@@ -435,6 +435,7 @@ class MyRadio_Season extends MyRadio_Metadata_Common
             ->editMode(
                 $this->getID(),
                 [
+                    'show_id' => $this->show_id,
                     'description' => $this->getMeta('description'),
                     'tags' => implode(', ', $this->getMeta('tag')),
                     'subtype' => $showSubtype === $seasonSubtype ? '' : $seasonSubtype
