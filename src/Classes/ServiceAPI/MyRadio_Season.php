@@ -434,6 +434,7 @@ class MyRadio_Season extends MyRadio_Metadata_Common
                 [
                     'description' => $this->getMeta('description'),
                     'tags' => implode(', ', $this->getMeta('tag')),
+                    'subtype' => $this->getSubtype()->getClass(),
                 ]
             );
     }

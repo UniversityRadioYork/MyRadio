@@ -437,7 +437,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                     'options' => MyRadio_ShowSubtype::getOptions(),
                     'label' => 'Subtype',
                     'explanation' => 'Select the subtype for this show (speech, music, news, etc.)'
-                    . 'If unsure, leave as Regular.'
+                    . ' If unsure, leave as Regular.'
                 ]
             )
         )->addField(
@@ -509,6 +509,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                     'title' => $this->getMeta('title'),
                     'description' => $this->getMeta('description'),
                     'genres' => $this->getGenre(),
+                    'subtype' => $this->getSubtype()->getClass(),
                     'tags' => is_null($this->getMeta('tag')) ? null : implode(', ', $this->getMeta('tag')),
                     'credits.memberid' => array_map(
                         function ($ar) {
