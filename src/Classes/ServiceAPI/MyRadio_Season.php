@@ -428,6 +428,8 @@ class MyRadio_Season extends MyRadio_Metadata_Common
 
     public function getEditForm()
     {
+        $showSubtype = $this->getShow()->getSubtype()->getClass();
+        $seasonSubtype = $this->getSubtype()->getClass();
         return self::getForm()
             ->setSubTitle('Edit Season')
             ->editMode(
@@ -435,7 +437,7 @@ class MyRadio_Season extends MyRadio_Metadata_Common
                 [
                     'description' => $this->getMeta('description'),
                     'tags' => implode(', ', $this->getMeta('tag')),
-                    'subtype' => $this->getSubtype()->getClass(),
+                    'subtype' => $showSubtype === $seasonSubtype ? '' : $seasonSubtype
                 ]
             );
     }
