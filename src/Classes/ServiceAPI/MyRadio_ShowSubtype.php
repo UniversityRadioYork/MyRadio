@@ -88,6 +88,14 @@ class MyRadio_ShowSubtype extends ServiceAPI {
         return CoreUtils::setToDataSource($subtypes);
     }
 
+    /**
+     * Get all subtypes in a format suitable for a MyRadioFormField select field.
+     * @return array
+     */
+    public static function getOptions() {
+        return self::$db->fetchAll('SELECT class AS value, name AS text FROM schedule.show_subtypes ORDER BY show_subtype_id ASC');
+    }
+
     protected static function factory($itemid)
     {
         $sql = 'SELECT show_subtype_id, name, class FROM schedule.show_subtypes WHERE show_subtype_id = $1 LIMIT 1';

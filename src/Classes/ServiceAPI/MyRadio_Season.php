@@ -287,7 +287,7 @@ class MyRadio_Season extends MyRadio_Metadata_Common
             self::$db->query(
                 'INSERT INTO schedule.show_season_subtype
                 (season_id, show_subtype_id, effective_from)
-                VALUES ($1, $2, NOW())',
+                VALUES ($1, (SELECT show_subtype_id FROM schedule.show_subtypes WHERE show_subtypes.class = $2), NOW())',
                 [
                     $season_id,
                     $params['subtype']
@@ -404,6 +404,20 @@ class MyRadio_Season extends MyRadio_Metadata_Common
                 ]
             )
         )->addField(
+                new MyRadioFormField(
+                    'subtype',
+                    MyRadioFormField::TYPE_SELECT,
+                    [
+                        'options' => array_merge(
+                            ['value' => '', 'name' => 'Leave unchanged'],
+                            MyRadio_ShowSubtype::getOptions()
+                        ),
+                        'label' => 'Subtype',
+                        'explanation' => 'If necessary, override the subtype for this season. '
+                            .'If you\'re not sure what you\'re doing, leave it what it is.'
+                    ]
+                )
+            )->addField(
             new MyRadioFormField(
                 'grp-adv_close',
                 MyRadioFormField::TYPE_SECTION_CLOSE
@@ -750,6 +764,20 @@ EOT
         self::$db->query('UPDATE schedule.show_season_subtype SET show_subtype_id = $1 WHERE season_id = $1', [
             $subtypeId, $this->season_id
         ]);
+    }
+
+    /**
+     * Sets this season's subtype by the subtype name.
+     * @param $subtypeName
+     */
+    public function setSubtypeByName($subtypeName) {
+        self::$db->query(
+            'UPDATE schedule.show_season_subtype
+            SET show_subtype_id = subtype.show_subtype_id
+            FROM (SELECT show_subtype_id FROM schedule.show_subtypes WHERE show_subtypes.class = $2) AS subtype
+            WHERE season_id = $1',
+            [$this->season_id, $subtypeName]
+        );
     }
 
     /**

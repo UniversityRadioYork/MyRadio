@@ -334,22 +334,12 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         );
 
         // Subtype too
-        // TODO: kill this bodgy shit as soon as possible
-        if (!empty($params['subtype'])) {
-            self::$db->query(
-                'INSERT INTO schedule.show_season_subtype
-            (show_id, show_subtype_id, effective_from)
-            VALUES ($1, $2, NOW())',
-                [$show_id, $params['subtype']]
-            );
-        } else {
-            self::$db->query(
-                'INSERT INTO schedule.show_season_subtype
-            (show_id, show_subtype_id, effective_from)
-            (SELECT $1, (SELECT show_subtype_id FROM schedule.show_subtypes WHERE show_subtypes.class = $2), NOW())',
-                [$show_id, CoreUtils::get_subtype_for_show($params['title'])]
-            );
-        }
+        self::$db->query(
+            'INSERT INTO schedule.show_season_subtype
+        (show_id, show_subtype_id, effective_from)
+        VALUES ($1, (SELECT show_subtype_id FROM schedule.show_subtypes WHERE show_subtypes.class = $2), NOW())',
+            [$show_id, $params['subtype']]
+        );
 
         //And now all that's left is who's on the show
         for ($i = 0; $i < sizeof($params['credits']['memberid']); ++$i) {
@@ -437,6 +427,17 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                     ),
                     'label' => 'Genre',
                     'explanation' => 'What type of music do you play, if any?',
+                ]
+            )
+        )->addField(
+            new MyRadioFormField(
+                'subtype',
+                MyRadioFormField::TYPE_SELECT,
+                [
+                    'options' => MyRadio_ShowSubtype::getOptions(),
+                    'label' => 'Subtype',
+                    'explanation' => 'Select the subtype for this show (speech, music, news, etc.)'
+                    . 'If unsure, leave as Regular.'
                 ]
             )
         )->addField(
