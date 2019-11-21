@@ -408,8 +408,9 @@ class MyRadio_Season extends MyRadio_Metadata_Common
                     'subtype',
                     MyRadioFormField::TYPE_SELECT,
                     [
-                        'options' => array_merge(
-                            ['value' => '', 'text' => 'Leave unchanged'],
+                        'options' => array_merge([
+                            ['value' => '', 'text' => 'Leave unchanged']
+                        ],
                             MyRadio_ShowSubtype::getOptions()
                         ),
                         'label' => 'Subtype',
