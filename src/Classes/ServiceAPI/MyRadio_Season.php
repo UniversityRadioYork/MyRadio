@@ -694,7 +694,7 @@ EOT
      * @param parent Unused for type compatibility with parent
      * @return array[]
      */
-    public function getCredits(MyRadio\ServiceAPI\MyRadio_Metadata_Common $parent = null)
+    public function getCredits(\MyRadio\ServiceAPI\MyRadio_Metadata_Common $parent = null)
     {
         return parent::getCredits($this->getShow());
     }
