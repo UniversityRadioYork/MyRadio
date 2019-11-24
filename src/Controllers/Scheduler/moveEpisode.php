@@ -8,10 +8,10 @@ use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_Timeslot;
 
-$timeslot = MyRadio_Timeslot::getInstance($_REQUEST['show_season_timeslot_id']);
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     //Submitted
+    // @todo this is a bit of a hack
+    $timeslot = MyRadio_Timeslot::getInstance($_REQUEST['sched_move-show_season_timeslot_id']);
     //Get data
     $data = $timeslot->getCancelForm()->readValues();
     //Cancel
@@ -33,6 +33,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!isset($_REQUEST['show_season_timeslot_id'])) {
         throw new MyRadioException('No timeslotid provided.', 400);
     }
+
+    $timeslot = MyRadio_Timeslot::getInstance($_REQUEST['show_season_timeslot_id']);
 
     $timeslot->getMoveForm()->render();
 }
