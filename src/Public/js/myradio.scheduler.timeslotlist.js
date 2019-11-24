@@ -128,6 +128,12 @@ $(".twig-datatable").dataTable({
     {
       "sTitle": "Mixcloud Status",
       "bVisible": false
+    },
+    //movelink
+    {
+      "sTitle": "Move",
+      "bVisible": true,
+      "bSortable": false
     }
   ],
   "bPaginate": false

@@ -7,6 +7,7 @@
 namespace MyRadio\ServiceAPI;
 
 use MyRadio\Config;
+use MyRadio\MyRadio\AuthUtils;
 use MyRadio\MyRadioException;
 use MyRadio\MyRadio\CoreUtils;
 use MyRadio\MyRadio\URLUtils;
@@ -330,7 +331,19 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
                         ['show_season_timeslot_id' => $this->getID()]
                     ),
                 ],
-            ]
+            ],
+            AuthUtils::hasPermission(AUTH_EDITSHOWS) ? [
+                'movelink' => [
+                    'display' => 'icon',
+                    'value' => 'move',
+                    'title' => 'Move Episode',
+                    'url' => URLUtils::makeURL(
+                        'Scheduler',
+                        'moveEpisode',
+                        ['show_season_timeslot_id' => $this->getID()]
+                    ),
+                ]
+            ] : []
         );
     }
 
