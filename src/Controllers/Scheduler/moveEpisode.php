@@ -8,18 +8,23 @@ use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_Timeslot;
 
+$timeslot = MyRadio_Timeslot::getInstance($data['show_season_timeslot_id']);
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     //Submitted
     //Get data
-    $data = MyRadio_Timeslot::getCancelForm()->readValues();
+    $data = $timeslot->getCancelForm()->readValues();
     //Cancel
-    $timeslot = MyRadio_Timeslot::getInstance($data['show_season_timeslot_id']);
     $result = $timeslot->moveTimeslot(
-        $data['new_start_time'],
-        $data['new_end_time']
+        strtotime($data['new_start_time']),
+        strtotime($data['new_end_time'])
     );
 
-    $message = 'Move successful.';
+    if ($result) {
+        $message = 'Move successful.';
+    } else {
+        $message = 'Something didn\'t work! Please ping Computing.';
+    }
 
     URLUtils::backWithMessage($message);
 } else {
@@ -29,5 +34,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         throw new MyRadioException('No timeslotid provided.', 400);
     }
 
-    MyRadio_Timeslot::getMoveForm()->render();
+    $timeslot->getMoveForm()->render();
 }

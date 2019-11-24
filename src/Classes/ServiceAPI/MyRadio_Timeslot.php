@@ -862,14 +862,13 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
      */
     public function moveTimeslot($newStart, $newEnd)
     {
-        $newDuration = $newEnd - $newStart;
         $r = self::$db->query(
             'UPDATE schedule.show_season_timeslot
             SET start_time = $1, duration = $2
             WHERE show_season_timeslot_id = $3',
             [
-                $newStart,
-                $newDuration,
+                CoreUtils::getTimestamp($newStart),
+                CoreUtils::makeInterval($newStart, $newEnd),
                 $this->getID()
             ]
         );
@@ -1165,8 +1164,9 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             );
     }
 
-    public static function getMoveForm()
+    public function getMoveForm()
     {
+        $title = $this->getMeta('title');
         return (
         new MyRadioForm(
             'sched_move',
@@ -1174,7 +1174,8 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             'moveEpisode',
             [
                 'debug' => false,
-                'title' => 'Move Episode'
+                'title' => 'Move Episode',
+                'subtitle' => "Moving $title"
             ]
         ))->addField(new MyRadioFormField(
                 'grp_info',
@@ -1186,12 +1187,18 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             ))->addField(new MyRadioFormField(
                 'new_start_time',
                 MyRadioFormField::TYPE_DATETIME,
-                ['label' => 'New Start Time']
+                [
+                    'label' => 'New Start Time',
+                    'value' => CoreUtils::getTimestamp($this->getStartTime())
+                ]
             ))
             ->addField(new MyRadioFormField(
                 'new_end_time',
                 MyRadioFormField::TYPE_DATETIME,
-                ['label' => 'New End Time']
+                [
+                    'label' => 'New End Time',
+                    'value' => CoreUtils::getTimestamp($this->getStartTime() + $this->getDuration())
+                ]
             ))->addField(new MyRadioFormField(
                 'grp_info_close',
                 MyRadioFormField::TYPE_SECTION_CLOSE,
