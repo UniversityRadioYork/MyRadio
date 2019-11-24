@@ -14,19 +14,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $timeslot = MyRadio_Timeslot::getInstance($_REQUEST['sched_move-show_season_timeslot_id']);
     //Get data
     $data = $timeslot->getMoveForm()->readValues();
-    //Move
-    $result = $timeslot->moveTimeslot(
-        $data['new_start_time'],
-        $data['new_end_time']
-    );
 
-    if ($result) {
-        $message = 'Move successful.';
+    if ($data['new_start_time'] === $data['new_end_time']) {
+        $message = 'You can\'t have an episode start and end at the same time.';
+        URLUtils::backWithMessage($message);
     } else {
-        $message = 'Something didn\'t work! Please ping Computing.';
-    }
+        //Move
+        $result = $timeslot->moveTimeslot(
+            $data['new_start_time'],
+            $data['new_end_time']
+        );
 
-    URLUtils::backWithMessage($message);
+        if ($result) {
+            $message = 'Move successful.';
+        } else {
+            $message = 'Something didn\'t work! Please ping Computing.';
+        }
+
+        URLUtils::backWithMessage($message);
+    }
 } else {
     //Not Submitted
 
