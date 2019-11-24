@@ -867,7 +867,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             SET start_time = $1, duration = $2
             WHERE show_season_timeslot_id = $3',
             [
-                CoreUtils::getTimestamp($newStart),
+                CoreUtils::getRfc2822Timestamp($newStart),
                 CoreUtils::makeInterval($newStart, $newEnd),
                 $this->getID()
             ]
