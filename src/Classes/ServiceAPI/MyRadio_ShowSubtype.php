@@ -14,7 +14,8 @@ use MyRadio\MyRadioException;
  *
  * @uses    \Database
  */
-class MyRadio_ShowSubtype extends ServiceAPI {
+class MyRadio_ShowSubtype extends ServiceAPI
+{
     /**
      * The ID of this subtype
      * @var int
@@ -41,7 +42,8 @@ class MyRadio_ShowSubtype extends ServiceAPI {
         $this->class = $data['class'];
     }
 
-    public function getID() {
+    public function getID()
+    {
         return $this->show_subtype_id;
     }
 
@@ -50,7 +52,8 @@ class MyRadio_ShowSubtype extends ServiceAPI {
      * Get the name of this subtype.
      * @return string
      */
-    public function getName() {
+    public function getName()
+    {
         return $this->name;
     }
 
@@ -58,7 +61,8 @@ class MyRadio_ShowSubtype extends ServiceAPI {
      * Get the CSS class of this subtype.
      * @return string
      */
-    public function getClass() {
+    public function getClass()
+    {
         return $this->class;
     }
 
@@ -76,7 +80,8 @@ class MyRadio_ShowSubtype extends ServiceAPI {
      *
      * @return MyRadio_ShowSubtype[]
      */
-    public static function getAll() {
+    public static function getAll()
+    {
         $sql = 'SELECT show_subtype_id, name, class FROM schedule.show_subtypes';
         $rows = self::$db->fetchAll($sql);
 
@@ -92,8 +97,11 @@ class MyRadio_ShowSubtype extends ServiceAPI {
      * Get all subtypes in a format suitable for a MyRadioFormField select field.
      * @return array
      */
-    public static function getOptions() {
-        return self::$db->fetchAll('SELECT class AS value, name AS text FROM schedule.show_subtypes ORDER BY show_subtype_id ASC');
+    public static function getOptions()
+    {
+        return self::$db->fetchAll(
+            'SELECT class AS value, name AS text FROM schedule.show_subtypes ORDER BY show_subtype_id ASC'
+        );
     }
 
     protected static function factory($itemid)

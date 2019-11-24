@@ -665,7 +665,8 @@ class MyRadio_Show extends MyRadio_Metadata_Common
      * Note that subtypes can be overridden per-season, so you should probably use MyRadio_Season->getSubtype().
      * @return MyRadio_ShowSubtype
      */
-    public function getSubtype() {
+    public function getSubtype()
+    {
         return MyRadio_ShowSubtype::getInstance($this->subtype_id);
     }
 
@@ -675,7 +676,8 @@ class MyRadio_Show extends MyRadio_Metadata_Common
      * @todo support effectiveFrom and effectiveTo
      * @param $subtypeId
      */
-    public function setSubtype($subtypeId) {
+    public function setSubtype($subtypeId)
+    {
         self::$db->query('UPDATE schedule.show_season_subtype SET show_subtype_id = $1 WHERE show_id = $1', [
             $subtypeId, $this->show_id
         ]);
@@ -685,7 +687,8 @@ class MyRadio_Show extends MyRadio_Metadata_Common
      * Sets this show's subtype by the subtype name.
      * @param $subtypeName
      */
-    public function setSubtypeByName($subtypeName) {
+    public function setSubtypeByName($subtypeName)
+    {
         self::$db->query(
             'UPDATE schedule.show_season_subtype
             SET show_subtype_id = subtype.show_subtype_id

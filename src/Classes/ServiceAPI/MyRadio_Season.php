@@ -287,7 +287,9 @@ class MyRadio_Season extends MyRadio_Metadata_Common
             self::$db->query(
                 'INSERT INTO schedule.show_season_subtype
                 (season_id, show_subtype_id, effective_from)
-                VALUES ($1, (SELECT show_subtype_id FROM schedule.show_subtypes WHERE show_subtypes.class = $2), NOW())',
+                VALUES ($1, (
+                    SELECT show_subtype_id FROM schedule.show_subtypes WHERE show_subtypes.class = $2
+                    ), NOW())',
                 [
                     $season_id,
                     $params['subtype']
@@ -404,13 +406,14 @@ class MyRadio_Season extends MyRadio_Metadata_Common
                 ]
             )
         )->addField(
-                new MyRadioFormField(
-                    'subtype',
-                    MyRadioFormField::TYPE_SELECT,
-                    [
-                        'options' => array_merge([
+            new MyRadioFormField(
+                'subtype',
+                MyRadioFormField::TYPE_SELECT,
+                [
+                        'options' => array_merge(
+                            [
                             ['value' => '', 'text' => 'Leave unchanged']
-                        ],
+                            ],
                             MyRadio_ShowSubtype::getOptions()
                         ),
                         'label' => 'Subtype',
@@ -418,8 +421,8 @@ class MyRadio_Season extends MyRadio_Metadata_Common
                             .'If you\'re not sure what you\'re doing, leave it what it is.',
                         'required' => false
                     ]
-                )
-            )->addField(
+            )
+        )->addField(
             new MyRadioFormField(
                 'grp-adv_close',
                 MyRadioFormField::TYPE_SECTION_CLOSE
@@ -761,7 +764,8 @@ EOT
      * Gets the subtype for this season.
      * @return MyRadio_ShowSubtype
      */
-    public function getSubtype() {
+    public function getSubtype()
+    {
         if ($this->subtype_id === null) {
             return $this->getShow()->getSubtype();
         }
@@ -774,7 +778,8 @@ EOT
      * @todo support effectiveFrom and effectiveTo
      * @param $subtypeId
      */
-    public function setSubtype($subtypeId) {
+    public function setSubtype($subtypeId)
+    {
         self::$db->query('UPDATE schedule.show_season_subtype SET show_subtype_id = $1 WHERE season_id = $1', [
             $subtypeId, $this->season_id
         ]);
@@ -784,7 +789,8 @@ EOT
      * Sets this season's subtype by the subtype name.
      * @param $subtypeName
      */
-    public function setSubtypeByName($subtypeName) {
+    public function setSubtypeByName($subtypeName)
+    {
         self::$db->query(
             'UPDATE schedule.show_season_subtype
             SET show_subtype_id = subtype.show_subtype_id
@@ -797,7 +803,8 @@ EOT
     /**
      * Clears the subtype for this season, resetting it to the show's "main" subtype.
      */
-    public function clearSubtype() {
+    public function clearSubtype()
+    {
         self::$db->query('DELETE FROM schedule.show_season_subtype WHERE season_id = $1', [$this->season_id]);
     }
 
