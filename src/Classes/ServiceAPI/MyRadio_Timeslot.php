@@ -1189,7 +1189,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
                 MyRadioFormField::TYPE_DATETIME,
                 [
                     'label' => 'New Start Time',
-                    'value' => gmdate('d/m/Y H:i', $this->getStartTime())
+                    'value' => date('d/m/Y H:i', $this->getStartTime())
                 ]
             ))
             ->addField(new MyRadioFormField(
@@ -1197,7 +1197,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
                 MyRadioFormField::TYPE_DATETIME,
                 [
                     'label' => 'New End Time',
-                    'value' => gmdate('d/m/Y H:i', $this->getEndTime())
+                    'value' => date('d/m/Y H:i', $this->getEndTime())
                 ]
             ))->addField(new MyRadioFormField(
                 'grp_info_close',
