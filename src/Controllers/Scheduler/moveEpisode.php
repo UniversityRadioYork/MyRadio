@@ -8,7 +8,7 @@ use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_Timeslot;
 
-$timeslot = MyRadio_Timeslot::getInstance($data['show_season_timeslot_id']);
+$timeslot = MyRadio_Timeslot::getInstance($_REQUEST['show_season_timeslot_id']);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     //Submitted

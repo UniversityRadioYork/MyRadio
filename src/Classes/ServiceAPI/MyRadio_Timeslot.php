@@ -1207,7 +1207,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
                 new MyRadioFormField(
                     'show_season_timeslot_id',
                     MyRadioFormField::TYPE_HIDDEN,
-                    ['value' => $_REQUEST['show_season_timeslot_id']]
+                    ['value' => $this->getID()]
             ));
     }
 }
