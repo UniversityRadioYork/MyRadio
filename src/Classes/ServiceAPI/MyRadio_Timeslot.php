@@ -1166,7 +1166,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
 
     public function getMoveForm()
     {
-        $title = $this->getMeta('title');
+        $title = $this->getMeta('title') . ' - ' . CoreUtils::happyTime($this->getStartTime());
         return (
         new MyRadioForm(
             'sched_move',
