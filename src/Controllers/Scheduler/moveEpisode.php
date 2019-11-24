@@ -8,8 +8,6 @@ use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_Timeslot;
 
-AuthUtils::requirePermission(AUTH_EDITANYSHOW);
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     //Submitted
     //Get data
