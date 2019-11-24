@@ -13,15 +13,7 @@
                     <td class="column-{{title}}">
                         {% if column.display is defined %}
                             {% if column.display == "text" %}
-                                <a
-                                        href="{{ column.disabled ? '#' : column.url}} "
-                                        title="{{column.title}}"
-                                        {% if column.disabled %}
-                                        class="btn btn-link disabled"
-                                        {% endif %}
-                                >
-                                    {{column.value}}
-                                </a>
+                                <a href="{{column.url}}" title="{{column.title}}">{{column.value}}</a>
                             {% elseif column.display == "icon" %}
                                 <a href="{{column.url}}" title="{{column.title}}">
                                     <span class="glyphicon glyphicon-{{column.value}}">&nbsp;</span>
