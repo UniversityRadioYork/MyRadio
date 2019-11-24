@@ -16,8 +16,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $data = $timeslot->getMoveForm()->readValues();
     //Cancel
     $result = $timeslot->moveTimeslot(
-        strtotime($data['new_start_time']),
-        strtotime($data['new_end_time'])
+        date_create_from_format('d/m/Y H:i', $data['new_start_time'])->getTimestamp(),
+        date_create_from_format('d/m/Y H:i', $data['new_end_time'])->getTimestamp()
     );
 
     if ($result) {
