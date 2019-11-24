@@ -1197,7 +1197,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
                 MyRadioFormField::TYPE_DATETIME,
                 [
                     'label' => 'New End Time',
-                    'value' => CoreUtils::getTimestamp($this->getStartTime() + $this->getDuration())
+                    'value' => CoreUtils::getTimestamp($this->getEndTime())
                 ]
             ))->addField(new MyRadioFormField(
                 'grp_info_close',
