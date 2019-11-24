@@ -14,10 +14,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $timeslot = MyRadio_Timeslot::getInstance($_REQUEST['sched_move-show_season_timeslot_id']);
     //Get data
     $data = $timeslot->getMoveForm()->readValues();
-    //Cancel
+    //Move
+    $newStart = date_create_from_format('d/m/Y H:i', $data['new_start_time']);
+    if ($newStart === false) {
+        $fail = $data['new_start_time'];
+        throw new MyRadioException("Malformed start time $fail", 400);
+    }
+    $newEnd = date_create_from_format('d/m/Y H:i', $data['new_end_time']);
+    if ($newEnd === false) {
+        $fail = $data['new_end_time'];
+        throw new MyRadioException("Malformed end time $fail", 400);
+    }
     $result = $timeslot->moveTimeslot(
-        date_create_from_format('d/m/Y H:i', $data['new_start_time'])->getTimestamp(),
-        date_create_from_format('d/m/Y H:i', $data['new_end_time'])->getTimestamp()
+        $newStart->getTimestamp(),
+        $newEnd->getTimestamp()
     );
 
     if ($result) {
