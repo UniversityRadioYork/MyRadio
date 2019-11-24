@@ -867,7 +867,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             SET start_time = $1, duration = $2
             WHERE show_season_timeslot_id = $3',
             [
-                CoreUtils::getRfc2822Timestamp($newStart),
+                CoreUtils::getTimestamp($newStart),
                 CoreUtils::makeInterval($newStart, $newEnd),
                 $this->getID()
             ]
@@ -1189,7 +1189,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
                 MyRadioFormField::TYPE_DATETIME,
                 [
                     'label' => 'New Start Time',
-                    'value' => CoreUtils::getTimestamp($this->getStartTime())
+                    'value' => gmdate('d/m/Y H:i', $this->getStartTime())
                 ]
             ))
             ->addField(new MyRadioFormField(
@@ -1197,7 +1197,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
                 MyRadioFormField::TYPE_DATETIME,
                 [
                     'label' => 'New End Time',
-                    'value' => CoreUtils::getTimestamp($this->getEndTime())
+                    'value' => gmdate('d/m/Y H:i', $this->getEndTime())
                 ]
             ))->addField(new MyRadioFormField(
                 'grp_info_close',
