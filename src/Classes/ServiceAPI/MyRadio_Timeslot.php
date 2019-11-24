@@ -343,7 +343,15 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
                         ['show_season_timeslot_id' => $this->getID()]
                     ),
                 ]
-            ] : []
+            ] : [
+                'movelink' => [
+                    'display' => 'icon',
+                    'value' => 'move',
+                    'title' => 'Contact the Programme Controller if you need to move an episode.',
+                    'disabled' => true,
+                    'url' => '#',
+                ]
+            ]
         );
     }
 
