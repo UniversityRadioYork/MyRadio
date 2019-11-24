@@ -13,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // @todo this is a bit of a hack
     $timeslot = MyRadio_Timeslot::getInstance($_REQUEST['sched_move-show_season_timeslot_id']);
     //Get data
-    $data = $timeslot->getCancelForm()->readValues();
+    $data = $timeslot->getMoveForm()->readValues();
     //Cancel
     $result = $timeslot->moveTimeslot(
         strtotime($data['new_start_time']),
