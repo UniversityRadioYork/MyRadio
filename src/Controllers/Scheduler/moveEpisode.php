@@ -15,19 +15,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     //Get data
     $data = $timeslot->getMoveForm()->readValues();
     //Move
-    $newStart = date_create_from_format('d/m/Y H:i', $data['new_start_time']);
-    if ($newStart === false) {
-        $fail = $data['new_start_time'];
-        throw new MyRadioException("Malformed start time $fail", 400);
-    }
-    $newEnd = date_create_from_format('d/m/Y H:i', $data['new_end_time']);
-    if ($newEnd === false) {
-        $fail = $data['new_end_time'];
-        throw new MyRadioException("Malformed end time $fail", 400);
-    }
     $result = $timeslot->moveTimeslot(
-        $newStart->getTimestamp(),
-        $newEnd->getTimestamp()
+        $data['new_start_time'],
+        $data['new_end_time']
     );
 
     if ($result) {
