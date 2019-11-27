@@ -20,7 +20,7 @@ while ($startOfBatch < $numShows) {
     Database::getInstance()->query('BEGIN');
     for ($i = $startOfBatch; $i < $startOfBatch + $batchSize; $i++) {
         $show = $shows[$i];
-        $subtype = CoreUtils::get_subtype_for_show($show->getMeta('title'));
+        $subtype = CoreUtils::getSubtypeForShow($show->getMeta('title'));
         Database::getInstance()->query('INSERT INTO schedule.show_season_subtype
             (show_id, show_subtype_id, effective_from)
             (SELECT $1, (SELECT show_subtype_id

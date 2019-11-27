@@ -761,7 +761,8 @@ class CoreUtils
      * @param $show_name string
      * @return string
      */
-    public static function get_subtype_for_show($show_name) {
+    public static function getSubtypeForShow($show_name)
+    {
         $blockMatches = [
             ["ury: early morning", "primetime"],
             ["ury breakfast", "primetime"],
@@ -828,5 +829,4 @@ class CoreUtils
         }
         return 'regular';
     }
-
 }

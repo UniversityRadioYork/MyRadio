@@ -35,6 +35,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $season->setMeta('description', $data['description']);
         $season->setMeta('tag', explode(' ', $data['tags']));
         $season->setCredits($data['credits']['member'], $data['credits']['credittype']);
+        if (!empty($data['subtype'])) {
+            $season->setSubtypeByName($data['subtype']);
+        } else {
+            $season->clearSubtype();
+        }
 
         URLUtils::redirectWithMessage('Scheduler', 'listSeasons', 'Season updated!', ['seasonid' => $season->getID()]);
     }

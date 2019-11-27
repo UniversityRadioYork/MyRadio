@@ -334,22 +334,12 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         );
 
         // Subtype too
-        // TODO: kill this bodgy shit as soon as possible
-        if (!empty($params['subtype'])) {
-            self::$db->query(
-                'INSERT INTO schedule.show_season_subtype
-            (show_id, show_subtype_id, effective_from)
-            VALUES ($1, $2, NOW())',
-                [$show_id, $params['subtype']]
-            );
-        } else {
-            self::$db->query(
-                'INSERT INTO schedule.show_season_subtype
-            (show_id, show_subtype_id, effective_from)
-            (SELECT $1, (SELECT show_subtype_id FROM schedule.show_subtypes WHERE show_subtypes.class = $2), NOW())',
-                [$show_id, CoreUtils::get_subtype_for_show($params['title'])]
-            );
-        }
+        self::$db->query(
+            'INSERT INTO schedule.show_season_subtype
+        (show_id, show_subtype_id, effective_from)
+        VALUES ($1, (SELECT show_subtype_id FROM schedule.show_subtypes WHERE show_subtypes.class = $2), NOW())',
+            [$show_id, $params['subtype']]
+        );
 
         //And now all that's left is who's on the show
         for ($i = 0; $i < sizeof($params['credits']['memberid']); ++$i) {
@@ -441,6 +431,17 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             )
         )->addField(
             new MyRadioFormField(
+                'subtype',
+                MyRadioFormField::TYPE_SELECT,
+                [
+                    'options' => MyRadio_ShowSubtype::getOptions(),
+                    'label' => 'Subtype',
+                    'explanation' => 'Select the subtype for this show (speech, music, news, etc.)'
+                    . ' If unsure, leave as Regular.'
+                ]
+            )
+        )->addField(
+            new MyRadioFormField(
                 'tags',
                 MyRadioFormField::TYPE_TEXT,
                 [
@@ -508,6 +509,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                     'title' => $this->getMeta('title'),
                     'description' => $this->getMeta('description'),
                     'genres' => $this->getGenre(),
+                    'subtype' => $this->getSubtype()->getClass(),
                     'tags' => is_null($this->getMeta('tag')) ? null : implode(', ', $this->getMeta('tag')),
                     'credits.memberid' => array_map(
                         function ($ar) {
@@ -663,7 +665,8 @@ class MyRadio_Show extends MyRadio_Metadata_Common
      * Note that subtypes can be overridden per-season, so you should probably use MyRadio_Season->getSubtype().
      * @return MyRadio_ShowSubtype
      */
-    public function getSubtype() {
+    public function getSubtype()
+    {
         return MyRadio_ShowSubtype::getInstance($this->subtype_id);
     }
 
@@ -673,7 +676,8 @@ class MyRadio_Show extends MyRadio_Metadata_Common
      * @todo support effectiveFrom and effectiveTo
      * @param $subtypeId
      */
-    public function setSubtype($subtypeId) {
+    public function setSubtype($subtypeId)
+    {
         self::$db->query('UPDATE schedule.show_season_subtype SET show_subtype_id = $1 WHERE show_id = $1', [
             $subtypeId, $this->show_id
         ]);
@@ -683,7 +687,8 @@ class MyRadio_Show extends MyRadio_Metadata_Common
      * Sets this show's subtype by the subtype name.
      * @param $subtypeName
      */
-    public function setSubtypeByName($subtypeName) {
+    public function setSubtypeByName($subtypeName)
+    {
         self::$db->query(
             'UPDATE schedule.show_season_subtype
             SET show_subtype_id = subtype.show_subtype_id

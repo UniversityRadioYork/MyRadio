@@ -49,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $show->setMeta('upload_state', 'Opted Out');
         }
 
-        $show->setSubtypeByName(CoreUtils::get_subtype_for_show($data['title']));
+        $show->setSubtypeByName($data['subtype']);
 
         URLUtils::redirectWithMessage('Scheduler', 'myShows', 'Show Updated!');
     }
