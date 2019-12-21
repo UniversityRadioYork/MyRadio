@@ -152,6 +152,16 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
             )
         )->addField(
             new MyRadioFormField(
+                'category',
+                MyRadioFormField::TYPE_SELECT,
+                [
+                    'label' => 'Category',
+                    'explanation' => 'Set the category for this playlist',
+                    'options' => iTones_PlaylistCategory::getOptions()
+                ]
+            )
+        )->addField(
+            new MyRadioFormField(
                 'description',
                 MyRadioFormField::TYPE_BLOCKTEXT,
                 [
@@ -172,6 +182,7 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
                 [
                     'title' => $this->getTitle(),
                     'description' => $this->getDescription(),
+                    'category' => $this->getCategory()->getID()
                 ]
             );
     }
@@ -459,6 +470,19 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
     }
 
     /**
+     * Update the category.
+     * @param $category
+     */
+    public function setCategoryById($category) {
+        self::$db->query(
+            'UPDATE jukebox.playlists SET category=$1 WHERE playlistid=$2',
+            [$category, $this->getID()]
+        );
+        $this->categoryid = $category;
+        $this->updateCacheObject();
+    }
+
+    /**
      * Get an array of all Playlists.
      *
      * @return array of iTones_Playlist objects
@@ -614,14 +638,14 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
         return self::resultSetToObjArray($result);
     }
 
-    public static function create($title, $description)
+    public static function create($title, $description, $category)
     {
         $id = str_replace(' ', '-', $title);
         $id = strtolower(preg_replace('/[^a-z0-9-]/i', '', $id));
         self::$db->query(
-            'INSERT INTO jukebox.playlists (playlistid, title, description)
-            VALUES ($1, $2, $3)',
-            [$id, $title, $description]
+            'INSERT INTO jukebox.playlists (playlistid, title, description, category)
+            VALUES ($1, $2, $3, $4)',
+            [$id, $title, $description, $category]
         );
 
         return self::getInstance($id);
