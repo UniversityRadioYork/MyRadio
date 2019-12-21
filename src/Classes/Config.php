@@ -308,6 +308,12 @@ final class Config
     public static $jukebox_obit_file = '/jukebox/OBIT.mp3';
 
     /**
+     * The category of playlists that Jukebox should get songs from.
+     * @var int
+     */
+    public static $jukebox_playlist_category_id = 2;
+
+    /**
      * The Samba File Share path to the Central Database.
      * This is used for BAPS compatibility features.
      *
