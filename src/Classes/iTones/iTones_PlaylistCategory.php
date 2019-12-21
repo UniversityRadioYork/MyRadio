@@ -75,6 +75,16 @@ class iTones_PlaylistCategory extends \MyRadio\ServiceAPI\ServiceAPI
         return \MyRadio\MyRadio\CoreUtils::setToDataSource($vals);
     }
 
+    /**
+     * Gets all the categories, formatted for use in a MyRadioFormField::TYPE_SELECT
+     * @return array
+     */
+    public static function getOptions() {
+        self::wakeup();
+
+        return self::$db->fetchAll('SELECT id AS value, name AS text FROM jukebox.playlist_categories ORDER BY id ASC');
+    }
+
     protected static function factory($id)
     {
         $sql = 'SELECT id, name, description FROM jukebox.playlist_categories WHERE id = $1 LIMIT 1';
