@@ -561,7 +561,7 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
                         LIMIT 1
                     )
                 GROUP BY playlists.playlistid',
-            $categoryId
+            [$categoryId]
         );
 
         if (!sizeof($result)) {
@@ -590,7 +590,7 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
         self::wakeup();
         $result = self::$db->fetchColumn(
             'SELECT playlistid FROM jukebox.playlists WHERE category = $1 ORDER BY title',
-            $categoryId
+            [$categoryId]
         );
 
         return self::resultSetToObjArray($result);
@@ -639,6 +639,11 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
             'title' => $this->getTitle(),
             'playlistid' => $this->getID(),
             'description' => $this->getDescription(),
+            'category' => array_merge($this->getCategory()->toDataSource($mixins), [
+                // I don't like using html here, but if I use text it adds an unnecessary and ugly <a> tag
+                'display' => 'html',
+                'html' => $this->getCategory()->getName()
+            ]),
             'edittrackslink' => [
                 'display' => 'icon',
                 'value' => 'folder-open',
