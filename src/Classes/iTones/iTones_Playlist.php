@@ -29,6 +29,7 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
     private $locktime;
     protected $tracks = [];
     protected $revisionid;
+    private $categoryid;
 
     /**
      * Initiates the ManagedPlaylist variables.
@@ -51,6 +52,7 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
         $this->description = $result['description'];
         $this->lock = empty($result['lock']) ? null : MyRadio_User::getInstance($result['lock']);
         $this->locktime = (int) $result['locktime'];
+        $this->categoryid = (int) $result['category'];
 
         $this->revisionid = (int) self::$db->fetchOne(
             'SELECT revisionid FROM jukebox.playlist_revisions
@@ -225,6 +227,15 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
     public function getDescription()
     {
         return $this->description;
+    }
+
+    /**
+     * Get the category of this playlist.
+     * @return iTones_PlaylistCategory
+     */
+    public function getCategory()
+    {
+        return iTones_PlaylistCategory::getInstance($this->categoryid);
     }
 
     /**
@@ -511,6 +522,78 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
         }
 
         return self::getInstance(CoreUtils::biasedRandom($result));
+    }
+
+    /**
+     * Uses weighted playout values to select a random Playlist from a category, returning it.
+     *
+     * Only includes Playlists with a currently running slot, and a Track.
+     *
+     * @param int $categoryId
+     * @param array $playlists_to_ignore one or more playlists to not return
+     * @return iTones_Playlist
+     */
+    public static function getPlaylistOfCategoryFromWeights($categoryId, $playlists_to_ignore = [])
+    {
+        // TODO: this is a straight copy-paste of the above. If we need to do this again,
+        // consider refactoring.
+        self::wakeup();
+
+        $result = self::$db->fetchAll(
+            'SELECT playlists.playlistid AS item, MAX(playlist_availability.weight) AS weight
+                FROM jukebox.playlists, jukebox.playlist_availability, jukebox.playlist_timeslot
+                WHERE playlists.category = $1
+                    AND playlists.playlistid=playlist_availability.playlistid
+                    AND playlist_availability.playlist_availability_id=playlist_timeslot.playlist_availability_id
+                    AND effective_from <= NOW()
+                    AND (effective_to IS NULL OR effective_to >= NOW())
+                    AND start_time <= "time"(NOW())
+                    AND end_time >= "time"(NOW())
+                    AND (
+                        day=EXTRACT(DOW FROM NOW())
+                        OR (EXTRACT(DOW FROM NOW())=0 AND day=7)
+                    )
+                    AND EXISTS (
+                        SELECT 1
+                        FROM jukebox.playlist_entries
+                        WHERE playlistid=jukebox.playlists.playlistid
+                        AND revision_removed IS NULL
+                        LIMIT 1
+                    )
+                GROUP BY playlists.playlistid',
+            $categoryId
+        );
+
+        if (!sizeof($result)) {
+            throw new MyRadioException('No weighted playlists currently available.');
+        }
+
+        for ($i = 0; $i < sizeof($result); $i++) {
+            foreach ($playlists_to_ignore as $playlist) {
+                if ($result[$i]['item'] === $playlist->getID()) {
+                    unset($result[$i]);
+                    break;
+                }
+            }
+        }
+
+        return self::getInstance(CoreUtils::biasedRandom($result));
+    }
+
+    /**
+     * Find all playlists with a given playlist category.
+     * @param $categoryId
+     * @return iTones_Playlist[]
+     */
+    public static function getAllPlaylistsOfCategory($categoryId)
+    {
+        self::wakeup();
+        $result = self::$db->fetchColumn(
+            'SELECT playlistid FROM jukebox.playlists WHERE category = $1 ORDER BY title',
+            $categoryId
+        );
+
+        return self::resultSetToObjArray($result);
     }
 
     /**

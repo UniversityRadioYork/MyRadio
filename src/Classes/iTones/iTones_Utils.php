@@ -69,7 +69,11 @@ class iTones_Utils extends \MyRadio\ServiceAPI\ServiceAPI
     {
         $playlists_to_ignore = [];
 
-        while ($playlist = iTones_Playlist::getPlaylistFromWeights($playlists_to_ignore)) {
+        while ($playlist = iTones_Playlist::getPlaylistOfCategoryFromWeights(
+            Config::$jukebox_playlist_category_id,
+            $playlists_to_ignore
+        )
+        ) {
             $tracks = $playlist->getTracks();
 
             // Randomly sort the array, then pop them out until one is playable (or we run out)

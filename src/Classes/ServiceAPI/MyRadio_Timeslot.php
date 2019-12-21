@@ -105,7 +105,10 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
         );
         if (empty($result)) {
             //Invalid Season
-            throw new MyRadioException('The MyRadio_Timeslot with instance ID #' . $timeslot_id . ' does not exist.', 400);
+            throw new MyRadioException(
+                'The MyRadio_Timeslot with instance ID #' . $timeslot_id . ' does not exist.',
+                400
+            );
         }
 
         //Deal with the easy bits
@@ -221,7 +224,8 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
      */
     public function getTimeslotAfter($filter = [1])
     {
-        $filter = '{' . implode(', ', $filter) . '}'; // lolphp http://php.net/manual/en/function.pg-query-params.php#71912
+        // lolphp http://php.net/manual/en/function.pg-query-params.php#71912
+        $filter = '{' . implode(', ', $filter) . '}';
 
         $result = self::$db->fetchColumn(
             'SELECT show_season_timeslot_id
@@ -447,7 +451,8 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
      */
     public static function getPreviousTimeslots($time = null, $n = 1, $filter = [1])
     {
-        $filter = '{' . implode(', ', $filter) . '}'; // lolphp http://php.net/manual/en/function.pg-query-params.php#71912
+        // lolphp http://php.net/manual/en/function.pg-query-params.php#71912
+        $filter = '{' . implode(', ', $filter) . '}';
 
         $result = self::$db->fetchAll(
             'SELECT show_season_timeslot_id
@@ -478,7 +483,8 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
      */
     public static function getNextTimeslot($time = null, $filter = [1])
     {
-        $filter = '{' . implode(', ', $filter) . '}'; // lolphp http://php.net/manual/en/function.pg-query-params.php#71912
+        // lolphp http://php.net/manual/en/function.pg-query-params.php#71912
+        $filter = '{' . implode(', ', $filter) . '}';
 
         $result = self::$db->fetchColumn(
             'SELECT show_season_timeslot_id
@@ -1150,18 +1156,18 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             ]
         )
         )->addField(
-                new MyRadioFormField(
-                    'reason',
-                    MyRadioFormField::TYPE_BLOCKTEXT,
-                    ['label' => 'Please explain why this Episode should be removed from the Schedule']
-                )
-            )->addField(
-                new MyRadioFormField(
-                    'show_season_timeslot_id',
-                    MyRadioFormField::TYPE_HIDDEN,
-                    ['value' => $_REQUEST['show_season_timeslot_id']]
-                )
-            );
+            new MyRadioFormField(
+                'reason',
+                MyRadioFormField::TYPE_BLOCKTEXT,
+                ['label' => 'Please explain why this Episode should be removed from the Schedule']
+            )
+        )->addField(
+            new MyRadioFormField(
+                'show_season_timeslot_id',
+                MyRadioFormField::TYPE_HIDDEN,
+                ['value' => $_REQUEST['show_season_timeslot_id']]
+            )
+        );
     }
 
     public function getMoveForm()
@@ -1178,20 +1184,20 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
                 'subtitle' => "Moving $title"
             ]
         ))->addField(new MyRadioFormField(
-                'grp_info',
-                MyRadioFormField::TYPE_SECTION,
-                [
+            'grp_info',
+            MyRadioFormField::TYPE_SECTION,
+            [
                     'label' => 'New Time',
                     'explanation' => 'Enter the new time to move the episode to. Take care with the end time.'
                 ]
-            ))->addField(new MyRadioFormField(
-                'new_start_time',
-                MyRadioFormField::TYPE_DATETIME,
-                [
+        ))->addField(new MyRadioFormField(
+            'new_start_time',
+            MyRadioFormField::TYPE_DATETIME,
+            [
                     'label' => 'New Start Time',
                     'value' => date('d/m/Y H:i', $this->getStartTime())
                 ]
-            ))
+        ))
             ->addField(new MyRadioFormField(
                 'new_end_time',
                 MyRadioFormField::TYPE_DATETIME,
@@ -1204,10 +1210,11 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
                 MyRadioFormField::TYPE_SECTION_CLOSE,
                 []
             ))->addField(
-                new MyRadioFormField(
-                    'show_season_timeslot_id',
-                    MyRadioFormField::TYPE_HIDDEN,
-                    ['value' => $this->getID()]
-            ));
+            new MyRadioFormField(
+                'show_season_timeslot_id',
+                MyRadioFormField::TYPE_HIDDEN,
+                ['value' => $this->getID()]
+            )
+        );
     }
 }
