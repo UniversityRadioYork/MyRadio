@@ -473,7 +473,11 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
      * Update the category.
      * @param $category
      */
-    public function setCategoryById($category) {
+    public function setCategoryById($category)
+    {
+        if (!is_int($category)) {
+            throw new MyRadioException('Expected $category to be an integer');
+        }
         self::$db->query(
             'UPDATE jukebox.playlists SET category=$1 WHERE playlistid=$2',
             [$category, $this->getID()]
@@ -559,6 +563,9 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
      */
     public static function getPlaylistOfCategoryFromWeights($categoryId, $playlists_to_ignore = [])
     {
+        if (!is_int($categoryId)) {
+            throw new MyRadioException('Expected $categoryId to be an integer');
+        }
         // TODO: this is a straight copy-paste of the above. If we need to do this again,
         // consider refactoring.
         self::wakeup();
@@ -611,6 +618,9 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
      */
     public static function getAllPlaylistsOfCategory($categoryId)
     {
+        if (!is_int($categoryId)) {
+            throw new MyRadioException('Expected $categoryId to be an integer');
+        }
         self::wakeup();
         $result = self::$db->fetchColumn(
             'SELECT playlistid FROM jukebox.playlists WHERE category = $1 ORDER BY title',
@@ -640,6 +650,9 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
 
     public static function create($title, $description, $category)
     {
+        if (!is_int($category)) {
+            throw new MyRadioException('Expected $category to be an integer');
+        }
         $id = str_replace(' ', '-', $title);
         $id = strtolower(preg_replace('/[^a-z0-9-]/i', '', $id));
         self::$db->query(
