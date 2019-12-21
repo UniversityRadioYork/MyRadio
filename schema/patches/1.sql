@@ -17,6 +17,9 @@ VALUES (
     '<p>This category is for all playlists that should be played by Jukebox.</p>'
 );
 
+ALTER SEQUENCE jukebox.playlist_categories_id_seq
+  START 3;
+
 ALTER TABLE jukebox.playlists
 ADD COLUMN category INTEGER DEFAULT 1;
 
