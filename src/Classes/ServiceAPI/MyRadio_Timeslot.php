@@ -1196,25 +1196,22 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             [
                     'label' => 'New Start Time',
                     'value' => date('d/m/Y H:i', $this->getStartTime())
-                ]
-        ))
-            ->addField(new MyRadioFormField(
-                'new_end_time',
-                MyRadioFormField::TYPE_DATETIME,
-                [
-                    'label' => 'New End Time',
-                    'value' => date('d/m/Y H:i', $this->getEndTime())
-                ]
-            ))->addField(new MyRadioFormField(
-                'grp_info_close',
-                MyRadioFormField::TYPE_SECTION_CLOSE,
-                []
-            ))->addField(
-            new MyRadioFormField(
-                'show_season_timeslot_id',
-                MyRadioFormField::TYPE_HIDDEN,
-                ['value' => $this->getID()]
-            )
-        );
+            ]
+        ))->addField(new MyRadioFormField(
+            'new_end_time',
+            MyRadioFormField::TYPE_DATETIME,
+            [
+            'label' => 'New End Time',
+            'value' => date('d/m/Y H:i', $this->getEndTime())
+            ]
+        ))->addField(new MyRadioFormField(
+            'grp_info_close',
+            MyRadioFormField::TYPE_SECTION_CLOSE,
+            []
+        ))->addField(new MyRadioFormField(
+            'show_season_timeslot_id',
+            MyRadioFormField::TYPE_HIDDEN,
+            ['value' => $this->getID()]
+        ));
     }
 }
