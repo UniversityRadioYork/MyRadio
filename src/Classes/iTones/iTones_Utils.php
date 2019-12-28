@@ -216,8 +216,12 @@ class iTones_Utils extends \MyRadio\ServiceAPI\ServiceAPI
      * @param MyRadio_Track $track
      * @return bool
      */
-    public static function getIfNowPlaying(MyRadio_Track $track) {
+    public static function getIfNowPlaying(MyRadio_Track $track)
+    {
         $id = self::telnetOp('now_playing');
+        if (!is_numeric($id)) {
+            return false;
+        }
         return (int) $id === $track->getID();
     }
 
