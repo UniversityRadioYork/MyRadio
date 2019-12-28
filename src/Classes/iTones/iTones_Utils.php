@@ -21,7 +21,7 @@ use MyRadio\iTones\iTones_Playlist;
 class iTones_Utils extends \MyRadio\ServiceAPI\ServiceAPI
 {
     private static $telnet_handle;
-    private static $queues = ['requests', 'main'];
+    private static $queues = ['requests'];
     private static $queue_cache = [];
     public static $ops = [];
 
@@ -86,8 +86,9 @@ class iTones_Utils extends \MyRadio\ServiceAPI\ServiceAPI
                     // These ones involve running more queries...
                     && !MyRadio_TracklistItem::getIfPlayedRecently($track)
                     && MyRadio_TracklistItem::getIfAlbumArtistCompliant($track)
-                    // And this one involves telnet!
+                    // And these ones involve telnet!
                     && !iTones_Utils::getIfQueued($track)
+                    && !iTones_Utils::getIfNowPlaying($track)
                 ) {
                     return $track;
                 }
@@ -208,6 +209,16 @@ class iTones_Utils extends \MyRadio\ServiceAPI\ServiceAPI
         }
 
         return false;
+    }
+
+    /**
+     * Check if a track is being played by Jukebox right now.
+     * @param MyRadio_Track $track
+     * @return bool
+     */
+    public static function getIfNowPlaying(MyRadio_Track $track) {
+        $id = self::telnetOp('now_playing');
+        return (int) $id === $track->getID();
     }
 
     /**
