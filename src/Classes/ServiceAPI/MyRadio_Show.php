@@ -228,7 +228,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
     public static function create($params = [])
     {
         //Validate input
-        $required = ['title', 'description', 'credits'];
+        $required = ['title', 'description', 'credits', 'subtype'];
         foreach ($required as $field) {
             if (!isset($params[$field])) {
                 throw new MyRadioException('You must provide ' . $field, 400);
