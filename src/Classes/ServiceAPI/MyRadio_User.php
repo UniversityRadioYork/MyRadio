@@ -1406,13 +1406,13 @@ class MyRadio_User extends ServiceAPI implements APICaller
             if (empty($email)) {
                 continue;
             } else {
-		$local = $user->getLocalAlias();
+                $local = $user->getLocalAlias();
                 $data[] = [$local, $email];
-            	$eduroam = $user->getEduroam();
-		if (!empty($eduroam) && ($eduroam !== $email)) {
-                	$data[] = [$eduroam, $email];
-		}
-	    }
+                $eduroam = $user->getEduroam();
+                if (!empty($eduroam) && ($eduroam !== $email)) {
+                    $data[] = [$eduroam, $email];
+                }
+            }
         }
 
         return $data;
