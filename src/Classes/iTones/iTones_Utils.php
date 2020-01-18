@@ -67,6 +67,7 @@ class iTones_Utils extends \MyRadio\ServiceAPI\ServiceAPI
      */
     public static function getTrackForJukebox()
     {
+        self::log('Started getTrackForJukebox');
         $playlists_to_ignore = [];
 
         while ($playlist = iTones_Playlist::getPlaylistOfCategoryFromWeights(
@@ -74,6 +75,7 @@ class iTones_Utils extends \MyRadio\ServiceAPI\ServiceAPI
             $playlists_to_ignore
         )
         ) {
+            self::log('Testing playlist', $playlist->getID());
             $tracks = $playlist->getTracks();
 
             // Randomly sort the array, then pop them out until one is playable (or we run out)
@@ -81,21 +83,37 @@ class iTones_Utils extends \MyRadio\ServiceAPI\ServiceAPI
 
             while ($track = array_pop($tracks)) {
                 // $track-> calls first because in theory these checks are really fast
-                if ($track->getClean() !== 'n'
-                    && !$track->isBlacklisted()
-                    // These ones involve running more queries...
-                    && !MyRadio_TracklistItem::getIfPlayedRecently($track)
-                    && MyRadio_TracklistItem::getIfAlbumArtistCompliant($track)
-                    // And these ones involve telnet!
-                    && !iTones_Utils::getIfQueued($track)
-                    && !iTones_Utils::getIfNowPlaying($track)
-                ) {
-                    return $track;
+                if ($track->getClean() === 'n') {
+                    self::log('Rejecting', strval($track->getID()), "because it's unclean");
+                    continue;
                 }
+                if ($track->isBlacklisted()) {
+                    self::log('Rejecting', strval($track->getID()), "because it's blacklisted");
+                    continue;
+                }
+                if (MyRadio_TracklistItem::getIfPlayedRecently($track)) {
+                    self::log('Rejecting', strval($track->getID()), "because it's been played recently");
+                    continue;
+                }
+                if (!(MyRadio_TracklistItem::getIfAlbumArtistCompliant($track))) {
+                    self::log('Rejecting', strval($track->getID()), "because it's non-compliant");
+                    continue;
+                }
+                if (iTones_Utils::getIfQueued($track)) {
+                    self::log('Rejecting', strval($track->getID()), "because it's queued");
+                    continue;
+                }
+                if (iTones_Utils::getIfNowPlaying($track)) {
+                    self::log('Rejecting', strval($track->getID()), "because it's now playing");
+                    continue;
+                }
+                self::log('Chosen', strval($track->getID()));
+                return $track;
             }
 
             // We've reached the end of the track list and none of them are playable
             // ignore the playlist we've been given, and try again
+            self::log('Had no luck with', $playlist->getID());
             $playlists_to_ignore[] = $playlist;
         }
     }
@@ -356,5 +374,14 @@ class iTones_Utils extends \MyRadio\ServiceAPI\ServiceAPI
             fclose(self::$telnet_handle);
             self::$telnet_handle = null;
         }
+    }
+
+    private static function log(...$fields)
+    {
+        file_put_contents(
+            '/var/log/myradio/jukebox.log',
+            date('Y-m-d H:i:s') . ': ' . implode(" ", $fields) . "\n",
+            FILE_APPEND
+        );
     }
 }
