@@ -811,6 +811,18 @@ class MyRadio_User extends ServiceAPI implements APICaller
     }
 
     /**
+     * Returns the current logged in user, or null if there is none.
+     * @return MyRadio_User|null
+     */
+    public static function getCurrentUser() {
+        if (isset($_SESSION['memberid'])) {
+            return self::getInstance();
+        } else {
+            return null;
+        }
+    }
+
+    /**
      * Returns the current logged in user, or failing that, the System User.
      *
      * @return MyRadio_User
