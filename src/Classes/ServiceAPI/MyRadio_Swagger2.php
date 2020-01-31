@@ -5,6 +5,7 @@
  */
 namespace MyRadio\ServiceAPI;
 
+use MyRadio\MyRadio\MyRadioSession;
 use ReflectionClass;
 use MyRadio\Config;
 use MyRadio\MyRadioException;
@@ -204,6 +205,18 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
             $status = '200 OK';
             if ($paths[$path][$op]->getName() === 'create') {
                 $status = '201 Created';
+            }
+
+            // If we're calling as a user (i.e. not using an API key)
+            // set $_SESSION properly, so we have a user context
+            if (!isset($args['api_key'])) {
+                $session_handler = MyRadioSession::factory();
+                // Changing the serialize handler to the general serialize/unserialize methods lets us
+                // read sessions without actually having to activate them and read them into $_SESSION
+                ini_set('session.serialize_handler', 'php_serialize');
+
+                session_set_save_handler($session_handler, true);
+                session_start();
             }
 
             // Don't send the API key to the function
