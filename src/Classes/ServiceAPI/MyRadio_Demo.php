@@ -10,6 +10,7 @@ use MyRadio\MyRadio\CoreUtils;
 use MyRadio\MyRadio\MyRadioForm;
 use MyRadio\MyRadio\MyRadioFormField;
 use MyRadio\MyRadioEmail;
+use MyRadio\Notifications\MyRadio_TrainingJoinedTraineeNotification;
 
 /**
  * Abstractor for the Demo utilities.
@@ -169,19 +170,7 @@ class MyRadio_Demo extends ServiceAPI
             'New Training Attendee',
             $attendee->getName() . ' has joined your session at ' . $time . '.'
         );
-        MyRadioEmail::sendEmailToUser(
-            $attendee,
-            'Attending Training',
-            'Hi '
-            .$attendee->getFName(a) . ",\r\n\r\n"
-            ."Thanks for joining a training session at $time. You will be trained by "
-            .$user->getName()
-            .'. Just head over to the station in Vanbrugh College just before your slot '
-            .' and the trainer will be waiting for you.'
-            ."\r\n\r\nSee you on air soon!\r\n"
-            .Config::$long_name
-            .' Training'
-        );
+        (new MyRadio_TrainingJoinedTraineeNotification($attendee, $user, $time))->setReceivers([$attendee])->send();
 
         return 0;
     }
