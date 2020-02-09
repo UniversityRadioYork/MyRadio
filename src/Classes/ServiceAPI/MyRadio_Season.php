@@ -12,6 +12,9 @@ use MyRadio\MyRadio\URLUtils;
 use MyRadio\MyRadio\MyRadioForm;
 use MyRadio\MyRadio\MyRadioFormField;
 use MyRadio\MyRadioEmail;
+use MyRadio\Notifications\MyRadio_SeasonCancelledNotification;
+use MyRadio\Notifications\MyRadio_SeasonRejectedNotification;
+use MyRadio\Notifications\MyRadio_SeasonScheduledNotification;
 
 /**
  * The Season class is used to create, view and manipulate Seasons within the new MyRadio Scheduler Format.
@@ -658,24 +661,9 @@ class MyRadio_Season extends MyRadio_Metadata_Common
         $this->setMeta('reject-reason', $reason);
 
         if ($notify_user) {
-            $sname = Config::$short_name; // Heredocs can't do static class variables
-            $email = Config::$email_domain;
-            MyRadioEmail::sendEmailToUserSet(
-                $this->getShow()->getCreditObjects(),
-                $this->getMeta('title').' Application Rejected',
-                <<<EOT
-Hi #NAME,
-
-Your application for a season of a show was rejected by our programming team, for the reason given below:
-
-$reason
-
-You can reapply online at any time, or for more information, email pc@{$email}.
-
-
-~ {$sname} Scheduling Legume
-EOT
-            );
+            (new MyRadio_SeasonRejectedNotification($this->getShow(), $reason))
+                ->setReceivers($this->getShow()->getCreditObjects())
+                ->send();
         }
 
         self::$db->query('COMMIT');
@@ -1085,33 +1073,10 @@ EOT
         self::$db->query('COMMIT');
         $this->updateCacheObject();
         //Email the user
-        /*
-         * @todo Make this nicer and configurable and stuff
-         */
-        $message = '
-Hello,
-
-  Please note that one of your shows has been allocated the following timeslots
-  on the '.Config::$short_name." Schedule:
-
-$times
-
-  Remember that except in exceptional circumstances, you must give at least
-  48 hours notice for cancelling your show as part of your presenter contract.
-  If you do not do this for two shows in one season, all other shows are forfeit
-  and may be cancelled.
-
-  You can cancel a timeslot by going to:
-    My Shows -> Seasons for Show -> Timeslots for Season
-  and then selecting cancel for the particular time.
-  ".URLUtils::makeURL('Scheduler', 'myShows').'
-
-  If you have any questions about your application, direct them to pc@'.Config::$email_domain.'
-
-  ~ '.Config::$short_name.' Scheduling Legume';
-
         if (!empty($times)) {
-            MyRadioEmail::sendEmailToUser($this->owner, $this->getMeta('title').' Scheduled', $message);
+            (new MyRadio_SeasonScheduledNotification($this->getShow(), $times))
+                ->setReceivers($this->getCreditObjects())
+                ->send();
         }
     }
 
@@ -1131,17 +1096,9 @@ $times
             $timeslot_str .= CoreUtils::happyTime("{$timeslot['start_time']}\r\n");
         }
 
-        $email = 'Please note that your show, '
-            . $this->getMeta('title')
-            . ' has been cancelled for the rest of the current Season. This is the following timeslots: '
-            . $timeslot_str
-            . "\r\n\r\n";
-        $email .= "Regards\r\n" . Config::$long_name . ' Programming Team';
-
-        foreach ($this->getShow()->getCredits() as $credit) {
-            $u = MyRadio_User::getInstance($credit);
-            MyRadioEmail::sendEmailToUser($u, 'Show Cancelled', $email);
-        }
+        (new MyRadio_SeasonCancelledNotification($this->getShow(), $timeslot_str))
+            ->setReceivers($this->getCreditObjects())
+            ->send();
 
         $r = (bool) self::$db->query(
             'DELETE FROM schedule.show_season_timeslot WHERE show_season_id=$1 AND start_time >= NOW()',

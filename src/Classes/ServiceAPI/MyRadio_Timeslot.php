@@ -15,6 +15,10 @@ use MyRadio\MyRadio\MyRadioForm;
 use MyRadio\MyRadio\MyRadioFormField;
 use MyRadio\NIPSWeb\NIPSWeb_TimeslotItem;
 use MyRadio\NIPSWeb\NIPSWeb_BAPSUtils;
+use MyRadio\Notifications\MyRadio_TimeslotCancelledNotification;
+use MyRadio\Notifications\MyRadio_TimeslotCancelledRequestNotification;
+use MyRadio\Notifications\MyRadio_TimeslotCancelledSelfServiceNotification;
+use MyRadio\Notifications\MyRadio_TimeslotCancelledSelfServiceProgrammingNotification;
 use MyRadio\SIS\SIS_Utils;
 
 /**
@@ -781,18 +785,12 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             return false;
         }
 
-        $email = "Hi #NAME, \r\n\r\n Please note that an episode of your show, " . $this->getMeta('title')
-            . ' has been cancelled by our Programming Team. The affected episode was at '
-            . CoreUtils::happyTime($this->getStartTime())
-            . "\r\n\r\n";
-        $email .= "Reason: $reason\r\n\r\nRegards\r\n" . Config::$long_name . ' Programming Team';
         self::$cache->purge();
 
-        MyRadioEmail::sendEmailToUserSet(
-            $this->getSeason()->getShow()->getCreditObjects(),
-            'Episode of ' . $this->getMeta('title') . ' Cancelled',
-            $email
-        );
+        (new MyRadio_TimeslotCancelledNotification($this, $reason))
+            ->setReceivers($this->getCreditObjects())
+            ->send();
+
         return true;
     }
 
@@ -803,45 +801,21 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             return false;
         }
 
-        $email1 = "Hi #NAME, \r\n\r\n You have requested that an episode of " . $this->getMeta('title')
-            . ' is cancelled. The affected episode was at ' . CoreUtils::happyTime($this->getStartTime())
-            . "\r\n\r\n";
-        $email1 .= "Reason: $reason\r\n\r\nRegards\r\n" . Config::$long_name . ' Scheduler Robot';
+        (new MyRadio_TimeslotCancelledSelfServiceNotification($this, $reason))
+            ->setReceivers($this->getCreditObjects())
+            ->send();
 
-        $email2 = $this->getMeta('title')
-            . ' on ' . CoreUtils::happyTime($this->getStartTime())
-            . ' was cancelled by a presenter because ' . $reason
-            . "\r\n\r\n";
-        $email2 .= "It was cancelled automatically as more than required notice was given.";
-
-        MyRadioEmail::sendEmailToUserSet(
-            $this->getSeason()->getShow()->getCreditObjects(),
-            'Episode of ' . $this->getMeta('title') . ' Cancelled',
-            $email1
-        );
-        MyRadioEmail::sendEmailToList(
-            MyRadio_List::getByName('programming'),
-            'Episode of ' . $this->getMeta('title') . ' Cancelled',
-            $email2
-        );
+        (new MyRadio_TimeslotCancelledSelfServiceProgrammingNotification($this, $reason))
+            ->setReceivers([MyRadio_List::getByName('programming')])
+            ->send();
         return true;
     }
 
     private function cancelTimeslotRequest($reason)
     {
-        $email = $this->getMeta('title')
-            . ' on ' . CoreUtils::happyTime($this->getStartTime())
-            . ' has requested cancellation because ' . $reason
-            . "\r\n\r\n";
-        $email .= "Due to the short notice, it has been passed to you for consideration. "
-            . "To cancel the timeslot, visit ";
-        $email .= URLUtils::makeURL(
-            'Scheduler',
-            'cancelEpisode',
-            ['show_season_timeslot_id' => $this->getID(), 'reason' => base64_encode($reason)]
-        );
-
-        MyRadioEmail::sendEmailToList(MyRadio_List::getByName('presenting'), 'Show Cancellation Request', $email);
+        (new MyRadio_TimeslotCancelledRequestNotification($this, $reason))
+            ->setReceivers([MyRadio_List::getByName('programming')])
+            ->send();
         return true;
     }
 
