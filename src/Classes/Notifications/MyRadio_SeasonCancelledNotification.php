@@ -37,8 +37,9 @@ implements MyRadio_EmailNotification
         $email = Config::$email_domain;
         $showName = $this->show->getMeta('title');
         $times = $this->times;
+        $name = $user->getFName();
         return <<<EOF
-Hello #NAME,
+Hello $name,
 
 Please note that your show, $showName, has been cancelled for the rest of the current season.
 

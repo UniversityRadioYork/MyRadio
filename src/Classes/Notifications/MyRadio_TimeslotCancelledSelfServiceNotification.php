@@ -40,6 +40,7 @@ implements MyRadio_EmailNotification
         $showName = $this->timeslot->getMeta('title');
         $time = CoreUtils::happyTime($this->timeslot->getStartTime());
         $reason = $this->reason;
+        $name = $user->getFName();
         $reasonStr = empty($reason) ? '.' : <<<EOF
 , for the following reason:
 
@@ -47,7 +48,7 @@ $reason
 EOF;
 
         return <<<EOF
-Hello #NAME,
+Hello $name,
 
 This is to confirm that your an episode of your show $showName at $time has been cancelled$reasonStr
 

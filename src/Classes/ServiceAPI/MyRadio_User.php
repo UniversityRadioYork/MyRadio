@@ -15,6 +15,8 @@ use MyRadio\MyRadio\URLUtils;
 use MyRadio\MyRadio\MyRadioDefaultAuthenticator;
 use MyRadio\MyRadio\MyRadioForm;
 use MyRadio\MyRadio\MyRadioFormField;
+use MyRadio\Notifications\MyRadio_WelcomeEmailNotification;
+use MyRadio\Notifications\MyRadio_WelcomeEmailPasswordNotification;
 
 /**
  * The user object provides and stores information about a user
@@ -1783,18 +1785,14 @@ class MyRadio_User extends ServiceAPI implements APICaller
         if (!empty($params['provided_password'])) {
             $plain_pass = '(The password you entered when registering)';
         }
-        $welcome_email = str_replace(
-            ['#NAME', '#USER', '#PASS'],
-            [$params['fname'], $uname, $plain_pass],
-            Config::$welcome_email
-        );
 
-        //Send the email
-        MyRadioEmail::sendEmailToUser(
-            $user,
-            'Welcome to '.Config::$short_name.' - Getting Involved and Your Account',
-            $welcome_email
-        );
+        (new MyRadio_WelcomeEmailPasswordNotification($uname, $plain_pass))
+                ->setReceivers($user)
+                ->send();
+
+        (new MyRadio_WelcomeEmailNotification())
+            ->setReceivers($user)
+            ->send();
 
         return $user;
     }

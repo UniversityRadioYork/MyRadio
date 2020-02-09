@@ -29,8 +29,10 @@ abstract class MyRadio_Notification
             // Email
             if ($this instanceof MyRadio_EmailNotification) {
                 if($rec instanceof MyRadio_List) {
-                    // TODO check preferences
-                    MyRadioEmail::sendEmailToList($rec, $this->getEmailSubject($rec), $this->toEmailBody($rec));
+                    foreach ($rec->getMembers() as $member) {
+                        // TODO check preferences
+                        MyRadioEmail::sendEmailToUser($member, $this->getEmailSubject($member), $this->toEmailBody($member));
+                    }
                 } else {
                     // TODO check preferences
                     MyRadioEmail::sendEmailToUser($rec, $this->getEmailSubject($rec), $this->toEmailBody($rec));

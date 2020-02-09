@@ -37,8 +37,9 @@ implements MyRadio_EmailNotification
         $email = Config::$email_domain;
         $showName = $this->show->getMeta('title');
         $times = $this->times;
+        $name = $user->getFName();
         return <<<EOF
-Hi #NAME,
+Hi $name,
 
 Congratulations! A new season of your show, $showName, has been scheduled at the following times:
 

@@ -37,6 +37,7 @@ implements MyRadio_EmailNotification
         $email = Config::$email_domain;
         $showName = $this->show->getMeta('title');
         $reason = $this->reason;
+        $name = $user->getFName();
         $reasonStr = empty($reason) ? "." : <<<EOF
 , for the following reason:
 
@@ -44,7 +45,7 @@ $reason
 EOF;
 
         return <<<EOF
-Hi #NAME,
+Hi $name,
 
 Your application for a new season of $showName was rejected$reasonStr
 
