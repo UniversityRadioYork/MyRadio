@@ -7,7 +7,7 @@ namespace MyRadio\Notifications;
 use MyRadio\Config;
 use MyRadio\ServiceAPI\MyRadio_User;
 
-class MyRadio_TrainingJoinedTraineeNotification
+class MyRadio_TrainingLeftTrainerNotification
 extends MyRadio_Notification
 implements MyRadio_EmailNotification
 {
@@ -40,28 +40,19 @@ implements MyRadio_EmailNotification
 
     public function toEmailBody(MyRadio_User $user): string
     {
-        $name = $this->trainee->getFName();
-        $trainerName = $this->trainer->getName();
+        $name = $this->trainee->getName();
         $trainerFName = $this->trainer->getFName();
         $time = $this->sessionTime;
-        $stationName = Config::$long_name;
 
         return <<<EOF
-Hi $name,
+Hi $trainerFName,
 
-Thanks for joining a training session at $time. You will be trained by $trainerName.
-
-Just head over to the station at Vanbrugh College just before your slot and $trainerFName will be waiting for you!
-
-If you realise you can't make it, please leave the session on MyRadio so $trainerFName doesn't have to wait for you.
-
-See you on air soon!
-$stationName Training
+$name has left your training session at $time.
 EOF;
     }
 
     public function getEmailSubject(MyRadio_User $user): string
     {
-        return 'Attending training';
+        return 'Training Attendee Left';
     }
 }
