@@ -3,7 +3,6 @@
 
 namespace MyRadio\Notifications;
 
-
 use MyRadio\MyRadioEmail;
 use MyRadio\ServiceAPI\MyRadio_List;
 use MyRadio\ServiceAPI\MyRadio_User;
@@ -19,19 +18,25 @@ abstract class MyRadio_Notification
      * @param MyRadio_User[] | MyRadio_List[] $receivers
      * @return MyRadio_Notification
      */
-    public function setReceivers($receivers) {
+    public function setReceivers($receivers)
+    {
         $this->receivers = $receivers;
         return $this;
     }
 
-    public function send() {
+    public function send()
+    {
         foreach ($this->receivers as $rec) {
             // Email
             if ($this instanceof MyRadio_EmailNotification) {
-                if($rec instanceof MyRadio_List) {
+                if ($rec instanceof MyRadio_List) {
                     foreach ($rec->getMembers() as $member) {
                         // TODO check preferences
-                        MyRadioEmail::sendEmailToUser($member, $this->getEmailSubject($member), $this->toEmailBody($member));
+                        MyRadioEmail::sendEmailToUser(
+                            $member,
+                            $this->getEmailSubject($member),
+                            $this->toEmailBody($member)
+                        );
                     }
                 } else {
                     // TODO check preferences

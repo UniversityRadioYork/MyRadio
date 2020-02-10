@@ -3,14 +3,11 @@
 
 namespace MyRadio\Notifications;
 
-
 use MyRadio\Config;
 use MyRadio\MyRadio\URLUtils;
 use MyRadio\ServiceAPI\MyRadio_User;
 
-class MyRadio_WelcomeEmailPasswordNotification
-extends MyRadio_Notification
-implements MyRadio_EmailNotification
+class MyRadio_WelcomeEmailPasswordNotification extends MyRadio_Notification implements MyRadio_EmailNotification
 {
     /**
      * @var string
@@ -45,7 +42,8 @@ Hi $name,
 
 Welcome to $stationName! We're glad to have you here.
 
-We've created an account for you on our back-end system, MyRadio. From there, you can book a training slot and apply for your first show!
+We've created an account for you on our back-end system, MyRadio. From there, you can book a training slot
+and apply for your first show!
 
 To access it, visit $url and use this login and password:
 Username: $uname
@@ -55,7 +53,6 @@ Please do not reply to this email. You will receive another email shortly, with 
 
 $stationName
 EOF;
-
     }
 
     public function getEmailSubject(MyRadio_User $user): string

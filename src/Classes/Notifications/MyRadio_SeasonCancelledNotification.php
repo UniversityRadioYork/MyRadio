@@ -3,14 +3,11 @@
 
 namespace MyRadio\Notifications;
 
-
 use MyRadio\Config;
 use MyRadio\ServiceAPI\MyRadio_Show;
 use MyRadio\ServiceAPI\MyRadio_User;
 
-class MyRadio_SeasonCancelledNotification
-extends MyRadio_Notification
-implements MyRadio_EmailNotification
+class MyRadio_SeasonCancelledNotification extends MyRadio_Notification implements MyRadio_EmailNotification
 {
     /**
      * @var MyRadio_Show
@@ -51,7 +48,6 @@ Please direct all enquiries to the Programme Controller at pc@$email.
 
 $sname Scheduling
 EOF;
-
     }
 
     public function getEmailSubject(MyRadio_User $user): string

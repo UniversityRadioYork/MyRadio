@@ -3,16 +3,13 @@
 
 namespace MyRadio\Notifications;
 
-
 use MyRadio\Config;
 use MyRadio\MyRadio\CoreUtils;
 use MyRadio\ServiceAPI\MyRadio_Show;
 use MyRadio\ServiceAPI\MyRadio_Timeslot;
 use MyRadio\ServiceAPI\MyRadio_User;
 
-class MyRadio_TimeslotCancelledSelfServiceNotification
-extends MyRadio_Notification
-implements MyRadio_EmailNotification
+class MyRadio_TimeslotCancelledSelfServiceNotification extends MyRadio_Notification implements MyRadio_EmailNotification
 {
     /**
      * @var MyRadio_Timeslot
@@ -54,7 +51,6 @@ This is to confirm that your an episode of your show $showName at $time has been
 
 $sname Scheduling
 EOF;
-
     }
 
     public function getEmailSubject(MyRadio_User $user): string

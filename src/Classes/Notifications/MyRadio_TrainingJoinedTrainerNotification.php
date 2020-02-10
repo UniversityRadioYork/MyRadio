@@ -3,13 +3,10 @@
 
 namespace MyRadio\Notifications;
 
-
 use MyRadio\Config;
 use MyRadio\ServiceAPI\MyRadio_User;
 
-class MyRadio_TrainingJoinedTrainerNotification
-extends MyRadio_Notification
-implements MyRadio_EmailNotification
+class MyRadio_TrainingJoinedTrainerNotification extends MyRadio_Notification implements MyRadio_EmailNotification
 {
     /**
      * @var MyRadio_User

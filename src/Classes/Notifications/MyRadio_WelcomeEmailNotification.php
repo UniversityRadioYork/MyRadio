@@ -3,14 +3,11 @@
 
 namespace MyRadio\Notifications;
 
-
 use MyRadio\Config;
 use MyRadio\ServiceAPI\MyRadio_Officer;
 use MyRadio\ServiceAPI\MyRadio_User;
 
-class MyRadio_WelcomeEmailNotification
-extends MyRadio_Notification
-implements MyRadio_EmailNotification
+class MyRadio_WelcomeEmailNotification extends MyRadio_Notification implements MyRadio_EmailNotification
 {
     public function toEmailBody(MyRadio_User $user): string
     {

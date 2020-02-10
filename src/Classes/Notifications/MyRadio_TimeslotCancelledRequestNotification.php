@@ -3,7 +3,6 @@
 
 namespace MyRadio\Notifications;
 
-
 use MyRadio\Config;
 use MyRadio\MyRadio\CoreUtils;
 use MyRadio\MyRadio\URLUtils;
@@ -11,9 +10,7 @@ use MyRadio\ServiceAPI\MyRadio_Show;
 use MyRadio\ServiceAPI\MyRadio_Timeslot;
 use MyRadio\ServiceAPI\MyRadio_User;
 
-class MyRadio_TimeslotCancelledRequestNotification
-extends MyRadio_Notification
-implements MyRadio_EmailNotification
+class MyRadio_TimeslotCancelledRequestNotification extends MyRadio_Notification implements MyRadio_EmailNotification
 {
     /**
      * @var MyRadio_Timeslot
@@ -62,7 +59,6 @@ To cancel the episode, visit $url.
 
 $sname Scheduling
 EOF;
-
     }
 
     public function getEmailSubject(MyRadio_User $user): string

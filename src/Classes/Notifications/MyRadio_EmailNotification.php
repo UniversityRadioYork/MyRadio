@@ -3,7 +3,6 @@
 
 namespace MyRadio\Notifications;
 
-
 use MyRadio\ServiceAPI\MyRadio_User;
 
 interface MyRadio_EmailNotification

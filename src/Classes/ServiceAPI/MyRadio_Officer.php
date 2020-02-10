@@ -147,7 +147,8 @@ class MyRadio_Officer extends ServiceAPI
      * @param string $alias
      * @return MyRadio_Officer
      */
-    public static function getOfficerByAlias(string $alias) {
+    public static function getOfficerByAlias(string $alias)
+    {
         return new self(
             self::$db->fetchColumn('SELECT officerid FROM public.officer WHERE officer_alias = $1', $alias)[0]
         );
