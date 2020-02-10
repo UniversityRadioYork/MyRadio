@@ -10,6 +10,10 @@ use MyRadio\MyRadio\CoreUtils;
 use MyRadio\MyRadio\MyRadioForm;
 use MyRadio\MyRadio\MyRadioFormField;
 use MyRadio\MyRadioEmail;
+use MyRadio\Notifications\MyRadio_TrainingJoinedTraineeNotification;
+use MyRadio\Notifications\MyRadio_TrainingJoinedTrainerNotification;
+use MyRadio\Notifications\MyRadio_TrainingLeftTraineeNotification;
+use MyRadio\Notifications\MyRadio_TrainingLeftTrainerNotification;
 
 /**
  * Abstractor for the Demo utilities.
@@ -164,24 +168,8 @@ class MyRadio_Demo extends ServiceAPI
         $time = self::getDemoTime($demoid);
         $user = self::getDemoer($demoid);
         $attendee = MyRadio_User::getInstance();
-        MyRadioEmail::sendEmailToUser(
-            $user,
-            'New Training Attendee',
-            $attendee->getName() . ' has joined your session at ' . $time . '.'
-        );
-        MyRadioEmail::sendEmailToUser(
-            $attendee,
-            'Attending Training',
-            'Hi '
-            .$attendee->getFName(a) . ",\r\n\r\n"
-            ."Thanks for joining a training session at $time. You will be trained by "
-            .$user->getName()
-            .'. Just head over to the station in Vanbrugh College just before your slot '
-            .' and the trainer will be waiting for you.'
-            ."\r\n\r\nSee you on air soon!\r\n"
-            .Config::$long_name
-            .' Training'
-        );
+        (new MyRadio_TrainingJoinedTrainerNotification($attendee, $user, $time))->setReceivers([$user])->send();
+        (new MyRadio_TrainingJoinedTraineeNotification($attendee, $user, $time))->setReceivers([$attendee])->send();
 
         return 0;
     }
@@ -201,20 +189,8 @@ class MyRadio_Demo extends ServiceAPI
         $time = self::getDemoTime($demoid);
         $user = self::getDemoer($demoid);
         $attendee = MyRadio_User::getInstance();
-        MyRadioEmail::sendEmailToUser(
-            $user,
-            'Training Attendee Left',
-            $attendee->getName() . ' has left your session at ' . $time . '.'
-        );
-        MyRadioEmail::sendEmailToUser(
-            $attendee,
-            'Training Cancellation',
-            'Hi ' . $attendee->getFName() . ",\r\n\r\n"
-            ."Just to confirm that you have left the training session at $time. If this was accidental, simply rejoin."
-            ."\r\n\r\nThanks!\r\n"
-            .Config::$long_name
-            .' Training'
-        );
+        (new MyRadio_TrainingLeftTrainerNotification($attendee, $user, $time))->setReceivers([$user])->send();
+        (new MyRadio_TrainingLeftTraineeNotification($attendee, $time))->setReceivers([$attendee])->send();
 
         return 0;
     }
