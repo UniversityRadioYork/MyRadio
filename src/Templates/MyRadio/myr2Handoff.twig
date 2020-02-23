@@ -1,0 +1,20 @@
+{% extends 'stripe.twig' %}
+
+{% block stripecontent %}
+<div id="myr2handoff_status">
+    <b>You have been signed in and will be redirected shortly.</b>
+    If nothing happens, try refreshing the page.
+</div>
+{% endblock %}
+
+{% block foot %}
+{{ parent() }}
+<script>
+    if (window !== window.parent) {
+        window.parent.postMessage("signed in", "*");
+    } else {
+        document.getElementById("myr2handoff_status").innerText =
+            "Sorry, something seems to have gone wrong. Try going back to MyRadio?";
+    }
+</script>
+{% endblock %}
