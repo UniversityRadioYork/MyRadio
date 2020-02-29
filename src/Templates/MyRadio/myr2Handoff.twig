@@ -11,7 +11,7 @@
 {{ parent() }}
 <script>
     if (window !== window.parent) {
-        window.parent.postMessage("signed in", "*");
+        window.parent.postMessage("myradio:signedIn", "*");
     } else {
         document.getElementById("myr2handoff_status").innerText =
             "Sorry, something seems to have gone wrong. Try going back to MyRadio?";
