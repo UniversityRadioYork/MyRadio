@@ -209,7 +209,7 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
 
             // If we're calling as a user (i.e. not using an API key)
             // set $_SESSION properly, so we have a user context
-            if (!isset($args['api_key'])) {
+            if (!empty($args['api_key'])) {
                 $session_handler = MyRadioSession::factory();
                 // Changing the serialize handler to the general serialize/unserialize methods lets us
                 // read sessions without actually having to activate them and read them into $_SESSION
