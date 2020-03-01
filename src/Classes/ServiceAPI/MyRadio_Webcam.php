@@ -27,6 +27,17 @@ class MyRadio_Webcam extends ServiceAPI
         $user = MyRadio_User::getInstance(); // This bit will fail if it's not an actual user calling the API.
         //Get the current view counter. We do this as a separate query in case the row doesn't exist yet
         $counter = self::getViewCounter($user);
+
+        if (isset($_SESSION['webcam_lastcounterincrement']) && $_SESSION['webcam_lastcounterincrement'] > time() - 10) {
+            // Occurs when browser wakes up and tries to spam all the missed updates, or if multiple webcam pages are open.
+            // In this case, don't actually increment.
+            return $counter;
+        }
+
+        // We haven't tried to increment the webcam recently, allow it and update the time it was last incremented.
+        $last_update_diff = max(time() - $_SESSION['webcam_lastcounterincrement'], 0);
+
+        $_SESSION['webcam_lastcounterincrement'] = time();
         if (empty($counter)) {
             $counter = 0;
             $sql = 'INSERT INTO webcam.memberviews (memberid, timer) VALUES ($1, $2)';
@@ -34,7 +45,7 @@ class MyRadio_Webcam extends ServiceAPI
             $counter = $counter['timer'];
             $sql = 'UPDATE webcam.memberviews SET timer=$2 WHERE memberid=$1';
         }
-        $counter += 15;
+        $counter += $last_update_diff;
 
         self::$db->query($sql, [$user->getID(), $counter]);
 
