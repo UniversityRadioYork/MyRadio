@@ -678,14 +678,21 @@ final class Config
     public static $welcome_email_sender_memberid = null;
     public static $welcome_email = <<<EOT
 
-   This is a welcome email. You can use #NAME to get the user's first name.
+   This is a welcome (sign-up) email. You can use #NAME to get the user's first name.
+   
+   Here you should probably tell people about what they should do next to get started.
+   
+   You can set the ($)welcome_email_sender_memberid variable to send this email from/reply to
+   someone important, maybe the head of station, so they can ask questions!
 
 EOT;
-    public static $account_email = <<<EOT
+    public static $account_details_email = <<<EOT
 
-   This is an email to give a new member their account details.
-   You can use #NAME to get the user's first name.
+   This is an email to give a newly signed-up member their new login details.
+   You can use #NAME to get the new member's first name.
    You can use #USER and #PASS to tell them their newly created login details.
+   
+   This email will send from a no-reply email so that user's don't spread their login details.
 
 EOT;
 
