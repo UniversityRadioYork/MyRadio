@@ -11,7 +11,7 @@ $__start = -microtime(true);
  */
 // Configure MyRadio & Set API Settings
 define('SILENT_EXCEPTIONS', false);
-define('DISABLE_SESSION', true);
+define('DISABLE_SESSION', !(empty($args['api_key'])));
 define('JSON_DEBUG', true);
 
 require_once __DIR__.'/../Controllers/root_cli.php';
