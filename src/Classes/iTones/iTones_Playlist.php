@@ -470,6 +470,29 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
     }
 
     /**
+     * Is this playlist available right now?
+     * @return boolean
+     */
+    public function isAvailable()
+    {
+        $result = self::$db->fetchOne('select count(*) AS valid
+            from jukebox.playlists
+            inner join jukebox.playlist_availability on playlists.playlistid = playlist_availability.playlistid
+            inner join jukebox.playlist_timeslot on playlist_availability.playlist_availability_id = playlist_timeslot.playlist_availability_id
+            where playlists.playlistid = $1
+            and playlist_availability.effective_from <= NOW()
+            and (playlist_availability.effective_to is null or playlist_availability.effective_to >= NOW())
+            and (
+                day=EXTRACT(DOW FROM NOW())
+                or (EXTRACT(DOW FROM NOW())=0 and day=7)
+            )
+            and start_time <= "time"(NOW())
+            and end_time >= "time"(NOW())', [$this->getID()]);
+
+        return $result['valid'] > 0;
+    }
+  
+    /**
      * Update the category.
      * @param $category
      */
@@ -496,6 +519,29 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
         self::wakeup();
         $result = self::$db->fetchColumn('SELECT playlistid FROM jukebox.playlists ORDER BY title');
 
+        return self::resultSetToObjArray($result);
+    }
+
+    /**
+     * Get all the playlists that are available right now
+     *
+     * @return array of iTones_Playlist objects
+     */
+    public static function getAllAvailablePlaylists()
+    {
+        self::wakeup();
+        $result = self::$db->fetchColumn('select playlists.playlistid
+            from jukebox.playlists
+            inner join jukebox.playlist_availability on playlists.playlistid = playlist_availability.playlistid
+            inner join jukebox.playlist_timeslot on playlist_availability.playlist_availability_id = playlist_timeslot.playlist_availability_id
+            where playlist_availability.effective_from <= NOW()
+            and (playlist_availability.effective_to is null or playlist_availability.effective_to >= NOW())
+            and (
+                day=EXTRACT(DOW FROM NOW())
+                or (EXTRACT(DOW FROM NOW())=0 and day=7)
+            )
+            and start_time <= "time"(NOW())
+            and end_time >= "time"(NOW())');
         return self::resultSetToObjArray($result);
     }
 
