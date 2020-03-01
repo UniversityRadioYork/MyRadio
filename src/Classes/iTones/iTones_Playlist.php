@@ -29,6 +29,7 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
     private $locktime;
     protected $tracks = [];
     protected $revisionid;
+    private $categoryid;
 
     /**
      * Initiates the ManagedPlaylist variables.
@@ -51,6 +52,7 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
         $this->description = $result['description'];
         $this->lock = empty($result['lock']) ? null : MyRadio_User::getInstance($result['lock']);
         $this->locktime = (int) $result['locktime'];
+        $this->categoryid = (int) $result['category'];
 
         $this->revisionid = (int) self::$db->fetchOne(
             'SELECT revisionid FROM jukebox.playlist_revisions
@@ -150,6 +152,16 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
             )
         )->addField(
             new MyRadioFormField(
+                'category',
+                MyRadioFormField::TYPE_SELECT,
+                [
+                    'label' => 'Category',
+                    'explanation' => 'Set the category for this playlist',
+                    'options' => iTones_PlaylistCategory::getOptions()
+                ]
+            )
+        )->addField(
+            new MyRadioFormField(
                 'description',
                 MyRadioFormField::TYPE_BLOCKTEXT,
                 [
@@ -170,6 +182,7 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
                 [
                     'title' => $this->getTitle(),
                     'description' => $this->getDescription(),
+                    'category' => $this->getCategory()->getID()
                 ]
             );
     }
@@ -225,6 +238,15 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
     public function getDescription()
     {
         return $this->description;
+    }
+
+    /**
+     * Get the category of this playlist.
+     * @return iTones_PlaylistCategory
+     */
+    public function getCategory()
+    {
+        return iTones_PlaylistCategory::getInstance($this->categoryid);
     }
 
     /**
@@ -448,6 +470,47 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
     }
 
     /**
+     * Is this playlist available right now?
+     * @return boolean
+     */
+    public function isAvailable()
+    {
+        $result = self::$db->fetchOne('select count(*) AS valid
+            from jukebox.playlists
+            inner join jukebox.playlist_availability on playlists.playlistid = playlist_availability.playlistid
+            inner join jukebox.playlist_timeslot
+            on playlist_availability.playlist_availability_id = playlist_timeslot.playlist_availability_id
+            where playlists.playlistid = $1
+            and playlist_availability.effective_from <= NOW()
+            and (playlist_availability.effective_to is null or playlist_availability.effective_to >= NOW())
+            and (
+                day=EXTRACT(DOW FROM NOW())
+                or (EXTRACT(DOW FROM NOW())=0 and day=7)
+            )
+            and start_time <= "time"(NOW())
+            and end_time >= "time"(NOW())', [$this->getID()]);
+
+        return $result['valid'] > 0;
+    }
+
+    /**
+     * Update the category.
+     * @param $category
+     */
+    public function setCategoryById($category)
+    {
+        if (!is_int($category)) {
+            throw new MyRadioException('Expected $category to be an integer');
+        }
+        self::$db->query(
+            'UPDATE jukebox.playlists SET category=$1 WHERE playlistid=$2',
+            [$category, $this->getID()]
+        );
+        $this->categoryid = $category;
+        $this->updateCacheObject();
+    }
+
+    /**
      * Get an array of all Playlists.
      *
      * @return array of iTones_Playlist objects
@@ -457,6 +520,30 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
         self::wakeup();
         $result = self::$db->fetchColumn('SELECT playlistid FROM jukebox.playlists ORDER BY title');
 
+        return self::resultSetToObjArray($result);
+    }
+
+    /**
+     * Get all the playlists that are available right now
+     *
+     * @return array of iTones_Playlist objects
+     */
+    public static function getAllAvailablePlaylists()
+    {
+        self::wakeup();
+        $result = self::$db->fetchColumn('select playlists.playlistid
+            from jukebox.playlists
+            inner join jukebox.playlist_availability on playlists.playlistid = playlist_availability.playlistid
+            inner join jukebox.playlist_timeslot
+            on playlist_availability.playlist_availability_id = playlist_timeslot.playlist_availability_id
+            where playlist_availability.effective_from <= NOW()
+            and (playlist_availability.effective_to is null or playlist_availability.effective_to >= NOW())
+            and (
+                day=EXTRACT(DOW FROM NOW())
+                or (EXTRACT(DOW FROM NOW())=0 and day=7)
+            )
+            and start_time <= "time"(NOW())
+            and end_time >= "time"(NOW())');
         return self::resultSetToObjArray($result);
     }
 
@@ -514,6 +601,84 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
     }
 
     /**
+     * Uses weighted playout values to select a random Playlist from a category, returning it.
+     *
+     * Only includes Playlists with a currently running slot, and a Track.
+     *
+     * @param int $categoryId
+     * @param array $playlists_to_ignore one or more playlists to not return
+     * @return iTones_Playlist
+     */
+    public static function getPlaylistOfCategoryFromWeights($categoryId, $playlists_to_ignore = [])
+    {
+        if (!is_int($categoryId)) {
+            throw new MyRadioException('Expected $categoryId to be an integer');
+        }
+        // TODO: this is a straight copy-paste of the above. If we need to do this again,
+        // consider refactoring.
+        self::wakeup();
+
+        $result = self::$db->fetchAll(
+            'SELECT playlists.playlistid AS item, MAX(playlist_availability.weight) AS weight
+                FROM jukebox.playlists, jukebox.playlist_availability, jukebox.playlist_timeslot
+                WHERE playlists.category = $1
+                    AND playlists.playlistid=playlist_availability.playlistid
+                    AND playlist_availability.playlist_availability_id=playlist_timeslot.playlist_availability_id
+                    AND effective_from <= NOW()
+                    AND (effective_to IS NULL OR effective_to >= NOW())
+                    AND start_time <= "time"(NOW())
+                    AND end_time >= "time"(NOW())
+                    AND (
+                        day=EXTRACT(DOW FROM NOW())
+                        OR (EXTRACT(DOW FROM NOW())=0 AND day=7)
+                    )
+                    AND EXISTS (
+                        SELECT 1
+                        FROM jukebox.playlist_entries
+                        WHERE playlistid=jukebox.playlists.playlistid
+                        AND revision_removed IS NULL
+                        LIMIT 1
+                    )
+                GROUP BY playlists.playlistid',
+            [$categoryId]
+        );
+
+        if (!sizeof($result)) {
+            throw new MyRadioException('No weighted playlists currently available.');
+        }
+
+        for ($i = 0; $i < sizeof($result); $i++) {
+            foreach ($playlists_to_ignore as $playlist) {
+                if ($result[$i]['item'] === $playlist->getID()) {
+                    unset($result[$i]);
+                    break;
+                }
+            }
+        }
+
+        return self::getInstance(CoreUtils::biasedRandom($result));
+    }
+
+    /**
+     * Find all playlists with a given playlist category.
+     * @param $categoryId
+     * @return iTones_Playlist[]
+     */
+    public static function getAllPlaylistsOfCategory($categoryId)
+    {
+        if (!is_int($categoryId)) {
+            throw new MyRadioException('Expected $categoryId to be an integer');
+        }
+        self::wakeup();
+        $result = self::$db->fetchColumn(
+            'SELECT playlistid FROM jukebox.playlists WHERE category = $1 ORDER BY title',
+            [$categoryId]
+        );
+
+        return self::resultSetToObjArray($result);
+    }
+
+    /**
      * Find out what Playlists have this Track in them, if any.
      *
      * @param MyRadio_Track $track The track to search for
@@ -531,14 +696,17 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
         return self::resultSetToObjArray($result);
     }
 
-    public static function create($title, $description)
+    public static function create($title, $description, $category)
     {
+        if (!is_int($category)) {
+            throw new MyRadioException('Expected $category to be an integer');
+        }
         $id = str_replace(' ', '-', $title);
         $id = strtolower(preg_replace('/[^a-z0-9-]/i', '', $id));
         self::$db->query(
-            'INSERT INTO jukebox.playlists (playlistid, title, description)
-            VALUES ($1, $2, $3)',
-            [$id, $title, $description]
+            'INSERT INTO jukebox.playlists (playlistid, title, description, category)
+            VALUES ($1, $2, $3, $4)',
+            [$id, $title, $description, $category]
         );
 
         return self::getInstance($id);
@@ -556,6 +724,11 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
             'title' => $this->getTitle(),
             'playlistid' => $this->getID(),
             'description' => $this->getDescription(),
+            'category' => array_merge($this->getCategory()->toDataSource($mixins), [
+                // I don't like using html here, but if I use text it adds an unnecessary and ugly <a> tag
+                'display' => 'html',
+                'html' => $this->getCategory()->getName()
+            ]),
             'edittrackslink' => [
                 'display' => 'icon',
                 'value' => 'folder-open',

@@ -100,7 +100,7 @@
     <tr>
       <td colspan="2">&nbsp;</td>
     </tr>
-    {% if user.payment is defined %}
+    {% if user.payment is defined and can_mark_payments %}
     <tr>
       <td valign="top"><b>Paid:</b></td>
       <td>

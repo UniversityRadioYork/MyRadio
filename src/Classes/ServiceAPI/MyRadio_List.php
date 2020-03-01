@@ -192,7 +192,7 @@ class MyRadio_List extends ServiceAPI
         }
 
         return sizeof(
-            self::$db->query(
+            self::$db->fetchColumn(
                 'SELECT memberid FROM public.mail_subscription WHERE memberid=$1 AND listid=$2',
                 [$userid, $this->getID()]
             )

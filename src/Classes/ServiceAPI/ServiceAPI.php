@@ -20,7 +20,7 @@ abstract class ServiceAPI
     /**
      * All ServiceAPI subclasses will contain a reference to the Database Singleton.
      *
-     * @var \Database
+     * @var Database
      */
     protected static $db = null;
     /**

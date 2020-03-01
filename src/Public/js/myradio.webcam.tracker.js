@@ -39,7 +39,7 @@ function webcamTrackViewer() {
         time = time + sub + " minutes, ";
         data -= sub*60;
       }
-      time = time + data + " seconds";
+      time = time + data + " seconds.";
       $("#webcam-time-counter-value").html(time);
     }
   });

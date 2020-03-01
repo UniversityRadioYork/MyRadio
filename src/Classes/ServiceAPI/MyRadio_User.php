@@ -811,6 +811,19 @@ class MyRadio_User extends ServiceAPI implements APICaller
     }
 
     /**
+     * Returns the current logged in user, or null if there is none.
+     * @return MyRadio_User|null
+     */
+    public static function getCurrentUser()
+    {
+        if (isset($_SESSION['memberid'])) {
+            return self::getInstance();
+        } else {
+            return null;
+        }
+    }
+
+    /**
      * Returns the current logged in user, or failing that, the System User.
      *
      * @return MyRadio_User
@@ -1406,7 +1419,12 @@ class MyRadio_User extends ServiceAPI implements APICaller
             if (empty($email)) {
                 continue;
             } else {
-                $data[] = [$user->getLocalAlias(), $email];
+                $local = $user->getLocalAlias();
+                $data[] = [$local, $email];
+                $eduroam = $user->getEduroam();
+                if (!empty($eduroam) && ($eduroam !== $email)) {
+                    $data[] = [$eduroam, $email];
+                }
             }
         }
 
@@ -1766,18 +1784,30 @@ class MyRadio_User extends ServiceAPI implements APICaller
         if (!empty($params['provided_password'])) {
             $plain_pass = '(The password you entered when registering)';
         }
+
         $welcome_email = str_replace(
-            ['#NAME', '#USER', '#PASS'],
-            [$params['fname'], $uname, $plain_pass],
+            ['#NAME'],
+            [$fname],
             Config::$welcome_email
         );
-
-        //Send the email
-        MyRadioEmail::sendEmailToUser(
-            $user,
-            'Welcome to '.Config::$short_name.' - Getting Involved and Your Account',
-            $welcome_email
+        $account_details_email = str_replace(
+            ['#NAME', '#USER', '#PASS'],
+            [$params['fname'], $uname, $plain_pass],
+            Config::$account_details_email
         );
+
+        //Send the emails
+        MyRadioEmail::sendEmailToUser(
+            self::getInstance($memberid),
+            'Welcome to '.Config::$short_name.' - Getting Involved',
+            $welcome_email,
+            $from = Config::$welcome_email_sender_memberid
+        );
+        MyRadioEmail::sendEmailToUser(
+            self::getInstance($memberid),
+            'Welcome to '.Config::$short_name.' - Your Account',
+            $account_details_email
+        );// comes from no-reply
 
         return $user;
     }

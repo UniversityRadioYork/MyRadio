@@ -54,11 +54,7 @@
                                         "url": "module=Scheduler,action=myShows",
                                         "description": "You signed a contract saying you'd give 48 hours of cancelling a show. Click here to do just that. Or if you want to fix a spelling mistake in the title of your show."
                                     },
-                                    {
-                                        "title": "Ask about shows/training",
-                                        "url": "module=Mail,action=send,list=56",
-                                        "description": "If you need to contact the Programme Controller or Training Coordinator then click here."
-                                    },
+                                   
                                     {
                                         "title": "Contact Management",
                                         "url": "module=Mail,action=send,list=44",
@@ -66,7 +62,7 @@
                                     },
                                     {
                                         "title": "Get Beds/Jingles",
-                                        "url": "https://goo.gl/forms/y7EPYc5jMcPcmv8z1",
+                                        "url": "https://docs.google.com/forms/d/e/1FAIpQLSdLauYhir0wRBHAJBXIw1OcpyRtdJulIueoVUz0CyM12qObSQ/viewform",
                                         "description": "The Audio Resources team have a huge library and a little experience - give them a shot if you want that little something that makes your show stand out."
                                     },
                                     {
@@ -84,6 +80,7 @@
                                         "url": "https://goo.gl/forms/bIxTp43VqqMQtRZ92",
                                         "description": "Planning an event? Make sure our production team are aware of it by completing the following form."
                                     }
+                                    
                                 ]
                         }
                     ]
@@ -187,7 +184,7 @@
                                 [
                                     {
                                         "title": "Constitution",
-                                        "url": "https://drive.google.com/open?id=1FU0vx9sTCy-IsvTxU4zYpaxNbe1Utb8E",
+                                        "url": "https://ury.org.uk/wiki/Constitution",
                                         "description": "The Constitution is the overarching contract by which we are all bound for life. Worth a skim read."
                                     },
                                     {
