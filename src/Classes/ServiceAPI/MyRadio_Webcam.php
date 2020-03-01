@@ -29,7 +29,7 @@ class MyRadio_Webcam extends ServiceAPI
         //Get the current view counter. We do this as a separate query in case the row doesn't exist yet
         $counter = self::getViewCounter($user);
 
-        if (isset($_SESSION['webcam_lastcounterincrement']) && $_SESSION['webcam_lastcounterincrement'] > time() - 10) {
+        if (isset($_SESSION['webcam_lastcounterincrement']) && $_SESSION['webcam_lastcounterincrement'] > time() -10) {
             // Occurs when browser wakes up and tries to spam all the missed updates, or if multiple webcam pages are open.
             // In this case, don't actually increment.
             throw new MyRadioException('Requested increment too soon after last increment.', 400);
