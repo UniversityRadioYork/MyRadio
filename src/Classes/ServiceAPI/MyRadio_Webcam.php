@@ -36,7 +36,11 @@ class MyRadio_Webcam extends ServiceAPI
         }
 
         // We haven't tried to increment the webcam recently, allow it and update the time it was last incremented.
-        $last_update_diff = max(time() - $_SESSION['webcam_lastcounterincrement'], 0);
+        if (isset($_SESSION['webcam_lastcounterincrement'])) {
+            $last_update_diff = max(time() - $_SESSION['webcam_lastcounterincrement'], 0);
+        } else {
+            $last_update_diff = 0;
+        }
 
         $_SESSION['webcam_lastcounterincrement'] = time();
         if (empty($counter)) {
