@@ -1801,7 +1801,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
             self::getInstance($memberid),
             'Welcome to '.Config::$short_name.' - Getting Involved',
             $welcome_email,
-            $from = Config::$welcome_email_sender_memberid
+            $from = self::getInstance(Config::$welcome_email_sender_memberid)
         );
         MyRadioEmail::sendEmailToUser(
             self::getInstance($memberid),
