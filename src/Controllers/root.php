@@ -107,7 +107,6 @@ register_shutdown_function('\MyRadio\MyRadio\CoreUtils::shutdown');
 /*
  * Sets up a session stored in the database - uesful for sharing between more
  * than one server.
- * We disable this for the API using the DISABLE_SESSION constant.
  */
 //Override any existing session
 if (isset($_SESSION)) {
@@ -117,13 +116,10 @@ if (isset($_SESSION)) {
 
 if ((!defined('DISABLE_SESSION')) or DISABLE_SESSION === false) {
     $session_handler = MyRadioSession::factory();
-} else {
-    $session_handler = MyRadioNullSession::factory();
+    // Changing the serialize handler to the general serialize/unserialize methods lets us
+    // read sessions without actually having to activate them and read them into $_SESSION
+    ini_set('session.serialize_handler', 'php_serialize');
+
+    session_set_save_handler($session_handler, true);
+    session_start();
 }
-
-// Changing the serialize handler to the general serialize/unserialize methods lets us
-// read sessions without actually having to activate them and read them into $_SESSION
-ini_set('session.serialize_handler', 'php_serialize');
-
-session_set_save_handler($session_handler, true);
-session_start();
