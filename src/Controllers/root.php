@@ -116,11 +116,10 @@ if (isset($_SESSION)) {
 
 if ((!defined('DISABLE_SESSION')) or DISABLE_SESSION === false) {
     $session_handler = MyRadioSession::factory();
+    // Changing the serialize handler to the general serialize/unserialize methods lets us
+    // read sessions without actually having to activate them and read them into $_SESSION
+    ini_set('session.serialize_handler', 'php_serialize');
+
+    session_set_save_handler($session_handler, true);
+    session_start();
 }
-
-// Changing the serialize handler to the general serialize/unserialize methods lets us
-// read sessions without actually having to activate them and read them into $_SESSION
-ini_set('session.serialize_handler', 'php_serialize');
-
-session_set_save_handler($session_handler, true);
-session_start();
