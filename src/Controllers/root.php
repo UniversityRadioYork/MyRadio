@@ -114,7 +114,9 @@ if (isset($_SESSION)) {
     session_id($_COOKIE['PHPSESSID']);
 }
 
-$session_handler = MyRadioSession::factory();
+if ((!defined('DISABLE_SESSION')) or DISABLE_SESSION === false) {
+    $session_handler = MyRadioSession::factory();
+}
 
 // Changing the serialize handler to the general serialize/unserialize methods lets us
 // read sessions without actually having to activate them and read them into $_SESSION
