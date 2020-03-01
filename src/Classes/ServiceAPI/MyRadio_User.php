@@ -1787,7 +1787,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
 
         $welcome_email = str_replace(
             ['#NAME'],
-            [$fname],
+            [$params['fname']],
             Config::$welcome_email
         );
         $account_details_email = str_replace(
