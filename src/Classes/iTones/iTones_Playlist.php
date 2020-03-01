@@ -478,7 +478,8 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
         $result = self::$db->fetchOne('select count(*) AS valid
             from jukebox.playlists
             inner join jukebox.playlist_availability on playlists.playlistid = playlist_availability.playlistid
-            inner join jukebox.playlist_timeslot on playlist_availability.playlist_availability_id = playlist_timeslot.playlist_availability_id
+            inner join jukebox.playlist_timeslot
+            on playlist_availability.playlist_availability_id = playlist_timeslot.playlist_availability_id
             where playlists.playlistid = $1
             and playlist_availability.effective_from <= NOW()
             and (playlist_availability.effective_to is null or playlist_availability.effective_to >= NOW())
@@ -491,7 +492,7 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
 
         return $result['valid'] > 0;
     }
-  
+
     /**
      * Update the category.
      * @param $category
@@ -533,7 +534,8 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
         $result = self::$db->fetchColumn('select playlists.playlistid
             from jukebox.playlists
             inner join jukebox.playlist_availability on playlists.playlistid = playlist_availability.playlistid
-            inner join jukebox.playlist_timeslot on playlist_availability.playlist_availability_id = playlist_timeslot.playlist_availability_id
+            inner join jukebox.playlist_timeslot
+            on playlist_availability.playlist_availability_id = playlist_timeslot.playlist_availability_id
             where playlist_availability.effective_from <= NOW()
             and (playlist_availability.effective_to is null or playlist_availability.effective_to >= NOW())
             and (
