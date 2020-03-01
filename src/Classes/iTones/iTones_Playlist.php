@@ -492,7 +492,7 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
         return $result['valid'] > 0;
     }
   
-    /*
+    /**
      * Update the category.
      * @param $category
      */
