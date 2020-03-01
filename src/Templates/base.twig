@@ -7,7 +7,7 @@
       {% include 'parts/base_head.twig' %}
     {% endblock %}
   </head>
-  <body>
+  <body{% if nonav == true %} class="nonav"{% endif %}>
     {% include 'parts/nav.twig' %}
     <br>
     <div class="container main-container">

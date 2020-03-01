@@ -11,7 +11,7 @@
         var img = document.getElementById('{{stream.streamname}}');
         setInterval(function (image, source) {
             image.setAttribute('src', source + '?_=' + Date.now());
-        }, 1000, img, '{{stream.liveurl}}');
+        }, 500, img, '{{stream.liveurl}}');
       </script>
     </figure>
   {% endfor %}

@@ -9,7 +9,7 @@
       var img = document.getElementById('webcam-focus-live');
       setInterval(function (image, source) {
           image.setAttribute('src', source + '?_=' + Date.now());
-      }, 1000, img, '{{live.liveurl}}');
+      }, 500, img, '{{live.liveurl}}');
     </script>
   </figure>
   <div class="webcam-focus-grid-container">
@@ -21,7 +21,7 @@
           var img = document.getElementById('{{stream.streamname}}');
           setInterval(function (image, source) {
               image.setAttribute('src', source + '?_=' + Date.now());
-          }, 1000, img, '{{stream.liveurl}}');
+          }, 500, img, '{{stream.liveurl}}');
         </script>
       </figure>
     {% endfor %}

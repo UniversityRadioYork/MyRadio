@@ -13,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (empty($data['id'])) {
         //Create
-        $playlist = iTones_Playlist::create($data['title'], $data['description']);
+        $playlist = iTones_Playlist::create($data['title'], $data['description'], $data['category']);
         URLUtils::redirect(
             'iTones',
             'configurePlaylist',
@@ -28,6 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $playlist->setTitle($data['title']);
         $playlist->setDescription($data['description']);
+        $playlist->setCategoryById($data['category']);
         URLUtils::backWithMessage('The playlist has been updated.');
     }
 } else {

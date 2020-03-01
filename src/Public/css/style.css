@@ -1,4 +1,4 @@
-body {
+body:not(.nonav) {
   margin-top: 50px; /* Bootstrap navbar offset */
 }
 
