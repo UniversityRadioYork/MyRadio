@@ -696,8 +696,6 @@ EOT;
 
 EOT;
 
-
-
     /**
      * The constructor doesn't do anything practical.
      *
