@@ -53,7 +53,10 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
         $this->lock = empty($result['lock']) ? null : MyRadio_User::getInstance($result['lock']);
         $this->locktime = (int) $result['locktime'];
         $this->categoryid = (int) $result['category'];
-
+        if (is_null($this->categoryid)) {
+                throw new MyRadioException('Playlist ' . $playlistid . ' has a null category!', 500);
+        }
+        
         $this->revisionid = (int) self::$db->fetchOne(
             'SELECT revisionid FROM jukebox.playlist_revisions
             WHERE playlistid=$1 ORDER BY revisionid DESC LIMIT 1',
@@ -671,7 +674,7 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
         }
         self::wakeup();
         $result = self::$db->fetchColumn(
-            'SELECT playlistid FROM jukebox.playlists WHERE category = $1 ORDER BY title',
+            'SELECT * FROM jukebox.playlists WHERE category = $1 ORDER BY title',
             [$categoryId]
         );
 
