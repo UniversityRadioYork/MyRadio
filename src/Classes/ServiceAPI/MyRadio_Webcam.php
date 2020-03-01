@@ -24,7 +24,7 @@ class MyRadio_Webcam extends ServiceAPI
     */
     public static function incrementViewCounter()
     {
-        $user = MyRadio_User::getInstance(); // This bit will fail if it's not an actual user calling the API.
+        $user = MyRadio_User::getCurrentUser(); // This bit will fail if it's not an actual user calling the API.
         //Get the current view counter. We do this as a separate query in case the row doesn't exist yet
         $counter = self::getViewCounter($user);
 
