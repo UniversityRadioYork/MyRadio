@@ -473,7 +473,8 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
      * Is this playlist available right now?
      * @return boolean
      */
-    public function isAvailable() {
+    public function isAvailable()
+    {
         $result = self::$db->fetchOne('select count(*) AS valid
             from jukebox.playlists
             inner join jukebox.playlist_availability on playlists.playlistid = playlist_availability.playlistid
