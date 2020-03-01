@@ -128,6 +128,16 @@ $(".twig-datatable").dataTable({
     {
       "sTitle": "Mixcloud Status",
       "bVisible": false
+    },
+    //mixcloud custom start time
+    {
+      "sTitle": "Mixcloud Custom Start Time",
+      "bVisible": false
+    },
+    //mixcloud custom end time
+    {
+      "sTitle": "Mixcloud Custom End Time",
+      "bVisible": false
     }
   ],
   "bPaginate": false
