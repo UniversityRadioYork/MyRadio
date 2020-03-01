@@ -1772,10 +1772,10 @@ class MyRadio_User extends ServiceAPI implements APICaller
             [$fname],
             Config::$welcome_email
         );
-        $account_email = str_replace(
+        $account_details_email = str_replace(
             ['#NAME', '#USER', '#PASS'],
             [$params['fname'], $uname, $plain_pass],
-            Config::$account_email
+            Config::$account_details_email
         );
 
         //Send the emails
@@ -1788,7 +1788,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
         MyRadioEmail::sendEmailToUser(
             self::getInstance($memberid),
             'Welcome to '.Config::$short_name.' - Your Account',
-            $account_email
+            $account_details_email
         );// comes from no-reply
 
         return $user;
