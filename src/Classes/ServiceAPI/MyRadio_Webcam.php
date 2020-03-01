@@ -36,12 +36,6 @@ class MyRadio_Webcam extends ServiceAPI
         }
 
         // We haven't tried to increment the webcam recently, allow it and update the time it was last incremented.
-        if (isset($_SESSION['webcam_lastcounterincrement'])) {
-            $last_update_diff = max(time() - $_SESSION['webcam_lastcounterincrement'], 0);
-        } else {
-            $last_update_diff = 0;
-        }
-
         $_SESSION['webcam_lastcounterincrement'] = time();
         if (empty($counter)) {
             $counter = 0;
@@ -50,7 +44,14 @@ class MyRadio_Webcam extends ServiceAPI
             $counter = $counter['timer'];
             $sql = 'UPDATE webcam.memberviews SET timer=$2 WHERE memberid=$1';
         }
-        $counter += $last_update_diff;
+
+        /*
+         * We must assume this, instead of calculating it.
+         * This is because the session remains if you close the webcam page,
+         * so would count the time if you closed and re-opened the webcam page
+         */
+        $counter += 15;
+
 
         self::$db->query($sql, [$user->getID(), $counter]);
 
