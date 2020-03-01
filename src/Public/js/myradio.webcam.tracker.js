@@ -8,6 +8,8 @@ function webcamTrackViewer() {
   if (typeof document.hidden !== "undefined" && document.hidden) {
     return;
   }
+  // Prevent a 400 error from triggering a myradio error popup.
+  myradio.ignoreErrorStatus(400);
   $.ajax({
     type: "get",
     cache: false,

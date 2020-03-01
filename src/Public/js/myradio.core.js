@@ -94,8 +94,19 @@ var myradio = {
     $("#showAlert").removeClass(function (index, className) {
       return (className.match (/(^|\s)alert-\S+/g) || []).join(" ");
     }).addClass("alert-"+type).html(icon + text);
+  },
+  // Set to ingore a error status code for the next API call.
+  ignoreErrorStatus: function(statusCode) {
+    if (window.ignoreErrorStatuses && window.ignoreErrorStatuses.length > 0) {
+      window.ignoreErrorStatuses.push(statusCode);
+    } else {
+      window.ignoreErrorStatuses = [statusCode];
+    }
   }
+
 };
+
+
 
 var errorVisible = false;
 $(document).ajaxError(
@@ -103,7 +114,12 @@ $(document).ajaxError(
     if (xhr.status == 401) {
       //Session timed out - need to login
       window.location = myradio.makeURL("MyRadio", "login", {next: window.location.pathname, message: window.btoa("Your session has expired and you need to log in again to continue.")});
+    } else if (window.ignoreErrorStatuses && window.ignoreErrorStatuses.length > 0 && window.ignoreErrorStatuses[xhr.status] != undefined) {
+      //This API call return value was expected. We should ignore it this time.
+      // Now reset.
+      window.ignoreErrorStatuses = null;
     } else if (!errorVisible) {
+      // We weren't expecting this error, make a popup.
       var close = myradio.closeButton();
       var report = myradio.reportButton(xhr, settings, error);
       var message = "";
@@ -142,6 +158,7 @@ $(document).ajaxSuccess(
     } catch (error) {
       return; //Not JSON
     }
+
     if (Object.prototype.hasOwnProperty.call(data, "myradio_errors") && data.myradio_errors.length > 0) {
       myradio.errorReport(data.myradio_errors, e, xhr, settings);
     }
