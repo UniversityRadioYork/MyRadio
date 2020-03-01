@@ -13,5 +13,6 @@
     ["\\MyRadio\\ServiceAPI\\MyRadio_Track", "setIntro", "AUTH_USENIPSWEB"],
     ["\\MyRadio\\ServiceAPI\\MyRadio_Track", "search", "AUTH_SEARCHCENTRALDB"],
     ["\\MyRadio\\ServiceAPI\\MyRadio_Artist", "findByName", "AUTH_SEARCHCENTRALDB"],
-    ["\\MyRadio\\ServiceAPI\\MyRadio_Scheduler", "isTerm", "AUTH_APITERM"]
+    ["\\MyRadio\\ServiceAPI\\MyRadio_Scheduler", "isTerm", "AUTH_APITERM"],
+    ["\\MyRadio\\ServiceAPI\\MyRadio_Webcam", "incrementViewCounter", "AUTH_VIEWEBCAM"]
 ]

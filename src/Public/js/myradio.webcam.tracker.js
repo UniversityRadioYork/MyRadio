@@ -8,13 +8,20 @@ function webcamTrackViewer() {
   if (typeof document.hidden !== "undefined" && document.hidden) {
     return;
   }
+  // Prevent a 400 error from triggering a myradio error popup.
+  myradio.ignoreErrorStatus(400);
   $.ajax({
     type: "get",
     cache: false,
-    url: myradio.makeURL("Webcam", "a-trackViewer"),
+    url: myradio.getAPIURL("webcam", "incrementviewcounter","",""),
+    statusCode: {
+      // API returns 400 when timedelta is too big (minimised tab or whatever) clientside should ignore.
+      400: function () {}
+    },
     success: function (data) {
       var sub = 0;
       var time = "";
+      data = data["payload"]; // Get the time int.
       if (data >= 7*24*60*60) {
         sub = Math.floor(data/(7*24*24*60));
         time = time + sub + " weeks, ";

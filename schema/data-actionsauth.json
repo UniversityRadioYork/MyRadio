@@ -160,7 +160,6 @@
     ["Stats", "jukeboxPlayCounter", "AUTH_TRACKSTATISTICS"],
     ["Stats", null, "AUTH_VIEWSTATS"],
     ["Webcam", "archive", "AUTH_VIEWWEBCAMARCHIVE"],
-    ["Webcam", "a-trackViewer", "AUTH_VIEWEBCAM"],
     ["Webcam", "default", "AUTH_VIEWEBCAM"],
     ["Webcam", "focus", "AUTH_VIEWEBCAM"],
     ["Website", "banners", "AUTH_EDIT_HOME_BANNERS"],
