@@ -342,7 +342,8 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
                 MyRadioFormField::TYPE_FILE,
                 [
                     'label' => 'Upload New Cover Photo',
-                    'explanation' => 'If you haven\'t specified an existing cover photo, upload one here.',
+                    'explanation' => 'If you haven\'t specified an existing cover photo, upload one '
+                    . 'here - it should be square and at least 400x400 pixels.',
                     'required' => false,
                 ]
             )
@@ -354,6 +355,8 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
                     'label' => 'I have read and confirm that this audio file complies'
                     .' with <a href="/wiki/Podcasting_Policy" target="_blank">'
                     .Config::$short_name.'\'s Podcasting Policy</a>.',
+                    'explanation' => 'Once the podcast upload is complete, please notify the '
+                    . 'Computing Team in Slack as they may need to clear the cache. Thank you!'
                 ]
             )
         );

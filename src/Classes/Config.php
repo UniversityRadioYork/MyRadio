@@ -269,11 +269,11 @@ final class Config
 
     /**
      * The full web address to the image that will be served on a member's profile page if they do not have a profile
-     * photo. The original value, /static/img/default_show_player.png is the main website's placeholder for shows.
+     * photo. The original value, /images/default_show_profile.png is the main website's placeholder for shows.
      *
      * @var string
      */
-    public static $default_person_uri = '/static/img/default_show_player.png';
+    public static $default_person_uri = '/images/default_show_profile.png';
 
     /**
      * The full web address of the image that will be shown for a vacant officer position.
@@ -306,6 +306,12 @@ final class Config
      * @var string
      */
     public static $jukebox_obit_file = '/jukebox/OBIT.mp3';
+
+    /**
+     * The category of playlists that Jukebox should get songs from.
+     * @var int
+     */
+    public static $jukebox_playlist_category_id = 2;
 
     /**
      * The Samba File Share path to the Central Database.
@@ -695,6 +701,28 @@ EOT;
    This email will send from a no-reply email so that user's don't spread their login details.
 
 EOT;
+
+    /**
+     * The MyRadio features that are under maintenance.
+     *
+     * This should be an associative array of arrays, where the keys are module names
+     * and the values are the actions in that module that are under maintenance and should be disabled for users.
+     *
+     * For example,
+     *
+     *     [
+     *      'scheduler' => ['editShow', 'editSeason']
+     *     ]
+     *
+     * would disable editing (and creation) of shows and seasons.
+     *
+     * Instead of passing an array of action names, you can pass '*', which would treat all actions in that module
+     * as under maintenance.
+     *
+     * You can also set $maintenance_modules to '*' to shut down MyRadio altogether (don't do that).
+     *
+     */
+    public static $maintenance_modules = [];
 
     /**
      * The constructor doesn't do anything practical.

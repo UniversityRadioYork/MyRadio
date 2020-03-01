@@ -2,5 +2,15 @@
 {% import 'macros.twig' as MyRadio %}
 {% block stripecontent %}
 <a href="{{MyRadio.makeURL(config, 'iTones', 'configurePlaylist')}}">Add a new Playlist</a>
+<form id="categoryForm" action="{{ MyRadio.makeURL(config, 'iTones', 'listPlaylists') }}" method="get">
+    <label for="categoryPicker">Category</label>
+    <select name="category" id="categoryPicker">
+        {% for cat in allCategories %}
+            <option value="{{ cat.id }}" {{ cat.id == category ? 'selected="selected"' : '' }}>
+                {{ cat.name }}
+            </option>
+        {% endfor %}
+    </select>
+</form>
 {{ parent() }}
 {% endblock %}

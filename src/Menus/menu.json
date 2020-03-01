@@ -62,7 +62,7 @@
                                     },
                                     {
                                         "title": "Get Beds/Jingles",
-                                        "url": "https://goo.gl/forms/y7EPYc5jMcPcmv8z1",
+                                        "url": "https://docs.google.com/forms/d/e/1FAIpQLSdLauYhir0wRBHAJBXIw1OcpyRtdJulIueoVUz0CyM12qObSQ/viewform",
                                         "description": "The Audio Resources team have a huge library and a little experience - give them a shot if you want that little something that makes your show stand out."
                                     },
                                     {
@@ -184,7 +184,7 @@
                                 [
                                     {
                                         "title": "Constitution",
-                                        "url": "https://drive.google.com/open?id=1FU0vx9sTCy-IsvTxU4zYpaxNbe1Utb8E",
+                                        "url": "https://ury.org.uk/wiki/Constitution",
                                         "description": "The Constitution is the overarching contract by which we are all bound for life. Worth a skim read."
                                     },
                                     {
@@ -201,6 +201,11 @@
                                         "title": "Officers",
                                         "url": "module=Profile,action=officers",
                                         "description": "List and manage officerships and their permissions."
+                                    },
+                                    {
+                                        "title": "Quotes Board",
+                                        "url": "module=Quotes",
+                                        "description": "See the latest 'funny' quotes from URY members."
                                     },
                                     {
                                         "title": "Webcam",
