@@ -6,6 +6,7 @@ namespace MyRadio\ServiceAPI;
 
 use MyRadio\Config;
 use MyRadio\ServiceAPI\MyRadio_User;
+use MyRadio\MyRadioException;
 
 /**
  * Deals with Webcam features within MyRadio.
@@ -31,7 +32,7 @@ class MyRadio_Webcam extends ServiceAPI
         if (isset($_SESSION['webcam_lastcounterincrement']) && $_SESSION['webcam_lastcounterincrement'] > time() - 10) {
             // Occurs when browser wakes up and tries to spam all the missed updates, or if multiple webcam pages are open.
             // In this case, don't actually increment.
-            return intval($counter['timer']);
+            throw new MyRadioException('Requested increment too soon after last increment.', 400);
         }
 
         // We haven't tried to increment the webcam recently, allow it and update the time it was last incremented.

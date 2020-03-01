@@ -19,6 +19,7 @@ function webcamTrackViewer() {
     success: function (data) {
       var sub = 0;
       var time = "";
+      data = data['payload']; // Get the time int.
       if (data >= 7*24*60*60) {
         sub = Math.floor(data/(7*24*24*60));
         time = time + sub + " weeks, ";
