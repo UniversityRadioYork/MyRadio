@@ -114,7 +114,7 @@ $(document).ajaxError(
     if (xhr.status == 401) {
       //Session timed out - need to login
       window.location = myradio.makeURL("MyRadio", "login", {next: window.location.pathname, message: window.btoa("Your session has expired and you need to log in again to continue.")});
-    } else if (window.ignoreErrorStatuses && window.ignoreErrorStatuses.length > 0 && window.ignoreErrorStatuses.indexOf(xhr.status) > 0) {
+    } else if (window.ignoreErrorStatuses && window.ignoreErrorStatuses.length > 0 && window.ignoreErrorStatuses.indexOf(xhr.status) >= 0) {
       //This API call return value was expected. We should ignore it this time.
 
     } else if (!errorVisible) {
