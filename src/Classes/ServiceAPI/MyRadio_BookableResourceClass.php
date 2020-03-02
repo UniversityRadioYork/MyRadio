@@ -56,7 +56,7 @@ EOF;
         return $result;
     }
 
-    public static function factory($itemid)
+    protected static function factory($itemid)
     {
         $result = self::$db->fetchOne(self::BASE_QUERY . 'WHERE resource_class_id = $1', [$itemid]);
 

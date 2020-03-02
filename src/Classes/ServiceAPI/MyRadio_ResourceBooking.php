@@ -121,7 +121,7 @@ EOF;
         );
     }
 
-    public static function factory($itemid)
+    protected static function factory($itemid)
     {
         $result = self::$db->fetchOne(self::BASE_QUERY . 'WHERE booking_id = $1', [$itemid]);
 
