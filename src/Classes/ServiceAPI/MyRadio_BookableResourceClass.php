@@ -3,6 +3,7 @@
 namespace MyRadio\ServiceAPI;
 
 use MyRadio\MyRadio\CoreUtils;
+use MyRadio\MyRadioException;
 
 class MyRadio_BookableResourceClass extends ServiceAPI {
 	private const BASE_QUERY = <<<EOF
@@ -53,6 +54,17 @@ EOF;
         }
 
         return $result;
+    }
+
+    public static function factory($itemid)
+    {
+        return self::$db->fetchOne(self::BASE_QUERY . 'WHERE resource_class_id = $1', [$itemid]);
+
+        if (empty($result)) {
+            throw new MyRadioException('That resource class does not exist.', 404);
+        }
+
+        return new self($result);
     }
 
 	public function toDataSource($mixins = [])
