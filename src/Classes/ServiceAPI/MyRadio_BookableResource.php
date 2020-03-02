@@ -4,7 +4,7 @@ namespace MyRadio\ServiceAPI;
 
 class MyRadio_BookableResource extends ServiceAPI {
 	private const BASE_QUERY = <<<EOF
-SELECT resources.resource_id, resource.name, resource.resource_class_id
+SELECT resources.resource_id, resources.name, resources.resource_class_id
 FROM bookings.resources
 EOF;
 
