@@ -3733,7 +3733,7 @@ ALTER TABLE ONLY selector
 --
 
 ALTER TABLE ONLY sso_session
-    ADD CONSTRAINT sso_session_pkey PRIMARY KEY (id, "timestamp");
+    ADD CONSTRAINT sso_session_pkey PRIMARY KEY (id);
 
 
 --
