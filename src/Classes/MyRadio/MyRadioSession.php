@@ -61,20 +61,27 @@ class MyRadioSession implements \SessionHandlerInterface
             return false;
         }
 
-        $this->db->query(
-            'INSERT INTO sso_session (id, data, timestamp)
-            VALUES ($1, \'\', NOW())
-            ON CONFLICT DO NOTHING',
-            [$id]
-        );
-        
+        // Use transaction to fix duplicate race condition on session storm.
+        $this->db->query('BEGIN');
         $result = $this->db->fetchColumn(
             'SELECT data FROM sso_session
             WHERE id=$1 LIMIT 1',
             [$id]
         );
+        if (empty($result)) {
+            $this->db->query(
+                'INSERT INTO sso_session (id, data, timestamp)
+                VALUES ($1, \'\', NOW())',
+                [$id]
+            );
+        }
+        $this->db->query('COMMIT');
 
-        return $result[0];
+        if (empty($result)) {
+            return '';
+        } else {
+            return $result[0];
+        }
     }
 
     /**
