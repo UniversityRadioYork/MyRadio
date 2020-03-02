@@ -60,21 +60,19 @@ class MyRadioSession implements \SessionHandlerInterface
         if (empty($id)) {
             return false;
         }
+
+        $this->db->query(
+            'INSERT INTO sso_session (id, data, timestamp)
+            VALUES ($1, \'\', NOW())
+            ON CONFLICT DO NOTHING',
+            [$id]
+        );
+        
         $result = $this->db->fetchColumn(
             'SELECT data FROM sso_session
             WHERE id=$1 LIMIT 1',
             [$id]
         );
-
-        if (empty($result)) {
-            $this->db->query(
-                'INSERT INTO sso_session (id, data, timestamp)
-                VALUES ($1, \'\', $2)',
-                [$id, CoreUtils::getTimestamp()]
-            );
-
-            return '';
-        }
 
         return $result[0];
     }
