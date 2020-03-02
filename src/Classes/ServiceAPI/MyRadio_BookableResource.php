@@ -55,7 +55,7 @@ EOF;
 
     public static function factory($itemid)
     {
-        return self::$db->fetchOne(self::BASE_QUERY . 'WHERE resource_id = $1', [$itemid]);
+        $result = self::$db->fetchOne(self::BASE_QUERY . 'WHERE resource_id = $1', [$itemid]);
 
         if (empty($result)) {
             throw new MyRadioException('That resource does not exist.', 404);
