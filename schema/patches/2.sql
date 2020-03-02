@@ -31,7 +31,7 @@ CREATE TABLE booking_resources (
 );
 
 CREATE TABLE booking_members (
-    booking_user_id SERIAL PRIMARY KEY,
+    booking_member_id SERIAL PRIMARY KEY,
     booking_id INTEGER REFERENCES bookings(booking_id),
     member_id INTEGER REFERENCES public.member(memberid)
 );
