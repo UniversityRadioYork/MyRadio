@@ -2,6 +2,7 @@
 
 namespace MyRadio\ServiceAPI;
 
+use MyRadio\MyRadio\CoreUtils;
 use MyRadio\MyRadioException;
 
 class MyRadio_BookableResource extends ServiceAPI {
@@ -62,7 +63,7 @@ EOF;
             AND $3 >= start_time
             AND $2 <= end_time
             ',
-            [$this->id, $start, $end]
+            [$this->id, CoreUtils::getTimestamp($start), CoreUtils::getTimestamp($end)]
         );
         return $result[0] == 0;
     }
