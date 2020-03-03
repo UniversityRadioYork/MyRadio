@@ -115,7 +115,7 @@ EOF;
 
         $result = self::$db->fetchColumn(
             'INSERT INTO bookings.bookings (start_time, end_time, priority, creator)
-            VALUES ($1, $2, $3, $3) RETURNING booking_id',
+            VALUES ($1, $2, $3, $4) RETURNING booking_id',
             [
                 $params['start_time'],
                 $params['end_time'],
