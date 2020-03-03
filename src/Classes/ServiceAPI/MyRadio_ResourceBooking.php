@@ -20,7 +20,7 @@ EOF;
     public function __construct($data)
     {
         parent::__construct();
-        $this->id = (int)$data['resource_id'];
+        $this->id = (int)$data['booking_id'];
         $this->startTime = strtotime($data['start_time']);
         $this->endTime = strtotime($data['end_time']);
         $this->priority = (int)$data['priority'];
