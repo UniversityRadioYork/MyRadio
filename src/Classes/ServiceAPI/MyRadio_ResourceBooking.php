@@ -130,27 +130,17 @@ EOF;
         $newBookingId = $result[0];
 
         foreach ($params['resources'] as $resId) {
-            if (empty(
-                self::$db->fetchColumn(
-                    'INSERT INTO bookings.booking_resources (booking_id, resource_id) VALUES ($1, $2)',
-                    [$newBookingId, $resId]
-                )
-            )) {
-                self::$db->query('ROLLBACK');
-                throw new MyRadioException('Booking creation failed (code 2)');
-            }
+            self::$db->query(
+                'INSERT INTO bookings.booking_resources (booking_id, resource_id) VALUES ($1, $2)',
+                [$newBookingId, $resId]
+            );
         }
 
         foreach ($params['members'] as $memberId) {
-            if (empty(
-            self::$db->fetchColumn(
+            self::$db->query(
                 'INSERT INTO bookings.booking_members (booking_id, member_id) VALUES ($1, $2)',
                 [$newBookingId, $memberId]
-            )
-            )) {
-                self::$db->query('ROLLBACK');
-                throw new MyRadioException('Booking creation failed (code 3)');
-            }
+            );
         }
 
         self::$db->query('COMMIT');
