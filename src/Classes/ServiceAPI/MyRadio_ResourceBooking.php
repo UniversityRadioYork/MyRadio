@@ -81,8 +81,10 @@ EOF;
     }
 
     /** Creates a new resource booking.
-     * @param array $params An assoc array (possibly from JSON), generally in the shape of toDataSource()
+     *
+     * The $params parameter should be in the same of toDataSource(),
      * (exception being that resources and members can be either an array of objects or of IDs)
+     * @param array $params An assoc array (possibly from JSON), generally in the shape of toDataSource()
      */
     public static function create(
         $params = []
@@ -109,9 +111,11 @@ EOF;
 
         self::initDB();
 
+        self::$db->query('BEGIN');
+
         $result = self::$db->fetchColumn(
             'INSERT INTO bookings.bookings (start_time, end_time, priority, creator)
-            VALUES ($1, $2, $3, $3)',
+            VALUES ($1, $2, $3, $3) RETURNING booking_id',
             [
                 $params['start_time'],
                 $params['end_time'],
@@ -119,6 +123,40 @@ EOF;
                 $creatorId
             ]
         );
+        if (empty($result)) {
+            self::$db->query('ROLLBACK');
+            throw new MyRadioException('Booking creation failed (code 1)');
+        }
+        $newBookingId = $result[0];
+
+        foreach ($params['resources'] as $resId) {
+            if (empty(
+                self::$db->fetchColumn(
+                    'INSERT INTO bookings.booking_resources (booking_id, resource_id) VALUES ($1, $2)',
+                    [$newBookingId, $resId]
+                )
+            )) {
+                self::$db->query('ROLLBACK');
+                throw new MyRadioException('Booking creation failed (code 2)');
+            }
+        }
+
+        foreach ($params['members'] as $memberId) {
+            if (empty(
+            self::$db->fetchColumn(
+                'INSERT INTO bookings.booking_members (booking_id, member_id) VALUES ($1, $2)',
+                [$newBookingId, $memberId]
+            )
+            )) {
+                self::$db->query('ROLLBACK');
+                throw new MyRadioException('Booking creation failed (code 3)');
+            }
+        }
+
+        self::$db->query('COMMIT');
+
+        $result = new self($newBookingId);
+        return $result;
     }
 
     protected static function factory($itemid)
