@@ -123,7 +123,7 @@ EOF;
 
     protected static function factory($itemid)
     {
-        $result = self::$db->fetchOne(self::BASE_QUERY . 'WHERE booking_id = $1', [$itemid]);
+        $result = self::$db->fetchOne(self::BASE_QUERY . ' WHERE booking_id = $1', [$itemid]);
 
         if (empty($result)) {
             throw new MyRadioException('That booking does not exist.', 404);
