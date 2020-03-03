@@ -53,6 +53,20 @@ EOF;
 		);
 	}
 
+	public function isFreeBetween(int $start, int $end) {
+        $result = self::$db->fetchColumn(
+            'SELECT COUNT(*)
+            FROM bookings.bookings
+            INNER JOIN bookings.booking_resources USING (booking_id)
+            WHERE resource_id = $1
+            AND $3 > start_time
+            AND $2 < end_time
+            ',
+            [$this->id, $start, $end]
+        );
+        return $result[0] == 0;
+    }
+
     protected static function factory($itemid)
     {
         $result = self::$db->fetchOne(self::BASE_QUERY . ' WHERE resource_id = $1', [$itemid]);

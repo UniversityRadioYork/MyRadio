@@ -96,14 +96,26 @@ EOF;
                 throw new MyRadioException('You must provide ' . $field, 400);
             }
         }
+
+        foreach (['start_time', 'end_time'] as $param) {
+            if (!(is_int($params[$param]))) {
+                $params[$param] = strtotime($params[$param]);
+            }
+        }
+
         for ($i = 0; $i < count($params['resources']); $i++) {
-            if ($params['resources'][$i] instanceof MyRadio_BookableResource) {
-                $params['resources'][$i] = $params['resources'][$i]->getID();
+            if (!($params['resources'][$i] instanceof MyRadio_BookableResource)) {
+                $params['resources'][$i] = MyRadio_BookableResource::getInstance($params['resources'][$i]);
+            }
+            if (!($params['resources'][$i]->isFreeBetween($params['start_time'], $params['end_time']))) {
+                // TODO: handle priorities
+                $name = $params['resources'][$i]->getName();
+                throw new MyRadioException("$name is already booked at that time.");
             }
         }
         for ($i = 0; $i < count($params['members']); $i++) {
-            if ($params['members'][$i] instanceof MyRadio_User) {
-                $params['members'][$i] = $params['members'][$i]->getID();
+            if (!($params['members'][$i] instanceof MyRadio_User)) {
+                $params['members'][$i] = MyRadio_User::getInstance($params['members'][$i]);
             }
         }
 
@@ -117,8 +129,8 @@ EOF;
             'INSERT INTO bookings.bookings (start_time, end_time, priority, creator)
             VALUES ($1, $2, $3, $4) RETURNING booking_id',
             [
-                $params['start_time'],
-                $params['end_time'],
+                CoreUtils::getTimestamp($params['start_time']),
+                CoreUtils::getTimestamp($params['end_time']),
                 $params['priority'],
                 $creatorId
             ]
@@ -129,17 +141,17 @@ EOF;
         }
         $newBookingId = $result[0];
 
-        foreach ($params['resources'] as $resId) {
+        foreach ($params['resources'] as $res) {
             self::$db->query(
                 'INSERT INTO bookings.booking_resources (booking_id, resource_id) VALUES ($1, $2)',
-                [$newBookingId, $resId]
+                [$newBookingId, $res->getID()]
             );
         }
 
-        foreach ($params['members'] as $memberId) {
+        foreach ($params['members'] as $member) {
             self::$db->query(
                 'INSERT INTO bookings.booking_members (booking_id, member_id) VALUES ($1, $2)',
-                [$newBookingId, $memberId]
+                [$newBookingId, $member->getID()]
             );
         }
 
