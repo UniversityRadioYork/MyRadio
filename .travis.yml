@@ -20,7 +20,7 @@ cache:
     - /home/travis/.cache/Cypress
 
 addons:
-    postgresql: '9.5'
+    postgresql: '12'
     chrome: stable
 services:
     - postgresql
