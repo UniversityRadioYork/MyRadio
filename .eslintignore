@@ -2,3 +2,4 @@
 src/vendor/*
 src/Public/js/vendor/**/*.js
 src/PublicAPI/rtfm/*
+tests/e2e/**/*.js

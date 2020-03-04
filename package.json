@@ -1,0 +1,18 @@
+{
+  "name": "myradio",
+  "version": "1.0.0",
+  "description": "MyRadio =======",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/UniversityRadioYork/MyRadio.git"
+  },
+  "author": "University Radio York",
+  "bugs": {
+    "url": "https://github.com/UniversityRadioYork/MyRadio/issues"
+  },
+  "homepage": "https://github.com/UniversityRadioYork/MyRadio#readme",
+  "devDependencies": {
+    "cypress": "^4.1.0",
+    "eslint": "^6.5.1"
+  }
+}
