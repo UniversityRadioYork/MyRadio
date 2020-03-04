@@ -1,0 +1,8 @@
+{
+  "integrationFolder": "tests/e2e/suites",
+  "fixturesFolder": "tests/e2e/fixtures",
+  "screenshotsFolder": "tests/e2e/screenshots",
+  "video": false,
+  "supportFile": false,
+  "pluginsFile": false
+}

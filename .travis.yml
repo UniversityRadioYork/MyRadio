@@ -20,11 +20,12 @@ cache:
 
 addons:
     postgresql: '9.5'
+    chrome: stable
 services:
     - postgresql
 install:
     - composer install
-    - npm install eslint@6.5.x
+    - npm install
     - sudo apt-get update
     - sudo apt-get install apache2 libapache2-mod-fastcgi
 before_script:
@@ -54,9 +55,10 @@ before_script:
     # configure MyRadio
     - cp sample_configs/travis-config.php src/MyRadio_Config.local.php
 script:
-    - src/vendor/bin/phpcs --standard=PSR2 --ignore="*.min.*,*/vendor/*,*/PublicAPI/rtfm/*,*/Public/js/*" --exclude=Squiz.Classes.ValidClassName,PSR1.Files.SideEffects src/ -p -s
-    - node_modules/.bin/eslint .
     - curl -v http://localhost/api/v2/config/publicconfig?api_key=travis-test-key
     - src/vendor/bin/codecept run --env travis
+    - $(npm bin)/cypress run
+    - src/vendor/bin/phpcs --standard=PSR2 --ignore="*.min.*,*/vendor/*,*/PublicAPI/rtfm/*,*/Public/js/*" --exclude=Squiz.Classes.ValidClassName,PSR1.Files.SideEffects src/ -p -s
+    - node_modules/.bin/eslint .
 after_script:
     - sudo cat $(pwd)/apache-*.log
