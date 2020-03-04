@@ -17,6 +17,7 @@ cache:
     - src/vendor
     - $HOME/.cache/composer/files
     - node_modules/
+    - /home/travis/.cache/Cypress
 
 addons:
     postgresql: '9.5'
