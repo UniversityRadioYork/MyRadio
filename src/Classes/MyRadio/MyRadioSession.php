@@ -7,7 +7,7 @@ use MyRadio\Database;
 /**
  * Custom session handler.
  */
-class MyRadioSession implements \SessionHandlerInterface
+class MyRadioSession implements \SessionHandlerInterface, \SessionIdInterface
 {
     const TIMEOUT = 7200; //Session expires after 2hrs
 
@@ -30,6 +30,25 @@ class MyRadioSession implements \SessionHandlerInterface
     public function open($save_path, $sesion_name)
     {
         return true;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function create_sid()
+    {
+        $default = new \SessionHandler();
+        while (true) {
+            $testSid = $default->create_sid();
+            $result = $this->db->query('
+                INSERT INTO public.sso_session (id, data, timestamp) 
+                VALUES ($1, \'\', NOW())
+                ON CONFLICT DO NOTHING
+            ', [$testSid]);
+            if ($this->db->numRows($result) > 0) {
+                return $testSid;
+            }
+        }
     }
 
     public function close()
@@ -61,21 +80,11 @@ class MyRadioSession implements \SessionHandlerInterface
             return false;
         }
 
-        // Use transaction to fix duplicate race condition on session storm.
-        $this->db->query('BEGIN');
         $result = $this->db->fetchColumn(
             'SELECT data FROM sso_session
             WHERE id=$1 LIMIT 1',
             [$id]
         );
-        if (empty($result)) {
-            $this->db->query(
-                'INSERT INTO sso_session (id, data, timestamp)
-                VALUES ($1, \'\', NOW())',
-                [$id]
-            );
-        }
-        $this->db->query('COMMIT');
 
         if (empty($result)) {
             return '';
