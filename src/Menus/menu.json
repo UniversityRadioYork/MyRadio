@@ -188,6 +188,11 @@
                                         "description": "The Constitution is the overarching contract by which we are all bound for life. Worth a skim read."
                                     },
                                     {
+                                        "title": "Presenter's Contract",
+                                        "url": "https://ury.org.uk/wiki/Contract",
+                                        "description": "The Presenter's Contract is URY's station rules and regulations."
+                                    },
+                                    {
                                         "title": "Members",
                                         "url": "module=Profile,action=list",
                                         "description": "List and manage members."
