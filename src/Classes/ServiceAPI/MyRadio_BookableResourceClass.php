@@ -56,6 +56,18 @@ EOF;
         return $result;
     }
 
+    /**
+     * Get all bookings of resources in this class.
+     * @return MyRadio_ResourceBooking[]
+     */
+    public function getAllBookings() {
+        $rows = self::$db->fetchAll('SELECT booking_id FROM bookings.booking_resources
+                                    INNER JOIN bookings.resources USING (resource_id)
+                                    WHERE resources.resource_class_id = $1', [$this->id]);
+
+        return MyRadio_ResourceBooking::resultSetToObjArray($rows);
+    }
+
     protected static function factory($itemid)
     {
         $result = self::$db->fetchOne(self::BASE_QUERY . ' WHERE resource_class_id = $1', [$itemid]);
