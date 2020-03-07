@@ -61,7 +61,7 @@ EOF;
      * @return MyRadio_ResourceBooking[]
      */
     public function getAllBookings() {
-        $rows = self::$db->fetchAll('SELECT booking_id FROM bookings.booking_resources
+        $rows = self::$db->fetchColumn('SELECT booking_id FROM bookings.booking_resources
                                     INNER JOIN bookings.resources USING (resource_id)
                                     WHERE resources.resource_class_id = $1', [$this->id]);
 
