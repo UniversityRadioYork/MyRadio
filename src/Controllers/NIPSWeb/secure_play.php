@@ -7,7 +7,7 @@ use \MyRadio\MyRadioException;
 use \MyRadio\NIPSWeb\NIPSWeb_Token;
 use \MyRadio\NIPSWeb\NIPSWeb_Views;
 
-header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Origin: " . $_SERVER["HTTP_ORIGIN"]);
 header("Access-Control-Allow-Credentials: true");
 
 if (!isset($_REQUEST['trackid']) or !isset($_REQUEST['recordid'])) {
