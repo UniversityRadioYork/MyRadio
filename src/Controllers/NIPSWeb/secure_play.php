@@ -8,6 +8,7 @@ use \MyRadio\NIPSWeb\NIPSWeb_Token;
 use \MyRadio\NIPSWeb\NIPSWeb_Views;
 
 header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Credentials: true");
 
 if (!isset($_REQUEST['trackid']) or !isset($_REQUEST['recordid'])) {
     throw new MyRadioException('Bad Request - trackid and recordid required.', 400);
