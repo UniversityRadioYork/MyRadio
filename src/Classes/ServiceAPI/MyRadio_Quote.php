@@ -43,11 +43,11 @@ class MyRadio_Quote extends ServiceAPI
             *
         FROM
             people.quote
-        ORDER BY 
+        ORDER BY
             random()
         LIMIT 1;
         ';
-        
+
     const INSERT_SQL = '
         INSERT INTO
             people.quote(text, source, date)
@@ -81,7 +81,7 @@ class MyRadio_Quote extends ServiceAPI
         WHERE
             quote_id = $2
         ;';
-    
+
     const SET_SUSPENDED_SQL = '
         UPDATE
             people.quote
@@ -121,7 +121,7 @@ class MyRadio_Quote extends ServiceAPI
 
     /**
      * Whether the quote has been suspended.
-     * 
+     *
      * @var bool
      */
     private $suspended;
@@ -197,7 +197,7 @@ class MyRadio_Quote extends ServiceAPI
 
         return array_map('self::getInstance', $quote_ids);
     }
-    
+
     /**
     * Retrieves a random quote
     * Probably didn't need to use array_map, but I copied getAll. Sorry - Jordan
@@ -206,10 +206,10 @@ class MyRadio_Quote extends ServiceAPI
     public static function getRandom()
     {
         $quote_id = self::$db->fetchColumn(self::GET_RANDOM_SQL, []);
-        
+
         return array_map('self::getInstance', $quote_id);
     }
-    
+
     /**
      * @return int The quote ID.
      */
@@ -242,7 +242,7 @@ class MyRadio_Quote extends ServiceAPI
         return $this->date;
     }
 
-    /** 
+    /**
      * @return bool Whether the quote has been suspended
      */
     public function getSuspended()
