@@ -26,6 +26,11 @@ $(".twig-datatable").dataTable({
     {
       bVisible: false
     },
+    //subtype
+    {
+      sTitle: "Subtype",
+      bVisible: true // subtype can be overridden per-season
+    },
     //seasons
     {
       "sTitle": "Seasons",

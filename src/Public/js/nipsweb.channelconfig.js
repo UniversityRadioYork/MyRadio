@@ -10,7 +10,7 @@ var ChannelConfigurator = function(player) {
     var storedDevices = [];
 
     try {
-      if (localStorage && localStorage.hasOwnProperty("nipsWebKnownDevices")) {
+      if (localStorage && Object.prototype.hasOwnProperty.call(localStorage, "nipsWebKnownDevices")) {
         storedDevices = localStorage.nipsWebKnownDevices;
       }
     } catch (e) {
@@ -73,7 +73,7 @@ var ChannelConfigurator = function(player) {
 
       // Set the current value, if there is one
       try {
-        if (localStorage.hasOwnProperty("nipsWebDeviceMapping")) {
+        if (Object.prototype.hasOwnProperty.call(localStorage, "nipsWebDeviceMapping")) {
           var storedValue = JSON.parse(localStorage.nipsWebDeviceMapping)[player.nipswebId];
           if (storedValue) {
             select.value = storedValue;
@@ -90,7 +90,7 @@ var ChannelConfigurator = function(player) {
             console.log("Changed output successfully", player, sink);
             try {
               var nwdm = {};
-              if (localStorage.hasOwnProperty("nipsWebDeviceMapping")) {
+              if (Object.prototype.hasOwnProperty.call(localStorage, "nipsWebDeviceMapping")) {
                 nwdm = JSON.parse(localStorage.nipsWebDeviceMapping);
               }
               nwdm[player.nipswebId] = sink;

@@ -1,33 +1,39 @@
 {% extends 'stripe.twig' %}
 
 {% block stripecontent %}
-<figure class="webcam-focus-stream-container" id="webcam-stream-{{live.streamid}}">
-      <img id="webcam-focus-live" src="{{live.liveurl}}" class="webcam-stream" />
-      <figcaption>{{live.streamname}}</figcaption>
-      <script>
-        var img = document.getElementById('webcam-focus-live');
-        setInterval(function (image, source) {
-            image.setAttribute('src', source + '?_=' + Date.now());
-        }, 1000, img, '{{live.liveurl}}');
-      </script>
-    </figure>
-<div class="webcam-focus-grid-container">
-  {% for stream in streams %}
-    <figure class="webcam-stream-container" id="webcam-stream-{{stream.streamid}}">
-      <img id="{{stream.streamname}}" src="{{stream.liveurl}}" class="webcam-stream" />
-      <figcaption>{{stream.streamname}}</figcaption>
-      <script>
-        var img = document.getElementById('{{stream.streamname}}');
-        setInterval(function (image, source) {
-            image.setAttribute('src', source + '?_=' + Date.now());
-        }, 1000, img, '{{stream.liveurl}}');
-      </script>
-    </figure>
-  {% endfor %}
-</div>
-<div class="alert alert-info" id="webcam-time-counter">
-  <span class="glyphicon glyphicon-time"></span> You've been watching the webcams for <span id="webcam-time-counter-value">not very long</span>
-</div>
+{% if live %}
+  <figure class="webcam-focus-stream-container" id="webcam-stream-{{live.streamid}}">
+    <img id="webcam-focus-live" src="{{live.liveurl}}" class="webcam-stream" />
+    <figcaption>{{live.streamname}}</figcaption>
+    <script>
+      var img = document.getElementById('webcam-focus-live');
+      setInterval(function (image, source) {
+          image.setAttribute('src', source + '?_=' + Date.now());
+      }, 500, img, '{{live.liveurl}}');
+    </script>
+  </figure>
+  <div class="webcam-focus-grid-container">
+    {% for stream in streams %}
+      <figure class="webcam-stream-container" id="webcam-stream-{{stream.streamid}}">
+        <img id="{{stream.streamname}}" src="{{stream.liveurl}}" class="webcam-stream" />
+        <figcaption>{{stream.streamname}}</figcaption>
+        <script>
+          var img = document.getElementById('{{stream.streamname}}');
+          setInterval(function (image, source) {
+              image.setAttribute('src', source + '?_=' + Date.now());
+          }, 500, img, '{{stream.liveurl}}');
+        </script>
+      </figure>
+    {% endfor %}
+  </div>
+  <div class="alert alert-info" id="webcam-time-counter">
+    <span class="glyphicon glyphicon-time"></span> You've been watching the webcams for <span id="webcam-time-counter-value">(loading).</span>
+  </div>
+{% else %}
+  <div class="alert alert-warning" id="webcam-time-counter">
+    <span class="glyphicon glyphicon-facetime-video"></span> No webcams have been setup yet. Please check the database.</span>
+  </div>
+{% endif %}
 {% endblock %}
 
 {% block foot %}

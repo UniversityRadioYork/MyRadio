@@ -342,7 +342,8 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
                 MyRadioFormField::TYPE_FILE,
                 [
                     'label' => 'Upload New Cover Photo',
-                    'explanation' => 'If you haven\'t specified an existing cover photo, upload one here.',
+                    'explanation' => 'If you haven\'t specified an existing cover photo, upload one '
+                    . 'here - it should be square and at least 400x400 pixels.',
                     'required' => false,
                 ]
             )
@@ -354,6 +355,8 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
                     'label' => 'I have read and confirm that this audio file complies'
                     .' with <a href="/wiki/Podcasting_Policy" target="_blank">'
                     .Config::$short_name.'\'s Podcasting Policy</a>.',
+                    'explanation' => 'Once the podcast upload is complete, please notify the '
+                    . 'Computing Team in Slack as they may need to clear the cache. Thank you!'
                 ]
             )
         );
@@ -858,17 +861,12 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
      */
     public static function getAllPodcasts($num_results = 0, $page = 1, $includeSuspended = true)
     {
-        $query = "SELECT podcast_id FROM uryplayer.podcast
-                  ORDER BY submitted DESC ";
-
-        if (!includeSuspended) {
-            $query .= "WHERE suspended = false ";
-        }
-
+        $where = !$includeSuspended ? 'WHERE suspended = false ': '';
         $filterLimit = $num_results == 0 ? 'ALL' : $num_results;
         $filterOffset = $num_results * $page;
+        $query = "SELECT podcast_id FROM uryplayer.podcast $where";
+        $query .= "ORDER BY submitted DESC OFFSET $filterOffset LIMIT $filterLimit;";
 
-        $query .= "OFFSET " . $filterOffset . " LIMIT " . $filterLimit;
         $result = self::$db->fetchColumn($query);
 
         $podcasts = [];

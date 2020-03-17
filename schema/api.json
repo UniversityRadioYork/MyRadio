@@ -22,6 +22,8 @@
         "\\MyRadio\\ServiceAPI\\MyRadio_Banner": "banner",
         "\\MyRadio\\ServiceAPI\\MyRadio_BannerCampaign": "bannerCampaign",
         "\\MyRadio\\ServiceAPI\\MyRadio_Artist": "artist",
+        "\\MyRadio\\ServiceAPI\\MyRadio_Webcam": "webcam",
+        "\\MyRadio\\ServiceAPI\\MyRadio_ShowSubtype": "showSubtype",
         "\\MyRadio\\iTones\\iTones_Utils": "iTones",
         "\\MyRadio\\iTones\\iTones_Playlist": "playlist",
         "\\MyRadio\\MyRadio\\AuthUtils": "auth",

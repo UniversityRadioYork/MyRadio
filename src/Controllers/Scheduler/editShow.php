@@ -24,6 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         );
     } else {
         //submit edit
+        /** @var MyRadio_Show $show */
         $show = MyRadio_Show::getInstance($data['id']);
 
         //Check the user has permission to edit this show
@@ -47,6 +48,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         } else {
             $show->setMeta('upload_state', 'Opted Out');
         }
+
+        $show->setSubtypeByName($data['subtype']);
+
         URLUtils::redirectWithMessage('Scheduler', 'myShows', 'Show Updated!');
     }
 } else {

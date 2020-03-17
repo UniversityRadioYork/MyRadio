@@ -152,7 +152,6 @@
     ["Stats", "mostMessagedShowYear"],
     ["Stats", "trainingMap"],
     ["Stats", "bapsPlayCounter"],
-    ["Webcam", "a-trackViewer"],
     ["Webcam", "focus"],
     ["Webcam", "archive"],
     ["Webcam", "default"],

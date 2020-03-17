@@ -875,12 +875,9 @@ class MyRadio_Track extends ServiceAPI
         }
 
         //Intersect with iTones if necessary, then return
-        return empty($options['itonesplaylistid']) ? $response :
-            array_intersect(
-                $response,
-                iTones_Playlist::getInstance($options['itonesplaylistid'])
-                ->getTracks()
-            );
+        return empty($options['itonesplaylistid']) ?
+            $response :
+            array_intersect($response, iTones_Playlist::getInstance($options['itonesplaylistid'])->getTracks());
     }
 
     /**

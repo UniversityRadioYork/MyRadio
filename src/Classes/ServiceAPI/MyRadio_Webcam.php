@@ -5,9 +5,13 @@
 namespace MyRadio\ServiceAPI;
 
 use MyRadio\Config;
+use MyRadio\ServiceAPI\MyRadio_User;
+use MyRadio\MyRadioException;
 
 /**
- * @todo Document
+ * Deals with Webcam features within MyRadio.
+ *
+ * @uses    \Database
  */
 class MyRadio_Webcam extends ServiceAPI
 {
@@ -16,10 +20,25 @@ class MyRadio_Webcam extends ServiceAPI
         return self::$db->fetchAll('SELECT * FROM webcam.streams ORDER BY streamid ASC');
     }
 
-    public static function incrementViewCounter(MyRadio_User $user)
+    /**
+    * Increments the logged in user's webcam counter.
+    */
+    public static function incrementViewCounter()
     {
+        $user = MyRadio_User::getCurrentUser(); // This bit will fail if it's not an actual user calling the API.
         //Get the current view counter. We do this as a separate query in case the row doesn't exist yet
-        $counter = self::$db->fetchOne('SELECT timer FROM webcam.memberviews WHERE memberid = $1', [$user->getID()]);
+        $counter = self::getViewCounter($user);
+
+        if (isset($_SESSION['webcam_lastcounterincrement']) && $_SESSION['webcam_lastcounterincrement'] > time() -10) {
+            /*
+             * Occurs when browser wakes up and tries to spam all the missed updates,
+             * or if multiple webcam pages are open. In this case, don't actually increment.
+             */
+            throw new MyRadioException('Requested increment too soon after last increment.', 400);
+        }
+
+        // We haven't tried to increment the webcam recently, allow it and update the time it was last incremented.
+        $_SESSION['webcam_lastcounterincrement'] = time();
         if (empty($counter)) {
             $counter = 0;
             $sql = 'INSERT INTO webcam.memberviews (memberid, timer) VALUES ($1, $2)';
@@ -27,10 +46,23 @@ class MyRadio_Webcam extends ServiceAPI
             $counter = $counter['timer'];
             $sql = 'UPDATE webcam.memberviews SET timer=$2 WHERE memberid=$1';
         }
+
+        /*
+         * We must assume this, instead of calculating it.
+         * This is because the session remains if you close the webcam page,
+         * so would count the time if you closed and re-opened the webcam page
+         */
         $counter += 15;
+
 
         self::$db->query($sql, [$user->getID(), $counter]);
 
+        return $counter;
+    }
+
+    public static function getViewCounter(MyRadio_User $user)
+    {
+        $counter = self::$db->fetchOne('SELECT timer FROM webcam.memberviews WHERE memberid = $1', [$user->getID()]);
         return $counter;
     }
 
@@ -104,9 +136,9 @@ class MyRadio_Webcam extends ServiceAPI
     }
 
     /**
-     * [setWebcam description].
+     * Changes the currently public live webcam.
      *
-     * @param [type] $id [description]
+     * @param string $id A string of the correct camera.
      */
     public static function setWebcam($id)
     {

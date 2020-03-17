@@ -1,50 +1,52 @@
 {% import 'macros.twig' as MyRadio %}
-<nav class="navbar navbar-ury navbar-fixed-top" role="navigation">
-  <div class="container">
-    <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse-1" aria-expanded="false">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-      </button>
-      {% if websiteurl %}
-        <a class="navbar-brand homepage-logo" href="{{websiteurl}}" title="Go to the {{shortname}} homepage"><img alt="Go to the {{shortname}} homepage" src="{{baseurl}}img/{{shortname}}.svg"></a>
-      {% endif %}
-      <span class="navbar-brand divider"></span>
-      <a class="navbar-brand myradio-logo" href="{{baseurl}}" title="Go to MyRadio main menu">
-        <img alt="Go to MyRadio main menu" src="{{baseurl}}img/myradio-logo.svg">
-      </a>
-    </div>
-    <div class="collapse navbar-collapse" id="navbar-collapse-1">
-     <ul class="nav navbar-nav navbar-right">
-        {% if memberid %}
-          <li>
-            <a href="{{MyRadio.makeURL(config,'MyRadio', 'timeslot', {next: uri})}}">
-              <span class="glyphicon glyphicon-time"></span> {% if timeslotname is not null %}{{ timeslotname }}{% else %}Select Timeslot{% endif %}
-            </a>
-          </li>
-          <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              {% if impersonator %}
-                <span class="glyphicon glyphicon-eye-open"></span>
-              {% else %}
-                <span class="glyphicon glyphicon-user"></span>
-              {% endif %}
-               {{ name }}<span class="caret"></span>
-            </a>
-            <ul class="dropdown-menu" role="menu">
-              <li><a href="{{MyRadio.makeURL(config, 'Profile')}}"><span class="glyphicon glyphicon-user"></span> My Profile</a></li>
-              {% if impersonator %}
-                <li class="divider"></li>
-                <li class="dropdown-header">Impersonator: {{impersonator}}</li>
-                <li><a href="{{MyRadio.makeURL(config, 'MyRadio', 'impersonate')}}"><span class="glyphicon glyphicon-eye-close"></span> Unimpersonate</a></li>
-              {% endif %}
-              <li><a href="{{MyRadio.makeURL(config, 'MyRadio', 'logout')}}"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
-            </ul>
-          </li>
-        {% endif %}
-      </ul>
-    </div>
-  </div>
-</nav>
+{% if nonav == false %}
+    <nav class="navbar navbar-ury navbar-fixed-top" role="navigation">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse-1" aria-expanded="false">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          {% if websiteurl %}
+            <a class="navbar-brand homepage-logo" href="{{websiteurl}}" title="Go to the {{shortname}} homepage"><img alt="Go to the {{shortname}} homepage" src="{{baseurl}}img/{{shortname}}.svg"></a>
+          {% endif %}
+          <span class="navbar-brand divider"></span>
+          <a class="navbar-brand myradio-logo" href="{{baseurl}}" title="Go to MyRadio main menu">
+            <img alt="Go to MyRadio main menu" src="{{baseurl}}img/myradio-logo.svg">
+          </a>
+        </div>
+        <div class="collapse navbar-collapse" id="navbar-collapse-1">
+         <ul class="nav navbar-nav navbar-right">
+            {% if memberid %}
+              <li>
+                <a href="{{MyRadio.makeURL(config,'MyRadio', 'timeslot', {next: uri})}}">
+                  <span class="glyphicon glyphicon-time"></span> {% if timeslotname is not null %}{{ timeslotname }}{% else %}Select Timeslot{% endif %}
+                </a>
+              </li>
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                  {% if impersonator %}
+                    <span class="glyphicon glyphicon-eye-open"></span>
+                  {% else %}
+                    <span class="glyphicon glyphicon-user"></span>
+                  {% endif %}
+                   {{ name }}<span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu" role="menu">
+                  <li><a href="{{MyRadio.makeURL(config, 'Profile')}}"><span class="glyphicon glyphicon-user"></span> My Profile</a></li>
+                  {% if impersonator %}
+                    <li class="divider"></li>
+                    <li class="dropdown-header">Impersonator: {{impersonator}}</li>
+                    <li><a href="{{MyRadio.makeURL(config, 'MyRadio', 'impersonate')}}"><span class="glyphicon glyphicon-eye-close"></span> Unimpersonate</a></li>
+                  {% endif %}
+                  <li><a href="{{MyRadio.makeURL(config, 'MyRadio', 'logout')}}"><span class="glyphicon glyphicon-log-out"></span> Logout</a></li>
+                </ul>
+              </li>
+            {% endif %}
+          </ul>
+        </div>
+      </div>
+    </nav>
+{% endif %}

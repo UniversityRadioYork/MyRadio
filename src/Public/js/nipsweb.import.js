@@ -12,6 +12,7 @@ $.urlParam = function(name){
 var nextWeightChannel0;
 var nextWeightChannel1;
 var nextWeightChannel2;
+var currentShowPlan;
 
 $(document).ready(
   function () {
@@ -113,7 +114,7 @@ function updateTimeslotList() {
           //If we've only got one timeslot, select that automatically.
           if (data.payload.length == 1 ) {
             $("#import-timeslot-selector option").last().prop("selected",true);
-            loadChannelList();
+            loadShowPlan();
             $("#import-showplan").fadeIn();
           }
         } else {
@@ -133,45 +134,57 @@ function updateTimeslotList() {
 
 // Stage 4) Select the timeslot & load the showplan from it.
 $("#import-timeslot-selector").change(function() {
-  loadChannelList();
+  loadShowPlan();
   $("#import-showplan").fadeIn();
 });
 
-function loadChannelList() {
+function loadShowPlan() {
   var selectedTimeslotID = $("#import-timeslot-selector").find(":selected").attr("value");
-  myradio.callAPI("GET","timeslot","showplan",selectedTimeslotID,"","",
+  myradio.callAPI("GET", "timeslot", "showplan", selectedTimeslotID, "", "",
     function (data) {
+      var item;
       for (item in data) {
         if (item === "myradio_errors") {
           continue;
         }
       }
-      $("#import-channel-list").empty();
-      var selectedChannelNo = $("#import-channel-selector a.active").attr("channel");
-      var item, itemid, cleanStars, extraString;
-      for (item in data.payload[selectedChannelNo]) {
-        if (data.payload[selectedChannelNo][item].type == "central") {
-          if (!data.payload[selectedChannelNo][item].clean) {
-            cleanStars = "**";
-          } else {
-            cleanStars = "";
-          }
-          extraString = " - " + data.payload[selectedChannelNo][item].artist + " - " + data.payload[selectedChannelNo][item].album.title + " (" + data.payload[selectedChannelNo][item].length + ")";
-          itemid = data.payload[selectedChannelNo][item]["album"].recordid + "-" + data.payload[selectedChannelNo][item].trackid;
+      currentShowPlan = data.payload;
+      loadChannelList();
+    });
+}
+
+function loadChannelList() {
+  $("#import-channel-list").empty();
+  var selectedChannelNo = $("#import-channel-selector a.active").attr("channel");
+  var item, itemid, cleanStars, extraString, expired, disabled;
+  if (currentShowPlan[selectedChannelNo] == undefined || currentShowPlan[selectedChannelNo].length == 0) {
+    $("#import-channel-list").append("<p>No items in this channel.</p>");
+    $("#import-channel-filter-btns").fadeOut();
+  } else {
+    for (item in currentShowPlan[selectedChannelNo]) {
+      item = currentShowPlan[selectedChannelNo][item];
+      if (item.type == "central") {
+        if (!item.clean) {
+          cleanStars = "**";
         } else {
           cleanStars = "";
-          extraString = "";
-          itemid = "ManagedDB-" + data.payload[selectedChannelNo][item].managedid;
         }
-        $("#import-channel-list").append("<input type=\"checkbox\" class=\"channel-list-item\" value=\""+ itemid + "\">" + cleanStars + data.payload[selectedChannelNo][item].title + extraString + "<br>");
-        $("#import-channel-filter-btns").fadeIn();
+        expired = !(item.digitised);
+        extraString = " - " + item.artist + " - " + item.album.title + " (" + item.length + ")";
+        itemid = item["album"].recordid + "-" + item.trackid;
+      } else {
+        cleanStars = "";
+        extraString = " ";
+        itemid = "ManagedDB-" + item.managedid;
+        expired = item.expired;
       }
-      if (data.payload[selectedChannelNo] == undefined || data.payload[selectedChannelNo].length == 0) {
-        $("#import-channel-list").append("<p>No items in this channel.</p>");
-        $("#import-channel-filter-btns").fadeOut();
-      }
+      disabled = (expired ? "disabled": "");
+      $("#import-channel-list").append("<li class=\"" + disabled + "\"><input type=\"checkbox\" class=\"channel-list-item\" "
+        + disabled + " value=\""+ itemid + "\">"
+        + cleanStars + item.title + extraString + "</li>");
+      $("#import-channel-filter-btns").fadeIn();
     }
-  );
+  }
 }
 
 // Stage 5) Select a channel to import from.
