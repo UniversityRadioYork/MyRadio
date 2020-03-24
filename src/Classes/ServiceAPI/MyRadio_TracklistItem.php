@@ -70,6 +70,48 @@ class MyRadio_TracklistItem extends ServiceAPI
         return new self($result);
     }
 
+
+    /**
+     * Create a new TracklistItem, returning the new item.
+     *
+     * @param int $trackid  The ID of the track to tracklist.
+     * @param int $timeslotid   The ID of the timeslot to tracklist to. Optional, defaults to current show.
+     *
+     * @return MyRadio_TracklistItem
+     *
+     * @throws MyRadioException
+     */
+    public static function create($trackid, $timeslotid = null)
+    {
+
+        $track = MyRadio_Track::getInstance($track_id);
+
+        if ($timeslotid == null) {
+            $timeslotid = (MyRadio_Timeslot::getCurrentTimeslot())->getID();
+        }
+
+        self::$db->query('BEGIN');
+
+        $audiologid = self::$db->fetchOne(
+            'INSERT INTO tracklist.tracklist (source, timeslotid)
+            VALUES ($1, $2) RETURNING audiologid',
+            [$source, $timeslotid]
+        );
+
+        $tracklistid = self::$db->fetchOne(
+            'INSERT INTO tracklist.track_rec (audiologid, recordid, trackid)
+            VALUES ($1, $2, $3) RETURNING',
+            [$audiologid['audiologid'], $track->getAlbum()->getID(), $track->getID()]
+        );
+
+        self::$db->query('COMMIT');
+
+        $item = self::getInstance($tracklistid);
+
+        return $item;
+
+    }
+
     public function getID()
     {
         return $this->audiologid;
