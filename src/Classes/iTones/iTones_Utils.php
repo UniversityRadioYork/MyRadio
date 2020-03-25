@@ -132,7 +132,7 @@ class iTones_Utils extends \MyRadio\ServiceAPI\ServiceAPI
     public static function requestFile($file, $queue = 'requests')
     {
         self::verifyQueue($queue);
-        $r = self::telnetOp('jukebox_'.$queue.'.push '.$file);
+        $r = self::telnetOp('jukebox_'.$queue.'.push replay_gain:'.$file);
 
         return is_numeric($r);
     }
