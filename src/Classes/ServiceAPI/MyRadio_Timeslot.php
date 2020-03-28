@@ -251,10 +251,19 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
     /**
     * Returns the currently selected timeslot (from the navbar).
     *
-    * @return int|null If null, no timeslot is selected/user is logged out.
+    * @return array  Time, id If null, no timeslot is selected/user is logged out.
     */
     public static function getUserSelectedTimeslot() {
-        return isset($_SESSION['timeslotid']) ? $_SESSION['timeslotid'] : null;
+        if (isset($_SESSION['timeslotid'])) {
+            $timeslot = self::getInstance($_SESSION['timeslotid']);
+
+            $result = [
+                "time" => $timeslot->getStartTime(),
+                "timeslotid" => $timeslot->getId()
+            ];
+            return result;
+        }
+        return null;
     }
 
     /**
