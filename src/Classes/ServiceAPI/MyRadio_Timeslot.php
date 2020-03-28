@@ -261,7 +261,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
                 "time" => $timeslot->getStartTime(),
                 "timeslotid" => $timeslot->getId()
             ];
-            return result;
+            return $result;
         }
         return null;
     }
