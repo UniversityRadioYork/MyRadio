@@ -109,16 +109,24 @@ class MyRadio_TracklistItem extends ServiceAPI
             $timeslot = MyRadio_Timeslot::getInstance($timeslotid);
         }
 
-        if ($tracklist_all == false && !in_array(MyRadio_User::getCurrentUser(), $this->timeslot->getSeason()->getShow()->getCreditObjects())) {
-            throw new MyRadioException("Current user doesn't have permission to tracklist to a show they aren't credited on.", 403);
+        if ($timeslot == null) {
+            // we're on jukebox
+            if ($tracklist_all == false) {
+                throw new MyRadioException("The current user doesn't have permission to set a tracklist on a show other than their own.", 403);
+            }
+        } else {
+            if ($tracklist_all == false && !in_array(MyRadio_User::getCurrentUser(), $timeslot->getSeason()->getShow()->getCreditObjects())) {
+                throw new MyRadioException("Current user doesn't have permission to tracklist to a show they aren't credited on.", 403);
+            }
+            if ($timeslot->getStartTime() > $starttime || $timeslot->getEndTime() < $starttime) {
+                throw new MyRadioException("The starttime provided was outside the window of the requested timeslot.", 400);
+            }
+
         }
+
 
         if ($starttime == null) {
             $starttime = time();
-        }
-
-        if ($timeslot->getStartTime() > $starttime || $timeslot->getEndTime() < $starttime) {
-            throw new MyRadioException("The starttime provided was outside the window of the requested timeslot.", 400);
         }
 
         $track = MyRadio_Track::getInstance($trackid);
