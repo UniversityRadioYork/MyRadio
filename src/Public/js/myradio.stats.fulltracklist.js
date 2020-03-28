@@ -26,6 +26,10 @@ $(".twig-datatable").dataTable({
     {
       "sTitle": "Start Time"
     },
+    //starttime
+    {
+      "sTitle": "End Time"
+    },
     //label
     {
       sTitle: "Label"
