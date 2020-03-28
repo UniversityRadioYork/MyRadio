@@ -135,9 +135,9 @@ class MyRadio_TracklistItem extends ServiceAPI
         self::$db->query('BEGIN');
 
         $audiologid = self::$db->fetchOne(
-            'INSERT INTO tracklist.tracklist (source, timeslotid, starttime, state)
+            'INSERT INTO tracklist.tracklist (source, timeslotid, timestart, state)
             VALUES ($1, $2, $3, $4) RETURNING audiologid',
-            [$sourceid, $timeslotid, CoreUtils::getTimestamp($time), $state]
+            [$sourceid, $timeslotid, CoreUtils::getTimestamp($starttime), $state]
         );
 
         if ($audiologid['audiologid'] == null) {
