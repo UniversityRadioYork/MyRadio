@@ -78,4 +78,7 @@
     ["Stop Broadcast","AUTH_STOPBROADCAST", true],
     ["Add Quotes","AUTH_ADD_QUOTES", true],
     ["Upload Music - Manual","AUTH_UPLOADMUSICMANUAL", true]
+    ["Tracklist own/current show","AUTH_TRACKLIST_OWN", true],
+    ["Tracklist for any show/timeslot","AUTH_TRACKLIST_ALL", true]
+
 ]
