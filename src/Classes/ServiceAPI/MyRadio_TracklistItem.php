@@ -91,10 +91,9 @@ class MyRadio_TracklistItem extends ServiceAPI
 
         if (AuthUtils::hasPermission(AUTH_TRACKLIST_ALL)) {
             $tracklist_all = true;
-        }
-        else if (AuthUtils::hasPermission(AUTH_TRACKLIST_OWN))
+        } else if (AuthUtils::hasPermission(AUTH_TRACKLIST_OWN)) {
             $tracklist_all = false;
-        else {
+        } else {
             throw new MyRadioException("The current user does not have permission to create a tracklistitem.", 403);
         }
 
@@ -115,7 +114,7 @@ class MyRadio_TracklistItem extends ServiceAPI
                 throw new MyRadioException("The current user doesn't have permission to set a tracklist on a show other than their own.", 403);
             }
         } else {
-            if ($tracklist_all == false && !in_array(MyRadio_User::getCurrentUser(), $timeslot->getSeason()->getShow()->getCreditObjects())) {
+            if ($tracklist_all == false && !$this->timeslot->getSeason()->getShow()->isCurrentUserAnOwner()) {
                 throw new MyRadioException("Current user doesn't have permission to tracklist to a show they aren't credited on.", 403);
             }
             if ($timeslot->getStartTime() > $starttime || $timeslot->getEndTime() < $starttime) {
@@ -168,16 +167,16 @@ class MyRadio_TracklistItem extends ServiceAPI
             $time = CoreUtils::getTimestamp();
             if (AuthUtils::hasPermission(AUTH_TRACKLIST_ALL)
                 || (AuthUtils::hasPermission(AUTH_TRACKLIST_OWN)
-                    && in_array(MyRadio_User::getCurrentUser(), $this->timeslot->getSeason()->getShow()->getCreditObjects()))
+                    && $this->timeslot->getSeason()->getShow()->isCurrentUserAnOwner())
             ) {
-                    self::$db->query(
-                        'UPDATE tracklist.tracklist SET timestop=$1 WHERE audiologid=$2',
-                        [$time, $this->getID()]
-                    );
-                    $this->endtime = strtotime($time);
-                } else {
-                    throw new MyRadioException("Current user doesn't have permission to set the endtime of a tracklistitem not from their show.", 403);
-                }
+                self::$db->query(
+                    'UPDATE tracklist.tracklist SET timestop=$1 WHERE audiologid=$2',
+                    [$time, $this->getID()]
+                );
+                $this->endtime = strtotime($time);
+            } else {
+                throw new MyRadioException("Current user doesn't have permission to set the endtime of a tracklistitem not from their show.", 403);
+            }
         } else {
             throw new MyRadioException("This timeslotitem does not have a start time. An end time therefore cannot be set.", 400);
         }
