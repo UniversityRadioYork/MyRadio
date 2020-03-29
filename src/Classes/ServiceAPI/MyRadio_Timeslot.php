@@ -258,8 +258,9 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             $timeslot = self::getInstance($_SESSION['timeslotid']);
 
             $result = [
-                "time" => $timeslot->getStartTime(),
-                "timeslotid" => $timeslot->getId()
+                "starttime" => $timeslot->getStartTime(),
+                "timeslotid" => $timeslot->getId(),
+                "title" => $timeslot->getMeta("title")
             ];
             return $result;
         }
