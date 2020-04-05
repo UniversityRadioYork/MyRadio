@@ -6,6 +6,7 @@ var Selector = function () {
       2: "Studio Blue",
       3: "Jukebox",
       4: "Outside Broadcast",
+      5: "WebStudio",
       8: "Off Air"
     },
     that,
