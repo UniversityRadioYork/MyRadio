@@ -5,6 +5,8 @@
  */
 namespace MyRadio\NIPSWeb;
 
+use MyRadio\ServiceAPI\MyRadio_User;
+
 /**
  * The NIPSWeb_ManagedUserPlaylist class provide My Jingles and My Beds for users.
  *
