@@ -47,6 +47,12 @@ class NIPSWeb_ManagedUserPlaylist extends NIPSWeb_ManagedPlaylist
             case 'links':
                 return 'My Links';
                 break;
+            case 'sfx':
+                return 'My Sound Effects';
+                break;
+            case 'other':
+                return 'My Misc Things';
+                break;
             default:
                 return 'ERR_USR_PRESET_NOT_FOUND: '.$id;
                 break;
@@ -102,7 +108,9 @@ class NIPSWeb_ManagedUserPlaylist extends NIPSWeb_ManagedPlaylist
         return [
             self::getInstance($user->getID().'/beds'),
             self::getInstance($user->getID().'/jingles'),
-            self::getInstance($user->getID().'/links')
+            self::getInstance($user->getID().'/links'),
+            self::getInstance($user->getID().'/sfx'),
+            self::getInstance($user->getID().'/other')
         ];
     }
 }
