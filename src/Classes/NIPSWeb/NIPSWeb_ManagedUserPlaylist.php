@@ -28,11 +28,11 @@ class NIPSWeb_ManagedUserPlaylist extends NIPSWeb_ManagedPlaylist
     }
 
     /**
-     * Get the User Playlist Name from the Folder path. This is "My Beds", "My Links", or "My Jingles".
+     * Get the User Playlist Name from the Folder path.
      *
      * @param string $id Folder
      *
-     * @return string "My Beds" or "My Jingles" or "My Links
+     * @return string the playlist name
      */
     public static function getNameFromFolder($id)
     {
