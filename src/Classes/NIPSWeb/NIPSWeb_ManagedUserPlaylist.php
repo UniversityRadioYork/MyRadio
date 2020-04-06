@@ -51,7 +51,7 @@ class NIPSWeb_ManagedUserPlaylist extends NIPSWeb_ManagedPlaylist
                 return 'My Sound Effects';
                 break;
             case 'other':
-                return 'My Misc Tbignes';
+                return 'My Misc Things';
                 break;
             default:
                 return 'ERR_USR_PRESET_NOT_FOUND: '.$id;
