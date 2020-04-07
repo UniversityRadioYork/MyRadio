@@ -24,7 +24,7 @@ CoreUtils::getTemplateObject()->setTemplate('NIPSWeb/manage_library_manual.twig'
             [
                 'managed' => [],
                 'aux' => NIPSWeb_ManagedPlaylist::getAllManagedPlaylists(true),
-                'user' => NIPSWeb_ManagedUserPlaylist::getAllManagedUserPlaylistsFor(MyRadio_User::getInstance()),
+                'user' => NIPSWeb_ManagedUserPlaylist::getAllManagedUserPlaylists(),
             ]
         )
     )->render();
