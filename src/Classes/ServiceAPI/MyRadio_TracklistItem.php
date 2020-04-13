@@ -170,7 +170,13 @@ class MyRadio_TracklistItem extends ServiceAPI
     public function setEndTime()
     {
         if ($this->starttime) {
-            $time = CoreUtils::getTimestamp();
+            // Table is timestamp with no timezone, so we need to account for BST
+            $endtime = time();
+            $dst_offset = timezone_offset_get(timezone_open(Config::$timezone), date_create('@'.$endtime));
+            if ($dst_offset !== false) {
+                $endtime = $endtime + $dst_offset;
+            }
+            $time = CoreUtils::getTimestamp($endtime);
             if (AuthUtils::hasPermission(AUTH_TRACKLIST_ALL)
                 || (AuthUtils::hasPermission(AUTH_TRACKLIST_OWN)
                     && $this->timeslot->getSeason()->getShow()->isCurrentUserAnOwner())
