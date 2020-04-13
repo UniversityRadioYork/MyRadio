@@ -108,6 +108,16 @@ class MyRadio_TracklistItem extends ServiceAPI
             $timeslot = MyRadio_Timeslot::getInstance($timeslotid);
         }
 
+        if ($starttime == null) {
+            $starttime = time();
+        }
+
+        // Table is timestamp with no timezone, so we need to account for BST
+        $dst_offset = timezone_offset_get(timezone_open(Config::$timezone), date_create('@'.$starttime));
+        if ($dst_offset !== false) {
+            $starttime = $starttime + $dst_offset;
+        }
+
         if ($timeslot == null) {
             // we're on jukebox
             if ($tracklist_all == false) {
@@ -123,10 +133,6 @@ class MyRadio_TracklistItem extends ServiceAPI
 
         }
 
-
-        if ($starttime == null) {
-            $starttime = time();
-        }
 
         $track = MyRadio_Track::getInstance($trackid);
 
