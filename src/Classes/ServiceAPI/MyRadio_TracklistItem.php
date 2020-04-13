@@ -112,25 +112,25 @@ class MyRadio_TracklistItem extends ServiceAPI
             $starttime = time();
         }
 
-        // Table is timestamp with no timezone, so we need to account for BST
-        $dst_offset = timezone_offset_get(timezone_open(Config::$timezone), date_create('@'.$starttime));
-        if ($dst_offset !== false) {
-            $starttime = $starttime + $dst_offset;
-        }
-
         if ($timeslot == null) {
             // we're on jukebox
             if ($tracklist_all == false) {
                 throw new MyRadioException("The current user doesn't have permission to set a tracklist on a show other than their own.", 403);
             }
         } else {
-            if ($tracklist_all == false && !$this->timeslot->getSeason()->getShow()->isCurrentUserAnOwner()) {
+            if ($tracklist_all == false && !$timeslot->getSeason()->getShow()->isCurrentUserAnOwner()) {
                 throw new MyRadioException("Current user doesn't have permission to tracklist to a show they aren't credited on.", 403);
             }
             if ($timeslot->getStartTime() > $starttime || $timeslot->getEndTime() < $starttime) {
                 throw new MyRadioException("The starttime provided was outside the window of the requested timeslot.", 400);
             }
 
+        }
+        
+        // Table is timestamp with no timezone, so we need to account for BST
+        $dst_offset = timezone_offset_get(timezone_open(Config::$timezone), date_create('@'.$starttime));
+        if ($dst_offset !== false) {
+            $starttime = $starttime + $dst_offset;
         }
 
 
