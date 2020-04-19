@@ -110,6 +110,7 @@
     ["Quotes", "addQuote", "AUTH_ADD_QUOTES"],
     ["Quotes", "default", null],
     ["Quotes", "editQuote", null],
+    ["Quotes", "removeQuote", null],
     ["Resource", "default", "AUTH_PERSONALPLAYLIST"],
     ["Scheduler", "a-findshowbytitle", null],
     ["Scheduler", "allocate", "AUTH_ALLOCATESLOTS"],

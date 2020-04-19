@@ -32,6 +32,8 @@ class MyRadio_Quote extends ServiceAPI
             quote_id
         FROM
             people.quote
+        WHERE
+            suspended = false
         ORDER BY
             date DESC
         ;';
@@ -41,11 +43,11 @@ class MyRadio_Quote extends ServiceAPI
             *
         FROM
             people.quote
-        ORDER BY 
+        ORDER BY
             random()
         LIMIT 1;
         ';
-        
+
     const INSERT_SQL = '
         INSERT INTO
             people.quote(text, source, date)
@@ -79,7 +81,16 @@ class MyRadio_Quote extends ServiceAPI
         WHERE
             quote_id = $2
         ;';
-    
+
+    const SET_SUSPENDED_SQL = '
+        UPDATE
+            people.quote
+        SET
+            suspended = true
+        WHERE
+            quote_id = $1
+        ;';
+
     /**
      * The quote ID.
      *
@@ -107,6 +118,13 @@ class MyRadio_Quote extends ServiceAPI
      * @var int
      */
     private $date;
+
+    /**
+     * Whether the quote has been suspended.
+     *
+     * @var bool
+     */
+    private $suspended;
 
     /**
      * The singleton store of all Quotes.
@@ -140,6 +158,7 @@ class MyRadio_Quote extends ServiceAPI
         $this->text = $quote_data['text'];
         $this->source = MyRadio_User::getInstance($quote_data['source']);
         $this->date = strtotime($quote_data['date']);
+        $this->suspended = $quote_data['suspended'];
     }
 
     /**
@@ -178,7 +197,7 @@ class MyRadio_Quote extends ServiceAPI
 
         return array_map('self::getInstance', $quote_ids);
     }
-    
+
     /**
     * Retrieves a random quote
     * Probably didn't need to use array_map, but I copied getAll. Sorry - Jordan
@@ -187,10 +206,10 @@ class MyRadio_Quote extends ServiceAPI
     public static function getRandom()
     {
         $quote_id = self::$db->fetchColumn(self::GET_RANDOM_SQL, []);
-        
+
         return array_map('self::getInstance', $quote_id);
     }
-    
+
     /**
      * @return int The quote ID.
      */
@@ -221,6 +240,14 @@ class MyRadio_Quote extends ServiceAPI
     public function getDate()
     {
         return $this->date;
+    }
+
+    /**
+     * @return bool Whether the quote has been suspended
+     */
+    public function getSuspended()
+    {
+        return $this->suspended;
     }
 
     /**
@@ -284,6 +311,13 @@ class MyRadio_Quote extends ServiceAPI
         $this->date = $date;
 
         return $this->set(self::SET_DATE_SQL, CoreUtils::getTimestamp($date));
+    }
+
+    public function setSuspended()
+    {
+        $this->suspended = $suspended;
+
+        return $this->set(self::SET_SUSPENDED_SQL);
     }
 
     /**
@@ -356,6 +390,49 @@ class MyRadio_Quote extends ServiceAPI
             );
     }
 
+    public function getRemoveForm()
+    {
+        $form = new MyRadioForm(
+            'quote_remove',
+            'Quote',
+            'removeQuote',
+            [
+                'debug' => false,
+                'title' => 'Remove Quote'
+            ]
+        );
+        $form->addField(
+            new MyRadioFormField(
+                'reason',
+                MyRadioFormField::TYPE_BLOCKTEXT,
+                ['label' => 'Please explain why this Quote should be removed from Quotes Board']
+            )
+        )->addField(
+            new MyRadioFormField(
+                'quote_id',
+                MyRadioFOrmField::TYPE_HIDDEN,
+                ['value' => $_REQUEST['quote_id']]
+            )
+        );
+        return $form;
+    }
+
+    public function removeQuote($reason)
+    {
+        if (MyRadio_User::getInstance()->hasAuth(AUTH_SUSPENDQUOTES)) {
+            $r = self::$db->query(
+                self::SET_SUSPENDED_SQL,
+                [$this->getID()]
+            );
+            if (!r) {
+                return false;
+            }
+        } else {
+            return false;
+        }
+        return true;
+    }
+
     /**
      * Converts this quote to a table data source.
      * @param array $mixins Mixins. Currently unused.
@@ -372,6 +449,7 @@ class MyRadio_Quote extends ServiceAPI
                 'display' => 'html',
                 'html' => $this->getText(),
             ],
+            'suspended' => $this->getSuspended(),
             'editlink' => [
                 'display' => 'icon',
                 'value' => 'pencil',
@@ -381,6 +459,16 @@ class MyRadio_Quote extends ServiceAPI
                     'editQuote',
                     ['quote_id' => $this->getID()]
                 ),
+            ],
+            'removelink' => [
+                'display' => 'icon',
+                'value' => 'trash',
+                'title' => 'Remove Quote',
+                'url' => URLUtils::makeURL(
+                    'Quotes',
+                    'removeQuote',
+                    ['quote_id' => $this->getID()]
+                )
             ],
         ];
     }
