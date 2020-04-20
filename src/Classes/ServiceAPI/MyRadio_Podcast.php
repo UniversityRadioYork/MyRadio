@@ -331,8 +331,8 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
                 [
                     'label' => 'Existing Cover Photo',
                     'explanation' => 'To use an existing cover photo of another podcast, '
-                                     . 'copy the Existing Cover Photo file of another '
-                                     . 'podcast with that photo into here. For new images, keep blank.',
+                        . 'copy the Existing Cover Photo file of another '
+                        . 'podcast with that photo into here. For new images, keep blank.',
                     'required' => false,
                 ]
             )
@@ -824,6 +824,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
             WHERE podcast_id=$2',
             [CoreUtils::getTimestamp($time), $this->getID()]
         );
+        $this->updateCacheObject();
 
         return $this;
     }
@@ -859,9 +860,22 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
      *
      * @return Array[MyRadio_Podcast]
      */
-    public static function getAllPodcasts($num_results = 0, $page = 1, $includeSuspended = true)
+    public static function getAllPodcasts($num_results = 0, $page = 1, $includeSuspended = true, $includePending = true)
     {
-        $where = !$includeSuspended ? 'WHERE suspended = false ': '';
+        $where = '';
+        if ($includeSuspended || $includePending) {
+            $where = 'WHERE ';
+            if (!$includeSuspended) {
+                $where += 'suspended = false'
+            }
+            if ($includeSuspended && $includePending) {
+                $where += ' AND '
+            }
+            if ($includePending) {
+                $where += 'submitted != false'
+            }
+        }
+
         $filterLimit = $num_results == 0 ? 'ALL' : $num_results;
         $filterOffset = $num_results * $page;
         $query = "SELECT podcast_id FROM uryplayer.podcast $where";
