@@ -868,7 +868,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
             if (!$includeSuspended) {
                 $where += 'suspended = false';
             }
-            if ($includeSuspended && $includePending) {
+            if (!$includeSuspended && $includePending) {
                 $where += ' AND ';
             }
             if ($includePending) {
