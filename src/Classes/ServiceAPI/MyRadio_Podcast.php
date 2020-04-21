@@ -856,22 +856,23 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
      *
      * @param int $num_results The number of results to return per page. 0 for all podcasts.
      * @param int $page The page required.
-     * @param bool $includeSuspended Whether to include suspended podcasts in the result
+     * @param bool $include_suspended Whether to include suspended podcasts in the result
+     * @param bool $include_pending Whether to include pending (future publish/processing) podcasts in the result
      *
      * @return Array[MyRadio_Podcast]
      */
-    public static function getAllPodcasts($num_results = 0, $page = 1, $includeSuspended = true, $includePending = true)
+    public static function getAllPodcasts($num_results = 0, $page = 1, $include_suspended = true, $include_pending = true)
     {
         $where = '';
-        if (!$includeSuspended || !$includePending) {
+        if (!$include_suspended || !$include_pending) {
             $where = 'WHERE ';
             if (!$includeSuspended) {
                 $where .= 'suspended = false';
             }
-            if (!$includeSuspended && !$includePending) {
+            if (!$include_suspended && !$include_pending) {
                 $where .= ' AND ';
             }
-            if (!$includePending) {
+            if (!$include_pending) {
                 $where .= 'NOT submitted IS NULL';
             }
         }
