@@ -863,12 +863,12 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
     public static function getAllPodcasts($num_results = 0, $page = 1, $includeSuspended = true, $includePending = true)
     {
         $where = '';
-        if ($includeSuspended || $includePending) {
+        if (!$includeSuspended || !$includePending) {
             $where = 'WHERE ';
             if (!$includeSuspended) {
                 $where .= 'suspended = false';
             }
-            if (!$includeSuspended && $includePending) {
+            if (!$includeSuspended && !$includePending) {
                 $where .= ' AND ';
             }
             if (!$includePending) {
