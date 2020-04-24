@@ -37,7 +37,7 @@ a2enmod ssl
 a2enmod rewrite
 service apache2 stop
 
-cat <<EOF >> /etc/php/7.2/mods-available/xdebug.ini
+cat <<EOF >> /etc/php/7.3/mods-available/xdebug.ini
 xdebug.default_enable=1
 xdebug.remote_enable=1
 xdebug.remote_autostart=0
