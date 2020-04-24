@@ -11,9 +11,9 @@ MyRadio is part of a suite of upcoming public projects, including:
 - loggerng, our python audio logging and retriving system
 - Bootstrapping scripts for setting up and configuring all the dependencies
 
-Super Quickstart
+Super Quickstart [@]
 ----------------
-MyRadio comes with a Vagrantfile based on Ubuntu 16.04.
+MyRadio comes with a Vagrantfile based on Ubuntu 16.10.
 If you have [Vagrant](https://www.vagrantup.com) installed and want to get
 developing or playing right away, just run `vagrant up` and a few minutes
 later [you'll have a working server](https://localhost:4443/myradio/).
@@ -118,3 +118,14 @@ York has 10 week terms, if you didn't know.
 
 MyRadio uses GitHub Flow as a development workflow:
 https://guides.github.com/overviews/flow/
+
+
+Super Quickstart Notes [@]
+--------------------------
+- Make sure you have both "vagrant" and "virtualbox" installed
+- Process may take a long time and use up all processing power
+- It will ask for database credentials TWICE, enter it both times as normal
+- Click on the "standard user" option (top) and confirm the config section without
+changing values (unless you wish to)
+- Input any first name and last name, an email (NOT a @york.ac.uk email) and a password
+- If you enter a @york.ac.uk email you will not be able to login at all
