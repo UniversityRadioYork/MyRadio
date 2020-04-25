@@ -7,7 +7,7 @@ use \MyRadio\MyRadio\AuthUtils;
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\ServiceAPI\MyRadio_User;
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $_REQUEST['password'] === $_REQUEST['passwordchk']) {
     $params = [
         'fname' => $_REQUEST['first-name'],
         'sname' => $_REQUEST['last-name'],
