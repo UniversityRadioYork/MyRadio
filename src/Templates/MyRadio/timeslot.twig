@@ -30,7 +30,15 @@
         Click here to load the current show</a>.
 </p>
 {% endif %}
-
+<hr />
+{% if timeslots is empty %}
+<p>
+    <strong>
+        You haven't got any timeslots, you need to schedule your show first! To do this, go to
+        the <a href="{{MyRadio.makeURL(config, 'Scheduler', 'editShow')}}" title="Create a show">Create New Show</a> page.
+    </strong>
+</p>
+{% else %}
 <form action='{{MyRadio.makeURL(config,"MyRadio","timeslot")}}' method='post'>
     <fieldset class="timeslot">
         <select id="shows" size="20">
@@ -47,6 +55,7 @@
     </fieldset>
     <input type="submit" id="signin-submit" value="Continue" class="btn btn-primary hidden" />
 </form>
+{% endif %}
 {% endblock %}
 {% block foot %}
 {{ parent() }}
