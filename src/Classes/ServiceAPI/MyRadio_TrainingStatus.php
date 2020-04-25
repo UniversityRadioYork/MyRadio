@@ -196,16 +196,16 @@ class MyRadio_TrainingStatus extends ServiceAPI
     /**
      * Returns full name of all Users with this Training Status
      */
-    public function getListAll($ids = false)
+    public function getAllTrained($ids = false)
     {
-        if ($this->listall === null) {
-            $this->listall = self::$db->fetchColumn(
+        if ($this->alltrained === null) {
+            $this->alltrained = self::$db->fetchColumn(
                 "SELECT RTRIM(LTRIM( CONCAT(fname, ' ', sname))) AS name FROM public.member_presenterstatus INNER JOIN public.member ON public.member_presenterstatus.memberid = public.member.memberid WHERE presenterstatusid = $1",
                 [$this->getID()]
             );
         }
         
-        return $this->listall;
+        return $this->alltrained;
     }
 
     /**
