@@ -14,7 +14,7 @@ $caption = 'Please select a Training Status above.';
 if (isset($_GET['id'])) {
     $title = MyRadio_TrainingStatus::getInstance($_GET['id'])->getTitle();
     $caption = 'List of the people who have: ' . $title . '...';
-    $text = implode(" ,  ",MyRadio_TrainingStatus::getInstance($_GET['id'])->getListAll());
+    $text = implode(" ,  ",MyRadio_TrainingStatus::getInstance($_GET['id'])->getAllTrained());
 }
 
 CoreUtils::getTemplateObject()->setTemplate('MyRadio/trainingMap.twig')
