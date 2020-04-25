@@ -258,7 +258,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
             function ($x) {
                 return ['text' => $x->getMeta('title'), 'value' => $x->getID()];
             },
-            $auth ? MyRadio_Show::getAllShows() : MyRadio_User::getInstance()->getShows()
+            $auth ? MyRadio_Show::getAllShows($current_term_only = true) : MyRadio_User::getInstance()->getShows()
         );
 
         //Add an option for not attached to a show
