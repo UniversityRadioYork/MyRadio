@@ -1027,8 +1027,12 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         $writer->endElement();
 
         $writer->startElementNs("itunes", "image", null);
-        $writer->writeAttribute("href", $this->getShowPhoto());
+        $writer->writeAttribute("href", 'https:' . Config::$website_url . Config::$public_media_uri.'/' . $this->getShowPhoto());
         $writer->endElement();
+
+        $writer->writeAttributeNs("itunes", "email", null, "podcasting@" . Config::$email_domain);
+
+        // TODO itunes:explicit
 
         foreach ($this->getAllPodcasts() as $episode) {
             if (!($episode->isPublished())) {
