@@ -1030,7 +1030,12 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         $writer->writeAttribute("href", 'https:' . Config::$website_url . Config::$public_media_uri.'/' . $this->getShowPhoto());
         $writer->endElement();
 
+        $writer->startElementNs("itunes", "owner", null);
+
+        $writer->writeAttributeNs("itunes", "name", null, Config::$long_name);
         $writer->writeAttributeNs("itunes", "email", null, "podcasting@" . Config::$email_domain);
+
+        $writer->endElement();
 
         // TODO itunes:explicit
 
