@@ -1053,7 +1053,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             }
 
             $writer->startElement("enclosure");
-            $writer->writeAttribute("url", $episode->getURI());
+            $writer->writeAttribute("url", 'https:' . Config::$website_url . $episode->getURI());
             $writer->writeAttribute("type", "audio/mpeg"); // TODO
             $writer->writeAttribute("length", filesize($episode->getWebFile()));
             $writer->endElement();
