@@ -812,6 +812,21 @@ class MyRadio_Show extends MyRadio_Metadata_Common
     }
 
     /**
+     * Gets all podcasts linked to this show.
+     * @return MyRadio_Podcast[]
+     */
+    public function getAllPodcasts() {
+        $ids = self::$db->fetchColumn('SELECT podcast_id FROM schedule.show_podcast_link WHERE show_id = $1', [$this->getID()]);
+
+        $podcasts = [];
+        foreach ($ids as $id) {
+            $podcasts[] = MyRadio_Podcast::getInstance($id);
+        }
+
+        return $podcasts;
+    }
+
+    /**
      * Returns all Shows of the given type. Caches for 1h.
      *
      * @return Array[MyRadio_Show]
@@ -972,6 +987,79 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         );
         return self::resultSetToObjArray($r);
     }
+
+    /**
+     * Generate a podcast RSS feed for this show.
+     * @return string
+     */
+    public function getPodcastRss() {
+        $writer = new \XMLWriter();
+        $writer->openMemory();
+        $writer->startDocument('1.0', 'UTF-8');
+        $writer->setIndent(true);
+
+        $writer->startElement('rss');
+        $writer->writeAttribute('xmlns:itunes', 'https://www.itunes.com/dtds/podcast-1.0.dtd');
+        $writer->writeAttribute('xmlns:spotify', 'https://www.spotify.com/ns/rss');
+        $writer->writeAttribute('version', '2.0');
+
+        $writer->startElement('channel');
+
+        $writer->writeElement("title", $this->getMeta("title"));
+        $writer->writeElement("link", $this->getWebpage());
+
+        $writer->startElement("description");
+        $writer->writeCdata($this->getMeta("description"));
+        $writer->endElement();
+
+        $writer->writeElement("language", "en"); // TODO
+
+        $writer->writeElementNs("itunes", "author", null, $this->getPresenterString());
+
+        $writer->startElementNs("itunes", "category", null);
+        $writer->writeAttribute("text", "Society & Culture");
+        $writer->endElement();
+
+        $writer->startElementNs("itunes", "image", null);
+        $writer->writeAttribute("href", $this->getShowPhoto());
+        $writer->endElement();
+
+        foreach ($this->getAllPodcasts() as $episode) {
+            if (!($episode->isPublished())) {
+                continue;
+            }
+
+            $writer->startElement("item");
+
+            $writer->writeElement("guid", $episode->getGUID());
+            $writer->writeElement("title", $episode->getMeta("title"));
+
+            $writer->startElement("description");
+            $writer->writeCdata($episode->getMeta("description"));
+            $writer->endElement();
+
+            $writer->writeElement("pubDate", CoreUtils::getRfc2822Timestamp($episode->getSubmitted()));
+
+            $writer->startElementNs("itunes", "image", null);
+            $writer->writeAttribute("href", Config::$public_media_uri.'/'.$episode->getCover());
+            $writer->endElement();
+
+            $writer->startElement("enclosure");
+            $writer->writeAttribute("url", $episode->getURI());
+            $writer->writeAttribute("type", "audio/mpeg"); // TODO
+            $writer->writeAttribute("length", filesize($episode->getWebFile()));
+            $writer->endElement();
+
+            $writer->endElement();
+        }
+
+        $writer->endElement();
+        $writer->endElement();
+        $writer->endDocument();
+
+        return $writer->flush();
+    }
+
 
     public function toDataSource($mixins = [])
     {

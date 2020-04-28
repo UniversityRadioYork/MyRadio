@@ -4,7 +4,8 @@
         "ezyang/htmlpurifier": "~4.10",
         "google/recaptcha": "~1.1",
         "soundasleep/html2text": "~0.5",
-        "twig/twig": "~2.4"
+        "twig/twig": "~2.4",
+        "ext-xmlwriter": "*"
     },
     "require-dev": {
         "squizlabs/php_codesniffer": "~3.5",

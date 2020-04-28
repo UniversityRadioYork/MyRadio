@@ -533,6 +533,16 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
     }
 
     /**
+     * Whether this podcast should be live right now
+     * @return bool
+     */
+    public function isPublished() {
+        return !$this->isSuspended()
+            && !empty($this->submitted)
+            && $this->submitted < time();
+    }
+
+    /**
      * Get the file system path to where the original file is stored.
      *
      * @return string
@@ -638,6 +648,14 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
         }
 
         return $this;
+    }
+
+    /**
+     * Get a GUID for iTunes
+     * @return string
+     */
+    public function getGUID() {
+        return $this->getWebpage();
     }
 
     /**
