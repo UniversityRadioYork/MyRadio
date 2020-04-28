@@ -816,7 +816,13 @@ class MyRadio_Show extends MyRadio_Metadata_Common
      * @return MyRadio_Podcast[]
      */
     public function getAllPodcasts() {
-        $ids = self::$db->fetchColumn('SELECT podcast_id FROM schedule.show_podcast_link WHERE show_id = $1', [$this->getID()]);
+        $ids = self::$db->fetchColumn(
+            'SELECT podcast_id FROM schedule.show_podcast_link
+                INNER JOIN uryplayer.podcast USING (podcast_id)
+                WHERE show_id = $1
+                ORDER BY submitted DESC',
+            [$this->getID()]
+        );
 
         $podcasts = [];
         foreach ($ids as $id) {
@@ -1040,9 +1046,11 @@ class MyRadio_Show extends MyRadio_Metadata_Common
 
             $writer->writeElement("pubDate", CoreUtils::getRfc2822Timestamp($episode->getSubmitted()));
 
-            $writer->startElementNs("itunes", "image", null);
-            $writer->writeAttribute("href", Config::$public_media_uri.'/'.$episode->getCover());
-            $writer->endElement();
+            if (!empty($episode->getCover())) {
+                $writer->startElementNs("itunes", "image", null);
+                $writer->writeAttribute("href", 'https:' . Config::$website_url . Config::$public_media_uri.'/'.$episode->getCover());
+                $writer->endElement();
+            }
 
             $writer->startElement("enclosure");
             $writer->writeAttribute("url", $episode->getURI());

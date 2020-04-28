@@ -655,7 +655,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
      * @return string
      */
     public function getGUID() {
-        return $this->getWebpage();
+        return 'https:' . Config::$website_url . $this->getWebpage();
     }
 
     /**
