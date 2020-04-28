@@ -1005,14 +1005,14 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         $writer->setIndent(true);
 
         $writer->startElement('rss');
-        $writer->writeAttribute('xmlns:itunes', 'https://www.itunes.com/dtds/podcast-1.0.dtd');
+        $writer->writeAttribute('xmlns:itunes', 'http://www.itunes.com/dtds/podcast-1.0.dtd');
         $writer->writeAttribute('xmlns:spotify', 'https://www.spotify.com/ns/rss');
         $writer->writeAttribute('version', '2.0');
 
         $writer->startElement('channel');
 
         $writer->writeElement("title", $this->getMeta("title"));
-        $writer->writeElement("link", $this->getWebpage());
+        $writer->writeElement("link", 'https:' . Config::$website_url . $this->getWebpage());
 
         $writer->startElement("description");
         $writer->writeCdata($this->getMeta("description"));
