@@ -1,13 +1,12 @@
 <?php
 
-use MyRadio\Config;
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_Quote;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $data = MyRadio_Quote::getRemoveForm()->readValues();
     $quote = MyRadio_Quote::getInstance($data['quote_id']);
-    $data = $quote->getRemoveForm()->readValues();
     $result = $quote->removeQuote($data['reason']);
 
     if (!$result) {
@@ -22,5 +21,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!isset($_REQUEST['quote_id'])) {
         throw new MyRadioException('No quote_id provided', 400);
     }
-    MyRadio_Quote::getInstance($_REQUEST['quote_id'])->getRemoveForm()->render();
+    MyRadio_Quote::getRemoveForm()->render();
 }

@@ -166,7 +166,7 @@ class MyRadio_Quote extends ServiceAPI
      *
      * @param $quote_id  The numeric ID of the quote.
      *
-     * @return MyRadio_Quote The quote release with the given ID.
+     * @return The quote release with the given ID.
      */
     public static function getInstance($quote_id = -1)
     {
@@ -313,6 +313,13 @@ class MyRadio_Quote extends ServiceAPI
         return $this->set(self::SET_DATE_SQL, CoreUtils::getTimestamp($date));
     }
 
+    public function setSuspended()
+    {
+        $this->suspended = $suspended;
+
+        return $this->set(self::SET_SUSPENDED_SQL);
+    }
+
     /**
      * Sets a property on this quote.
      *
@@ -387,7 +394,7 @@ class MyRadio_Quote extends ServiceAPI
     {
         $form = new MyRadioForm(
             'quote_remove',
-            'Quotes',
+            'Quote',
             'removeQuote',
             [
                 'debug' => false,
@@ -403,8 +410,8 @@ class MyRadio_Quote extends ServiceAPI
         )->addField(
             new MyRadioFormField(
                 'quote_id',
-                MyRadioFormField::TYPE_HIDDEN,
-                ['value' => $this->id]
+                MyRadioFOrmField::TYPE_HIDDEN,
+                ['value' => $_REQUEST['quote_id']]
             )
         );
         return $form;
@@ -412,16 +419,18 @@ class MyRadio_Quote extends ServiceAPI
 
     public function removeQuote($reason)
     {
-        // TODO do something with the reason
         if (MyRadio_User::getInstance()->hasAuth(AUTH_SUSPENDQUOTES)) {
             $r = self::$db->query(
                 self::SET_SUSPENDED_SQL,
                 [$this->getID()]
             );
-            return !empty($r);
+            if (!r) {
+                return false;
+            }
         } else {
             return false;
         }
+        return true;
     }
 
     /**

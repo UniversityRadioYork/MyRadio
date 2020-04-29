@@ -86,7 +86,7 @@ class Database
      * @param array  $params   Parameters for the query
      * @param bool   $rollback Deprecated.
      *
-     * @return resource|boolean A pg result reference
+     * @return A pg result reference
      *
      * @throws MyRadioException If the query fails
      * @assert ('SELECT * FROM public.tableethatreallydoesntexist') throws MyRadioException
