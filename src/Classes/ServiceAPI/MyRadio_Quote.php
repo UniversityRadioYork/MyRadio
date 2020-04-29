@@ -387,7 +387,7 @@ class MyRadio_Quote extends ServiceAPI
     {
         $form = new MyRadioForm(
             'quote_remove',
-            'Quote',
+            'Quotes',
             'removeQuote',
             [
                 'debug' => false,
