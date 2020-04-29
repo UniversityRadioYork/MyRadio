@@ -108,7 +108,7 @@ class MyRadio_Quote extends ServiceAPI
     /**
      * The member who said the quote.
      *
-     * @var User
+     * @var MyRadio_User
      */
     private $source;
 
@@ -227,7 +227,7 @@ class MyRadio_Quote extends ServiceAPI
     }
 
     /**
-     * @return User The quote source.
+     * @return MyRadio_User The quote source.
      */
     public function getSource()
     {
@@ -442,7 +442,7 @@ class MyRadio_Quote extends ServiceAPI
     {
         return [
             'id' => $this->getID(),
-            'source' => $this->getSource()->getName(),
+            'source' => $this->getSource()->toDataSource($mixins),
             'date' => strftime('%F', $this->getDate()),
             'text' => $this->getText(),
             'html' => [
