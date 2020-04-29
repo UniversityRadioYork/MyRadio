@@ -13,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $message = 'The quote was unable to be removed or you do not have the required permissions, '
             .'please contact computing@'.Config::$email_domain.' instead.';
     } else {
-        $message = 'Your quote removal has been processed.'
+        $message = 'Your quote removal has been processed.';
     }
 
     URLUtils::backWithMessage($message);
