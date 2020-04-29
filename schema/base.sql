@@ -744,8 +744,7 @@ CREATE TABLE quote (
     quote_id integer NOT NULL,
     text text NOT NULL,
     source integer NOT NULL,
-    date timestamp with time zone DEFAULT now() NOT NULL,
-    supended boolean DEFAULT false NOT NULL
+    date timestamp with time zone DEFAULT now() NOT NULL
 );
 CREATE SEQUENCE quote_quote_id_seq
     START WITH 1

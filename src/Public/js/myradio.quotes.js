@@ -23,19 +23,9 @@ $(".twig-datatable").dataTable({
     {
       "sTitle": "Quote"
     },
-    //suspended
-    {
-      "bVisible": false
-    },
     //editlink
     {
       "sTitle": "Edit",
-      "bSortable": false,
-      "bVisible": true
-    },
-    //removelink
-    {
-      "sTitle": "Remove",
       "bSortable": false,
       "bVisible": true
     }
