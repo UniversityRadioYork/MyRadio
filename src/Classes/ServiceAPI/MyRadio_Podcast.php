@@ -536,7 +536,8 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
      * Whether this podcast should be live right now
      * @return bool
      */
-    public function isPublished() {
+    public function isPublished()
+    {
         return !$this->isSuspended()
             && !empty($this->submitted)
             && $this->submitted < time();
@@ -654,7 +655,8 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
      * Get a GUID for iTunes
      * @return string
      */
-    public function getGUID() {
+    public function getGUID()
+    {
         return 'https:' . Config::$website_url . $this->getWebpage();
     }
 
@@ -670,7 +672,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
     public function toDataSource($mixins = [])
     {
         $mixin_funcs = [
-            'show' => function (&$data) {
+            'show' => function (&$data) use ($mixins) {
                 $data['show'] = $this->getShow() ?
                     $this->getShow()->toDataSource($mixins) : null;
             },

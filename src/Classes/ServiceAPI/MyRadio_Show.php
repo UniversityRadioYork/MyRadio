@@ -815,7 +815,8 @@ class MyRadio_Show extends MyRadio_Metadata_Common
      * Gets all podcasts linked to this show.
      * @return MyRadio_Podcast[]
      */
-    public function getAllPodcasts() {
+    public function getAllPodcasts()
+    {
         $ids = self::$db->fetchColumn(
             'SELECT podcast_id FROM schedule.show_podcast_link
                 INNER JOIN uryplayer.podcast USING (podcast_id)
@@ -998,7 +999,8 @@ class MyRadio_Show extends MyRadio_Metadata_Common
      * Generate a podcast RSS feed for this show.
      * @return string
      */
-    public function getPodcastRss() {
+    public function getPodcastRss()
+    {
         $writer = new \XMLWriter();
         $writer->openMemory();
         $writer->startDocument('1.0', 'UTF-8');
@@ -1027,7 +1029,10 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         $writer->endElement();
 
         $writer->startElementNs("itunes", "image", null);
-        $writer->writeAttribute("href", 'https:' . Config::$website_url . Config::$public_media_uri.'/' . $this->getShowPhoto());
+        $writer->writeAttribute(
+            "href",
+            'https:' . Config::$website_url . Config::$public_media_uri.'/' . $this->getShowPhoto()
+        );
         $writer->endElement();
 
         $writer->startElementNs("itunes", "owner", null);
@@ -1057,7 +1062,10 @@ class MyRadio_Show extends MyRadio_Metadata_Common
 
             if (!empty($episode->getCover())) {
                 $writer->startElementNs("itunes", "image", null);
-                $writer->writeAttribute("href", 'https:' . Config::$website_url . Config::$public_media_uri.'/'.$episode->getCover());
+                $writer->writeAttribute(
+                    "href",
+                    'https:' . Config::$website_url . Config::$public_media_uri.'/'.$episode->getCover()
+                );
                 $writer->endElement();
             }
 
