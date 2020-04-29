@@ -1042,7 +1042,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
 
         $writer->endElement();
 
-        // TODO itunes:explicit
+        $writer->writeElementNs("itunes", "explicit", null, "false"); // TODO
 
         foreach ($this->getAllPodcasts() as $episode) {
             if (!($episode->isPublished())) {
