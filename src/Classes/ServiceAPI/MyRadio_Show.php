@@ -1022,10 +1022,10 @@ class MyRadio_Show extends MyRadio_Metadata_Common
 
         $writer->writeElement("language", "en"); // TODO
 
-        $writer->writeElementNs("itunes", "author", null, $this->getPresenterString());
+        $writer->writeElementNs("itunes", "author", null, Config::$long_name);
 
         $writer->startElementNs("itunes", "category", null);
-        $writer->writeAttribute("text", "Society & Culture");
+        $writer->writeAttribute("text", "Society & Culture"); // TODO
         $writer->endElement();
 
         $writer->startElementNs("itunes", "image", null);
