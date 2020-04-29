@@ -1,5 +1,5 @@
 $(".twig-datatable").dataTable({
-  "aaSorting": [[2, "desc"]],
+  "aaSorting": [[3, "desc"]],
   "aoColumns": [
     //quoteID
     {
