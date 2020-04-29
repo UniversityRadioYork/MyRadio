@@ -366,6 +366,7 @@ class MyRadio_Quote extends ServiceAPI
         return [
             'id' => $this->getID(),
             'source' => $this->getSource()->toDataSource($mixins),
+            'source_name' => $this->getSource()->getName(),
             'date' => strftime('%F', $this->getDate()),
             'text' => $this->getText(),
             'html' => [

@@ -7,8 +7,12 @@ $(".twig-datatable").dataTable({
     },
     //source
     {
+      "bVisible": false
+    },
+    // source_name
+    {
       "sTitle": "Source",
-      "sClass": "left",
+      "sClass": "left"
     },
     //date
     {
