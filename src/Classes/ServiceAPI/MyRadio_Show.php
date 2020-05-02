@@ -1053,7 +1053,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
 
             $fileSize = filesize($episode->getWebFile());
 
-            if ($fileSize === 0) {
+            if (empty($fileSize)) {
                 // that file is in the twilight zone
                 continue;
             }
