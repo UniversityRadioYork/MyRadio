@@ -183,8 +183,7 @@ class MyRadio_Selector
         if ($studio == $status['studio']) {
             throw new MyRadioException('Source '.$studio.' is already selected.');
         }
-        if (
-               (($studio == 1) && (!$status['s1power']))
+        if ((($studio == 1) && (!$status['s1power']))
             || (($studio == 2) && (!$status['s2power']))
             || (($studio == 4) && (!$status['s4power']))
             || (($studio == 5) && (!$status['s5power']))

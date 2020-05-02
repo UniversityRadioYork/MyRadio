@@ -533,6 +533,17 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
     }
 
     /**
+     * Whether this podcast should be live right now
+     * @return bool
+     */
+    public function isPublished()
+    {
+        return !$this->isSuspended()
+            && !empty($this->submitted)
+            && $this->submitted < time();
+    }
+
+    /**
      * Get the file system path to where the original file is stored.
      *
      * @return string
@@ -641,6 +652,15 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
     }
 
     /**
+     * Get a GUID for iTunes
+     * @return string
+     */
+    public function getGUID()
+    {
+        return 'https:' . Config::$website_url . $this->getWebpage();
+    }
+
+    /**
      * Get data in array format.
      * @param array $mixins Mixins.
      * @mixin show Provides data about the show this podcast is from
@@ -652,7 +672,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
     public function toDataSource($mixins = [])
     {
         $mixin_funcs = [
-            'show' => function (&$data) {
+            'show' => function (&$data) use ($mixins) {
                 $data['show'] = $this->getShow() ?
                     $this->getShow()->toDataSource($mixins) : null;
             },
