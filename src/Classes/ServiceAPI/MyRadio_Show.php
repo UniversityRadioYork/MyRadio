@@ -1031,7 +1031,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         $writer->startElementNs("itunes", "image", null);
         $writer->writeAttribute(
             "href",
-            'https:' . Config::$website_url . Config::$public_media_uri.'/' . $this->getShowPhoto()
+            'https:' . Config::$website_url . $this->getShowPhoto()
         );
         $writer->endElement();
 
@@ -1046,6 +1046,13 @@ class MyRadio_Show extends MyRadio_Metadata_Common
 
         foreach ($this->getAllPodcasts() as $episode) {
             if (!($episode->isPublished())) {
+                continue;
+            }
+
+            $fileSize = filesize($episode->getWebFile());
+
+            if ($fileSize === 0) {
+                // that file is in the twilight zone
                 continue;
             }
 
@@ -1069,10 +1076,17 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                 $writer->endElement();
             }
 
+            $getID3 = new \getID3();
+            $fileInfo = $getID3->analyze($episode->getWebFile());
+
+            if (isset($fileInfo["playtime_string"])) {
+                $writer->writeElementNs("itunes", "duration", "null", $fileInfo['playtime_string']);
+            }
+
             $writer->startElement("enclosure");
             $writer->writeAttribute("url", 'https:' . Config::$website_url . $episode->getURI());
             $writer->writeAttribute("type", "audio/mpeg"); // TODO
-            $writer->writeAttribute("length", filesize($episode->getWebFile()));
+            $writer->writeAttribute("length", $fileSize);
             $writer->endElement();
 
             $writer->endElement();
