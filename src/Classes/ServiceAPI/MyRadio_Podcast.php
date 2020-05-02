@@ -859,7 +859,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
     {
         $tmpfile = $this->getArchiveFile();
         $dbfile = $this->getWebFile();
-        shell_exec("nice -n 15 ffmpeg -i '{$tmpfile}' -ab 192k -f mp3 -map 0:a '{$dbfile}'");
+        shell_exec("nice -n 15 ffmpeg -i '{$tmpfile}' -ab 128k -f mp3 -map 0:a '{$dbfile}'");
 
         self::$db->query(
             'UPDATE uryplayer.podcast SET file=$1 WHERE podcast_id=$2',
