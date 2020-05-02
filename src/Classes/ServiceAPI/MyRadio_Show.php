@@ -1019,7 +1019,13 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         $writer->writeElement("link", 'https:' . $website . $this->getWebpage());
 
         $writer->startElement("description");
-        $writer->writeCdata(strip_tags($this->getMeta("description"), ['a']));
+        $writer->writeCdata(
+            html_entity_decode(
+                strip_tags($this->getMeta("description"), ['a']),
+                ENT_QUOTES | ENT_XML1,
+                "UTF-8"
+            )
+        );
         $writer->endElement();
 
         $writer->writeElement("language", "en"); // TODO
@@ -1064,7 +1070,13 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             $writer->writeElement("title", $episode->getMeta("title"));
 
             $writer->startElement("description");
-            $writer->writeCdata(strip_tags($episode->getMeta("description"), ['a']));
+            $writer->writeCdata(
+                html_entity_decode(
+                    strip_tags($episode->getMeta("description"), ['a']),
+                    ENT_QUOTES | ENT_XML1,
+                    "UTF-8"
+                )
+            );
             $writer->endElement();
 
             $writer->writeElement("pubDate", CoreUtils::getRfc2822Timestamp($episode->getSubmitted()));
