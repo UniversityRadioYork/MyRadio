@@ -7123,12 +7123,14 @@ CREATE TABLE show_subtypes
 (
     show_subtype_id INTEGER NOT NULL PRIMARY KEY,
     name            text    NOT NULL,
-    class           text    NOT NULL
+    class           text    NOT NULL,
+    description     text
 );
 
 COMMENT ON TABLE show_subtypes IS 'The various subtypes of show (music, news etc.)';
 COMMENT ON COLUMN show_subtypes.name IS 'The publicly visible name of the subtype.';
 COMMENT ON COLUMN show_subtypes.class IS 'The CSS class of the subtype - similar to the name, but not intended for humans';
+COMMENT ON COLUMN show_subtypes.description IS 'A description of the shows that are in this subtype, for the subtype pages';
 
 INSERT INTO show_subtypes (show_subtype_id, name, class)
 VALUES (1,
@@ -7150,7 +7152,7 @@ VALUES (1,
         'Music',
         'music'),
        (7,
-        'Collaboration',
+        'Alumni/Collaboration',
         'collab');
 
 CREATE SEQUENCE show_subtype_id_seq
