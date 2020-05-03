@@ -46,7 +46,7 @@ class MyRadio_ShowSubtype extends ServiceAPI
         $this->show_subtype_id = $data['show_subtype_id'];
         $this->name = $data['name'];
         $this->class = $data['class'];
-        $this->description = $data['description']
+        $this->description = $data['description'];
     }
 
     public function getID()
