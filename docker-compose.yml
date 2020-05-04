@@ -1,0 +1,18 @@
+version: '3'
+services:
+  postgres:
+    image: postgres:alpine
+    environment:
+      POSTGRES_DB: myradio
+      POSTGRES_USER: myradio
+      POSTGRES_PASSWORD: myradio
+  memcached:
+    image: memcached:alpine
+  myradio:
+    build: .
+    depends_on:
+      - postgres
+      - memcached
+    ports:
+      - 7080:80
+      - 4443:443
