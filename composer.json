@@ -6,6 +6,8 @@
         "soundasleep/html2text": "~0.5",
         "twig/twig": "~2.4",
         "ext-xmlwriter": "*",
+        "simshaun/recurr": "^4.0"
+        "ext-xmlwriter": "*",
         "webonyx/graphql-php": "^0.13.8",
         "ext-json": "*"
         "simshaun/recurr": "^4.0"
