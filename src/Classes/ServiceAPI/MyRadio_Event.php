@@ -164,7 +164,7 @@ class MyRadio_Event extends ServiceAPI
         // Now, apply the RRule and create child events
         if (!(empty($data['rrule']))) {
             $length = (int)$data['end_time'] - $data['start_time'];
-            $start = new \DateTime($data['start_time'], new \DateTimeZone('UTC'));
+            $start = (new \DateTime("now", new \DateTimeZone('UTC')))->setTimestamp($data['start_time']);
             $rrule = new Rule($data['rrule'], $start, null, 'UTC');
             foreach ($rrule->getRDates() as $date) {
                 self::$db->fetchOne('INSERT INTO public.events
