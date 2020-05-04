@@ -149,7 +149,7 @@ class MyRadio_Event extends ServiceAPI
         $sql = "INSERT INTO public.events (title, description_html, start_time, end_time, hostid, rrule)
                 VALUES ($1, $2, $3, $4, $5, $6) RETURNING eventid";
 
-        $result = self::$db->fetchOne($sql, [
+        $result = self::$db->fetchColumn($sql, [
             $data['title'], $data['description_html'],
             CoreUtils::getTimestamp($data['start_time']), CoreUtils::getTimestamp($data['end_time']),
             $hostid, $data['rrule']
@@ -159,7 +159,7 @@ class MyRadio_Event extends ServiceAPI
             throw new MyRadioException("Creation of event failed!", 500);
         }
 
-        $newEventId = $result['eventid'];
+        $newEventId = $result[0];
 
         // Now, apply the RRule and create child events
         if (!(empty($data['rrule']))) {
@@ -177,6 +177,8 @@ class MyRadio_Event extends ServiceAPI
                 ]);
             }
         }
+
+        self::$cache->purge();
 
         // Return the master
         return self::getInstance($newEventId);
