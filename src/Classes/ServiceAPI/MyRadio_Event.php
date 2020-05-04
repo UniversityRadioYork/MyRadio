@@ -133,7 +133,7 @@ class MyRadio_Event extends ServiceAPI
         return $this->masterId;
     }
 
-    public static function create(array $data)
+    public static function create($data = [])
     {
         // Validate
         $requiredFields = ['title', 'description_html', 'start_time', 'end_time'];
