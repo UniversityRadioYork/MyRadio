@@ -181,7 +181,8 @@ class MyRadio_Event extends ServiceAPI
         self::$cache->purge();
 
         // Return the master
-        return self::getInstance($newEventId);
+        return print_r($result, true);
+//        return self::getInstance($newEventId);
     }
 
     protected static function factory($itemid)
