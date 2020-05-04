@@ -66,7 +66,7 @@ class MyRadio_Event extends ServiceAPI
 
         $this->rrule = $data['rrule'];
 
-        $this->masterId = (int)$data['master_id'];
+        $this->masterId = is_null($data['master_id']) ? null : (int)$data['master_id'];
     }
 
     /**
@@ -177,8 +177,6 @@ class MyRadio_Event extends ServiceAPI
                 ]);
             }
         }
-
-        self::$cache->purge();
 
         // Return the master
         return self::factory($newEventId);
