@@ -824,7 +824,8 @@ class MyRadio_Show extends MyRadio_Metadata_Common
      * Sets this show's "Podcast explicit" status
      * @param $value bool
      */
-    public function setPodcastExplicit($value) {
+    public function setPodcastExplicit($value)
+    {
         self::$db->query(
             'UPDATE schedule.show SET podcast_explicit = $2::boolean WHERE show_id = $1',
             [$this->getID(), $value ? 1 : 0]
