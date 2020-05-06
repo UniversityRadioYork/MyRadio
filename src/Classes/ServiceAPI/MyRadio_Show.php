@@ -28,6 +28,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             show.show_type_id,
             show.submitted,
             show.memberid AS owner,
+            show.podcast_explicit,
             array_to_json(metadata.metadata_key_id) AS metadata_keys,
             array_to_json(metadata.metadata_value) AS metadata_values,
             array_to_json(image_metadata.image_metadata_key_id) AS image_metadata_keys,
@@ -109,6 +110,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
     private $submitted_time;
     private $season_ids;
     private $photo_url;
+    private $podcast_explicit;
     private $subtype_id;
 
     /**
@@ -134,6 +136,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         $this->owner = (int) $result['owner'];
         $this->show_type = (int) $result['show_type_id'];
         $this->submitted_time = strtotime($result['submitted']);
+        $this->podcast_explicit = (bool) $result['podcast_explicit'];
         $this->subtype_id = (int) $result['subtype_id'];
 
         $this->genres = json_decode($result['genres']);
@@ -496,6 +499,19 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                     'required' => false,
                 ]
             )
+        )->addField(
+            new MyRadioFormField(
+                'podcast_explicit',
+                MyRadioFormField::TYPE_CHECK,
+                [
+                    'required' => false,
+                    'label' => 'Podcast contains explicit content',
+                    'explanation' => 'Check this box if, and only if, this show is a podcast '
+                        . 'and it contains explicit content. '
+                        . 'Remember: explicit content is NEVER acceptable to broadcast!',
+                    'options' => ['checked' => false],
+                ]
+            )
         );
     }
 
@@ -524,6 +540,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                         $this->getCredits()
                     ),
                     'mixclouder' => ($this->getMeta('upload_state') === 'Requested'),
+                    'podcast_explicit' => $this->isPodcastExplicit()
                 ]
             );
     }
@@ -668,6 +685,15 @@ class MyRadio_Show extends MyRadio_Metadata_Common
     public function getSubtype()
     {
         return MyRadio_ShowSubtype::getInstance($this->subtype_id);
+    }
+
+    /**
+     * If this show is a podcast, does it contain explicit content?
+     * @return bool
+     */
+    public function isPodcastExplicit()
+    {
+        return $this->podcast_explicit;
     }
 
     /**
@@ -1050,7 +1076,12 @@ class MyRadio_Show extends MyRadio_Metadata_Common
 
         $writer->endElement();
 
-        $writer->writeElementNs("itunes", "explicit", null, "false"); // TODO
+        $writer->writeElementNs(
+            "itunes",
+            "explicit",
+            null,
+            $this->isPodcastExplicit() ? "true" : "false"
+        );
 
         foreach ($this->getAllPodcasts() as $episode) {
             if (!($episode->isPublished())) {
