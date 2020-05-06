@@ -229,7 +229,8 @@ class Database
         try {
             $result = $this->query($sql, $params, $rollback);
         } catch (MyRadioException $e) {
-            return [];
+            // TODO: temporary, uncomment this - marks.polakovs
+            //return [];
         }
         if (pg_num_rows($result) === 0) {
             return [];

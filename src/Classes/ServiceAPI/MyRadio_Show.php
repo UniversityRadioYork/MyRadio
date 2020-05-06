@@ -279,6 +279,9 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             ],
             true
         );
+        if (empty($result)) {
+            throw new MyRadioException('Inserting show record failed!', 500);
+        }
         $show_id = $result[0];
 
         //Right, set the title and description next
