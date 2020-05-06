@@ -28,7 +28,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             show.show_type_id,
             show.submitted,
             show.memberid AS owner,
-            show.podcast_explicit,
+            show.podcast_explicit::int,
             array_to_json(metadata.metadata_key_id) AS metadata_keys,
             array_to_json(metadata.metadata_value) AS metadata_values,
             array_to_json(image_metadata.image_metadata_key_id) AS image_metadata_keys,
