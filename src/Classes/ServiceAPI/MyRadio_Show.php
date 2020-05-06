@@ -272,7 +272,11 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         $result = self::$db->fetchColumn(
             'INSERT INTO schedule.show (show_type_id, submitted, memberid, podcast_explicit)
             VALUES ($1, NOW(), $2, $3::boolean) RETURNING show_id',
-            [$params['showtypeid'], $creator, $params['podcast_explicit'] ? 1 : 0],
+            [
+                $params['showtypeid'],
+                $creator,
+                (isset($params['podcast_explicit']) && $params['podcast_explicit']) ? 1 : 0
+            ],
             true
         );
         $show_id = $result[0];
