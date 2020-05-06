@@ -231,6 +231,7 @@ class Database
         } catch (MyRadioException $e) {
             // TODO: temporary, uncomment this - marks.polakovs
             //return [];
+            throw $e;
         }
         if (pg_num_rows($result) === 0) {
             return [];
