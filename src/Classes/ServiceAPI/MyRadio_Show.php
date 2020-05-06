@@ -270,9 +270,9 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         //Add the basic info, getting the show id
 
         $result = self::$db->fetchColumn(
-            'INSERT INTO schedule.show (show_type_id, submitted, memberid)
-            VALUES ($1, NOW(), $2) RETURNING show_id',
-            [$params['showtypeid'], $creator],
+            'INSERT INTO schedule.show (show_type_id, submitted, memberid, podcast_explicit)
+            VALUES ($1, NOW(), $2, $3::boolean) RETURNING show_id',
+            [$params['showtypeid'], $creator, $params['podcast_explicit'] ? 1 : 0],
             true
         );
         $show_id = $result[0];
@@ -818,6 +818,18 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             $this->genres = [$genreid];
             $this->updateCacheObject();
         }
+    }
+
+    /**
+     * Sets this show's "Podcast explicit" status
+     * @param $value bool
+     */
+    public function setPodcastExplicit($value) {
+        self::$db->query(
+            'UPDATE schedule.show SET podcast_explicit = $2::boolean WHERE show_id = $1',
+            [$this->getID(), $value ? 1 : 0]
+        );
+        $this->updateCacheObject();
     }
 
     /**
