@@ -23,12 +23,15 @@ RUN a2dissite 000-default && a2ensite myradio \
 
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 
-COPY schema /var/www/schema
-COPY src /var/www/myradio
-
+RUN mkdir -p /var/www/myradio && chown -R www-data:www-data /var/www/myradio
+RUN mkdir -p /var/log/myradio && chown -R www-data:www-data /var/log/myradio
 COPY composer.json /var/www/myradio
 
 WORKDIR /var/www/myradio
 RUN COMPOSER_VENDOR_DIR=/var/www/myradio/vendor composer install
 
+COPY schema /var/www/schema
+COPY src /var/www/myradio
+
 COPY sample_configs/docker-config.php /var/www/myradio/MyRadio_Config.local.php
+RUN chown www-data:www-data /var/www/myradio/MyRadio_Config.local.php && chmod 664 /var/www/myradio/MyRadio_Config.local.php

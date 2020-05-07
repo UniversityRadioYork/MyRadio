@@ -832,7 +832,6 @@ CREATE SEQUENCE types_id_seq
     CACHE 1;
 ALTER SEQUENCE types_id_seq OWNED BY role_visibility.role_visibility_id;
 SET search_path = public, pg_catalog;
-SET default_with_oids = true;
 CREATE TABLE auth (
     memberid integer NOT NULL,
     lookupid integer NOT NULL,
@@ -855,7 +854,7 @@ CREATE SEQUENCE auth_group_id_seq
     NO MAXVALUE
     CACHE 1;
 ALTER SEQUENCE auth_group_id_seq OWNED BY auth_group.id;
-SET default_with_oids = true;
+
 CREATE TABLE auth_officer (
     officerid integer NOT NULL,
     lookupid integer NOT NULL
@@ -910,7 +909,7 @@ CREATE SEQUENCE banner_category_categoryid_seq
     NO MINVALUE
     NO MAXVALUE
     CACHE 1;
-SET default_with_oids = true;
+
 CREATE TABLE baps_audio (
     audioid integer NOT NULL,
     trackid integer,
@@ -1141,7 +1140,7 @@ CREATE TABLE gammu (
     "Version" numeric
 );
 COMMENT ON TABLE gammu IS 'Do not delete - Gammu will break';
-SET default_with_oids = true;
+
 CREATE TABLE l_action (
     typeid integer DEFAULT nextval(('"l_action_typeid_seq"'::text)::regclass) NOT NULL,
     descr character varying(255) NOT NULL,
@@ -1195,7 +1194,7 @@ CREATE SEQUENCE l_newsfeeds_feedid_seq
     NO MAXVALUE
     CACHE 1;
 ALTER SEQUENCE l_newsfeeds_feedid_seq OWNED BY l_newsfeed.feedid;
-SET default_with_oids = true;
+
 CREATE TABLE l_presenterstatus (
     presenterstatusid integer NOT NULL,
     descr character varying(40) NOT NULL,
@@ -1294,7 +1293,7 @@ CREATE TABLE mail_subscription (
     listid integer NOT NULL
 );
 COMMENT ON TABLE mail_subscription IS 'If a list is subscribable, then all members here are subscribed.  If a list is not, then all members here are opted out.';
-SET default_with_oids = true;
+
 CREATE TABLE member (
     memberid integer DEFAULT nextval(('"member_memberid_seq"'::text)::regclass) NOT NULL,
     fname character varying(255) NOT NULL,
@@ -1350,7 +1349,7 @@ CREATE SEQUENCE member_office_member_office_seq
     NO MINVALUE
     MAXVALUE 2147483647
     CACHE 1;
-SET default_with_oids = true;
+
 CREATE TABLE member_officer (
     member_officerid integer DEFAULT nextval(('"member_office_member_office_seq"'::text)::regclass) NOT NULL,
     officerid integer NOT NULL,
@@ -1364,7 +1363,7 @@ CREATE TABLE member_pass (
     password character varying
 );
 COMMENT ON TABLE member_pass IS 'User password. Access only to be granted to Shibbobleh, Dovecot Users. Exim authenticates via IMAP.';
-SET default_with_oids = true;
+
 CREATE TABLE member_presenterstatus (
     memberid integer NOT NULL,
     presenterstatusid integer NOT NULL,
@@ -1426,7 +1425,7 @@ CREATE TABLE nipsweb_migrate (
     enforced boolean DEFAULT false
 );
 COMMENT ON TABLE nipsweb_migrate IS 'Used to migrate users from BAPSWeb to NIPSWeb.';
-SET default_with_oids = true;
+
 CREATE TABLE officer (
     officerid integer DEFAULT nextval(('"officer_officerid_seq"'::text)::regclass) NOT NULL,
     officer_name character varying(255) NOT NULL,
@@ -1466,7 +1465,7 @@ CREATE TABLE rec_itunes (
     identifier text
 );
 COMMENT ON TABLE rec_itunes IS 'itunes affiliation program';
-SET default_with_oids = true;
+
 CREATE TABLE rec_labelqueue (
     recordid integer,
     queueid integer DEFAULT nextval(('"rec_labelqueue_queueid_seq"'::text)::regclass) NOT NULL,
@@ -1499,7 +1498,7 @@ CREATE SEQUENCE rec_lookup_description_seq
     NO MAXVALUE
     CACHE 1;
 ALTER SEQUENCE rec_lookup_description_seq OWNED BY rec_lookup.description;
-SET default_with_oids = true;
+
 CREATE TABLE rec_medialookup (
     media_code character(1) NOT NULL,
     media_descr text NOT NULL
@@ -1601,7 +1600,7 @@ COMMENT ON COLUMN show_metadata.memberid IS 'The ID of the member who submitted 
 COMMENT ON COLUMN show_metadata.approvedid IS 'The ID of the member who approved the change to the show metadata item. A value of NULL means not yet approved or this item does not need to be approved.';
 COMMENT ON COLUMN show_metadata.effective_to IS 'The timestamp of the period at which this metadatum stops being effective.  If NULL, the metadatum is effective indefinitely from effective_from.';
 SET search_path = public, pg_catalog;
-SET default_with_oids = true;
+
 SET search_path = schedule, pg_catalog;
 SET default_with_oids = false;
 CREATE TABLE show_season (
@@ -1655,7 +1654,7 @@ CREATE TABLE sso_session (
     data text,
     "timestamp" timestamp without time zone NOT NULL
 );
-SET default_with_oids = true;
+
 CREATE TABLE strm_useragent (
     useragentid integer NOT NULL,
     useragent character varying(255) NOT NULL

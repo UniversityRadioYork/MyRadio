@@ -6,6 +6,8 @@ services:
       POSTGRES_DB: myradio
       POSTGRES_USER: myradio
       POSTGRES_PASSWORD: myradio
+    volumes:
+      - db-data:/var/lib/postgresql/data
   memcached:
     image: memcached:alpine
   myradio:
@@ -16,3 +18,5 @@ services:
     ports:
       - 7080:80
       - 4443:443
+volumes:
+  db-data:

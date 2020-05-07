@@ -14,3 +14,6 @@ Config::$welcome_email = '   This is a welcome email. You can use #NAME to get t
 Config::$base_url = 'http://localhost/myradio/';
 Config::$cache_enable = true;
 Config::$cache_memcached_servers = [['memcached', 11211]];
+
+// Bounce into setup until we're done
+Config::$setup = true;
