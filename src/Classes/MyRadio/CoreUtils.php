@@ -258,7 +258,7 @@ class CoreUtils
         $commands = [
             'mp3' => "nice -n 15 ffmpeg -i '{$tmpfile}' -ab 192k -f mp3 -map 0:a '{$dbfile}.mp3'",
             'ogg' => "nice -n 15 ffmpeg -i '{$tmpfile}' -acodec libvorbis -ab 192k -map 0:a '{$dbfile}.ogg'",
-            'normalised.mp3' => "nice -n 15 ffmpeg -i '{$tmpfile}' -filter:a loudnorm=i=-16.0:lra=10.0-ab 192k -f mp3 -map 0:a '{$dbfile}.normalised.mp3'"
+            'normalised.mp3' => "nice -n 15 ffmpeg -i '{$tmpfile}' -filter:a loudnorm=i=-16.0:lra=10.0 -ab 192k -f mp3 -map 0:a '{$dbfile}.normalised.mp3'"
         ];
         $escaped_commands = array_map('escapeshellcmd', $commands);
         $failed_formats = [];
