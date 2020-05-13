@@ -49,6 +49,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $show->setMeta('upload_state', 'Opted Out');
         }
 
+        if ($data['podcast_explicit']) {
+            $show->setPodcastExplicit(true);
+        } else {
+            $show->setPodcastExplicit(false);
+        }
+
         $show->setSubtypeByName($data['subtype']);
 
         URLUtils::redirectWithMessage('Scheduler', 'myShows', 'Show Updated!');

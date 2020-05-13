@@ -1,14 +1,9 @@
 BEGIN;
 
-CREATE TABLE public.events (
-    eventid SERIAL PRIMARY KEY,
-    title TEXT,
-    description_html TEXT,
-    start_time TIMESTAMPTZ,
-    end_time TIMESTAMPTZ,
-    hostid INTEGER REFERENCES member (memberid),
-    rrule TEXT DEFAULT '',
-    master_id INTEGER REFERENCES events (eventid) NULL DEFAULT NULL
-);
+ALTER TABLE schedule.show
+    ADD COLUMN podcast_explicit BOOLEAN DEFAULT 'f';
+
+COMMENT ON COLUMN schedule.show.podcast_explicit IS
+'If this show is a podcast, whether it contains explicit content.';
 
 COMMIT;
