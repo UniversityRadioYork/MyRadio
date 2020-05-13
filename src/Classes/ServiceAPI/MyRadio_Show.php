@@ -1047,7 +1047,16 @@ class MyRadio_Show extends MyRadio_Metadata_Common
      */
     public function getPodcastRss()
     {
-        $website = preg_replace('(/$)', '', Config::$website_url);
+        $website = preg_replace(
+            '(/$)',
+            '',
+            'https:' .Config::$website_url
+        );
+        $media_url = preg_replace(
+            '(/$)',
+            '',
+            'https:' .$website . '/' . Config::$public_media_uri
+        );
 
         $writer = new \XMLWriter();
         $writer->openMemory();
@@ -1062,7 +1071,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         $writer->startElement('channel');
 
         $writer->writeElement("title", $this->getMeta("title"));
-        $writer->writeElement("link", 'https:' . $website . $this->getWebpage());
+        $writer->writeElement("link", $website . $this->getWebpage());
 
         $writer->startElement("description");
         $writer->writeCdata(
@@ -1085,7 +1094,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         $writer->startElementNs("itunes", "image", null);
         $writer->writeAttribute(
             "href",
-            'https:' . $website . $this->getShowPhoto()
+            $website . $this->getShowPhoto()
         );
         $writer->endElement();
 
@@ -1136,7 +1145,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                 $writer->startElementNs("itunes", "image", null);
                 $writer->writeAttribute(
                     "href",
-                    'https:' . $website . Config::$public_media_uri.'/'.$episode->getCover()
+                    $media_url.$episode->getCover()
                 );
                 $writer->endElement();
             }
@@ -1149,7 +1158,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             }
 
             $writer->startElement("enclosure");
-            $writer->writeAttribute("url", 'https:' . $website . $episode->getURI());
+            $writer->writeAttribute("url", $website . $episode->getURI());
             $writer->writeAttribute("type", "audio/mpeg"); // TODO
             $writer->writeAttribute("length", $fileSize);
             $writer->endElement();
