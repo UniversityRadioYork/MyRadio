@@ -1055,7 +1055,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         $media_url = preg_replace(
             '(/$)',
             '',
-            'https:' .$website . '/' . Config::$public_media_uri
+            $website . '/' . Config::$public_media_uri
         );
 
         $writer = new \XMLWriter();
