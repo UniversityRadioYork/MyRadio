@@ -123,7 +123,7 @@ class MyRadio_ShowSubtype extends ServiceAPI
 
     protected static function factory($itemid)
     {
-        $sql = 'SELECT show_subtype_id, name, class FROM schedule.show_subtypes WHERE show_subtype_id = $1 LIMIT 1';
+        $sql = 'SELECT show_subtype_id, name, class, description FROM schedule.show_subtypes WHERE show_subtype_id = $1 LIMIT 1';
         $result = self::$db->fetchOne($sql, [$itemid]);
 
         if (empty($result)) {
