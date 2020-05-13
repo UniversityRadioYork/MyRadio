@@ -1135,15 +1135,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
 
             $writer->startElement("description");
             $writer->writeCdata(
-                str_replace(
-                    '&nbsp;',
-                    '',
-                    html_entity_decode(
-                        strip_tags($episode->getMeta("description"), ['a']),
-                        ENT_QUOTES | ENT_XML1,
-                        "UTF-8"
-                    )
-                )
+                $episode->getMeta("description")
             );
             $writer->endElement();
 
