@@ -873,7 +873,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
                 $where .= ' AND ';
             }
             if (!$include_pending) {
-                $where .= 'NOT submitted IS NULL';
+                $where .= 'submitted IS NOT NULL';
             }
         }
 
