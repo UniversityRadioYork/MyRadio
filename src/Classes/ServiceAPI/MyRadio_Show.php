@@ -891,7 +891,8 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         $keys = self::$cache->get($key);
 
         if ($keys) {
-            $shows = self::$cache->getAll($keys);
+            $results = self::$cache->getAll($keys);
+            $shows = array_values($results); // Cached results are in different format.
         } else {
             $sql = self::BASE_SHOW_SQL.' WHERE show_type_id=$1';
             $params = [$show_type_id];
