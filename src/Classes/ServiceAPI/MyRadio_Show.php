@@ -28,6 +28,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             show.show_type_id,
             show.submitted,
             show.memberid AS owner,
+            show.podcast_explicit::int,
             array_to_json(metadata.metadata_key_id) AS metadata_keys,
             array_to_json(metadata.metadata_value) AS metadata_values,
             array_to_json(image_metadata.image_metadata_key_id) AS image_metadata_keys,
@@ -109,6 +110,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
     private $submitted_time;
     private $season_ids;
     private $photo_url;
+    private $podcast_explicit;
     private $subtype_id;
 
     /**
@@ -134,6 +136,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         $this->owner = (int) $result['owner'];
         $this->show_type = (int) $result['show_type_id'];
         $this->submitted_time = strtotime($result['submitted']);
+        $this->podcast_explicit = (bool) $result['podcast_explicit'];
         $this->subtype_id = (int) $result['subtype_id'];
 
         $this->genres = json_decode($result['genres']);
@@ -267,11 +270,18 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         //Add the basic info, getting the show id
 
         $result = self::$db->fetchColumn(
-            'INSERT INTO schedule.show (show_type_id, submitted, memberid)
-            VALUES ($1, NOW(), $2) RETURNING show_id',
-            [$params['showtypeid'], $creator],
+            'INSERT INTO schedule.show (show_type_id, submitted, memberid, podcast_explicit)
+            VALUES ($1, NOW(), $2, $3::boolean) RETURNING show_id',
+            [
+                $params['showtypeid'],
+                $creator,
+                (isset($params['podcast_explicit']) && $params['podcast_explicit']) ? 1 : 0
+            ],
             true
         );
+        if (empty($result)) {
+            throw new MyRadioException('Inserting show record failed!', 500);
+        }
         $show_id = $result[0];
 
         //Right, set the title and description next
@@ -496,6 +506,19 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                     'required' => false,
                 ]
             )
+        )->addField(
+            new MyRadioFormField(
+                'podcast_explicit',
+                MyRadioFormField::TYPE_CHECK,
+                [
+                    'required' => false,
+                    'label' => 'Podcast contains explicit content',
+                    'explanation' => 'Check this box if, and only if, this show is a podcast '
+                        . 'and it contains explicit content. '
+                        . 'Remember: explicit content is NEVER acceptable to broadcast!',
+                    'options' => ['checked' => false],
+                ]
+            )
         );
     }
 
@@ -524,6 +547,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                         $this->getCredits()
                     ),
                     'mixclouder' => ($this->getMeta('upload_state') === 'Requested'),
+                    'podcast_explicit' => $this->isPodcastExplicit()
                 ]
             );
     }
@@ -671,6 +695,15 @@ class MyRadio_Show extends MyRadio_Metadata_Common
     }
 
     /**
+     * If this show is a podcast, does it contain explicit content?
+     * @return bool
+     */
+    public function isPodcastExplicit()
+    {
+        return $this->podcast_explicit;
+    }
+
+    /**
      * Sets this show's subtype.
      *
      * @todo support effectiveFrom and effectiveTo
@@ -795,6 +828,19 @@ class MyRadio_Show extends MyRadio_Metadata_Common
     }
 
     /**
+     * Sets this show's "Podcast explicit" status
+     * @param $value bool
+     */
+    public function setPodcastExplicit($value)
+    {
+        self::$db->query(
+            'UPDATE schedule.show SET podcast_explicit = $2::boolean WHERE show_id = $1',
+            [$this->getID(), $value ? 1 : 0]
+        );
+        $this->updateCacheObject();
+    }
+
+    /**
      * Updates the list of Credits.
      *
      * Existing credits are kept active, ones that are not in the new list are set to effective_to now,
@@ -809,6 +855,28 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         $this->updateCacheObject();
 
         return $r;
+    }
+
+    /**
+     * Gets all podcasts linked to this show.
+     * @return MyRadio_Podcast[]
+     */
+    public function getAllPodcasts()
+    {
+        $ids = self::$db->fetchColumn(
+            'SELECT podcast_id FROM schedule.show_podcast_link
+                INNER JOIN uryplayer.podcast USING (podcast_id)
+                WHERE show_id = $1
+                ORDER BY submitted DESC',
+            [$this->getID()]
+        );
+
+        $podcasts = [];
+        foreach ($ids as $id) {
+            $podcasts[] = MyRadio_Podcast::getInstance($id);
+        }
+
+        return $podcasts;
     }
 
     /**
@@ -972,6 +1040,139 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         );
         return self::resultSetToObjArray($r);
     }
+
+    /**
+     * Generate a podcast RSS feed for this show.
+     * @return string
+     */
+    public function getPodcastRss()
+    {
+        $website = preg_replace(
+            '(/$)',
+            '',
+            'https:' .Config::$website_url
+        );
+        $media_url = preg_replace(
+            '(/$)',
+            '',
+            $website . '/' . Config::$public_media_uri
+        );
+
+        $writer = new \XMLWriter();
+        $writer->openMemory();
+        $writer->startDocument('1.0', 'UTF-8');
+        $writer->setIndent(true);
+
+        $writer->startElement('rss');
+        $writer->writeAttribute('xmlns:itunes', 'http://www.itunes.com/dtds/podcast-1.0.dtd');
+        $writer->writeAttribute('xmlns:spotify', 'https://www.spotify.com/ns/rss');
+        $writer->writeAttribute('version', '2.0');
+
+        $writer->startElement('channel');
+
+        $writer->writeElement("title", $this->getMeta("title"));
+        $writer->writeElement("link", $website . $this->getWebpage());
+
+        $writer->startElement("description");
+        $writer->writeCdata(
+            str_replace(
+                '&nbsp;',
+                '',
+                html_entity_decode(
+                    strip_tags($this->getMeta("description"), ['a']),
+                    ENT_QUOTES | ENT_XML1,
+                    "UTF-8"
+                )
+            )
+        );
+        $writer->endElement();
+
+        $writer->writeElement("language", "en"); // TODO
+
+        $writer->writeElementNs("itunes", "author", null, Config::$long_name);
+
+        $writer->startElementNs("itunes", "category", null);
+        $writer->writeAttribute("text", "Society & Culture"); // TODO
+        $writer->endElement();
+
+        $writer->startElementNs("itunes", "image", null);
+        $writer->writeAttribute(
+            "href",
+            $website . $this->getShowPhoto()
+        );
+        $writer->endElement();
+
+        $writer->startElementNs("itunes", "owner", null);
+
+        $writer->writeElementNs("itunes", "name", null, Config::$long_name);
+        $writer->writeElementNs("itunes", "email", null, "podcasting@" . Config::$email_domain);
+
+        $writer->endElement();
+
+        $writer->writeElementNs(
+            "itunes",
+            "explicit",
+            null,
+            $this->isPodcastExplicit() ? "true" : "false"
+        );
+
+        foreach ($this->getAllPodcasts() as $episode) {
+            if (!($episode->isPublished())) {
+                continue;
+            }
+
+            $fileSize = filesize($episode->getWebFile());
+
+            if (empty($fileSize)) {
+                // that file is in the twilight zone
+                continue;
+            }
+
+            $writer->startElement("item");
+
+            $writer->writeElement("guid", $episode->getGUID());
+            $writer->writeElement("title", $episode->getMeta("title"));
+
+            $writer->startElement("description");
+            $writer->writeCdata(
+                $episode->getMeta("description")
+            );
+            $writer->endElement();
+
+            $writer->writeElement("pubDate", CoreUtils::getRfc2822Timestamp($episode->getSubmitted()));
+
+            if (!empty($episode->getCover())) {
+                $writer->startElementNs("itunes", "image", null);
+                $writer->writeAttribute(
+                    "href",
+                    $media_url.$episode->getCover()
+                );
+                $writer->endElement();
+            }
+
+            $getID3 = new \getID3();
+            $fileInfo = $getID3->analyze($episode->getWebFile());
+
+            if (isset($fileInfo["playtime_string"])) {
+                $writer->writeElementNs("itunes", "duration", null, $fileInfo['playtime_string']);
+            }
+
+            $writer->startElement("enclosure");
+            $writer->writeAttribute("url", $website . $episode->getURI());
+            $writer->writeAttribute("type", "audio/mpeg"); // TODO
+            $writer->writeAttribute("length", $fileSize);
+            $writer->endElement();
+
+            $writer->endElement();
+        }
+
+        $writer->endElement();
+        $writer->endElement();
+        $writer->endDocument();
+
+        return $writer->flush();
+    }
+
 
     public function toDataSource($mixins = [])
     {

@@ -33,6 +33,12 @@ class MyRadio_ShowSubtype extends ServiceAPI
      * @var string
      */
     private $class;
+    
+    /**
+     * The description of the subtype
+     * @var string
+    */
+    private $description;
 
     public function __construct($data)
     {
@@ -40,6 +46,7 @@ class MyRadio_ShowSubtype extends ServiceAPI
         $this->show_subtype_id = $data['show_subtype_id'];
         $this->name = $data['name'];
         $this->class = $data['class'];
+        $this->description = $data['description'];
     }
 
     public function getID()
@@ -65,13 +72,23 @@ class MyRadio_ShowSubtype extends ServiceAPI
     {
         return $this->class;
     }
+    
+    /**
+     * Get the description of the subtype
+     * @return string
+    */
+    public function getDescription()
+    {
+        return $this->description;
+    }
 
     public function toDataSource($mixins = [])
     {
         return [
             'id' => $this->getID(),
             'name' => $this->getName(),
-            'class' => $this->getClass()
+            'class' => $this->getClass(),
+            'description' => $this->getDescription()
         ];
     }
 
@@ -82,7 +99,7 @@ class MyRadio_ShowSubtype extends ServiceAPI
      */
     public static function getAll()
     {
-        $sql = 'SELECT show_subtype_id, name, class FROM schedule.show_subtypes';
+        $sql = 'SELECT show_subtype_id, name, class, description FROM schedule.show_subtypes';
         $rows = self::$db->fetchAll($sql);
 
         $subtypes = [];
@@ -106,7 +123,7 @@ class MyRadio_ShowSubtype extends ServiceAPI
 
     protected static function factory($itemid)
     {
-        $sql = 'SELECT show_subtype_id, name, class FROM schedule.show_subtypes WHERE show_subtype_id = $1 LIMIT 1';
+        $sql = 'SELECT show_subtype_id, name, class, description FROM schedule.show_subtypes WHERE show_subtype_id = $1 LIMIT 1';
         $result = self::$db->fetchOne($sql, [$itemid]);
 
         if (empty($result)) {
