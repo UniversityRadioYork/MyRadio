@@ -89,6 +89,11 @@
                                         "title": "Request marketing for your show",
                                         "url": "https://docs.google.com/forms/d/e/1FAIpQLSf9tQMn2FvE-ldCmK7XeMKBRrJk_eYzuUZtVartSnrT5a4s_w/viewform",
                                         "description": "If you would like marketing put out for your show, fill out this form."
+                                    },
+                                    {
+                                        "title": "Request feedback on your demo",
+                                        "url": "https://docs.google.com/forms/d/e/1FAIpQLSed1ddilaPWdfMVWwACOO2hUMfisVcGvRj5nHuj0ESRWwgm_g/viewform",
+                                        "description": "If you would like feedback on a demo you've made, fill out this form."
                                     }
                                 ]
                         }
