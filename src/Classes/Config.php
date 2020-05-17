@@ -234,11 +234,12 @@ final class Config
      * The formats to resize uploaded images to.
      *
      * The keys of the array are format names to rename to. The values are [x,y] sizes in pixels.
+     * If provided, the third value in the array is the JPEG quality. If none given, defaults to 80.
      * @var int[][]
      */
     public static $image_resize_formats = [
         'podcast_small' => [1400, 1400],
-        'web' => [800, 800]
+        'web' => [800, 800, 90]
     ];
 
     public static $default_image_format = 'web';

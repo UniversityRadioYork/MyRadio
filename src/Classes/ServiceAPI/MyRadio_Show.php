@@ -789,7 +789,10 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         foreach (Config::$image_resize_formats as $name => $size) {
             $resized = ImageUtils::cropAndResizeImage($img, $size[0], $size[1]);
             $resizedPath = str_replace('.orig.', ".$name.", $path);
-            imagejpeg($resized, $resizedPath, 80);
+            imagejpeg(
+                $resized,
+                $resizedPath,
+                $size[2] ?? 80);
         }
 
         self::$db->query(
