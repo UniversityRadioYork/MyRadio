@@ -15,7 +15,8 @@
         "phploc/phploc": "~4.0",
         "theseer/phpdox": "~0.11",
         "codeception/codeception": "~2.4",
-        "flow/jsonpath": "~0.4"
+        "flow/jsonpath": "~0.4",
+        "mockery/mockery": "^1.3"
     },
     "config": {
         "vendor-dir": "src/vendor"
