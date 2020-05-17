@@ -95,13 +95,13 @@ class ImageUtils
             // Alter it by the scale factor
             $overspillX /= $scaleFactor; // ~188
             // Cut off equally from either side
-            $srcX += ($overspillX / 2); // 188
-            $srcW -= ($overspillX / 2); // 612
+            $srcX += ceil($overspillX / 2); // 188
+            $srcW -= ceil($overspillX / 2); // 612
         } else if ($newResizedY > $newY) {
             $overspillY = $newResizedY - $newY; // calculations not reproduced
             $overspillY /= $scaleFactor;
-            $srcY += ($overspillY / 2);
-            $srcH -= ($overspillY / 2);
+            $srcY += ceil($overspillY / 2);
+            $srcH -= ceil($overspillY / 2);
         }
 
         $newImage = imagecreatetruecolor($newX, $newY);
