@@ -7,6 +7,7 @@
 namespace MyRadio\ServiceAPI;
 
 use MyRadio\Config;
+use MyRadio\MyRadio\AuthUtils;
 use MyRadio\MyRadioException;
 use MyRadio\MyRadio\CoreUtils;
 use MyRadio\MyRadio\URLUtils;
@@ -1064,6 +1065,9 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
 
     public function getMessages($offset = 0)
     {
+        if (!($this->getSeason()->getShow()->isCurrentUserAnOwner())) {
+            AuthUtils::requirePermission(AUTH_ANY_SHOW_MESSAGES);
+        }
         $result = self::$db->fetchAll(
             'SELECT c.commid AS id,
             commtypeid AS type,
