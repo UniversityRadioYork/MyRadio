@@ -189,7 +189,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         /*
          * @todo Support general photo attachment?
          */
-        $this->photo_path = Config::$default_show_path;
+        $this->photo_path = Config::$default_show_image_path;
         $image_metadata = json_decode($result['image_metadata_values']);
         if ($result['image_metadata_values'] !== null) {
             $this->photo_path = $image_metadata[0];

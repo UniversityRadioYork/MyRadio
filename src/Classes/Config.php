@@ -238,8 +238,8 @@ final class Config
      * @var int[][]
      */
     public static $image_resize_formats = [
-        'podcast_small' => [1400, 1400],
-        'web' => [800, 800, 90]
+        'podcast_small' => [1400, 1400, 90],
+        'web' => [800, 800]
     ];
 
     public static $default_image_format = 'web';
@@ -272,7 +272,7 @@ final class Config
      *
      * @var string
      */
-    public static $default_show_path = 'image_meta/ShowImageMetadata/22.png';
+    public static $default_show_image_path = 'image_meta/ShowImageMetadata/22.png';
 
     /**
      * The full web address to the image that will be served outside of term time.
