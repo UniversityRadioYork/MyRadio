@@ -54,7 +54,7 @@ before_script:
     # configure MyRadio
     - cp sample_configs/travis-config.php src/MyRadio_Config.local.php
 script:
-    - src/vendor/bin/phpunit tests/Classes
+    - src/vendor/bin/phpunit
     - curl -v http://localhost/api/v2/config/publicconfig?api_key=travis-test-key
     - src/vendor/bin/codecept run --env travis
     - node_modules/.bin/eslint .
