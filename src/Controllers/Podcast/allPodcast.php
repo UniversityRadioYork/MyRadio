@@ -12,5 +12,5 @@ CoreUtils::getTemplateObject()->setTemplate('table.twig')
     ->addVariable('subtitle', 'All Podcasts')
     ->addVariable(
         'tabledata',
-        CoreUtils::setToDataSource(MyRadio_Podcast::getAllPodcasts($include_suspended = true, $include_pending = true))
+        CoreUtils::setToDataSource(MyRadio_Podcast::getAllPodcasts())
     )->render();
