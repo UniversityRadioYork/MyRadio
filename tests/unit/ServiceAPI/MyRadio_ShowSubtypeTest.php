@@ -27,4 +27,31 @@ class MyRadio_ShowSubtypeTest extends TestCase
         $this->assertEquals('Test', $test->getName());
         $this->assertEquals('test', $test->getClass());
     }
+
+    public function testGetAll()
+    {
+        $this->database->shouldReceive('fetchAll')
+            ->andReturn([
+                [
+                    'show_subtype_id' => 1,
+                    'name' => 'Test1',
+                    'class' => 'test',
+                    'description' => 'Test'
+                ],
+                [
+                    'show_subtype_id' => 2,
+                    'name' => 'Test2',
+                    'class' => 'test',
+                    'description' => 'Test'
+                ]
+            ]);
+
+        $test = MyRadio_ShowSubtype::getAll();
+
+        for ($i = 0; $i < 2; $i++) {
+            $this->assertEquals($i+1, $test[$i]['id']);
+            $this->assertEquals('Test'.($i+1), $test[$i]['name']);
+            $this->assertEquals('test', $test[$i]['class']);
+        }
+    }
 }

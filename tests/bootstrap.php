@@ -1,5 +1,8 @@
 <?php
 
+// PHPUnit has a bad habit of running out of RAM while generating coverage
+ini_set('memory_limit', '1024M');
+
 require_once './src/Classes/Autoloader.php';
 // instantiate the loader
 $loader = new \MyRadio\Autoloader();

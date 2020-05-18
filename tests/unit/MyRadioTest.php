@@ -12,7 +12,12 @@ trait MyRadioTest
      */
     protected $database;
 
-    protected function setUp()
+    protected function setUp(): void
+    {
+        self::overrideDatabase();
+    }
+
+    protected function overrideDatabase()
     {
         $this->database = Mockery::mock(\MyRadio\Database::class);
         $rc = new \ReflectionClass(ServiceAPI::class);
