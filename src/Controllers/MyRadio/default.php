@@ -11,6 +11,7 @@ use \MyRadio\ServiceAPI\MyRadio_User;
 use \MyRadio\MyRadio\MyRadioMenu;
 use \MyRadio\MyRadio\MyRadioNews;
 
+/** @var MyRadio_User $user */
 $user = MyRadio_User::getInstance();
 $menu = (new MyRadioMenu())->getMenuForUser();
 

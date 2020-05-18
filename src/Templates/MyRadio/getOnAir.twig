@@ -27,10 +27,30 @@ else
 
 <!--Advanced Studio Training-->
 <li class="{% if not studio_demoed %}menu-checklist-disabled{% endif %}">
-    <a href="{% if not (studio_demoed) %}javascript:{% else %}https://docs.google.com/forms/d/e/1FAIpQLSdaCSzLu7cNDnkr0nVVFkSpzgBFor_coIotY1Wt1o9cH9UyyA/viewform{% endif %}" title="Want to find out about more of the amazing things you can do in the studio? Get Advanced Training here!">Get Advanced Studio Trained</a>
+    <a
+        href="{% if not (studio_demoed) %}javascript:{% else %}https://docs.google.com/forms/d/e/1FAIpQLSdaCSzLu7cNDnkr0nVVFkSpzgBFor_coIotY1Wt1o9cH9UyyA/viewform{% endif %}"
+        title="Want to find out about more of the amazing things you can do in the studio? Get Advanced Training here!"
+    >
+        Get Advanced Studio Trained
+    </a>
+</li>
+
+<!--Advanced Studio Training-->
+<li class="{% if not studio_demoed %}menu-checklist-disabled{% endif %}">
+    <a
+            href="{% if not (studio_demoed) %}javascript:{% else %}https://docs.google.com/forms/d/e/1FAIpQLSc286QroMZV7FSjw8SQc5TMSDd2te940vXY_r5fCDtEjv1T6A/viewform{% endif %}"
+            title="Want to improve your presenting skills? Get Advanced Presenter Trained! Book a session through this form."
+    >
+        Get Advanced Presenter Trained
+    </a>
 </li>
 
 <!--Uploader Training-->
 <li class="{% if not (studio_demoed and contract_signed)%}menu-checklist-disabled{% endif %}">
-    <a href="{% if not (studio_demoed and contract_signed)%}javascript:{% else %}https://docs.google.com/forms/d/e/1FAIpQLSeIkVMShKhuwtn5cKJyvJd242WNVf2vtn7elW3-myFEKrIPig/viewform{% endif %}" title="Before you upload songs to our music library, you need to learn some rules about uploading. Click here to get some training.">Get Manual Upload Trained</a>
+    <a
+        href="{% if not (studio_demoed and contract_signed)%}javascript:{% else %}https://docs.google.com/forms/d/e/1FAIpQLSeIkVMShKhuwtn5cKJyvJd242WNVf2vtn7elW3-myFEKrIPig/viewform{% endif %}"
+        title="Before you upload songs to our music library, you need to learn some rules about uploading. Click here to get some training."
+    >
+        Get Manual Upload Trained
+    </a>
 </li>
