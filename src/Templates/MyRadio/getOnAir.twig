@@ -35,6 +35,16 @@ else
     </a>
 </li>
 
+<!--Advanced Studio Training-->
+<li class="{% if not studio_demoed %}menu-checklist-disabled{% endif %}">
+    <a
+            href="{% if not (studio_demoed) %}javascript:{% else %}https://docs.google.com/forms/d/e/1FAIpQLSc286QroMZV7FSjw8SQc5TMSDd2te940vXY_r5fCDtEjv1T6A/viewform{% endif %}"
+            title="Want to improve your presenting skills? Get Advanced Presenter Trained! Book a session through this form."
+    >
+        Get Advanced Presenter Trained
+    </a>
+</li>
+
 <!--Uploader Training-->
 <li class="{% if not (studio_demoed and contract_signed)%}menu-checklist-disabled{% endif %}">
     <a
