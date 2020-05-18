@@ -77,10 +77,29 @@
                                     },
                                     {
                                         "title": "Apply for an Event",
-                                        "url": "https://goo.gl/forms/bIxTp43VqqMQtRZ92",
-                                        "description": "Planning an event? Make sure our production team are aware of it by completing the following form."
+                                        "url": "https://docs.google.com/forms/d/e/1FAIpQLSezvdE92zWlT4r1mrVkLG-L5LO1m6jTw138oz-7_01Ue6jiSw/viewform",
+                                        "description": "Planning an event? Make sure our Management and Production teams are aware of it by completing the following form."
+                                    },
+                                    {
+                                        "title": "Get My Show Visualised",
+                                        "url": "https://docs.google.com/forms/d/e/1FAIpQLSeemET6POjd3S_TeKy5Dy9qgGRy7U-24BIjxlMhaihVOTtiWg/viewform",
+                                        "description": "If you would like to have your show live-streamed with video, fill out this form."
+                                    },
+                                    {
+                                        "title": "Request Marketing for My Show",
+                                        "url": "https://docs.google.com/forms/d/e/1FAIpQLSf9tQMn2FvE-ldCmK7XeMKBRrJk_eYzuUZtVartSnrT5a4s_w/viewform",
+                                        "description": "Got a specific feature or event you want to get social media and graphics for? Fill out this form!"
+                                    },
+                                    {
+                                        "title": "Request Feedback on My Presenting",
+                                        "url": "https://docs.google.com/forms/d/e/1FAIpQLSed1ddilaPWdfMVWwACOO2hUMfisVcGvRj5nHuj0ESRWwgm_g/viewform",
+                                        "description": "Fill out this form to get your demo reviewed by URY members past and present."
+                                    },
+                                    {
+                                        "title": "Request Press Access to an Event",
+                                        "url": "https://docs.google.com/forms/d/1CmTXxFJIUgPhUngLLeQYsYEpU4Ivg46Gl53pSO92C5U/viewform",
+                                        "description": "Want to go to a gig, festival, or any other event and cover it for URY? Fill out this form and we can try and get you press access."
                                     }
-                                    
                                 ]
                         }
                     ]
