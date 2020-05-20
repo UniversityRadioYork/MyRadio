@@ -42,8 +42,17 @@ checkout of this repository):
 Alias /myradio /usr/local/www/MyRadio/src/Public
 
 <Directory /usr/local/www/MyRadio/src/Public>
-   Require all granted
-   AllowOverride None
+  Require all granted
+  AllowOverride None
+  RewriteEngine On
+
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteRule ^([^/]+)/([^/]+)/? /myradio/index.php?module=$1&action=$2 [QSA,L]
+
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteRule ^([^/]+)/? /myradio/index.php?module=$1 [QSA,L]
 </Directory>
 
 Alias /api /usr/local/www/MyRadio/src/PublicAPI
@@ -71,8 +80,8 @@ CREATE DATABASE myradio WITH OWNER=myradio;
 
 Tests
 -----
-MyRadio uses [Codeception](http://codeception.com/quickstart) for its test
-suite.
+MyRadio uses [Codeception](http://codeception.com/quickstart) for its component
+test suite.
 
 To run the tests, call `src/vendor/bin/codecept run` from the root directory.
 By default this assumes that the API is running at http://localhost:7080/api/v2,

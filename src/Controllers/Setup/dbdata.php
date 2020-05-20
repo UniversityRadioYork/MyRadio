@@ -98,6 +98,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $action = CoreUtils::getActionId($module, $action[1]);
                 AuthUtils::addActionPermission($module, $action, null);
             }
+            // We still need NOLOGIN on some things
+            foreach (json_decode(file_get_contents(SCHEMA_DIR.'data-auth-min.json')) as $auth) {
+                try {
+                    AuthUtils::addPermission($auth[0], $auth[1]);
+                } catch (MyRadioException $e) {
+                    $warnings[] = 'Failed to create Permission "'.$auth[0].'". It may already exist.';
+                }
+            }
+            foreach (json_decode(file_get_contents(SCHEMA_DIR.'data-actionsauth.json')) as $actionauth) {
+                if ($actionauth[2] == "AUTH_NOLOGIN") {
+                    $module = CoreUtils::getModuleId($actionauth[0]);
+                    $action = $actionauth[1] == null ? null : CoreUtils::getActionId($module, $actionauth[1]);
+                    $auth = $actionauth[2] == null ? null : constant($actionauth[2]);
+                    AuthUtils::addActionPermission($module, $action, $auth);
+                }
+            }
             break;
         case DBDATA_BLANK:
             foreach (json_decode(file_get_contents(SCHEMA_DIR.'data-actions-min.json')) as $action) {
