@@ -70,7 +70,7 @@ class MyRadioSession implements \SessionHandlerInterface
         );
         if (empty($result)) {
             $this->db->query(
-                'INSERT INTO sso_session (id, data, timestamp)
+                'INSERT INTO sso_session (id, data, timestamp) ON CONFLICT DO NOTHING
                 VALUES ($1, \'\', NOW())',
                 [$id]
             );
