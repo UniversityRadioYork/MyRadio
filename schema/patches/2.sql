@@ -9,7 +9,7 @@ CREATE TABLE myradio.analytics (
     session_id VARCHAR(32)
 );
 
-CREATE FUNCTION myr_create_analytics_record(
+CREATE FUNCTION myradio.create_analytics_record(
     page TEXT,
     ref TEXT,
     memberid INTEGER,
@@ -24,14 +24,14 @@ AS $$
         -- Find officerships
         SELECT array_agg(officerid) INTO officerships
         FROM public.member_officer
-        WHERE member_officer.memberid = myr_create_analytics_record.memberid
+        WHERE member_officer.memberid = create_analytics_record.memberid
         AND from_date <= NOW()
         AND (till_date IS NULL OR till_date >= (NOW() + '28 days'::INTERVAL));
 
         -- Find number of shows
         SELECT COUNT(*) INTO num_shows
         FROM schedule.show
-        WHERE show.memberid=myr_create_analytics_record.memberid
+        WHERE show.memberid=create_analytics_record.memberid
         OR show_id IN (
                SELECT show_id FROM schedule.show_credit
                   WHERE creditid=myr_create_analytics_record.memberid AND

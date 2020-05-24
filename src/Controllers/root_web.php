@@ -83,7 +83,7 @@ if (isset($_REQUEST['joyride'])) {
 // Unless it's config.js, that's just silly
 if ($action !== 'config.js') {
     Database::getInstance()->query(
-        'SELECT myr_create_analytics_record($1, $2, $3, $4)',
+        'SELECT myradio.create_analytics_record($1, $2, $3, $4)',
         [
             $module . '/' . $action,
             $_GET['ref'] ?? '',
