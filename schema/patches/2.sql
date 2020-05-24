@@ -1,12 +1,16 @@
 BEGIN;
 
+DROP TABLE IF EXISTS myradio.analytics;
+DROP FUNCTION IF EXISTS myradio.create_analytics_record(TEXT, TEXT, INTEGER, VARCHAR);
+
 CREATE TABLE myradio.analytics (
     analytics_record_id BIGSERIAL PRIMARY KEY,
     page TEXT,
     ref TEXT DEFAULT NULL,
     member_officerships integer[],
     member_shows_bucketed integer,
-    session_id VARCHAR(32)
+    session_id VARCHAR(32),
+    time timestamptz
 );
 
 CREATE FUNCTION myradio.create_analytics_record(
@@ -40,13 +44,14 @@ AS $$
 
         -- Right, we've got what we need
         INSERT INTO myradio.analytics
-        (page, ref, member_officerships, member_shows_bucketed, session_id)
+        (page, ref, member_officerships, member_shows_bucketed, session_id, time)
         VALUES (
                 create_analytics_record.page,
                 create_analytics_record.ref,
                 officerships,
                 CEIL(num_shows::decimal / 5),
-                create_analytics_record.session_id
+                create_analytics_record.session_id,
+                NOW()
                );
     END;
     $$
