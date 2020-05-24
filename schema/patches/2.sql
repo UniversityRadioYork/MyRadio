@@ -34,7 +34,7 @@ AS $$
         WHERE show.memberid=create_analytics_record.memberid
         OR show_id IN (
                SELECT show_id FROM schedule.show_credit
-                  WHERE creditid=myr_create_analytics_record.memberid AND
+                  WHERE creditid=create_analytics_record.memberid AND
                       (effective_to >= NOW() OR effective_to IS NULL)
         );
 
@@ -42,11 +42,11 @@ AS $$
         INSERT INTO myradio.analytics
         (page, ref, member_officerships, member_shows_bucketed, session_id)
         VALUES (
-                myr_create_analytics_record.page,
-                myr_create_analytics_record.ref,
+                create_analytics_record.page,
+                create_analytics_record.ref,
                 officerships,
                 CEIL(num_shows::decimal / 5),
-                myr_create_analytics_record.session_id
+                create_analytics_record.session_id
                );
     END;
     $$
