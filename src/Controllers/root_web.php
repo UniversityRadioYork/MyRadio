@@ -80,7 +80,7 @@ if (isset($_REQUEST['joyride'])) {
 }
 
 // Apply analytics
-if (substr($action, 0, 2) !== 'a' // pseudo-API
+if (substr($action, 0, 2) !== 'a-' // pseudo-API
     && $action !== 'config.js'
     && !($module === 'SIS' && $action === 'remote')
 ) {
