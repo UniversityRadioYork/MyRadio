@@ -80,16 +80,18 @@ if (isset($_REQUEST['joyride'])) {
 }
 
 // Apply analytics
-
-Database::getInstance()->query(
-    'SELECT myr_create_analytics_record($1, $2, $3, $4)',
-    [
-        $module . '/' . $action,
-        $_GET['ref'] ?? '',
-        $_SESSION['memberid'] ?? -1,
-        session_id()
-    ]
-);
+// Unless it's config.js, that's just silly
+if ($action !== 'config.js') {
+    Database::getInstance()->query(
+        'SELECT myr_create_analytics_record($1, $2, $3, $4)',
+        [
+            $module . '/' . $action,
+            $_GET['ref'] ?? '',
+            $_SESSION['memberid'] ?? -1,
+            session_id()
+        ]
+    );
+}
 
 //Include the requested action
 require 'Controllers/'.$module.'/'.$action.'.php';
