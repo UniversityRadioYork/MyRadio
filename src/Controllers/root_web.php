@@ -80,19 +80,21 @@ if (isset($_REQUEST['joyride'])) {
 }
 
 // Apply analytics
-if (substr($action, 0, 2) !== 'a-' // pseudo-API
-    && $action !== 'config.js'
-    && !($module === 'SIS' && $action === 'remote')
-) {
-    Database::getInstance()->query(
-        'SELECT myradio.create_analytics_record($1, $2, $3, $4)',
-        [
-            $module . '/' . $action,
-            $_GET['ref'] ?? '',
-            $_SESSION['memberid'] ?? -1,
-            session_id()
-        ]
-    );
+if (Config::$enable_analytics) {
+    if (substr($action, 0, 2) !== 'a-' // pseudo-API
+        && $action !== 'config.js'
+        && !($module === 'SIS' && $action === 'remote')
+    ) {
+        Database::getInstance()->query(
+            'SELECT myradio.create_analytics_record($1, $2, $3, $4)',
+            [
+                $module . '/' . $action,
+                $_GET['ref'] ?? '',
+                $_SESSION['memberid'] ?? -1,
+                session_id()
+            ]
+        );
+    }
 }
 
 //Include the requested action
