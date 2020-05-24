@@ -331,8 +331,8 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
                 [
                     'label' => 'Existing Cover Photo',
                     'explanation' => 'To use an existing cover photo of another podcast, '
-                                     . 'copy the Existing Cover Photo file of another '
-                                     . 'podcast with that photo into here. For new images, keep blank.',
+                        . 'copy the Existing Cover Photo file of another '
+                        . 'podcast with that photo into here. For new images, keep blank.',
                     'required' => false,
                 ]
             )
@@ -533,6 +533,17 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
     }
 
     /**
+     * Whether this podcast should be live right now
+     * @return bool
+     */
+    public function isPublished()
+    {
+        return !$this->isSuspended()
+            && !empty($this->submitted)
+            && $this->submitted < time();
+    }
+
+    /**
      * Get the file system path to where the original file is stored.
      *
      * @return string
@@ -641,6 +652,15 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
     }
 
     /**
+     * Get a GUID for iTunes
+     * @return string
+     */
+    public function getGUID()
+    {
+        return 'https:' . Config::$website_url . $this->getWebpage();
+    }
+
+    /**
      * Get data in array format.
      * @param array $mixins Mixins.
      * @mixin show Provides data about the show this podcast is from
@@ -652,7 +672,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
     public function toDataSource($mixins = [])
     {
         $mixin_funcs = [
-            'show' => function (&$data) {
+            'show' => function (&$data) use ($mixins) {
                 $data['show'] = $this->getShow() ?
                     $this->getShow()->toDataSource($mixins) : null;
             },
@@ -824,6 +844,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
             WHERE podcast_id=$2',
             [CoreUtils::getTimestamp($time), $this->getID()]
         );
+        $this->updateCacheObject();
 
         return $this;
     }
@@ -839,7 +860,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
     {
         $tmpfile = $this->getArchiveFile();
         $dbfile = $this->getWebFile();
-        shell_exec("nice -n 15 ffmpeg -i '{$tmpfile}' -ab 192k -f mp3 -map 0:a '{$dbfile}'");
+        shell_exec("nice -n 15 ffmpeg -i '{$tmpfile}' -ab 128k -f mp3 -map 0:a '{$dbfile}'");
 
         self::$db->query(
             'UPDATE uryplayer.podcast SET file=$1 WHERE podcast_id=$2',
@@ -855,16 +876,34 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
      *
      * @param int $num_results The number of results to return per page. 0 for all podcasts.
      * @param int $page The page required.
-     * @param bool $includeSuspended Whether to include suspended podcasts in the result
+     * @param bool $include_suspended Whether to include suspended podcasts in the result
+     * @param bool $include_pending Whether to include pending (future publish/processing) podcasts in the result
      *
      * @return Array[MyRadio_Podcast]
      */
-    public static function getAllPodcasts($num_results = 0, $page = 1, $includeSuspended = true)
-    {
-        $where = !$includeSuspended ? 'WHERE suspended = false ': '';
+    public static function getAllPodcasts(
+        $num_results = 0,
+        $page = 1,
+        $include_suspended = false,
+        $include_pending = false
+    ) {
+        $where = '';
+        if (!$include_suspended || !$include_pending) {
+            $where = 'WHERE ';
+            if (!$include_suspended) {
+                $where .= 'suspended = false';
+            }
+            if (!$include_suspended && !$include_pending) {
+                $where .= ' AND ';
+            }
+            if (!$include_pending) {
+                $where .= 'submitted IS NOT NULL';
+            }
+        }
+
         $filterLimit = $num_results == 0 ? 'ALL' : $num_results;
         $filterOffset = $num_results * $page;
-        $query = "SELECT podcast_id FROM uryplayer.podcast $where";
+        $query = "SELECT podcast_id FROM uryplayer.podcast $where ";
         $query .= "ORDER BY submitted DESC OFFSET $filterOffset LIMIT $filterLimit;";
 
         $result = self::$db->fetchColumn($query);

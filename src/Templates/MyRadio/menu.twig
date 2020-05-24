@@ -11,7 +11,7 @@
       {% if item.template is not same as(null) %}
       {% include item.template %}
       {% else %}
-      <li><a href="{{ item.url }}?ref={{ item.title | e('url') }}" title="{{ item.description | replace({'"': '&quot;'}) | raw }}">{{ item.title }}</a></li>
+      <li><a href="{{ item.url }}?ref={{ item.title | e('url') }}" target="_blank" title="{{ item.description | replace({'"': '&quot;'}) | raw }}">{{ item.title }}</a></li>
       {% endif %}
     {% endfor %}
     </ul>

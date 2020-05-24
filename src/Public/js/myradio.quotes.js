@@ -1,5 +1,5 @@
 $(".twig-datatable").dataTable({
-  "aaSorting": [[2, "desc"]],
+  "aaSorting": [[3, "desc"]],
   "aoColumns": [
     //quoteID
     {
@@ -7,8 +7,12 @@ $(".twig-datatable").dataTable({
     },
     //source
     {
+      "bVisible": false
+    },
+    // source_name
+    {
       "sTitle": "Source",
-      "sClass": "left",
+      "sClass": "left"
     },
     //date
     {
@@ -23,19 +27,9 @@ $(".twig-datatable").dataTable({
     {
       "sTitle": "Quote"
     },
-    //suspended
-    {
-      "bVisible": false
-    },
     //editlink
     {
       "sTitle": "Edit",
-      "bSortable": false,
-      "bVisible": true
-    },
-    //removelink
-    {
-      "sTitle": "Remove",
       "bSortable": false,
       "bVisible": true
     }

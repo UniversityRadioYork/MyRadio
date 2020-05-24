@@ -7,7 +7,9 @@ use \MyRadio\MyRadio\AuthUtils;
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\ServiceAPI\MyRadio_User;
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+$pass_error = '';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && $_REQUEST['password'] === $_REQUEST['passwordchk']) {
     $params = [
         'fname' => $_REQUEST['first-name'],
         'sname' => $_REQUEST['last-name'],
@@ -29,9 +31,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     header('Location: ?c=save');
 } else {
+    $pass_error = 'Password and Password Confirmation must be the same';
     CoreUtils::getTemplateObject()
         ->setTemplate('Setup/user.twig')
         ->addVariable('title', 'User')
         ->addVariable('db_error', isset($_GET['err']))
+        ->addVariable('pass_error', $pass_error)
         ->render();
 }

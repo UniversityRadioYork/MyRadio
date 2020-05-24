@@ -78,7 +78,8 @@ class MyRadio_TracklistItem extends ServiceAPI
      * @param int $trackid  The ID of the track to tracklist.
      * @param int $timeslotid   The ID of the timeslot to tracklist to. Optional, defaults to current show.
      * @param int $starttime    Epoch time of the start of the tracklist. Optional, defaults to current time.
-     * @param char $sourceid    The id of the tracklist source (baps, webstudio, etc), see tracklist.source. Defaults to 'api'
+     * @param char $sourceid    The id of the tracklist source (baps, webstudio, etc), see tracklist.source.
+     *                          Defaults to 'api'
      * @param char $state       The state of the tracklist, see tracklist.state. Defaults to 'confirmed'
      *
      *
@@ -91,14 +92,20 @@ class MyRadio_TracklistItem extends ServiceAPI
 
         if (AuthUtils::hasPermission(AUTH_TRACKLIST_ALL)) {
             $tracklist_all = true;
-        } else if (AuthUtils::hasPermission(AUTH_TRACKLIST_OWN)) {
+        } elseif (AuthUtils::hasPermission(AUTH_TRACKLIST_OWN)) {
             $tracklist_all = false;
         } else {
-            throw new MyRadioException("The current user does not have permission to create a tracklistitem.", 403);
+            throw new MyRadioException(
+                "The current user does not have permission to create a tracklistitem.",
+                403
+            );
         }
 
         if ($timeslotid != null && $tracklist_all == false) {
-            throw new MyRadioException("The current user doesn't have permission to set a tracklist on a show other than their own.", 403);
+            throw new MyRadioException(
+                "The current user doesn't have permission to set a tracklist on a show other than their own.",
+                403
+            );
         }
 
         if ($timeslotid == null) {
@@ -115,16 +122,24 @@ class MyRadio_TracklistItem extends ServiceAPI
         if ($timeslot == null) {
             // we're on jukebox
             if ($tracklist_all == false) {
-                throw new MyRadioException("The current user doesn't have permission to set a tracklist on a show other than their own.", 403);
+                throw new MyRadioException(
+                    "The current user doesn't have permission to set a tracklist on a show other than their own.",
+                    403
+                );
             }
         } else {
             if ($tracklist_all == false && !$timeslot->getSeason()->getShow()->isCurrentUserAnOwner()) {
-                throw new MyRadioException("Current user doesn't have permission to tracklist to a show they aren't credited on.", 403);
+                throw new MyRadioException(
+                    "Current user doesn't have permission to tracklist to a show they aren't credited on.",
+                    403
+                );
             }
             if ($timeslot->getStartTime() > $starttime || $timeslot->getEndTime() < $starttime) {
-                throw new MyRadioException("The starttime provided was outside the window of the requested timeslot.", 400);
+                throw new MyRadioException(
+                    "The starttime provided was outside the window of the requested timeslot.",
+                    400
+                );
             }
-
         }
         
         // Table is timestamp with no timezone, so we need to account for BST
@@ -147,7 +162,10 @@ class MyRadio_TracklistItem extends ServiceAPI
 
         if ($audiologid['audiologid'] == null) {
             self::$db->query('ABORT');
-            throw new MyRadioException("Was not able to register tracklist entry. Source is likely invalid.", 400);
+            throw new MyRadioException(
+                "Was not able to register tracklist entry. Source is likely invalid.",
+                400
+            );
         }
 
         self::$db->query(
@@ -159,7 +177,6 @@ class MyRadio_TracklistItem extends ServiceAPI
         self::$db->query('COMMIT');
 
         return self::getInstance($audiologid['audiologid']);
-
     }
 
     public function getEndTime()
@@ -187,10 +204,16 @@ class MyRadio_TracklistItem extends ServiceAPI
                 );
                 $this->endtime = strtotime($time);
             } else {
-                throw new MyRadioException("Current user doesn't have permission to set the endtime of a tracklistitem not from their show.", 403);
+                throw new MyRadioException(
+                    "Current user doesn't have permission to set the endtime of a tracklistitem not from their show.",
+                    403
+                );
             }
         } else {
-            throw new MyRadioException("This timeslotitem does not have a start time. An end time therefore cannot be set.", 400);
+            throw new MyRadioException(
+                "This timeslotitem does not have a start time. An end time therefore cannot be set.",
+                400
+            );
         }
         return $this;
     }
