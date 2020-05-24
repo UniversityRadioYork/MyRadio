@@ -80,7 +80,10 @@ if (isset($_REQUEST['joyride'])) {
 }
 
 // Apply analytics
-if ($action !== 'config.js' && !($module === 'SIS' && $action === 'remote')) {
+if (substr($action, 0, 2) !== 'a' // pseudo-API
+    && $action !== 'config.js'
+    && !($module === 'SIS' && $action === 'remote')
+) {
     Database::getInstance()->query(
         'SELECT myradio.create_analytics_record($1, $2, $3, $4)',
         [
