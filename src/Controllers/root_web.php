@@ -80,8 +80,7 @@ if (isset($_REQUEST['joyride'])) {
 }
 
 // Apply analytics
-// Unless it's config.js, that's just silly
-if ($action !== 'config.js') {
+if ($action !== 'config.js' && !($module === 'SIS' && $action === 'remote')) {
     Database::getInstance()->query(
         'SELECT myradio.create_analytics_record($1, $2, $3, $4)',
         [
