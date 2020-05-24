@@ -86,7 +86,7 @@ Database::getInstance()->query(
     [
         $module . '/' . $action,
         $_GET['ref'] ?? '',
-        $_SESSION['memberid'] ?? '',
+        $_SESSION['memberid'] ?? -1,
         session_id()
     ]
 );
