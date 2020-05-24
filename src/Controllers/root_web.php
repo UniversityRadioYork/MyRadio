@@ -85,8 +85,8 @@ Database::getInstance()->query(
     'SELECT myr_create_analytics_record($1, $2, $3, $4)',
     [
         $module . '/' . $action,
-        $_GET['ref'],
-        $_SESSION['memberid'],
+        $_GET['ref'] ?? '',
+        $_SESSION['memberid'] ?? '',
         session_id()
     ]
 );
