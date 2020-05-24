@@ -45,7 +45,7 @@ AS $$
                 myr_create_analytics_record.page,
                 myr_create_analytics_record.ref,
                 officerships,
-                CEIL(num_shows / 5),
+                CEIL(num_shows::decimal / 5),
                 myr_create_analytics_record.session_id
                );
     END;
