@@ -8,6 +8,12 @@ RUN docker-php-ext-install pgsql pdo_pgsql gd ldap curl xsl zip
 RUN pecl install memcached
 RUN echo extension=memcached.so >> /usr/local/etc/php/conf.d/memcached.ini
 
+RUN pecl install xdebug-2.9.5 && docker-php-ext-enable xdebug \
+ && echo 'zend_extension="/usr/local/lib/php/extensions/no-debug-non-zts-20170718/xdebug.so"' >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+ && echo 'xdebug.remote_port=9000' >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+ && echo 'xdebug.remote_enable=1' >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+ && echo 'xdebug.remote_connect_back=1' >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+
 # Self-signed certificate
 RUN openssl req -nodes -new -subj "/C=GB/ST=North Yorkshire/L=York/O=University Radio York/OU=Localhost/CN=localhost" > myradio.csr && \
     openssl rsa -in privkey.pem -out myradio.key && \
