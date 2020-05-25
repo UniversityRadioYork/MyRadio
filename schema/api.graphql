@@ -1,0 +1,33 @@
+directive @bind(
+    class: String,
+    method: String
+) on FIELD_DEFINITION
+
+scalar DateTime
+
+interface Node {
+    id: ID!
+}
+
+type User implements Node {
+    id: ID! @bind(method: "getID")
+    fname: String! @bind(method: "getFName")
+    sname: String! @bind(method: "getSName")
+}
+
+type Quote implements Node {
+    id: ID!
+    source: User!
+    date: DateTime!
+    text: String!
+}
+
+type Query {
+    node(id: ID): Node
+
+    allQuotes: [Quote!]! @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Quote", method: "getAll")
+}
+
+schema {
+    query: Query
+}
