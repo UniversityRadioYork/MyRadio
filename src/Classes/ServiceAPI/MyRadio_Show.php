@@ -91,7 +91,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             (
                 SELECT
                     show_id,
-                    array_agg(show_season_id ORDER BY termid) AS show_season_id
+                    array_agg(show_season_id ORDER BY termid, submitted) AS show_season_id
                 FROM schedule.show_season
                 GROUP BY show_id
             ) AS season
