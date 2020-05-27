@@ -704,7 +704,9 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
 
         $cover = $this->getCover();
         if (!empty($cover)) {
-            $data['photo'] = Config::$public_media_uri . '/' . $cover;
+            $cover_path = Config::$public_media_uri . '/' . $cover;
+            $cover_path = preg_replace('(//)', '/', $cover_path);
+            $data['photo'] = $cover_path;
         }
 
         $this->addMixins($data, $mixins, $mixin_funcs);
