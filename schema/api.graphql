@@ -1,7 +1,19 @@
+"""
+Bind an object field to a class or method. This shouldn't be used externally and is only used within the schema defition.
+Use cases:
+1. Inside Query (and eventually Mutation) (needs both class and method)
+2. On a field that can't be resolved by the name munging rules (needs method)
+"""
 directive @bind(
+    """
+    The class that we're binding to. It should be a fully qualified class name, prefixed with a backslash (\\).
+    """
     class: String,
+    """
+    The method that we're binding to
+    """
     method: String
-) on FIELD_DEFINITION
+) on FIELD_DEFINITION | OBJECT
 
 """
 An RFC3339 date string, such as 2007-12-03
@@ -25,13 +37,13 @@ interface Node {
     id: ID!
 }
 
-type User implements Node {
+type User implements Node @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_User") {
     id: ID! @bind(method: "getID")
     fname: String! @bind(method: "getFName")
     sname: String! @bind(method: "getSName")
 }
 
-type Quote implements Node {
+type Quote implements Node @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Quote") {
     id: ID!
     source: User!
     date: Date!

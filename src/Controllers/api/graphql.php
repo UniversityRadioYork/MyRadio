@@ -15,6 +15,67 @@ if ($schemaText === false) {
     throw new MyRadioException('Failed to get API schema!');
 }
 
+$typeConfigDecorator = function($typeConfig, $typeDefinitionNode) {
+    $name = $typeConfig['name'];
+    switch ($name) {
+        case "Query":
+            // Gets special handling
+            $typeConfig['fields']['node']['resolve'] = function($_, $args) {
+                $id_val = base64_decode($args['id']);
+                list($type, $id) = explode('#', $id_val);
+                $rc = new ReflectionClass($type);
+                if (!($rc->isSubclassOf(\MyRadio\ServiceAPI\ServiceAPI::class))) {
+                    throw new MyRadioException("Tried to resolve node $type#$id but it's not a ServiceAPI");
+                }
+                return $type::getInstance($id);
+            };
+            $typeConfig['fields']['node']['resolveType'] = function($value, $context, ResolveInfo $info) {
+                // Go through all the defined types, until we find one that binds to $value::class
+                $className = get_class($value);
+                if ($className === false) {
+                    throw new MyRadioException('Tried to resolve a node that isn\'t a class!');
+                }
+                $rc = new ReflectionClass($className);
+                if(!($rc->isSubclassOf(\MyRadio\ServiceAPI\ServiceAPI::class))) {
+                    throw new MyRadioException("Tried to resolve $className through Node, but it's not a ServiceAPI");
+                }
+                $typeName = $className::getGraphQLTypeName();
+                return $info->schema->getType($typeName);
+            };
+
+            $typeConfig['resolveField'] = function($source, $args, $context, ResolveInfo $info) {
+                $fieldName = $info->fieldName;
+                // If we're on the Query type, we're entering the graph, so we'll want a static method.
+                // Unlike elsewhere in the graph, we can assume everything on Query will have an @bind.
+                $bindDirective = GraphQLUtils::getDirectiveByName($info, 'bind');
+                if (!$bindDirective) {
+                    throw new MyRadioException("Tried to resolve $fieldName on Query but it didn't have an @bind");
+                }
+                $bindArgs = GraphQLUtils::getDirectiveArguments($bindDirective);
+                if (isset($bindArgs['class'])) {
+                    // we know class is a string
+                    /** @noinspection PhpPossiblePolymorphicInvocationInspection */
+                    $className = $bindArgs['class']->value;
+                } else {
+                    throw new MyRadioException("Tried to resolve $fieldName on Query but its @bind didn't have a class");
+                }
+                if (isset($bindArgs['method'])) {
+                    $methodName = $bindArgs['method']->value;
+                } else {
+                    throw new MyRadioException("Tried to resolve $fieldName on Query but its @bind didn't have a method");
+                }
+                // Wonderful!
+                $clazz = new ReflectionClass($className);
+                $meth = $clazz->getMethod($methodName);
+                // TODO authz
+                return GraphQLUtils::processScalarIfNecessary($info, GraphQLUtils::invokeNamed($meth, null, $args));
+            };
+            break;
+        case "Mutation":
+            throw new MyRadioException('Mutations not supported');
+    }
+    return $typeConfig;
+};
 
 $schema = BuildSchema::build($schemaText);
 
@@ -38,46 +99,6 @@ function graphQlResolver($source, $args, $context, ResolveInfo $info) {
             $methodName = $bindArgs['method']->value;
         }
     }
-
-    // If we're on the Query type, we're entering the graph, so we'll want a static method.
-    // Unlike elsewhere in the graph, we can assume everything on Query will have an @bind.
-    if ($info->parentType->name === 'Query') {
-        // Everything with the exception of `node`, that is.
-        if ($fieldName === "node") {
-            // See below for reasoning.
-            $id_val = base64_decode($args['id']);
-            list($type, $id) = explode('#', $id_val);
-            $rc = new ReflectionClass($type);
-            if (!($rc->isSubclassOf(\MyRadio\ServiceAPI\ServiceAPI::class))) {
-                throw new MyRadioException("Tried to resolve node $type#$id but it's not a ServiceAPI");
-            }
-            return $type::getInstance($id);
-        }
-        if (!$bindDirective) {
-            throw new MyRadioException("Tried to resolve $fieldName on Query but it didn't have an @bind");
-        }
-        if (isset($bindArgs['class'])) {
-            // we know class is a string
-            /** @noinspection PhpPossiblePolymorphicInvocationInspection */
-            $className = $bindArgs['class']->value;
-        } else {
-            throw new MyRadioException("Tried to resolve $fieldName on Query but its @bind didn't have a class");
-        }
-        if (!isset($methodName)) {
-            throw new MyRadioException("Tried to resolve $fieldName on Query but its @bind didn't have a method");
-        }
-
-        // Wonderful!
-        $clazz = new ReflectionClass($className);
-        $meth = $clazz->getMethod($methodName);
-        // TODO authz
-        return GraphQLUtils::processScalarIfNecessary($info, GraphQLUtils::invokeNamed($meth, null, $args));
-    }
-    // TODO
-    if ($info->parentType->name === 'Mutation') {
-        throw new MyRadioException('Mutations not yet supported.');
-    }
-
     // Okay, we're in the Wild West. We're on an object and we need to get a field.
     // First, check if we're on an array
     if (is_array($source)) {

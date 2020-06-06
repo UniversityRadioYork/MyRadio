@@ -2162,4 +2162,9 @@ class MyRadio_User extends ServiceAPI implements APICaller
 
         return $data;
     }
+
+    public static function getGraphQLTypeName()
+    {
+        return 'User';
+    }
 }

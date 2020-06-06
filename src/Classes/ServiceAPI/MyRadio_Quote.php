@@ -385,4 +385,9 @@ class MyRadio_Quote extends ServiceAPI
             ],
         ];
     }
+
+    public static function getGraphQLTypeName()
+    {
+        return 'Quote';
+    }
 }
