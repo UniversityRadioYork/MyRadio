@@ -68,6 +68,9 @@ class GraphQLUtils
             return $value;
         }
         switch ($type) {
+            case "HTMLString":
+                // Passed through directly
+                return $value;
             case "Date":
             case "Time":
             case "DateTime":
