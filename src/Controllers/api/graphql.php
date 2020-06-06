@@ -41,14 +41,22 @@ $typeConfigDecorator = function($typeConfig, $typeDefinitionNode) {
                     $orig,
                     [
                         'node' => [
-                            'resolve' => function($_, $args) {
+                            'resolve' => function($value, $args, $context, ResolveInfo $info) {
                                 $id_val = base64_decode($args['id']);
                                 list($type, $id) = explode('#', $id_val);
+                                if ($type[0] !== '\\') {
+                                    $type = '\\' . $type;
+                                }
                                 $rc = new ReflectionClass($type);
                                 if (!($rc->isSubclassOf(\MyRadio\ServiceAPI\ServiceAPI::class))) {
                                     throw new MyRadioException("Tried to resolve node $type#$id but it's not a ServiceAPI");
                                 }
-                                return $type::getInstance($id);
+                                // Node resolution checks authorisation for $type::toDataSource
+                                if (GraphQLUtils::isAuthorisedToAccess($info, $type, 'toDataSource')) {
+                                    return $type::getInstance($id);
+                                } else {
+                                    return GraphQLUtils::returnNullOrThrowForbiddenException($info);
+                                }
                             }
                         ]
                     ]
@@ -79,8 +87,15 @@ $typeConfigDecorator = function($typeConfig, $typeDefinitionNode) {
                 // Wonderful!
                 $clazz = new ReflectionClass($className);
                 $meth = $clazz->getMethod($methodName);
-                // TODO authz
-                return GraphQLUtils::processScalarIfNecessary($info, GraphQLUtils::invokeNamed($meth, null, $args));
+                if (GraphQLUtils::isAuthorisedToAccess($info, $className, $methodName)) {
+                    return GraphQLUtils::processScalarIfNecessary(
+                        $info,
+                        GraphQLUtils::invokeNamed($meth, null, $args
+                        )
+                    );
+                } else {
+                    return GraphQLUtils::returnNullOrThrowForbiddenException($info);
+                }
             };
             break;
         case "Mutation":
@@ -115,7 +130,11 @@ function graphQlResolver($source, $args, $context, ResolveInfo $info) {
     // First, check if we're on an array
     if (is_array($source)) {
         if (isset($source[$fieldName])) {
-            return GraphQLUtils::processScalarIfNecessary($info, $source[$fieldName]);
+            if (GraphQLUtils::isAuthorisedToAccess($info, null, null)) {
+                return GraphQLUtils::processScalarIfNecessary($info, $source[$fieldName]);
+            } else {
+                return GraphQLUtils::returnNullOrThrowForbiddenException($info);
+            }
         }
     }
     // Next, check if it's an object
@@ -139,6 +158,7 @@ function graphQlResolver($source, $args, $context, ResolveInfo $info) {
                 }
                 // Not done yet. Remember, GraphQL IDs have to be unique
                 // We combine it with the class name and base64encode it
+                // Also note that `id` is bypassed from authorization, as it's controlled by access to the parent object
                 return base64_encode($clazz . '#' . strval($id));
             }
         }
@@ -160,28 +180,43 @@ function graphQlResolver($source, $args, $context, ResolveInfo $info) {
         }
         // Okay. Have we tracked down a method?
         if (isset($methodName)) {
-            // Yay. Call it!
-            // (We'll get a ReflectionException here if it's inaccessible. But That's Okay.
-            // TODO authz
-            $meth = new ReflectionMethod(
+            // Great. Can we access it?
+            if (GraphQLUtils::isAuthorisedToAccess($info, get_class($source), $methodName)) {
+                // Yay. Call it!
+                // (We'll get a ReflectionException here if it's inaccessible. But That's Okay.
+                $meth = new ReflectionMethod(
                 // Assume we know what we're doing.
-                get_class($source),
-                $methodName
-            );
-            return GraphQLUtils::processScalarIfNecessary($info,
-                GraphQLUtils::invokeNamed($meth, $source, $args)
-            );
+                    get_class($source),
+                    $methodName
+                );
+                return GraphQLUtils::processScalarIfNecessary($info,
+                    GraphQLUtils::invokeNamed($meth, $source, $args)
+                );
+            } else {
+                // So the method exists, but we can't access it.
+                return GraphQLUtils::returnNullOrThrowForbiddenException($info);
+            }
         }
         // Giving up on methods. Last shot: is it a property?
         if (isset($source->{$fieldName})) {
-            return GraphQLUtils::processScalarIfNecessary($info, $source->{$fieldName});
+            // Right. Can we access it?
+            if (GraphQLUtils::isAuthorisedToAccess($info, get_class($source), $fieldName)) {
+                return GraphQLUtils::processScalarIfNecessary($info, $source->{$fieldName});
+            } else {
+                return GraphQLUtils::returnNullOrThrowForbiddenException($info);
+            }
         }
         // Darn.
         throw new MyRadioException("Couldn't track down a resolution for $fieldName");
     }
 
     // It's probably a scalar. Return it directly.
-    return GraphQLUtils::processScalarIfNecessary($info, $source);
+    // Check authz just in case it's overridden
+    if (GraphQLUtils::isAuthorisedToAccess($info, null, null)) {
+        return GraphQLUtils::processScalarIfNecessary($info, $source);
+    } else {
+        return GraphQLUtils::returnNullOrThrowForbiddenException($info);
+    }
 }
 
 try {

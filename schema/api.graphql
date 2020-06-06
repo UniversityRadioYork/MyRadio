@@ -16,6 +16,17 @@ directive @bind(
 ) on FIELD_DEFINITION | OBJECT
 
 """
+Override authorisation requirements for a field. This shouldn't be used externally and is only used within the schema defition.
+"""
+directive @auth(
+    """
+    The AUTH_XXX constants that will grant access to this method. Note that this uses OR logic, not AND, so any of them
+    will grant access.
+    """
+    constants: [String!]!
+) on FIELD_DEFINITION
+
+"""
 An RFC3339 date string, such as 2007-12-03
 """
 scalar Date

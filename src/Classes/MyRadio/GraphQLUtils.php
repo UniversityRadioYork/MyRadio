@@ -7,11 +7,13 @@ namespace MyRadio\MyRadio;
 use GraphQL\Language\AST\DirectiveNode;
 use GraphQL\Language\AST\NodeList;
 use GraphQL\Language\AST\ValueNode;
+use GraphQL\Type\Definition\EnumType;
 use GraphQL\Type\Definition\NonNull;
 use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\ScalarType;
 use GraphQL\Type\Definition\WrappingType;
 use MyRadio\MyRadioException;
+use MyRadio\ServiceAPI\MyRadio_Swagger2;
 
 class GraphQLUtils
 {
@@ -47,6 +49,58 @@ class GraphQLUtils
             $args[$arg->name->value] = $arg->value;
         }
         return $args;
+    }
+
+    /**
+     * Er, take a wild guess?
+     * @param ResolveInfo $info
+     */
+    public static function returnNullOrThrowForbiddenException(ResolveInfo $info) {
+        if ($info instanceof NonNull) {
+            throw new MyRadioException('Caller cannot access this field', 403);
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Tests if the current caller is authorised to access the given GraphQL field
+     * @param ResolveInfo $info
+     * @param string $resolvedClass
+     * @param string $resolvedMethod
+     * @return bool
+     */
+    public static function isAuthorisedToAccess(ResolveInfo $info, string $resolvedClass, string $resolvedMethod) {
+        // First, check if we have an auth directive. If so, it overrides.
+        $authDirective = self::getDirectiveByName($info, 'auth');
+        if ($authDirective !== null) {
+            $constants = self::getDirectiveArguments($authDirective)['constants'];
+            // No constants => public access
+            if (count($constants) === 0) {
+                return true;
+            }
+            foreach ($constants as $constant) {
+                if (AuthUtils::hasPermission(constant($constant))) {
+                    return true;
+                }
+            }
+            return false;
+        } else {
+            // Object-scalar rule: if we're dealing with an object, use API v2 rules
+            // If we're dealing with a scalar, assume it's okay, as it must have come from an object
+            if ($info->returnType instanceof WrappingType) {
+                $type = $info->returnType->getWrappedType(true);
+            } else {
+                $type = $info->returnType;
+            }
+            if ($type instanceof ScalarType || $type instanceof EnumType) {
+                return true;
+            } else if ($resolvedClass === null && $resolvedMethod === null) {
+                return true;
+            } else {
+                return MyRadio_Swagger2::getAPICaller()->canCall($resolvedClass, $resolvedMethod);
+            }
+        }
     }
 
     /**
