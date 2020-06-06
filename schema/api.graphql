@@ -34,7 +34,7 @@ type User implements Node {
 type Quote implements Node {
     id: ID!
     source: User!
-    date: DateTime!
+    date: Date!
     text: HTMLString!
 }
 
