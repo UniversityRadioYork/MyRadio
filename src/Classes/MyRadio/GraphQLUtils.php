@@ -68,6 +68,11 @@ class GraphQLUtils
             return $value;
         }
         switch ($type) {
+            case "Int":
+            case "Float":
+            case "String":
+            case "Boolean":
+            case "ID":
             case "HTMLString":
                 // Passed through directly
                 return $value;
