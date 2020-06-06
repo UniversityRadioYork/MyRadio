@@ -56,7 +56,7 @@ type User implements Node @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_User") {
 
 type Quote implements Node @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Quote") {
     id: ID!
-    source: User!
+    source: User! @auth(constants: [])
     date: Date!
     text: HTMLString!
 }
