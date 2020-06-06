@@ -64,7 +64,7 @@ type Quote implements Node @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Quote") 
 type Query {
     node(id: ID): Node
 
-    allQuotes: [Quote!]! @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Quote", method: "getAll")
+    allQuotes: [Quote!] @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Quote", method: "getAll")
 }
 
 schema {
