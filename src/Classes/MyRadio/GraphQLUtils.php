@@ -10,6 +10,7 @@ use GraphQL\Language\AST\ValueNode;
 use GraphQL\Type\Definition\NonNull;
 use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\ScalarType;
+use GraphQL\Type\Definition\WrappingType;
 use MyRadio\MyRadioException;
 
 class GraphQLUtils
@@ -61,8 +62,8 @@ class GraphQLUtils
         // If the field is not a scalar, don't touch it.
         if ($info->returnType instanceof ScalarType) {
             $type = $info->returnType->name;
-        } else if ($info->returnType instanceof NonNull && $info->returnType->ofType instanceof ScalarType) {
-            $type = $info->returnType->ofType->name;
+        } else if ($info->returnType instanceof WrappingType && $info->returnType->getWrappedType(true) instanceof ScalarType) {
+            $type = $info->returnType->getWrappedType(true)->name;
         } else {
             return $value;
         }
