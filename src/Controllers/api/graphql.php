@@ -20,7 +20,7 @@ $typeConfigDecorator = function($typeConfig, $typeDefinitionNode) {
     switch ($name) {
         case "Node":
             $typeConfig['resolveType'] = function($value, $context, ResolveInfo $info) {
-                // Go through all the defined types, until we find one that binds to $value::class
+                // If it's a Node, it'll implement ServiceAPI, and thus we can use getGraphQLTypeName
                 $className = get_class($value);
                 if ($className === false) {
                     throw new MyRadioException('Tried to resolve a node that isn\'t a class!');

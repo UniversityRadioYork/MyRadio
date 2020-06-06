@@ -22,7 +22,7 @@ class GraphQLUtils
      */
     public static function getDirectiveByName(ResolveInfo $info, string $name)
     {
-        $fieldNode = $info->parentType->getField($info->fieldName)->astNode;
+        $fieldNode = $info->returnType->astNode;
         /** @var NodeList $directives */
         $directives = $fieldNode->directives;
         if ($directives) {
