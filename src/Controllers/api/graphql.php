@@ -42,6 +42,17 @@ function graphQlResolver($source, $args, $context, ResolveInfo $info) {
     // If we're on the Query type, we're entering the graph, so we'll want a static method.
     // Unlike elsewhere in the graph, we can assume everything on Query will have an @bind.
     if ($info->parentType->name === 'Query') {
+        // Everything with the exception of `node`, that is.
+        if ($fieldName === "node") {
+            // See below for reasoning.
+            $id_val = base64_decode($args['id']);
+            list($type, $id) = explode('#', $id_val);
+            $rc = new ReflectionClass($type);
+            if (!($rc->isSubclassOf(\MyRadio\ServiceAPI\ServiceAPI::class))) {
+                throw new MyRadioException("Tried to resolve node $type#$id but it's not a ServiceAPI");
+            }
+            return $type::getInstance($id);
+        }
         if (!$bindDirective) {
             throw new MyRadioException("Tried to resolve $fieldName on Query but it didn't have an @bind");
         }
