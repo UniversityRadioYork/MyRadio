@@ -18,6 +18,21 @@ if ($schemaText === false) {
 $typeConfigDecorator = function($typeConfig, $typeDefinitionNode) {
     $name = $typeConfig['name'];
     switch ($name) {
+        case "Node":
+            $typeConfig['resolveType'] = function($value, $context, ResolveInfo $info) {
+                // Go through all the defined types, until we find one that binds to $value::class
+                $className = get_class($value);
+                if ($className === false) {
+                    throw new MyRadioException('Tried to resolve a node that isn\'t a class!');
+                }
+                $rc = new ReflectionClass($className);
+                if(!($rc->isSubclassOf(\MyRadio\ServiceAPI\ServiceAPI::class))) {
+                    throw new MyRadioException("Tried to resolve $className through Node, but it's not a ServiceAPI");
+                }
+                $typeName = $className::getGraphQLTypeName();
+                return $info->schema->getType($typeName);
+            };
+            break;
         case "Query":
             // Gets special handling
             $typeConfig['fields'] = function() use ($typeConfig) {
@@ -34,19 +49,6 @@ $typeConfigDecorator = function($typeConfig, $typeDefinitionNode) {
                                     throw new MyRadioException("Tried to resolve node $type#$id but it's not a ServiceAPI");
                                 }
                                 return $type::getInstance($id);
-                            },
-                            'resolveType' => function($value, $context, ResolveInfo $info) {
-                                // Go through all the defined types, until we find one that binds to $value::class
-                                $className = get_class($value);
-                                if ($className === false) {
-                                    throw new MyRadioException('Tried to resolve a node that isn\'t a class!');
-                                }
-                                $rc = new ReflectionClass($className);
-                                if(!($rc->isSubclassOf(\MyRadio\ServiceAPI\ServiceAPI::class))) {
-                                    throw new MyRadioException("Tried to resolve $className through Node, but it's not a ServiceAPI");
-                                }
-                                $typeName = $className::getGraphQLTypeName();
-                                return $info->schema->getType($typeName);
                             }
                         ]
                     ]
