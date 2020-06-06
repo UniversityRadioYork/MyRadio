@@ -231,7 +231,7 @@ try {
     );
     $result = $queryResult->toArray($debug);
 } catch (Exception $e) {
-    $status = 500;
+    $status = $e instanceof MyRadioException ? $e->getCode() : 500;
     $result = [
         'errors' => FormattedError::createFromException($e, $debug)
     ];
