@@ -59,13 +59,13 @@ class GraphQLUtils
      */
     public static function processScalarIfNecessary(ResolveInfo $info, $value) {
         // If the field is not a scalar, don't touch it.
-        if (
-            (!$info->returnType instanceof ScalarType)
-            || !($info->returnType instanceof NonNull && $info->returnType->ofType instanceof ScalarType)
-        ) {
+        if ($info->returnType instanceof ScalarType) {
+            $type = $info->returnType->name;
+        } else if ($info->returnType instanceof NonNull && $info->returnType->ofType instanceof ScalarType) {
+            $type = $info->returnType->ofType->name;
+        } else {
             return $value;
         }
-        $type = $info->returnType->name;
         switch ($type) {
             case "Date":
             case "Time":
