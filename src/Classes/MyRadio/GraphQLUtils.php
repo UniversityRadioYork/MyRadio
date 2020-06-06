@@ -7,6 +7,7 @@ namespace MyRadio\MyRadio;
 use GraphQL\Language\AST\DirectiveNode;
 use GraphQL\Language\AST\NodeList;
 use GraphQL\Language\AST\ValueNode;
+use GraphQL\Type\Definition\NonNull;
 use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\ScalarType;
 use MyRadio\MyRadioException;
@@ -58,7 +59,10 @@ class GraphQLUtils
      */
     public static function processScalarIfNecessary(ResolveInfo $info, $value) {
         // If the field is not a scalar, don't touch it.
-        if ((!$info->returnType instanceof ScalarType)) {
+        if (
+            (!$info->returnType instanceof ScalarType)
+            || !($info->returnType instanceof NonNull && $info->returnType->ofType instanceof ScalarType)
+        ) {
             return $value;
         }
         $type = $info->returnType->name;
