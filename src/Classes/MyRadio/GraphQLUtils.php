@@ -56,7 +56,7 @@ class GraphQLUtils
      * @param ResolveInfo $info
      */
     public static function returnNullOrThrowForbiddenException(ResolveInfo $info) {
-        if ($info instanceof NonNull) {
+        if ($info->returnType instanceof NonNull) {
             throw new MyRadioException('Caller cannot access this field', 403);
         } else {
             return null;
