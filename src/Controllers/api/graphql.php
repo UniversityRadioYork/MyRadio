@@ -76,6 +76,28 @@ function graphQlResolver($source, $args, $context, ResolveInfo $info) {
     }
     // Next, check if it's an object
     if (is_object($source)) {
+        // Before we move on, check if we're getting `id` on a `Node`. This merits special handling.
+        if ($fieldName === "id") {
+            /** @noinspection PhpParamsInspection - we know `Node` is an interface */
+            if ($info->parentType->implementsInterface(
+                $info->schema->getType("Node")
+            )) {
+                $clazz = get_class($source);
+                // If we've used @bind on the ID, use that method. Otherwise, assume $source->getID() exists.
+                // Also, ID methods can't take any arguments, by dint of the Node spec
+                $id = null;
+                if (isset($methodName) && method_exists($source, $methodName)) {
+                    $id = $source->{$methodName}();
+                } else if (method_exists($source, "getID")) {
+                    $id = $source->getID();
+                } else {
+                    throw new MyRadioException("Couldn't resolve ID for type $clazz");
+                }
+                // Not done yet. Remember, GraphQL IDs have to be unique
+                // We combine it with the class name and base64encode it
+                return base64_encode($clazz . '#' . strval($id));
+            }
+        }
         // At this point, we check the method given by @bind again.
         if (isset($methodName) && method_exists($source, $methodName)) {
             // Yipee!
@@ -98,7 +120,7 @@ function graphQlResolver($source, $args, $context, ResolveInfo $info) {
             // (We'll get a ReflectionException here if it's inaccessible. But That's Okay.
             // TODO authz
             $meth = new ReflectionMethod(
-                // Since it's a @bind, assume we know what we're doing.
+                // Assume we know what we're doing.
                 get_class($source),
                 $methodName
             );
