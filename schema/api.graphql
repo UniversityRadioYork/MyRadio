@@ -3,6 +3,17 @@ directive @bind(
     method: String
 ) on FIELD_DEFINITION
 
+"""
+An RFC3339 date string, such as 2007-12-03
+"""
+scalar Date
+"""
+An RFC3339 time string, such as 10:15:30Z.
+"""
+scalar Time
+"""
+An RFC3339 date-time string, such as 2007-12-03T10:15:30Z.
+"""
 scalar DateTime
 
 """

@@ -8,6 +8,8 @@ use GraphQL\Language\AST\DirectiveNode;
 use GraphQL\Language\AST\NodeList;
 use GraphQL\Language\AST\ValueNode;
 use GraphQL\Type\Definition\ResolveInfo;
+use GraphQL\Type\Definition\ScalarType;
+use MyRadio\MyRadioException;
 
 class GraphQLUtils
 {
@@ -43,6 +45,48 @@ class GraphQLUtils
             $args[$arg->name->value] = $arg->value;
         }
         return $args;
+    }
+
+    /**
+     * Given a resolved value, converts it into a scalar type if appropriate.
+     *
+     * For example, given a number or date string on a Date/Time/DateTime type field,
+     * this method will format it accordingly.
+     * @param ResolveInfo $info
+     * @param mixed $value
+     * @return mixed
+     */
+    public static function processScalarIfNecessary(ResolveInfo $info, $value) {
+        // If the field is not a scalar, don't touch it.
+        if ((!$info->returnType instanceof ScalarType)) {
+            return $value;
+        }
+        $type = $info->returnType->name;
+        switch ($type) {
+            case "Date":
+            case "Time":
+            case "DateTime":
+                // If the value is a number, assume it's a UNIX timestamp. If not, try and parse it.
+                if (is_numeric($value)) {
+                    $val_unix = (float) $value;
+                } else {
+                    $val_unix = strtotime($value);
+                    if ($val_unix === false) {
+                        throw new MyRadioException("Failed to parse datetime $value");
+                    }
+                }
+                switch ($type) {
+                    case "Date":
+                        return date("Y-m-d", $val_unix);
+                    case "Time":
+                        return date("H:i:sP", $val_unix);
+                    case "DateTime":
+                        return date("Y-m-d\TH:i:sP", $val_unix);
+                }
+                break;
+            default:
+                throw new MyRadioException("Unknown scalar type $type!");
+        }
     }
 
     public static function invokeNamed(\ReflectionMethod $meth, $object=null, $args=[]) {

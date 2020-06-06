@@ -71,7 +71,7 @@ function graphQlResolver($source, $args, $context, ResolveInfo $info) {
         $clazz = new ReflectionClass($className);
         $meth = $clazz->getMethod($methodName);
         // TODO authz
-        return GraphQLUtils::invokeNamed($meth, null, $args);
+        return GraphQLUtils::processScalarIfNecessary($info, GraphQLUtils::invokeNamed($meth, null, $args));
     }
     // TODO
     if ($info->parentType->name === 'Mutation') {
@@ -82,7 +82,7 @@ function graphQlResolver($source, $args, $context, ResolveInfo $info) {
     // First, check if we're on an array
     if (is_array($source)) {
         if (isset($source[$fieldName])) {
-            return $source[$fieldName];
+            return GraphQLUtils::processScalarIfNecessary($info, $source[$fieldName]);
         }
     }
     // Next, check if it's an object
@@ -135,18 +135,20 @@ function graphQlResolver($source, $args, $context, ResolveInfo $info) {
                 get_class($source),
                 $methodName
             );
-            return GraphQLUtils::invokeNamed($meth, $source, $args);
+            return GraphQLUtils::processScalarIfNecessary($info,
+                GraphQLUtils::invokeNamed($meth, $source, $args)
+            );
         }
         // Giving up on methods. Last shot: is it a property?
         if (isset($source->{$fieldName})) {
-            return $source->{$fieldName};
+            return GraphQLUtils::processScalarIfNecessary($info, $source->{$fieldName});
         }
         // Darn.
         throw new MyRadioException("Couldn't track down a resolution for $fieldName");
     }
 
     // It's probably a scalar. Return it directly.
-    return $source;
+    return GraphQLUtils::processScalarIfNecessary($info, $source);
 }
 
 try {
