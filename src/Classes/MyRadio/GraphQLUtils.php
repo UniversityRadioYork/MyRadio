@@ -71,6 +71,10 @@ class GraphQLUtils
      * @return bool
      */
     public static function isAuthorisedToAccess(ResolveInfo $info, string $resolvedClass, string $resolvedMethod) {
+        $caller = MyRadio_Swagger2::getAPICaller();
+        if ($caller === null) {
+            throw new MyRadioException('No valid authentication data provided', 401);
+        }
         // First, check if we have an auth directive. If so, it overrides.
         $authDirective = self::getDirectiveByName($info, 'auth');
         if ($authDirective !== null) {
@@ -98,7 +102,7 @@ class GraphQLUtils
             } else if ($resolvedClass === null && $resolvedMethod === null) {
                 return true;
             } else {
-                return MyRadio_Swagger2::getAPICaller()->canCall($resolvedClass, $resolvedMethod);
+                return $caller->canCall($resolvedClass, $resolvedMethod);
             }
         }
     }

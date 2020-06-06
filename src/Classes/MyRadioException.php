@@ -5,6 +5,7 @@
  */
 namespace MyRadio;
 
+use GraphQL\Error\ClientAware;
 use MyRadio\MyRadio\AuthUtils;
 use MyRadio\MyRadio\CoreUtils;
 
@@ -12,7 +13,7 @@ use MyRadio\MyRadio\CoreUtils;
  * Extends the standard Exception class to provide additional functionality
  * and logging.
  */
-class MyRadioException extends \RuntimeException
+class MyRadioException extends \RuntimeException implements ClientAware
 {
     const FATAL = -1;
 
@@ -200,5 +201,15 @@ class MyRadioException extends \RuntimeException
     public static function resetExceptionCount()
     {
         self::$count = 0;
+    }
+
+    public function isClientSafe()
+    {
+        return $this->code < 500;
+    }
+
+    public function getCategory()
+    {
+        return 'oh_dear';
     }
 }
