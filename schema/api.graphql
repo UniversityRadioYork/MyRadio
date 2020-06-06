@@ -5,6 +5,11 @@ directive @bind(
 
 scalar DateTime
 
+"""
+Equivalent to a string for all intents and purposes, but used to signal that it may contain arbitrary HTML.
+"""
+scalar HTMLString
+
 interface Node {
     id: ID!
 }
@@ -19,7 +24,7 @@ type Quote implements Node {
     id: ID!
     source: User!
     date: DateTime!
-    text: String!
+    text: HTMLString!
 }
 
 type Query {
