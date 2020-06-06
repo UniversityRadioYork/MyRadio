@@ -77,7 +77,7 @@ $typeConfigDecorator = function($typeConfig, $typeDefinitionNode) {
     return $typeConfig;
 };
 
-$schema = BuildSchema::build($schemaText);
+$schema = BuildSchema::build($schemaText, $typeConfigDecorator);
 
 if (isset($_SERVER['CONTENT_TYPE']) && strpos($_SERVER['CONTENT_TYPE'], 'application/json') !== false) {
     $raw = file_get_contents('php://input') ?: '';
