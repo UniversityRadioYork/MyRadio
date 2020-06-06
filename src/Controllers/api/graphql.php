@@ -20,27 +20,37 @@ $typeConfigDecorator = function($typeConfig, $typeDefinitionNode) {
     switch ($name) {
         case "Query":
             // Gets special handling
-            $typeConfig['fields']['node']['resolve'] = function($_, $args) {
-                $id_val = base64_decode($args['id']);
-                list($type, $id) = explode('#', $id_val);
-                $rc = new ReflectionClass($type);
-                if (!($rc->isSubclassOf(\MyRadio\ServiceAPI\ServiceAPI::class))) {
-                    throw new MyRadioException("Tried to resolve node $type#$id but it's not a ServiceAPI");
-                }
-                return $type::getInstance($id);
-            };
-            $typeConfig['fields']['node']['resolveType'] = function($value, $context, ResolveInfo $info) {
-                // Go through all the defined types, until we find one that binds to $value::class
-                $className = get_class($value);
-                if ($className === false) {
-                    throw new MyRadioException('Tried to resolve a node that isn\'t a class!');
-                }
-                $rc = new ReflectionClass($className);
-                if(!($rc->isSubclassOf(\MyRadio\ServiceAPI\ServiceAPI::class))) {
-                    throw new MyRadioException("Tried to resolve $className through Node, but it's not a ServiceAPI");
-                }
-                $typeName = $className::getGraphQLTypeName();
-                return $info->schema->getType($typeName);
+            $typeConfig['fields'] = function() use ($typeConfig) {
+                $orig = is_callable($typeConfig['fields']) ? $typeConfig['fields']() : $typeConfig['fields'];
+                return array_merge_recursive(
+                    $orig,
+                    [
+                        'node' => [
+                            'resolve' => function($_, $args) {
+                                $id_val = base64_decode($args['id']);
+                                list($type, $id) = explode('#', $id_val);
+                                $rc = new ReflectionClass($type);
+                                if (!($rc->isSubclassOf(\MyRadio\ServiceAPI\ServiceAPI::class))) {
+                                    throw new MyRadioException("Tried to resolve node $type#$id but it's not a ServiceAPI");
+                                }
+                                return $type::getInstance($id);
+                            },
+                            'resolveType' => function($value, $context, ResolveInfo $info) {
+                                // Go through all the defined types, until we find one that binds to $value::class
+                                $className = get_class($value);
+                                if ($className === false) {
+                                    throw new MyRadioException('Tried to resolve a node that isn\'t a class!');
+                                }
+                                $rc = new ReflectionClass($className);
+                                if(!($rc->isSubclassOf(\MyRadio\ServiceAPI\ServiceAPI::class))) {
+                                    throw new MyRadioException("Tried to resolve $className through Node, but it's not a ServiceAPI");
+                                }
+                                $typeName = $className::getGraphQLTypeName();
+                                return $info->schema->getType($typeName);
+                            }
+                        ]
+                    ]
+                );
             };
 
             $typeConfig['resolveField'] = function($source, $args, $context, ResolveInfo $info) {
