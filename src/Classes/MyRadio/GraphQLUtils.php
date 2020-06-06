@@ -155,6 +155,14 @@ class GraphQLUtils
                         return date("Y-m-d\TH:i:sP", $val_unix);
                 }
                 break;
+            case "Duration":
+                // If it's a number, assume it's seconds.
+                if (is_numeric($value)) {
+                    $interval = new \DateInterval("PT${value}S");
+                } else {
+                    $interval = \DateInterval::createFromDateString($value);
+                }
+                return $interval->format("H:M:S");
             default:
                 throw new MyRadioException("Unknown scalar type $type!");
         }

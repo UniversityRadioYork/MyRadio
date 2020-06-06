@@ -40,6 +40,11 @@ An RFC3339 date-time string, such as 2007-12-03T10:15:30Z.
 scalar DateTime
 
 """
+A time duration, such as 01:00:00
+"""
+scalar Duration
+
+"""
 Equivalent to a string for all intents and purposes, but used to signal that it may contain arbitrary HTML.
 """
 scalar HTMLString
@@ -54,6 +59,61 @@ type User implements Node {
     sname: String! @bind(method: "getSName")
 }
 
+type ShowSubtype implements Node {
+    id: ID!
+    name: String!
+    class: String!
+    description: String
+}
+
+type ShowCredit {
+    type: String
+    User: User
+}
+
+type Show implements Node {
+    id: ID!
+    title: String!
+    description: HTMLString!
+    subtype: ShowSubtype!
+    photo: String
+    credits: [ShowCredit]
+    seasons: [Season]
+}
+
+union PotentialFirstTime = Boolean | DateTime
+
+type Season implements Node {
+    id: ID!
+    show: Show!
+    subtype: ShowSubtype!
+    seasonNumber: Int!
+    timeslots: [Timeslot]
+    firstTime: PotentialFirstTime
+}
+
+type Message {
+    read: Boolean!
+    time: DateTime!
+    id: ID!
+    type: Int # TODO: make this an enum
+    title: String
+    body: String
+    source: String
+    location: [String]
+}
+
+type Timeslot implements Node {
+    id: ID!
+    season: Season!
+    timeslotNumber: Int!
+    startTime: DateTime!
+    endTime: DateTime!
+    duration: Duration!
+    messages: [Message]
+    webpage: String!
+}
+
 type Quote implements Node {
     id: ID!
     source: User! @auth(constants: [])
@@ -65,6 +125,10 @@ type Query {
     node(id: ID): Node
 
     allQuotes: [Quote!] @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Quote", method: "getAll")
+
+    show(id: ID!): Show @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Show", method: "getInstance")
+    season(id: ID!): Season @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Season")
+    timeslot(id: ID!): Timeslot @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Timeslot")
 }
 
 schema {
