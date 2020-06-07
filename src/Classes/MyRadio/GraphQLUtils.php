@@ -242,6 +242,9 @@ class GraphQLUtils
                 // If it's a number, assume it's seconds.
                 if (is_numeric($value)) {
                     $interval = new \DateInterval("PT${value}S");
+                } else if (preg_match("(\d{2}:\d{2}:\d{2})", $value) !== false) {
+                    $intval = CoreUtils::intervalToSeconds($value);
+                    $interval = new \DateInterval("PT${intval}S");
                 } else {
                     $interval = \DateInterval::createFromDateString($value);
                 }
