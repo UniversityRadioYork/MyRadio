@@ -245,7 +245,7 @@ class GraphQLUtils
                 } else {
                     $interval = \DateInterval::createFromDateString($value);
                 }
-                return $interval->format("H:M:S");
+                return $interval->format("%H:%M:%S");
             default:
                 throw new MyRadioException("Unknown scalar type $type!");
         }
