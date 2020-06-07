@@ -79,15 +79,15 @@ class GraphQLUtils
     /**
      * Tests if the current caller is authorised to access the given GraphQL field
      * @param ResolveInfo $info
-     * @param string $resolvedClass
-     * @param string $resolvedMethod
+     * @param string|null $resolvedClass
+     * @param string|null $resolvedMethod
      * @param mixed|null $resolvedObject
      * @return bool
      */
     public static function isAuthorisedToAccess(
         ResolveInfo $info,
-        string $resolvedClass,
-        string $resolvedMethod,
+        $resolvedClass,
+        $resolvedMethod,
         $resolvedObject=null
     ) {
         $caller = MyRadio_Swagger2::getAPICaller();
@@ -134,8 +134,8 @@ class GraphQLUtils
 
     private static function processAuthDirective(
         array $args,
-        string $resolvedClass,
-        string $resolvedMethod,
+        $resolvedClass,
+        $resolvedMethod,
         $resolvedObject=null
     ) {
         if (isset($args['constants'])) {
