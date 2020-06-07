@@ -177,7 +177,16 @@ class GraphQLUtils
             // Overwrite them in the parameters array to ensure we call them in the correct order
             foreach ($methArgs as &$param) {
                 $name = $param->getName();
-                $param = isset($args[$name]) ? $args[$name] : $param->getDefaultValue();
+                if (isset($args[$name])) {
+                    $param = $args[$name];
+                } else {
+                    try {
+                        $param = $param->getDefaultValue();
+                    } catch (\ReflectionException $e) {
+                        $methName = $meth->getName();
+                        throw new MyRadioException("Missing parameter $name in call to $methName");
+                    }
+                }
             }
             return $meth->invokeArgs($object, $methArgs);
         }
