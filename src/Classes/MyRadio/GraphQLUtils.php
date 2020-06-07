@@ -184,7 +184,8 @@ class GraphQLUtils
                         $param = $param->getDefaultValue();
                     } catch (\ReflectionException $e) {
                         $methName = $meth->getName();
-                        throw new MyRadioException("Missing parameter $name in call to $methName");
+                        $obj = $meth->getDeclaringClass()->getName();
+                        throw new MyRadioException("Missing parameter $name in call to $obj::$methName");
                     }
                 }
             }

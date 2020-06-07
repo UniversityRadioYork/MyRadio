@@ -27,6 +27,11 @@ directive @auth(
 ) on FIELD_DEFINITION
 
 """
+Tells the resolver that the given property is not on the object itself, but on its metadata
+"""
+directive @meta(key: String!) on FIELD_DEFINITION
+
+"""
 An RFC3339 date string, such as 2007-12-03
 """
 scalar Date
@@ -73,10 +78,10 @@ type ShowCredit {
 
 type Show implements Node {
     id: ID!
-    title: String!
-    description: HTMLString!
+    title: String! @meta(key: "title")
+    description: HTMLString! @meta(key: "description")
     subtype: ShowSubtype!
-    photo: String
+    photo: String @bind(method: "getShowPhoto")
     credits: [ShowCredit]
     seasons: [Season]
 }

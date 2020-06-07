@@ -162,6 +162,18 @@ function graphQlResolver($source, $args, $context, ResolveInfo $info) {
                 return base64_encode($clazz . '#' . strval($id));
             }
         }
+        // Now, check if it's a meta field, as given by the @meta directive
+        $metaDirective = GraphQLUtils::getDirectiveByName($info, "meta");
+        if ($metaDirective !== null) {
+            $metaArgs = GraphQLUtils::getDirectiveArguments($metaDirective);
+            // Authorization for metadata is the same as toDataSource
+            // TODO is this really the best way
+            if (GraphQLUtils::isAuthorisedToAccess($info, get_class($source), "toDataSource")) {
+                return $source->getMeta($metaArgs['key']);
+            } else {
+                return GraphQLUtils::returnNullOrThrowForbiddenException($info);
+            }
+        }
         // At this point, we check the method given by @bind again.
         if (isset($methodName) && method_exists($source, $methodName)) {
             // Yipee!
