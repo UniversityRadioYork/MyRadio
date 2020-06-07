@@ -246,7 +246,7 @@ class GraphQLUtils
                     $data = date_parse($value);
                     $interval = new \DateInterval(
                         sprintf(
-                            "PY%02dM%02dD%02dTH%02dM%02dS%02d",
+                            "P%02dY%02dM%02dDT%02dH%02dM%02dS",
                             $data['year'],
                             $data['month'],
                             $data['day'],
