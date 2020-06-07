@@ -189,6 +189,22 @@ class GraphQLUtils
         } else {
             return $value;
         }
+        // If it has a @coerce directive, do as it says
+        $coerceDirective = self::getDirectiveByName($info, 'coerce');
+        if ($coerceDirective !== null) {
+            foreach (self::getDirectiveArguments($coerceDirective)['hooks'] as $hook) {
+                switch ($hook->value) {
+                    case "FalseToNull":
+                        if ($value === false) {
+                            $value = null;
+                        }
+                        break;
+                    default:
+                        $val = $hook->value;
+                        throw new MyRadioException("Unknown coerce hook $val");
+                }
+            }
+        }
         switch ($type) {
             case "Int":
             case "Float":

@@ -42,13 +42,13 @@ Tells the resolver that the given property is not on the object itself, but on i
 directive @meta(key: String!) on FIELD_DEFINITION
 
 enum Coercion {
-    BoolToNull
+    FalseToNull
 }
 
 """
 Gives the resolver coercion hints.
 """
-directive @coerce(hooks: [Coercion]) on FIELD_DEFINITION
+directive @coerce(hooks: [Coercion]!) on FIELD_DEFINITION
 
 """
 An RFC3339 date string, such as 2007-12-03
@@ -111,7 +111,7 @@ type Season implements Node {
     subtype: ShowSubtype!
     seasonNumber: Int!
     timeslots: [Timeslot]
-    firstTime: DateTime @coerce(hooks: [BoolToNull])
+    firstTime: DateTime @coerce(hooks: [FalseToNull])
 }
 
 type Message {
