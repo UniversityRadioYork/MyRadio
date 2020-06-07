@@ -152,8 +152,9 @@ class GraphQLUtils
         }
         $hook = $args['hook'];
         if (isset($hook)) {
-            switch ($hook->value) {
-                case 'show':
+            $hookName = $hook->value;
+            switch ($hookName) {
+                case 'shows':
                     /** @var MyRadio_Show $show */
                     $show = $resolvedObject;
                     if (AuthUtils::hasPermission(AUTH_VIEWMEMBERSHOWS)) {
@@ -162,7 +163,7 @@ class GraphQLUtils
                     return $show->isCurrentUserAnOwner();
                     break;
                 default:
-                    throw new MyRadioException("Unknown auth hook $hook");
+                    throw new MyRadioException("Unknown auth hook $hookName");
             }
         }
         return false;
