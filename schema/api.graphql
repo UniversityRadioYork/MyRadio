@@ -80,7 +80,7 @@ type Show implements Node {
     id: ID!
     title: String! @meta(key: "title")
     description: HTMLString! @meta(key: "description")
-    subtype: ShowSubtype!
+    subtype: ShowSubtype! @auth(constants: ["AUTH_VIEWMEMBERSHOWS"])
     photo: String @bind(method: "getShowPhoto")
     credits: [ShowCredit]
     seasons: [Season]
