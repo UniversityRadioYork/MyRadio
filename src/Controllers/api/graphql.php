@@ -254,15 +254,16 @@ try {
         'graphQlResolver'
     );
     $result = $queryResult->toArray($debug);
-    $warnings = $ctx->getWarnings();
-    if (count($warnings) > 0) {
-        $result['warnings'] = $warnings;
-    }
 } catch (Exception $e) {
     $status = $e instanceof MyRadioException ? $e->getCode() : 500;
     $result = [
         'errors' => FormattedError::createFromException($e, $debug)
     ];
+}
+
+$warnings = $ctx->getWarnings();
+if (count($warnings) > 0) {
+    $result['warnings'] = $warnings;
 }
 
 header('Content-Type: application/json', true, $status);
