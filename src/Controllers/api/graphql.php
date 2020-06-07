@@ -169,7 +169,10 @@ function graphQlResolver($source, $args, $context, ResolveInfo $info) {
             // Authorization for metadata is the same as toDataSource
             // TODO is this really the best way
             if (GraphQLUtils::isAuthorisedToAccess($info, get_class($source), "toDataSource")) {
-                return $source->getMeta($metaArgs['key']);
+                // This Is Fine.
+                /** @noinspection PhpPossiblePolymorphicInvocationInspection */
+                /** @noinspection PhpUndefinedMethodInspection */
+                return $source->getMeta($metaArgs['key']->value);
             } else {
                 return GraphQLUtils::returnNullOrThrowForbiddenException($info);
             }
