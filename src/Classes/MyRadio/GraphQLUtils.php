@@ -154,7 +154,7 @@ class GraphQLUtils
         /** @var EnumValueNode $hookVal */
         $hook = $args['hook'];
         if (isset($hook)) {
-            $hookName = $hook-value;
+            $hookName = $hook->value;
             switch ($hookName) {
                 case 'Show':
                     /** @var MyRadio_Show $show */
