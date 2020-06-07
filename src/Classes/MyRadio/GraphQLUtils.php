@@ -242,11 +242,16 @@ class GraphQLUtils
                 // If it's a number, assume it's seconds.
                 if (is_numeric($value)) {
                     $interval = new \DateInterval("PT${value}S");
-                } else if (preg_match("(\d{2}:\d{2}:\d{2})", $value) !== false) {
-                    $intval = CoreUtils::intervalToSeconds($value);
-                    $interval = new \DateInterval("PT${intval}S");
                 } else {
-                    $interval = \DateInterval::createFromDateString($value);
+                    $data = date_parse($value);
+                    $interval = new \DateInterval(
+                        'PY' . ($data['year'] || 0)
+                        . 'M' . ($data['month'] || 0)
+                        . 'D' . ($data['day'] || 0)
+                        . 'TH' . ($data['hour'] || 0)
+                        . 'M' . ($data['minute'] || 0)
+                        . 'S' . ($data['second'] || 0)
+                    );
                 }
                 return $interval->format("%H:%M:%S");
             default:
