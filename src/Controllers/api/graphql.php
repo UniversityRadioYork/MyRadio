@@ -250,7 +250,7 @@ try {
         null,
         $ctx,
         (array) $data['variables'],
-        null,
+        $data['operationName'],
         'graphQlResolver'
     );
     $result = $queryResult->toArray($debug);
