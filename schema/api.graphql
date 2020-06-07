@@ -126,9 +126,9 @@ type Query {
 
     allQuotes: [Quote!] @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Quote", method: "getAll")
 
-    show(id: Int!): Show @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Show", method: "getInstance")
-    season(id: Int!): Season @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Season", method: "getInstance")
-    timeslot(id: Int!): Timeslot @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Timeslot", method: "getInstance")
+    show(itemid: Int!): Show @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Show", method: "getInstance")
+    season(itemid: Int!): Season @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Season", method: "getInstance")
+    timeslot(itemid: Int!): Timeslot @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Timeslot", method: "getInstance")
 }
 
 schema {
