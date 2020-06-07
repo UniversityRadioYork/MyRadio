@@ -17,14 +17,20 @@ directive @bind(
 
 """
 Override authorisation requirements for a field. This shouldn't be used externally and is only used within the schema defition.
+
+If set on an object, overrides all authentication on that object, unless a field also has @auth.
 """
 directive @auth(
     """
     The AUTH_XXX constants that will grant access to this method. Note that this uses OR logic, not AND, so any of them
     will grant access.
     """
-    constants: [String!]!
-) on FIELD_DEFINITION
+    constants: [String!],
+    """
+    Use a custom authentication hook to authenticate this field.
+    """
+    hook: String
+) on FIELD_DEFINITION | OBJECT
 
 """
 Tells the resolver that the given property is not on the object itself, but on its metadata
@@ -76,11 +82,11 @@ type ShowCredit {
     User: User
 }
 
-type Show implements Node {
+type Show implements Node @auth(hook: "shows") {
     id: ID!
     title: String! @meta(key: "title")
     description: HTMLString! @meta(key: "description")
-    subtype: ShowSubtype! @auth(constants: ["AUTH_VIEWMEMBERSHOWS"])
+    subtype: ShowSubtype!
     photo: String @bind(method: "getShowPhoto")
     credits: [ShowCredit]
     allSeasons: [Season]

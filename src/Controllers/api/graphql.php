@@ -171,7 +171,7 @@ function graphQlResolver($source, $args, GraphQLContext $context, ResolveInfo $i
             $metaArgs = GraphQLUtils::getDirectiveArguments($metaDirective);
             // Authorization for metadata is the same as toDataSource
             // TODO is this really the best way
-            if (GraphQLUtils::isAuthorisedToAccess($info, get_class($source), "toDataSource")) {
+            if (GraphQLUtils::isAuthorisedToAccess($info, get_class($source), "toDataSource", $source)) {
                 // This Is Fine.
                 /** @noinspection PhpPossiblePolymorphicInvocationInspection */
                 /** @noinspection PhpUndefinedMethodInspection */
@@ -200,7 +200,7 @@ function graphQlResolver($source, $args, GraphQLContext $context, ResolveInfo $i
         // Okay. Have we tracked down a method?
         if (isset($methodName)) {
             // Great. Can we access it?
-            if (GraphQLUtils::isAuthorisedToAccess($info, get_class($source), $methodName)) {
+            if (GraphQLUtils::isAuthorisedToAccess($info, get_class($source), $methodName, $source)) {
                 // Yay. Call it!
                 // (We'll get a ReflectionException here if it's inaccessible. But That's Okay.
                 $meth = new ReflectionMethod(
@@ -220,7 +220,7 @@ function graphQlResolver($source, $args, GraphQLContext $context, ResolveInfo $i
         // Giving up on methods. Last shot: is it a property?
         if (isset($source->{$fieldName})) {
             // Right. Can we access it?
-            if (GraphQLUtils::isAuthorisedToAccess($info, get_class($source), $fieldName)) {
+            if (GraphQLUtils::isAuthorisedToAccess($info, get_class($source), $fieldName, $source)) {
                 return GraphQLUtils::processScalarIfNecessary($info, $source->{$fieldName});
             } else {
                 $context->addWarning("Unauthorised to access $typeName::$fieldName");
@@ -233,7 +233,7 @@ function graphQlResolver($source, $args, GraphQLContext $context, ResolveInfo $i
 
     // It's probably a scalar. Return it directly.
     // Check authz just in case it's overridden
-    if (GraphQLUtils::isAuthorisedToAccess($info, null, null)) {
+    if (GraphQLUtils::isAuthorisedToAccess($info, null, null, $source)) {
         return GraphQLUtils::processScalarIfNecessary($info, $source);
     } else {
         $context->addWarning("Unauthorised to access $typeName::$fieldName");

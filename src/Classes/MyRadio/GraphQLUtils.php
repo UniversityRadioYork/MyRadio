@@ -5,7 +5,9 @@ namespace MyRadio\MyRadio;
 
 
 use GraphQL\Language\AST\DirectiveNode;
+use GraphQL\Language\AST\FieldDefinitionNode;
 use GraphQL\Language\AST\NodeList;
+use GraphQL\Language\AST\ObjectTypeDefinitionNode;
 use GraphQL\Language\AST\ValueNode;
 use GraphQL\Type\Definition\EnumType;
 use GraphQL\Type\Definition\NonNull;
@@ -13,7 +15,9 @@ use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\ScalarType;
 use GraphQL\Type\Definition\WrappingType;
 use MyRadio\MyRadioException;
+use MyRadio\ServiceAPI\MyRadio_Show;
 use MyRadio\ServiceAPI\MyRadio_Swagger2;
+use MyRadio\ServiceAPI\MyRadio_User;
 
 class GraphQLUtils
 {
@@ -25,8 +29,17 @@ class GraphQLUtils
     public static function getDirectiveByName(ResolveInfo $info, string $name)
     {
         $fieldNode = $info->parentType->getField($info->fieldName)->astNode;
+        return self::getDirectiveByNameOnAstNode($fieldNode, $name);
+    }
+
+    /**
+     * @param ObjectTypeDefinitionNode|FieldDefinitionNode $node
+     * @param string $name
+     * @return DirectiveNode|null
+     */
+    private static function getDirectiveByNameOnAstNode($node, string $name) {
         /** @var NodeList $directives */
-        $directives = $fieldNode->directives;
+        $directives = $node->directives;
         if ($directives) {
             /** @var DirectiveNode[] $directives */
             foreach ($directives as $directive) {
@@ -68,17 +81,65 @@ class GraphQLUtils
      * @param ResolveInfo $info
      * @param string $resolvedClass
      * @param string $resolvedMethod
+     * @param mixed|null $resolvedObject
      * @return bool
      */
-    public static function isAuthorisedToAccess(ResolveInfo $info, string $resolvedClass, string $resolvedMethod) {
+    public static function isAuthorisedToAccess(
+        ResolveInfo $info,
+        string $resolvedClass,
+        string $resolvedMethod,
+        $resolvedObject=null
+    ) {
         $caller = MyRadio_Swagger2::getAPICaller();
         if ($caller === null) {
             throw new MyRadioException('No valid authentication data provided', 401);
         }
-        // First, check if we have an auth directive. If so, it overrides.
+        // First, check if we have an @auth directive. If so, it overrides.
         $authDirective = self::getDirectiveByName($info, 'auth');
         if ($authDirective !== null) {
-            $constants = self::getDirectiveArguments($authDirective)['constants'];
+            return self::processAuthDirective(
+                self::getDirectiveArguments($authDirective),
+                $resolvedClass,
+                $resolvedMethod,
+                $resolvedObject
+            );
+        } else {
+            // Check if there's an @auth on the parent object
+            $authDirective = self::getDirectiveByNameOnAstNode($info->parentType->astNode, "auth");
+            if ($authDirective !== null) {
+                return self::processAuthDirective(
+                    self::getDirectiveArguments($authDirective),
+                    $resolvedClass,
+                    $resolvedMethod,
+                    $resolvedObject
+                );
+            } else {
+                // Object-scalar rule: if we're dealing with an object, use API v2 rules
+                // If we're dealing with a scalar, assume it's okay, as it must have come from an object
+                if ($info->returnType instanceof WrappingType) {
+                    $type = $info->returnType->getWrappedType(true);
+                } else {
+                    $type = $info->returnType;
+                }
+                if ($type instanceof ScalarType || $type instanceof EnumType) {
+                    return true;
+                } else if ($resolvedClass === null && $resolvedMethod === null) {
+                    return true;
+                } else {
+                    return $caller->canCall($resolvedClass, $resolvedMethod);
+                }
+            }
+        }
+    }
+
+    private static function processAuthDirective(
+        array $args,
+        string $resolvedClass,
+        string $resolvedMethod,
+        $resolvedObject=null
+    ) {
+        if (isset($args['constants'])) {
+            $constants = $args['constants'];
             // No constants => public access
             if (count($constants) === 0) {
                 return true;
@@ -88,23 +149,23 @@ class GraphQLUtils
                     return true;
                 }
             }
-            return false;
-        } else {
-            // Object-scalar rule: if we're dealing with an object, use API v2 rules
-            // If we're dealing with a scalar, assume it's okay, as it must have come from an object
-            if ($info->returnType instanceof WrappingType) {
-                $type = $info->returnType->getWrappedType(true);
-            } else {
-                $type = $info->returnType;
-            }
-            if ($type instanceof ScalarType || $type instanceof EnumType) {
-                return true;
-            } else if ($resolvedClass === null && $resolvedMethod === null) {
-                return true;
-            } else {
-                return $caller->canCall($resolvedClass, $resolvedMethod);
+        }
+        $hook = $args['hook'];
+        if (isset($hook)) {
+            switch ($hook) {
+                case 'show':
+                    /** @var MyRadio_Show $show */
+                    $show = $resolvedObject;
+                    if (AuthUtils::hasPermission(AUTH_VIEWMEMBERSHOWS)) {
+                        return true;
+                    }
+                    return $show->isCurrentUserAnOwner();
+                    break;
+                default:
+                    throw new MyRadioException("Unknown auth hook $hook");
             }
         }
+        return false;
     }
 
     /**
