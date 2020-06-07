@@ -152,7 +152,7 @@ class GraphQLUtils
         }
         $hook = $args['hook'];
         if (isset($hook)) {
-            switch ($hook) {
+            switch ($hook->value) {
                 case 'show':
                     /** @var MyRadio_Show $show */
                     $show = $resolvedObject;
