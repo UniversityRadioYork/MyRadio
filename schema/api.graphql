@@ -110,7 +110,7 @@ type Season implements Node {
     show: Show!
     subtype: ShowSubtype!
     seasonNumber: Int!
-    timeslots: [Timeslot]
+    allTimeslots: [Timeslot]
     firstTime: DateTime @coerce(hooks: [FalseToNull])
 }
 
