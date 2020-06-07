@@ -4,6 +4,7 @@ use GraphQL\Error\FormattedError;
 use GraphQL\GraphQL;
 use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Utils\BuildSchema;
+use MyRadio\MyRadio\GraphQLContext;
 use MyRadio\MyRadio\GraphQLUtils;
 use MyRadio\MyRadioException;
 
@@ -41,7 +42,7 @@ $typeConfigDecorator = function($typeConfig, $typeDefinitionNode) {
                     $orig,
                     [
                         'node' => [
-                            'resolve' => function($value, $args, $context, ResolveInfo $info) {
+                            'resolve' => function($value, $args, GraphQLContext $context, ResolveInfo $info) {
                                 $id_val = base64_decode($args['id']);
                                 list($type, $id) = explode('#', $id_val);
                                 if ($type[0] !== '\\') {
@@ -63,7 +64,7 @@ $typeConfigDecorator = function($typeConfig, $typeDefinitionNode) {
                 );
             };
 
-            $typeConfig['resolveField'] = function($source, $args, $context, ResolveInfo $info) {
+            $typeConfig['resolveField'] = function($source, $args, GraphQLContext $context, ResolveInfo $info) {
                 $fieldName = $info->fieldName;
                 // If we're on the Query type, we're entering the graph, so we'll want a static method.
                 // Unlike elsewhere in the graph, we can assume everything on Query will have an @bind.
@@ -113,7 +114,8 @@ if (isset($_SERVER['CONTENT_TYPE']) && strpos($_SERVER['CONTENT_TYPE'], 'applica
     $data = $_REQUEST;
 }
 
-function graphQlResolver($source, $args, $context, ResolveInfo $info) {
+function graphQlResolver($source, $args, GraphQLContext $context, ResolveInfo $info) {
+    $typeName = $info->parentType->name;
     $fieldName = $info->fieldName;
     // First up, check if we have a bind directive
     $bindDirective = GraphQLUtils::getDirectiveByName($info, 'bind');
@@ -133,6 +135,7 @@ function graphQlResolver($source, $args, $context, ResolveInfo $info) {
             if (GraphQLUtils::isAuthorisedToAccess($info, null, null)) {
                 return GraphQLUtils::processScalarIfNecessary($info, $source[$fieldName]);
             } else {
+                $context->addWarning("Unauthorised to access $typeName::$fieldName");
                 return GraphQLUtils::returnNullOrThrowForbiddenException($info);
             }
         }
@@ -174,6 +177,7 @@ function graphQlResolver($source, $args, $context, ResolveInfo $info) {
                 /** @noinspection PhpUndefinedMethodInspection */
                 return $source->getMeta($metaArgs['key']->value);
             } else {
+                $context->addWarning("Unauthorised to access $typeName::$fieldName");
                 return GraphQLUtils::returnNullOrThrowForbiddenException($info);
             }
         }
@@ -209,6 +213,7 @@ function graphQlResolver($source, $args, $context, ResolveInfo $info) {
                 );
             } else {
                 // So the method exists, but we can't access it.
+                $context->addWarning("Unauthorised to access $typeName::$fieldName");
                 return GraphQLUtils::returnNullOrThrowForbiddenException($info);
             }
         }
@@ -218,6 +223,7 @@ function graphQlResolver($source, $args, $context, ResolveInfo $info) {
             if (GraphQLUtils::isAuthorisedToAccess($info, get_class($source), $fieldName)) {
                 return GraphQLUtils::processScalarIfNecessary($info, $source->{$fieldName});
             } else {
+                $context->addWarning("Unauthorised to access $typeName::$fieldName");
                 return GraphQLUtils::returnNullOrThrowForbiddenException($info);
             }
         }
@@ -230,21 +236,28 @@ function graphQlResolver($source, $args, $context, ResolveInfo $info) {
     if (GraphQLUtils::isAuthorisedToAccess($info, null, null)) {
         return GraphQLUtils::processScalarIfNecessary($info, $source);
     } else {
+        $context->addWarning("Unauthorised to access $typeName::$fieldName");
         return GraphQLUtils::returnNullOrThrowForbiddenException($info);
     }
 }
+
+$ctx = new GraphQLContext();
 
 try {
     $queryResult = GraphQL::executeQuery(
         $schema,
         $data['query'],
         null,
-        null,
+        $ctx,
         (array) $data['variables'],
         null,
         'graphQlResolver'
     );
     $result = $queryResult->toArray($debug);
+    $warnings = $ctx->getWarnings();
+    if (count($warnings) > 0) {
+        $result['warnings'] = $warnings;
+    }
 } catch (Exception $e) {
     $status = $e instanceof MyRadioException ? $e->getCode() : 500;
     $result = [
