@@ -97,6 +97,10 @@ class GraphQLUtils
         if ($caller === null) {
             throw new MyRadioException('No valid authentication data provided', 401);
         }
+        if ($caller->hasAuth(AUTH_APISUDO)) {
+            // I am become sudo, doer of API calls
+            return true;
+        }
         // First, check if we have an @auth directive. If so, it overrides.
         $authDirective = self::getDirectiveByName($info, 'auth');
         if ($authDirective !== null) {
