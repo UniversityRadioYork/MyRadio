@@ -16,8 +16,10 @@ use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\ScalarType;
 use GraphQL\Type\Definition\WrappingType;
 use MyRadio\MyRadioException;
+use MyRadio\ServiceAPI\MyRadio_Season;
 use MyRadio\ServiceAPI\MyRadio_Show;
 use MyRadio\ServiceAPI\MyRadio_Swagger2;
+use MyRadio\ServiceAPI\MyRadio_Timeslot;
 use MyRadio\ServiceAPI\MyRadio_User;
 
 class GraphQLUtils
@@ -156,14 +158,15 @@ class GraphQLUtils
         if (isset($hook)) {
             $hookName = $hook->value;
             switch ($hookName) {
-                case 'Show':
-                    /** @var MyRadio_Show $show */
+                case 'ViewShow':
+                case 'ViewSeason':
+                case 'ViewTimeslot':
+                    /** @var MyRadio_Show|MyRadio_Season|MyRadio_Timeslot $show */
                     $show = $resolvedObject;
                     if (AuthUtils::hasPermission(AUTH_VIEWMEMBERSHOWS)) {
                         return true;
                     }
                     return $show->isCurrentUserAnOwner();
-                    break;
                 default:
                     throw new MyRadioException("Unknown auth hook $hookName");
             }
