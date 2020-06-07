@@ -245,12 +245,15 @@ class GraphQLUtils
                 } else {
                     $data = date_parse($value);
                     $interval = new \DateInterval(
-                        'PY' . strval($data['year'] || 0)
-                        . 'M' . strval($data['month'] || 0)
-                        . 'D' . strval($data['day'] || 0)
-                        . 'TH' . strval($data['hour'] || 0)
-                        . 'M' . strval($data['minute'] || 0)
-                        . 'S' . strval($data['second'] || 0)
+                        sprintf(
+                            "PY%02dM%02dD%02dTH%02dM%02dS%02d",
+                            $data['year'],
+                            $data['month'],
+                            $data['day'],
+                            $data['hour'],
+                            $data['minute'],
+                            $data['second']
+                        )
                     );
                 }
                 return $interval->format("%H:%M:%S");
