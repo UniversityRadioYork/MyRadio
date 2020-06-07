@@ -85,14 +85,20 @@ interface Node {
     id: ID!
 }
 
-type User implements Node {
+interface MyRadioObject {
+    itemId: Int!
+}
+
+type User implements Node, MyRadioObject {
     id: ID! @bind(method: "getID")
+    itemId: Int! @bind(method: "getID")
     fname: String! @bind(method: "getFName")
     sname: String! @bind(method: "getSName")
 }
 
-type ShowSubtype implements Node {
+type ShowSubtype implements Node, MyRadioObject {
     id: ID!
+    itemId: Int! @bind(method: "getID")
     name: String!
     class: String!
     description: String
@@ -103,8 +109,9 @@ type ShowCredit {
     User: User
 }
 
-type Show implements Node @auth(hook: ViewShow) {
+type Show implements Node, MyRadioObject @auth(hook: ViewShow) {
     id: ID!
+    itemId: Int! @bind(method: "getID")
     title: String! @meta(key: "title")
     description: HTMLString! @meta(key: "description")
     subtype: ShowSubtype!
@@ -113,8 +120,9 @@ type Show implements Node @auth(hook: ViewShow) {
     allSeasons: [Season]
 }
 
-type Season implements Node @auth(hook: ViewSeason) {
+type Season implements Node, MyRadioObject @auth(hook: ViewSeason) {
     id: ID!
+    itemId: Int! @bind(method: "getID")
     show: Show!
     subtype: ShowSubtype!
     seasonNumber: Int!
@@ -133,8 +141,9 @@ type Message {
     location: [String]
 }
 
-type Timeslot implements Node @auth(hook: ViewTimeslot) {
+type Timeslot implements Node, MyRadioObject @auth(hook: ViewTimeslot) {
     id: ID!
+    itemId: Int! @bind(method: "getID")
     season: Season!
     timeslotNumber: Int!
     startTime: DateTime!
@@ -146,6 +155,7 @@ type Timeslot implements Node @auth(hook: ViewTimeslot) {
 
 type Quote implements Node {
     id: ID!
+    itemId: Int! @bind(method: "getID")
     source: User! @auth(constants: [])
     date: Date!
     text: HTMLString!
