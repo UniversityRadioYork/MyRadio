@@ -15,6 +15,10 @@ directive @bind(
     method: String
 ) on FIELD_DEFINITION | OBJECT
 
+enum AuthHook {
+    Show
+}
+
 """
 Override authorisation requirements for a field. This shouldn't be used externally and is only used within the schema defition.
 
@@ -29,13 +33,22 @@ directive @auth(
     """
     Use a custom authentication hook to authenticate this field.
     """
-    hook: String
+    hook: AuthHook
 ) on FIELD_DEFINITION | OBJECT
 
 """
 Tells the resolver that the given property is not on the object itself, but on its metadata
 """
 directive @meta(key: String!) on FIELD_DEFINITION
+
+enum Coercion {
+    BoolToNull
+}
+
+"""
+Gives the resolver coercion hints.
+"""
+directive @coerce(hooks: [Coercion]) on FIELD_DEFINITION
 
 """
 An RFC3339 date string, such as 2007-12-03
@@ -82,7 +95,7 @@ type ShowCredit {
     User: User
 }
 
-type Show implements Node @auth(hook: "shows") {
+type Show implements Node @auth(hook: Show) {
     id: ID!
     title: String! @meta(key: "title")
     description: HTMLString! @meta(key: "description")
@@ -92,15 +105,13 @@ type Show implements Node @auth(hook: "shows") {
     allSeasons: [Season]
 }
 
-union PotentialFirstTime = Boolean | DateTime
-
 type Season implements Node {
     id: ID!
     show: Show!
     subtype: ShowSubtype!
     seasonNumber: Int!
     timeslots: [Timeslot]
-    firstTime: PotentialFirstTime
+    firstTime: DateTime @coerce(hooks: [BoolToNull])
 }
 
 type Message {

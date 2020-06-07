@@ -5,6 +5,7 @@ namespace MyRadio\MyRadio;
 
 
 use GraphQL\Language\AST\DirectiveNode;
+use GraphQL\Language\AST\EnumValueNode;
 use GraphQL\Language\AST\FieldDefinitionNode;
 use GraphQL\Language\AST\NodeList;
 use GraphQL\Language\AST\ObjectTypeDefinitionNode;
@@ -150,11 +151,12 @@ class GraphQLUtils
                 }
             }
         }
+        /** @var EnumValueNode $hookVal */
         $hook = $args['hook'];
         if (isset($hook)) {
-            $hookName = $hook->value;
+            $hookName = $hook-value;
             switch ($hookName) {
-                case 'shows':
+                case 'Show':
                     /** @var MyRadio_Show $show */
                     $show = $resolvedObject;
                     if (AuthUtils::hasPermission(AUTH_VIEWMEMBERSHOWS)) {
