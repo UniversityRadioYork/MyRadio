@@ -266,5 +266,16 @@ if (count($warnings) > 0) {
     $result['warnings'] = $warnings;
 }
 
+$corsWhitelistOrigins = [
+    'https://ury.org.uk',
+    'http://localhost:3000'
+];
+
+$origin = $_SERVER['HTTP_ORIGIN'];
+if (in_array($origin, $corsWhitelistOrigins)) {
+    header("Access-Control-Allow-Origin: $origin");
+    header("Access-Control-Allow-Credentials: true");
+}
+
 header('Content-Type: application/json', true, $status);
 echo json_encode($result);
