@@ -17,13 +17,15 @@ directive @bind(
 
 enum AuthHook {
     """
-    Only valid on MyRadio_Shows. Grants access if the current user has "View Any Show" or is credited on the show.
+    Only valid on MyRadio_Shows/Seasons/Timeslots.
+    Grants access if the current user has "View Any Show" or is credited on the show.
     """
     ViewShow,
-    "Ditto, but for seasons"
-    ViewSeason,
-    "Ditto, but for timeslots"
-    ViewTimeslot
+    """
+    Only valid on MyRadio_User fields.
+    Grants access if we are looking at the current user, or they have "View Any Profile".
+    """
+    ViewMember
 }
 
 """
@@ -98,8 +100,8 @@ type User implements Node & MyRadioObject {
     photo: String
     bio: HTMLString
 
-    shows: [Show]
-    officerships: [Officership]
+    shows: [Show] @auth(hook: ViewMember)
+    officerships: [Officership] @auth(hook: ViewMember)
 }
 
 type Officership {
@@ -134,7 +136,7 @@ type Show implements Node & MyRadioObject @auth(hook: ViewShow) {
     allSeasons: [Season]
 }
 
-type Season implements Node & MyRadioObject @auth(hook: ViewSeason) {
+type Season implements Node & MyRadioObject @auth(hook: ViewShow) {
     id: ID!
     itemId: Int! @bind(method: "getID")
     show: Show!
@@ -155,7 +157,7 @@ type Message {
     location: [String]
 }
 
-type Timeslot implements Node & MyRadioObject @auth(hook: ViewTimeslot) {
+type Timeslot implements Node & MyRadioObject @auth(hook: ViewShow) {
     id: ID!
     itemId: Int! @bind(method: "getID")
     season: Season!

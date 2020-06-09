@@ -163,14 +163,19 @@ class GraphQLUtils
             $hookName = $hook->value;
             switch ($hookName) {
                 case 'ViewShow':
-                case 'ViewSeason':
-                case 'ViewTimeslot':
                     /** @var MyRadio_Show|MyRadio_Season|MyRadio_Timeslot $show */
                     $show = $resolvedObject;
                     if (AuthUtils::hasPermission(AUTH_VIEWMEMBERSHOWS)) {
                         return true;
                     }
                     return $show->isCurrentUserAnOwner();
+                case 'ViewMember':
+                    /** @var MyRadio_User $member */
+                    $member = $resolvedObject;
+                    if (AuthUtils::hasPermission(AUTH_VIEWOTHERMEMBERS)) {
+                        return true;
+                    }
+                    return $member->getID() === (MyRadio_User::getCurrentOrSystemUser()->getID());
                 default:
                     throw new MyRadioException("Unknown auth hook $hookName");
             }
