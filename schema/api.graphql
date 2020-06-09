@@ -97,11 +97,16 @@ type User implements Node & MyRadioObject {
     fname: String! @bind(method: "getFName")
     sname: String! @bind(method: "getSName")
 
+    # Public information
     photo: String
     bio: HTMLString
 
-    shows: [Show] @auth(hook: ViewMember)
-    officerships: [Officership] @auth(hook: ViewMember)
+    # Public information
+    shows: [Show] @auth(constants: [])
+    officerships: [Officership] @auth(constants: [])
+
+    # Not public information
+    allTraining: [UserTrainingStatus] @auth(hook: ViewMember)
 }
 
 type Officership {
@@ -110,6 +115,34 @@ type Officership {
     teamid: Int!
     from_date: Date!
     till_date: Date
+}
+
+type TrainingStatus implements Node & MyRadioObject {
+    id: ID!
+    itemId: Int! @bind(method: "getID")
+    title: String!
+    detail: String!
+    depends: TrainingStatus
+    awarder: TrainingStatus
+}
+
+type UserTrainingStatus implements Node & MyRadioObject @auth(hook: ViewMember) {
+    id: ID! @bind(method: "getUserTrainingStatusID")
+    itemId: Int! @bind(method: "getUserTrainingStatusID")
+    trainingStatusId: ID! @bind(method: "getID")
+    trainingStatusItemId: Int! @bind(method: "getID")
+
+    title: String!
+    detail: String!
+    depends: TrainingStatus
+    awarder: TrainingStatus
+
+    awardedTo: User!
+    awardedBy: User!
+    awardedTime: DateTime!
+
+    revokedBy: User
+    revokedTime: DateTime
 }
 
 type ShowSubtype implements Node & MyRadioObject {
@@ -187,6 +220,8 @@ type Query {
     show(itemid: Int!): Show @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Show", method: "getInstance")
     season(itemid: Int!): Season @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Season", method: "getInstance")
     timeslot(itemid: Int!): Timeslot @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Timeslot", method: "getInstance")
+
+    allTrainingStatuses: [TrainingStatus!] @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_TrainingStatus", method: "getAll")
 }
 
 schema {
