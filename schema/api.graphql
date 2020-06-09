@@ -103,7 +103,7 @@ type User implements Node & MyRadioObject {
     sname: String! @bind(method: "getSName")
 
     # Public information
-    profilePhoto: String
+    profilePhoto: Photo
     bio: HTMLString
     publicEmail: String
     url: String
@@ -125,6 +125,15 @@ type User implements Node & MyRadioObject {
     localName: String @auth(hook: ViewMember)
     lastLogin: DateTime @auth(hook: ViewMember)
     isCurrentlyPaid: Boolean @auth(hook: ViewMember)
+}
+
+type Photo implements Node & MyRadioObject{
+    id: ID!
+    itemId: Int! @bind(method: "getID")
+    dateAdded: DateTime!
+    format: String!
+    owner: User!
+    url: String!
 }
 
 type Officership {
