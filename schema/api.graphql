@@ -164,7 +164,7 @@ type Quote implements Node {
 type Query {
     node(id: ID): Node
 
-    me: User @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_User", method: "getCurrentOrSystemUser")
+    me: User @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_User", method: "getCurrentUser")
 
     allQuotes: [Quote!] @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Quote", method: "getAll")
 
