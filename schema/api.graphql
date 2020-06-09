@@ -100,6 +100,8 @@ type User implements Node & MyRadioObject {
     # Public information
     photo: String
     bio: HTMLString
+    publicEmail: String
+    url: String
 
     # Public information
     shows: [Show] @auth(constants: [])
@@ -107,6 +109,15 @@ type User implements Node & MyRadioObject {
 
     # Not public information
     allTraining: [UserTrainingStatus] @auth(hook: ViewMember)
+    accountLocked: Boolean @auth(hook: ViewMember)
+    college: String @auth(hook: ViewMember) # TODO: consider enum
+    email: String @auth(hook: ViewMember)
+    phone: String @auth(hook: ViewMember)
+    eduroam: String @auth(hook: ViewMember)
+    localAlias: String @auth(hook: ViewMember)
+    localName: String @auth(hook: ViewMember)
+    lastLogin: DateTime @auth(hook: ViewMember)
+    isCurrentlyPaid: Boolean @auth(hook: ViewMember)
 }
 
 type Officership {
