@@ -170,9 +170,13 @@ class GraphQLUtils
                     }
                     return $show->isCurrentUserAnOwner();
                 case 'ViewMember':
+                case 'ViewOfficer':
                     /** @var MyRadio_User $member */
                     $member = $resolvedObject;
                     if (AuthUtils::hasPermission(AUTH_VIEWOTHERMEMBERS)) {
+                        return true;
+                    }
+                    if ($hookName === 'viewOfficer' && $member->isOfficer()) {
                         return true;
                     }
                     return $member->getID() === (MyRadio_User::getCurrentOrSystemUser()->getID());

@@ -25,7 +25,12 @@ enum AuthHook {
     Only valid on MyRadio_User fields.
     Grants access if we are looking at the current user, or they have "View Any Profile".
     """
-    ViewMember
+    ViewMember,
+    """
+    Only valid on MyRadio_User fields.
+    Grants access if we are looking at the current user, or they have "View Any Profile", *or* they are an officer.
+    """
+    ViewOfficer
 }
 
 """
@@ -107,12 +112,14 @@ type User implements Node & MyRadioObject {
     shows: [Show] @auth(constants: [])
     officerships: [Officership] @auth(constants: [])
 
+    # Semi-public information
+    phone: String @auth(hook: ViewOfficer)
+
     # Not public information
     allTraining: [UserTrainingStatus] @auth(hook: ViewMember)
     accountLocked: Boolean @auth(hook: ViewMember)
     college: String @auth(hook: ViewMember) # TODO: consider enum
     email: String @auth(hook: ViewMember)
-    phone: String @auth(hook: ViewMember)
     eduroam: String @auth(hook: ViewMember)
     localAlias: String @auth(hook: ViewMember)
     localName: String @auth(hook: ViewMember)
