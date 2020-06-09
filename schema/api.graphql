@@ -103,7 +103,7 @@ type User implements Node & MyRadioObject {
     sname: String! @bind(method: "getSName")
 
     # Public information
-    photo: String
+    profilePhoto: String
     bio: HTMLString
     publicEmail: String
     url: String
