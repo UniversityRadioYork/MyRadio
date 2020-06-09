@@ -94,6 +94,20 @@ type User implements Node & MyRadioObject {
     itemId: Int! @bind(method: "getID")
     fname: String! @bind(method: "getFName")
     sname: String! @bind(method: "getSName")
+
+    photo: String
+    bio: HTMLString
+
+    shows: [Show]
+    officerships: [Officership]
+}
+
+type Officership {
+    officerid: Int!
+    officer_name: String!
+    teamid: Int!
+    from_date: Date!
+    till_date: Date
 }
 
 type ShowSubtype implements Node & MyRadioObject {
