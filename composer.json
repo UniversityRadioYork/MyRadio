@@ -5,7 +5,8 @@
         "google/recaptcha": "~1.1",
         "soundasleep/html2text": "~0.5",
         "twig/twig": "~2.4",
-        "ext-xmlwriter": "*"
+        "ext-xmlwriter": "*",
+        "ext-gd": "*"
     },
     "require-dev": {
         "squizlabs/php_codesniffer": "~3.5",

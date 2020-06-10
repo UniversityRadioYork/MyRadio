@@ -6,6 +6,7 @@ namespace MyRadio\ServiceAPI;
 
 use MyRadio\Config;
 use MyRadio\Database;
+use MyRadio\MyRadio\ImageUtils;
 use MyRadio\MyRadioException;
 use MyRadio\MyRadio\CoreUtils;
 use MyRadio\MyRadio\URLUtils;
@@ -109,7 +110,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
     private $show_type;
     private $submitted_time;
     private $season_ids;
-    private $photo_url;
+    private $photo_path;
     private $podcast_explicit;
     private $subtype_id;
 
@@ -188,10 +189,10 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         /*
          * @todo Support general photo attachment?
          */
-        $this->photo_url = Config::$default_person_uri;
+        $this->photo_path = Config::$default_show_image_path;
         $image_metadata = json_decode($result['image_metadata_values']);
         if ($result['image_metadata_values'] !== null) {
-            $this->photo_url = Config::$public_media_uri.'/'.$image_metadata[0];
+            $this->photo_path = $image_metadata[0];
         }
 
         //Get information about Seasons
@@ -656,13 +657,40 @@ class MyRadio_Show extends MyRadio_Metadata_Common
     }
 
     /**
-     * Get the web url for the Show Photo.
+     * Get the web url for the Show Photo, in the default format if it exists, otherwise "original".
      *
      * @return string
      */
     public function getShowPhoto()
     {
-        return $this->photo_url;
+        try {
+            return $this->getShowPhotoWithFormat(Config::$default_image_format);
+        } catch (MyRadioException $e) {
+            if ($e->getCode() === 404) {
+                // This show doesn't have the photo resized
+                return $this->getLegacyShowPhoto();
+            } else {
+                throw $e;
+            }
+        }
+    }
+
+    public function getShowPhotoWithFormat(string $format)
+    {
+        // Strip out all non-alphanums (and _ and -) to avoid shell injection
+        $safeFormat = preg_replace('/[^A-Za-z0-9_\-]/', '_', $format);
+        $suffix = str_replace('.orig.', ".$safeFormat.", $this->photo_path);
+        $path = Config::$public_media_path . '/' . $suffix;
+        if (is_file($path)) {
+            return Config::$public_media_uri . '/' . $suffix;
+        } else {
+            throw new MyRadioException("This show doesn't have a photo with format $safeFormat", 404);
+        }
+    }
+
+    private function getLegacyShowPhoto()
+    {
+        return Config::$public_media_uri . '/' . $this->photo_path;
     }
 
     /**
@@ -748,11 +776,24 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                 $this->getID()
             ]
         )[0];
-        
+
+        // Save the original file
+
         $filetype = explode('/', getimagesize($tmp_path)['mime'])[1];
-        $suffix = 'image_meta/ShowImageMetadata/'.$result.'.'.$filetype;
+        $suffix = 'image_meta/ShowImageMetadata/'.$result.'.orig.'.$filetype;
         $path = Config::$public_media_path.'/'.$suffix;
         rename($tmp_path, $path);
+
+        // Now, resize it
+        $img = ImageUtils::loadImage($path);
+        foreach (Config::$image_resize_formats as $name => $size) {
+            $resized = ImageUtils::cropAndResizeImage($img, $size[0], $size[1]);
+            $resizedPath = str_replace('.orig.', ".$name.", $path);
+            imagejpeg(
+                $resized,
+                $resizedPath,
+                $size[2] ?? 80);
+        }
 
         self::$db->query(
             'UPDATE schedule.show_image_metadata SET effective_to=NOW()
@@ -768,7 +809,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             [$suffix, $result]
         );
         
-        $this->photo_url = Config::$public_media_uri.'/'.$suffix;
+        $this->photo_path = $suffix;
         $this->updateCacheObject();
     }
 

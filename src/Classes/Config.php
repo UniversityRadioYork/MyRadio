@@ -231,6 +231,20 @@ final class Config
     public static $webcam_set_url;
 
     /**
+     * The formats to resize uploaded images to.
+     *
+     * The keys of the array are format names to rename to. The values are [x,y] sizes in pixels.
+     * If provided, the third value in the array is the JPEG quality. If none given, defaults to 80.
+     * @var int[][]
+     */
+    public static $image_resize_formats = [
+        'podcast_small' => [1400, 1400, 90],
+        'web' => [800, 800]
+    ];
+
+    public static $default_image_format = 'web';
+
+    /**
      * The path to store the original, unencoded copies of MyRadio Podcasts.
      * The originals are archived here for future reencoding.
      *
@@ -253,12 +267,12 @@ final class Config
     public static $public_media_uri = '/media';
 
     /**
-     * The full web address to the image that will be served for a show if there
+     * The local path, relative to $public_media_path, to the image that will be served for a show if there
      * is not a photo for that show.
      *
      * @var string
      */
-    public static $default_show_uri = '/media/image_meta/ShowImageMetadata/22.png';
+    public static $default_show_image_path = 'image_meta/ShowImageMetadata/22.png';
 
     /**
      * The full web address to the image that will be served outside of term time.
