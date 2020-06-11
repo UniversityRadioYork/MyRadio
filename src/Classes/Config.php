@@ -663,6 +663,11 @@ final class Config
      */
     public static $obit_list_id = 36;
 
+    /**
+     * @var bool Enable analytics?
+     */
+    public static $enable_analytics = false;
+
     /**** DAEMON CONFIGURATION ****/
     public static $d_BAPSSync_enabled = false;
     public static $d_EmailQueue_enabled = true;
