@@ -5,6 +5,7 @@
  * the necessary handler.
  */
 use \MyRadio\Config;
+use MyRadio\Database;
 use \MyRadio\MyRadio\AuthUtils;
 use \MyRadio\MyRadio\CoreUtils;
 
@@ -76,6 +77,24 @@ AuthUtils::requirePermissionAuto($module, $action);
  */
 if (isset($_REQUEST['joyride'])) {
     $_SESSION['joyride'] = $_REQUEST['joyride'];
+}
+
+// Apply analytics
+if (Config::$enable_analytics) {
+    if (substr($action, 0, 2) !== 'a-' // pseudo-API
+        && $action !== 'config.js'
+        && !($module === 'SIS' && $action === 'remote')
+    ) {
+        Database::getInstance()->query(
+            'SELECT myradio.create_analytics_record($1, $2, $3, $4)',
+            [
+                $module . '/' . $action,
+                $_GET['ref'] ?? '',
+                $_SESSION['memberid'] ?? -1,
+                session_id()
+            ]
+        );
+    }
 }
 
 //Include the requested action
