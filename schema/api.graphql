@@ -177,7 +177,7 @@ type UserTrainingStatus implements Node & MyRadioObject @auth(hook: ViewMember) 
     awardedTime: DateTime!
 
     revokedBy: User
-    revokedTime: DateTime
+    revokedTime: DateTime @coerce(hooks: [FalseToNull])
 }
 
 type ShowSubtype implements Node & MyRadioObject {
