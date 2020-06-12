@@ -109,8 +109,10 @@ type User implements Node & MyRadioObject {
     url: String
 
     # Public information
-    shows: [Show] @auth(constants: [])
-    officerships: [Officership] @auth(constants: [])
+    shows: [Show!] @auth(constants: [])
+    officerships: [Officership!] @auth(constants: [])
+
+    timeline: [UserTimelineEntry!] @auth(constants: [])
 
     # Semi-public information
     phone: String @auth(hook: ViewOfficer)
@@ -125,6 +127,12 @@ type User implements Node & MyRadioObject {
     localName: String @auth(hook: ViewMember)
     lastLogin: DateTime @auth(hook: ViewMember)
     isCurrentlyPaid: Boolean @auth(hook: ViewMember)
+}
+
+type UserTimelineEntry {
+    photo: String
+    message: String @coerce(hooks: [FalseToNull])
+    timestamp: DateTime
 }
 
 type Photo implements Node & MyRadioObject{
