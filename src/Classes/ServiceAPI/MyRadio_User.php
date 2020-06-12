@@ -862,6 +862,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
                     'message' => 'stepped down as '.$officer['officer_name'],
                     'timestamp' => strtotime($officer['till_date']),
                     //'photo' => MyRadio_Photo::getInstance(Config::$photo_officership_down)->getRelativeWebPath(),
+                    'photo' => null
                 ];
             }
         }
