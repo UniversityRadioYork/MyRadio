@@ -131,8 +131,8 @@ type User implements Node & MyRadioObject {
 
 type UserTimelineEntry {
     photo: String
-    message: String @coerce(hooks: [FalseToNull])
-    timestamp: DateTime
+    message: String
+    timestamp: DateTime @coerce(hooks: [FalseToNull])
 }
 
 type Photo implements Node & MyRadioObject{
