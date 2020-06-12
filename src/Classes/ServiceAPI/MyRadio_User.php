@@ -843,7 +843,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
      * @return array A 2D Array where every value of the first dimension is an Array as follows:<br>
      *               timestamp: When the event occurred, as a Unix timestamp<br>
      *               message: A text description of the event<br>
-     *               photo: The relative web path of a thumbnail to render with the event
+     *               photo: The relative web path of a thumbnail to render with the event, or null
      */
     public function getTimeline()
     {
@@ -854,13 +854,14 @@ class MyRadio_User extends ServiceAPI implements APICaller
             $events[] = [
                 'message' => 'became '.$officer['officer_name'],
                 'timestamp' => strtotime($officer['from_date']),
-                'photo' => MyRadio_Photo::getInstance(Config::$photo_officership_get)->getRelativeWebPath(),
+                //'photo' => MyRadio_Photo::getInstance(Config::$photo_officership_get)->getRelativeWebPath(),
+                'photo' => null
             ];
             if ($officer['till_date'] != null) {
                 $events[] = [
                     'message' => 'stepped down as '.$officer['officer_name'],
                     'timestamp' => strtotime($officer['till_date']),
-                    'photo' => MyRadio_Photo::getInstance(Config::$photo_officership_down)->getRelativeWebPath(),
+                    //'photo' => MyRadio_Photo::getInstance(Config::$photo_officership_down)->getRelativeWebPath(),
                 ];
             }
         }
@@ -909,7 +910,8 @@ class MyRadio_User extends ServiceAPI implements APICaller
         $events[] = [
             'timestamp' => $this->joined,
             'message' => 'joined '.Config::$short_name,
-            'photo' => MyRadio_Photo::getInstance(Config::$photo_joined)->getRelativeWebPath(),
+            //'photo' => MyRadio_Photo::getInstance(Config::$photo_joined)->getRelativeWebPath(),
+            'photo' => null
         ];
 
         return $events;
