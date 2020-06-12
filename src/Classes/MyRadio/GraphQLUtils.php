@@ -234,7 +234,9 @@ class GraphQLUtils
             case "Time":
             case "DateTime":
                 // If the value is a number, assume it's a UNIX timestamp. If not, try and parse it.
-                if (is_numeric($value)) {
+                if ($value === null) {
+                    return $value;
+                } else if (is_numeric($value)) {
                     $val_unix = (float) $value;
                 } else {
                     $val_unix = strtotime($value);
@@ -253,7 +255,9 @@ class GraphQLUtils
                 break;
             case "Duration":
                 // If it's a number, assume it's seconds.
-                if (is_numeric($value)) {
+                if ($value === null) {
+                    return $value;
+                } else if (is_numeric($value)) {
                     $interval = new \DateInterval("PT${value}S");
                 } else {
                     $data = date_parse($value);
