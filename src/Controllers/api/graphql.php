@@ -131,7 +131,7 @@ function graphQlResolver($source, $args, GraphQLContext $context, ResolveInfo $i
     // Okay, we're in the Wild West. We're on an object and we need to get a field.
     // First, check if we're on an array
     if (is_array($source)) {
-        if (isset($source[$fieldName])) {
+        if (array_key_exists($fieldName, $source)) {
             if (GraphQLUtils::isAuthorisedToAccess($info, null, null)) {
                 return GraphQLUtils::processScalarIfNecessary($info, $source[$fieldName]);
             } else {
