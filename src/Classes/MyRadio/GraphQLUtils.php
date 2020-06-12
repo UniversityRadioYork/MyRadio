@@ -208,7 +208,7 @@ class GraphQLUtils
         // If it has a @coerce directive, do as it says
         $coerceDirective = self::getDirectiveByName($info, 'coerce');
         if ($coerceDirective !== null) {
-            foreach (self::getDirectiveArguments($coerceDirective)['hooks']->value as $hook) {
+            foreach (self::getDirectiveArguments($coerceDirective)['hooks']->values as $hook) {
                 switch ($hook->value) {
                     case "FalseToNull":
                         if ($value === false) {
