@@ -841,7 +841,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
      * Runs a super-long pSQL query that returns the information used to generate the Profile Timeline.
      *
      * @return array A 2D Array where every value of the first dimension is an Array as follows:<br>
-     *               timestamp: When the event occurred, formatted as d/m/Y<br>
+     *               timestamp: When the event occurred, as a Unix timestamp<br>
      *               message: A text description of the event<br>
      *               photo: The photoid of a thumbnail to render with the event
      */
@@ -880,7 +880,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
                 if ($season->getSeasonNumber() == 1) {
                     $events[] = [
                         'message' => 'started a new Show as '.$credit.' of '.$season->getMeta('title'),
-                        'timestamp' => strtotime($season->getAllTimeslots()[0]->getStartTime()),
+                        'timestamp' => $season->getAllTimeslots()[0]->getStartTime(),
                         'photo' => $show->getShowPhoto(),
                     ];
                 } else {
@@ -888,7 +888,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
                         'message' => 'was ' . $credit
                                      . ' on Season ' . $season->getSeasonNumber()
                                      . ' of '.$season->getMeta('title'),
-                        'timestamp' => strtotime($season->getAllTimeslots()[0]->getStartTime()),
+                        'timestamp' => $season->getAllTimeslots()[0]->getStartTime(),
                         'photo' => $show->getShowPhoto(),
                     ];
                 }
@@ -907,7 +907,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
 
         //Get when they joined URY
         $events[] = [
-            'timestamp' => strtotime($this->joined),
+            'timestamp' => $this->joined,
             'message' => 'joined '.Config::$short_name,
             'photo' => Config::$photo_joined,
         ];
