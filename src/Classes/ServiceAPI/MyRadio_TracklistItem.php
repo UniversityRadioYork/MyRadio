@@ -128,7 +128,7 @@ class MyRadio_TracklistItem extends ServiceAPI
                 );
             }
         } else {
-            if ($tracklist_all == false && !$timeslot->getSeason()->getShow()->isCurrentUserAnOwner()) {
+            if ($tracklist_all == false && !$timeslot->isCurrentUserAnOwner()) {
                 throw new MyRadioException(
                     "Current user doesn't have permission to tracklist to a show they aren't credited on.",
                     403
