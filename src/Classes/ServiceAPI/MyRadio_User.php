@@ -752,6 +752,15 @@ class MyRadio_User extends ServiceAPI implements APICaller
     }
 
     /**
+     * Finds all the email addresses and lists that go to this user.
+     *
+     * @return MyRadio_EmailDestination[]
+     */
+    public function getAllEmails() {
+        return MyRadio_EmailDestination::getAllSourcesForUser(self::$db, $this->getID());
+    }
+
+    /**
      * Searches for Users with a name starting with $name.
      *
      * @param string $name  The name to search for. If there is a space, it is assumed the second word is the surname
