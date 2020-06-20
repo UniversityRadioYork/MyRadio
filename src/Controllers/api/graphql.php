@@ -7,6 +7,7 @@ use GraphQL\Utils\BuildSchema;
 use MyRadio\MyRadio\GraphQLContext;
 use MyRadio\MyRadio\GraphQLUtils;
 use MyRadio\MyRadioException;
+use MyRadio\ServiceAPI\MyRadio_User;
 
 $debug = ($_GET['debug'] ?? 'false') === 'true';
 
@@ -202,15 +203,19 @@ function graphQlResolver($source, $args, GraphQLContext $context, ResolveInfo $i
             // Great. Can we access it?
             if (GraphQLUtils::isAuthorisedToAccess($info, get_class($source), $methodName, $source)) {
                 // Yay. Call it!
-                // (We'll get a ReflectionException here if it's inaccessible. But That's Okay.
-                $meth = new ReflectionMethod(
-                // Assume we know what we're doing.
-                    get_class($source),
-                    $methodName
-                );
-                return GraphQLUtils::processScalarIfNecessary($info,
-                    GraphQLUtils::invokeNamed($meth, $source, $args)
-                );
+                // First, though, check if we should be using a calling convention
+                if (isset($bindArgs['callingConvention'])) {
+                    $val = $source->{$methodName}(MyRadio_User::getInstance()->getID());
+                } else {
+                    // (We'll get a ReflectionException here if it's inaccessible. But That's Okay.
+                    $meth = new ReflectionMethod(
+                    // Assume we know what we're doing.
+                        get_class($source),
+                        $methodName
+                    );
+                    $val = GraphQLUtils::invokeNamed($meth, $source, $args);
+                }
+                return GraphQLUtils::processScalarIfNecessary($info, $val);
             } else {
                 // So the method exists, but we can't access it.
                 $context->addWarning("Unauthorised to access $typeName::$fieldName");

@@ -314,6 +314,10 @@ class MyRadio_List extends ServiceAPI
         return MyRadioEmail::resultSetToObjArray($this->archive);
     }
 
+    /**
+     * @param $str
+     * @return MyRadio_List|null
+     */
     public static function getByName($str)
     {
         self::initDB();
@@ -322,7 +326,7 @@ class MyRadio_List extends ServiceAPI
             [$str]
         );
         if (empty($r)) {
-            return;
+            return null;
         } else {
             return self::getInstance($r[0]);
         }
@@ -331,7 +335,7 @@ class MyRadio_List extends ServiceAPI
     /**
      * Return all mailing lists.
      *
-     * @return MyRadio_User[]
+     * @return MyRadio_List[]
      */
     public static function getAllLists()
     {
