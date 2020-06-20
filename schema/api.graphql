@@ -108,7 +108,7 @@ type User implements Node & MyRadioObject {
 
     # Public information
     shows: [Show!] @auth(constants: [])
-    officerships: [Officership!] @auth(constants: [])
+    officerships: [MemberOfficership!] @auth(constants: [])
 
     timeline: [UserTimelineEntry!] @auth(constants: [])
 
@@ -125,6 +125,7 @@ type User implements Node & MyRadioObject {
     localName: String @auth(hook: ViewMember)
     lastLogin: DateTime @auth(hook: ViewMember)
     isCurrentlyPaid: Boolean @auth(hook: ViewMember)
+    allEmails: [EmailDestination] @auth(hook: ViewMember)
 }
 
 type UserTimelineEntry {
@@ -143,6 +144,42 @@ type Photo implements Node & MyRadioObject{
 }
 
 type Officership {
+    User: User!
+    from_date: Date!
+    till_date: Date
+}
+
+type TeamOfficership {
+    User: User!
+    from_date: Date!
+    till_date: Date
+    position: Officer!
+}
+
+type Team implements Node & MyRadioObject {
+    id: ID!
+    itemId: Int! @bind(method: "getID")
+    name: String!
+    alias: String
+    description: String
+    status: String # TODO enum
+    currentHolders: [TeamOfficership]
+    history: [TeamOfficership]
+}
+
+type Officer implements Node & MyRadioObject {
+    id: ID!
+    itemId: Int! @bind(method: "getID")
+    team: Team
+    name: String!
+    alias: String
+    description: String
+    status: String # TODO enum
+    type: String # TODO enum
+    history: [Officership]
+}
+
+type MemberOfficership {
     officerid: Int!
     officer_name: String!
     teamid: Int!
@@ -253,6 +290,24 @@ type MailingList implements Node & MyRadioObject @auth(constants: []) {
 
     areWeAMember: Boolean! @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_List", method: "isMember", callingConvention: FirstArgCurrentUser)
     haveWeOptedOutOfAuto: Boolean! @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_List", method: "hasOptedOutOfAuto", callingConvention: FirstArgCurrentUser)
+}
+
+
+type Alias implements Node & MyRadioObject {
+    id: ID!
+    itemId: Int! @bind(method: "getID")
+
+    source: String
+    # TODO: destination - there's no good way to type "string" destinations
+}
+
+union EmailDestinationType = User | Officer | Team | MailingList
+
+type EmailDestination {
+    source: String!
+    reason: String! # TODO enum
+    destination: EmailDestinationType!
+    alias: Alias
 }
 
 type Query {
