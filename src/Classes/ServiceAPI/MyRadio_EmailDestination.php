@@ -132,6 +132,7 @@ AND $1 IN (
 AND $1 NOT IN (
     SELECT memberid FROM mail_subscription WHERE listid = mail_list.listid
 )
+AND COALESCE(listaddress, listname) NOT IN (SELECT local_alias FROM public.team)
 UNION
 SELECT NULL AS alias_id, officer_alias || '@' || $2 AS listname, 'officer' AS reason, officerid AS source
 FROM public.officer
