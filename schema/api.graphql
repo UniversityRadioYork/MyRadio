@@ -306,7 +306,7 @@ union EmailDestinationType = User | Officer | Team | MailingList
 type EmailDestination {
     source: String!
     reason: String! # TODO enum
-    destination: EmailDestinationType!
+    destination: EmailDestinationType! @auth(constants: [])
     alias: Alias
 }
 
