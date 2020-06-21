@@ -30,6 +30,11 @@ class MyRadio_List extends ServiceAPI
      */
     private $name;
 
+    public static function getGraphQLTypeName()
+    {
+        return 'MailingList';
+    }
+
     /**
      * If non-optin, stores the SQL query that returns the member memberids.
      *

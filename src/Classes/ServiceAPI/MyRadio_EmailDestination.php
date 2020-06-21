@@ -65,6 +65,7 @@ class MyRadio_EmailDestination
     {
         switch ($this->reason) {
             case 'member':
+            case 'personal':
                 return MyRadio_User::getInstance($this->destination);
             case 'officer':
                 return MyRadio_Officer::getInstance($this->destination);
