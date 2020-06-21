@@ -2,6 +2,8 @@
 
 use GraphQL\Error\FormattedError;
 use GraphQL\GraphQL;
+use GraphQL\Language\AST\TypeDefinitionNode;
+use GraphQL\Language\AST\UnionTypeDefinitionNode;
 use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Utils\BuildSchema;
 use MyRadio\MyRadio\GraphQLContext;
@@ -17,7 +19,18 @@ if ($schemaText === false) {
     throw new MyRadioException('Failed to get API schema!');
 }
 
-$typeConfigDecorator = function($typeConfig, $typeDefinitionNode) {
+$typeConfigDecorator = function($typeConfig, TypeDefinitionNode $typeDefinitionNode) {
+    if ($typeDefinitionNode instanceof UnionTypeDefinitionNode) {
+        $typeConfig['resolveType'] = function($value, $context, ResolveInfo $info) {
+            // If it's a Node, it'll implement ServiceAPI, and thus we can use getGraphQLTypeName
+            $className = get_class($value);
+            if ($className === false) {
+                throw new MyRadioException('Tried to resolve a node that isn\'t a class!');
+            }
+            $typeName = $className::getGraphQLTypeName();
+            return $info->schema->getType($typeName);
+        };
+    }
     $name = $typeConfig['name'];
     switch ($name) {
         case "Node":
