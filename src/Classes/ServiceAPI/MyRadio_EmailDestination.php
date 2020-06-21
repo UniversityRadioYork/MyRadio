@@ -152,6 +152,7 @@ AND $1 IN (
     INNER JOIN officer o on member_officer.officerid = o.officerid
     WHERE o.teamid = team.teamid
 )
+AND (SELECT COUNT(*) FROM mail_list WHERE listaddress = local_alias) > 0
 UNION
 SELECT NULL AS alias_id, local_alias || '@' || $2 AS listname, 'personal' AS reason, $1 AS source
 FROM public.member
