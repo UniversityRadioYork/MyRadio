@@ -24,6 +24,19 @@ use MyRadio\ServiceAPI\MyRadio_User;
 
 class GraphQLUtils
 {
+    private static $ENUM_MAPPINGS = [
+        'OfficerStatus' => [
+            'c' => 'Current',
+            'h' => 'Historic'
+        ],
+        'OfficerType' => [
+            'h' => 'HeadOfTeam',
+            'a' => 'AssistantHeadOfTeam',
+            'm' => 'TeamMember',
+            'o' => 'Other'
+        ]
+    ];
+
     /**
      * @param ResolveInfo $info
      * @param string $name
@@ -197,6 +210,12 @@ class GraphQLUtils
      * @return mixed
      */
     public static function processScalarIfNecessary(ResolveInfo $info, $value) {
+        // Resolve enums if necessary
+        if ($info->returnType instanceof EnumType) {
+            if (isset(self::$ENUM_MAPPINGS[$info->returnType->name])) {
+                return self::$ENUM_MAPPINGS[$info->returnType->name][$value];
+            }
+        }
         // If the field is not a scalar, don't touch it.
         if ($info->returnType instanceof ScalarType) {
             $type = $info->returnType->name;

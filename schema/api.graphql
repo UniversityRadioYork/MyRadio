@@ -167,6 +167,18 @@ type Team implements Node & MyRadioObject {
     history: [TeamOfficership]
 }
 
+enum OfficerStatus {
+    Current,
+    Historic
+}
+
+enum OfficerType {
+    AssistantHeadOfTeam,
+    HeadOfTeam,
+    TeamMember,
+    Other
+}
+
 type Officer implements Node & MyRadioObject {
     id: ID!
     itemId: Int! @bind(method: "getID")
@@ -174,8 +186,8 @@ type Officer implements Node & MyRadioObject {
     name: String!
     alias: String
     description: String
-    status: String # TODO enum
-    type: String # TODO enum
+    status: OfficerStatus
+    type: OfficerType
     history: [Officership]
 }
 
@@ -322,6 +334,10 @@ type Query {
     timeslot(itemid: Int!): Timeslot @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Timeslot", method: "getInstance")
 
     allShows(current_term_only: Boolean): [Show] @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Show", method: "getAllShows")
+
+    currentTimeslot: Timeslot @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Timeslot", method: "getCurrentTimeslot")
+    nextTimeslot: Timeslot @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Timeslot", method: "getNextTimeslot")
+    nineDaySchedule(weekno: Int!, year: Int): Timeslot @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Timeslot", method: "get9DaySchedule")
 
     user(itemid: Int!): User @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_User", method: "getInstance")
 
