@@ -321,6 +321,8 @@ type Query {
     season(itemid: Int!): Season @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Season", method: "getInstance")
     timeslot(itemid: Int!): Timeslot @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Timeslot", method: "getInstance")
 
+    allShows(current_term_only: Boolean): [Show] @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Show", method: "getAllShows")
+
     user(itemid: Int!): User @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_User", method: "getInstance")
 
     allTrainingStatuses: [TrainingStatus!] @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_TrainingStatus", method: "getAll")
