@@ -142,7 +142,8 @@ abstract class ServiceAPI
      * Get the name of this ServiceAPI in the GraphQL schema.
      * @return string
      */
-    public static function getGraphQLTypeName() {
+    public static function getGraphQLTypeName()
+    {
         throw new MyRadioException('Tried to call getGraphQLTypeName on a type that it shouldn\'t be called on!');
     }
 

@@ -19,9 +19,9 @@ if ($schemaText === false) {
     throw new MyRadioException('Failed to get API schema!');
 }
 
-$typeConfigDecorator = function($typeConfig, TypeDefinitionNode $typeDefinitionNode) {
+$typeConfigDecorator = function ($typeConfig, TypeDefinitionNode $typeDefinitionNode) {
     if ($typeDefinitionNode instanceof UnionTypeDefinitionNode) {
-        $typeConfig['resolveType'] = function($value, $context, ResolveInfo $info) {
+        $typeConfig['resolveType'] = function ($value, $context, ResolveInfo $info) {
             // If it's a Node, it'll implement ServiceAPI, and thus we can use getGraphQLTypeName
             $className = get_class($value);
             if ($className === false) {
@@ -34,14 +34,14 @@ $typeConfigDecorator = function($typeConfig, TypeDefinitionNode $typeDefinitionN
     $name = $typeConfig['name'];
     switch ($name) {
         case "Node":
-            $typeConfig['resolveType'] = function($value, $context, ResolveInfo $info) {
+            $typeConfig['resolveType'] = function ($value, $context, ResolveInfo $info) {
                 // If it's a Node, it'll implement ServiceAPI, and thus we can use getGraphQLTypeName
                 $className = get_class($value);
                 if ($className === false) {
                     throw new MyRadioException('Tried to resolve a node that isn\'t a class!');
                 }
                 $rc = new ReflectionClass($className);
-                if(!($rc->isSubclassOf(\MyRadio\ServiceAPI\ServiceAPI::class))) {
+                if (!($rc->isSubclassOf(\MyRadio\ServiceAPI\ServiceAPI::class))) {
                     throw new MyRadioException("Tried to resolve $className through Node, but it's not a ServiceAPI");
                 }
                 $typeName = $className::getGraphQLTypeName();
@@ -50,13 +50,13 @@ $typeConfigDecorator = function($typeConfig, TypeDefinitionNode $typeDefinitionN
             break;
         case "Query":
             // Gets special handling
-            $typeConfig['fields'] = function() use ($typeConfig) {
+            $typeConfig['fields'] = function () use ($typeConfig) {
                 $orig = is_callable($typeConfig['fields']) ? $typeConfig['fields']() : $typeConfig['fields'];
                 return array_merge_recursive(
                     $orig,
                     [
                         'node' => [
-                            'resolve' => function($value, $args, GraphQLContext $context, ResolveInfo $info) {
+                            'resolve' => function ($value, $args, GraphQLContext $context, ResolveInfo $info) {
                                 $id_val = base64_decode($args['id']);
                                 list($type, $id) = explode('#', $id_val);
                                 if ($type[0] !== '\\') {
@@ -64,7 +64,9 @@ $typeConfigDecorator = function($typeConfig, TypeDefinitionNode $typeDefinitionN
                                 }
                                 $rc = new ReflectionClass($type);
                                 if (!($rc->isSubclassOf(\MyRadio\ServiceAPI\ServiceAPI::class))) {
-                                    throw new MyRadioException("Tried to resolve node $type#$id but it's not a ServiceAPI");
+                                    throw new MyRadioException(
+                                        "Tried to resolve node $type#$id but it's not a ServiceAPI"
+                                    );
                                 }
                                 // Node resolution checks authorisation for $type::toDataSource
                                 if (GraphQLUtils::isAuthorisedToAccess($info, $type, 'toDataSource')) {
@@ -78,7 +80,7 @@ $typeConfigDecorator = function($typeConfig, TypeDefinitionNode $typeDefinitionN
                 );
             };
 
-            $typeConfig['resolveField'] = function($source, $args, GraphQLContext $context, ResolveInfo $info) {
+            $typeConfig['resolveField'] = function ($source, $args, GraphQLContext $context, ResolveInfo $info) {
                 $fieldName = $info->fieldName;
                 // If we're on the Query type, we're entering the graph, so we'll want a static method.
                 // Unlike elsewhere in the graph, we can assume everything on Query will have an @bind.
@@ -92,12 +94,16 @@ $typeConfigDecorator = function($typeConfig, TypeDefinitionNode $typeDefinitionN
                     /** @noinspection PhpPossiblePolymorphicInvocationInspection */
                     $className = $bindArgs['class']->value;
                 } else {
-                    throw new MyRadioException("Tried to resolve $fieldName on Query but its @bind didn't have a class");
+                    throw new MyRadioException(
+                        "Tried to resolve $fieldName on Query but its @bind didn't have a class"
+                    );
                 }
                 if (isset($bindArgs['method'])) {
                     $methodName = $bindArgs['method']->value;
                 } else {
-                    throw new MyRadioException("Tried to resolve $fieldName on Query but its @bind didn't have a method");
+                    throw new MyRadioException(
+                        "Tried to resolve $fieldName on Query but its @bind didn't have a method"
+                    );
                 }
                 // Wonderful!
                 $clazz = new ReflectionClass($className);
@@ -105,8 +111,7 @@ $typeConfigDecorator = function($typeConfig, TypeDefinitionNode $typeDefinitionN
                 if (GraphQLUtils::isAuthorisedToAccess($info, $className, $methodName)) {
                     return GraphQLUtils::processScalarIfNecessary(
                         $info,
-                        GraphQLUtils::invokeNamed($meth, null, $args
-                        )
+                        GraphQLUtils::invokeNamed($meth, null, $args)
                     );
                 } else {
                     return GraphQLUtils::returnNullOrThrowForbiddenException($info);
@@ -128,7 +133,8 @@ if (isset($_SERVER['CONTENT_TYPE']) && strpos($_SERVER['CONTENT_TYPE'], 'applica
     $data = $_REQUEST;
 }
 
-function graphQlResolver($source, $args, GraphQLContext $context, ResolveInfo $info) {
+function graphQlResolver($source, $args, GraphQLContext $context, ResolveInfo $info)
+{
     $typeName = $info->parentType->name;
     $fieldName = $info->fieldName;
     // First up, check if we have a bind directive
@@ -168,7 +174,7 @@ function graphQlResolver($source, $args, GraphQLContext $context, ResolveInfo $i
                 $id = null;
                 if (isset($methodName) && method_exists($source, $methodName)) {
                     $id = $source->{$methodName}();
-                } else if (method_exists($source, "getID")) {
+                } elseif (method_exists($source, "getID")) {
                     $id = $source->getID();
                 } else {
                     throw new MyRadioException("Couldn't resolve ID for type $clazz");

@@ -18,7 +18,8 @@ class MyRadio_EmailDestination
     private $reason;
     private $destination;
 
-    public function __construct(array $data) {
+    public function __construct(array $data)
+    {
         $this->alias_id = $data['alias_id'];
         $this->source = $data['source'];
         $this->reason = $data['reason'];
@@ -81,9 +82,11 @@ class MyRadio_EmailDestination
     }
 
 
-    public static function getAllSourcesForUser(Database $database, int $memberid) {
+    public static function getAllSourcesForUser(Database $database, int $memberid)
+    {
         // Oh dear.
-        $rows = $database->fetchAll(<<<SQL
+        $rows = $database->fetchAll(
+            <<<SQL
 SELECT alias_id, source || '@' || $2 AS source, 'member' AS reason, destination FROM mail.alias
 INNER JOIN mail.alias_member USING (alias_id)
 WHERE destination = $1
@@ -110,7 +113,10 @@ AND $1 IN (
     SELECT memberid FROM mail_subscription WHERE listid = mail_list.listid
 )
 UNION
-SELECT NULL as alias_id, COALESCE(listaddress || '@' || $2, listname) AS source, 'list_auto' AS reason, listid AS destination
+SELECT NULL as alias_id,
+       COALESCE(listaddress || '@' || $2, listname) AS source,
+       'list_auto' AS reason,
+       listid AS destination
 FROM mail_list
 WHERE defn IS NOT NULL
 AND $1 IN (
@@ -120,8 +126,19 @@ AND $1 IN (
                 mail_list.defn,
                 '%Y',
                 COALESCE(
-                    (SELECT EXTRACT(year FROM start) FROM public.terms WHERE descr = 'Autumn' AND EXTRACT(year FROM start) = EXTRACT(year FROM NOW())),
-                    (SELECT EXTRACT(year FROM start) FROM public.terms WHERE descr = 'Autumn' AND EXTRACT(year FROM start) = EXTRACT(year FROM NOW()) - 1)
+                    (
+                        SELECT EXTRACT(year FROM start)
+                        FROM public.terms
+                        WHERE descr = 'Autumn'
+                          AND EXTRACT(year FROM start) = EXTRACT(year FROM NOW())
+                    ),
+                    (
+                        SELECT
+                               EXTRACT(year FROM start)
+                        FROM public.terms
+                        WHERE descr = 'Autumn'
+                          AND EXTRACT(year FROM start) = EXTRACT(year FROM NOW()) - 1
+                    )
                 )::TEXT
             ),
             '%LISTID',
@@ -164,9 +181,9 @@ FROM public.member
 WHERE local_name IS NOT NULL
 AND memberid = $1
 SQL
-        // What maniac wrote this?
-,
-        [$memberid, Config::$email_domain]
+            // What maniac wrote this?
+            ,
+            [$memberid, Config::$email_domain]
         );
         $result = [];
         foreach ($rows as $row) {

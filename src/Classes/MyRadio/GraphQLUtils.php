@@ -3,7 +3,6 @@
 
 namespace MyRadio\MyRadio;
 
-
 use GraphQL\Language\AST\DirectiveNode;
 use GraphQL\Language\AST\EnumValueNode;
 use GraphQL\Language\AST\FieldDefinitionNode;
@@ -53,7 +52,8 @@ class GraphQLUtils
      * @param string $name
      * @return DirectiveNode|null
      */
-    private static function getDirectiveByNameOnAstNode($node, string $name) {
+    private static function getDirectiveByNameOnAstNode($node, string $name)
+    {
         /** @var NodeList $directives */
         $directives = $node->directives;
         if ($directives) {
@@ -84,7 +84,8 @@ class GraphQLUtils
      * Er, take a wild guess?
      * @param ResolveInfo $info
      */
-    public static function returnNullOrThrowForbiddenException(ResolveInfo $info) {
+    public static function returnNullOrThrowForbiddenException(ResolveInfo $info)
+    {
         if ($info->returnType instanceof NonNull) {
             throw new MyRadioException('Caller cannot access this field', 403);
         } else {
@@ -104,7 +105,7 @@ class GraphQLUtils
         ResolveInfo $info,
         $resolvedClass,
         $resolvedMethod,
-        $resolvedObject=null
+        $resolvedObject = null
     ) {
         $caller = MyRadio_Swagger2::getAPICaller();
         if ($caller === null) {
@@ -143,7 +144,7 @@ class GraphQLUtils
                 }
                 if ($type instanceof ScalarType || $type instanceof EnumType) {
                     return true;
-                } else if ($resolvedClass === null && $resolvedMethod === null) {
+                } elseif ($resolvedClass === null && $resolvedMethod === null) {
                     return true;
                 } else {
                     return $caller->canCall($resolvedClass, $resolvedMethod);
@@ -156,7 +157,7 @@ class GraphQLUtils
         array $args,
         $resolvedClass,
         $resolvedMethod,
-        $resolvedObject=null
+        $resolvedObject = null
     ) {
         if (isset($args['constants'])) {
             $constants = $args['constants'];
@@ -209,7 +210,8 @@ class GraphQLUtils
      * @param mixed $value
      * @return mixed
      */
-    public static function processScalarIfNecessary(ResolveInfo $info, $value) {
+    public static function processScalarIfNecessary(ResolveInfo $info, $value)
+    {
         // Resolve enums if necessary
         if ($info->returnType instanceof EnumType) {
             if (isset(self::$ENUM_MAPPINGS[$info->returnType->name])) {
@@ -219,7 +221,9 @@ class GraphQLUtils
         // If the field is not a scalar, don't touch it.
         if ($info->returnType instanceof ScalarType) {
             $type = $info->returnType->name;
-        } else if ($info->returnType instanceof WrappingType && $info->returnType->getWrappedType(true) instanceof ScalarType) {
+        } elseif ($info->returnType instanceof WrappingType
+            && $info->returnType->getWrappedType(true) instanceof ScalarType
+        ) {
             $type = $info->returnType->getWrappedType(true)->name;
         } else {
             return $value;
@@ -255,7 +259,7 @@ class GraphQLUtils
                 // If the value is a number, assume it's a UNIX timestamp. If not, try and parse it.
                 if ($value === null) {
                     return $value;
-                } else if (is_numeric($value)) {
+                } elseif (is_numeric($value)) {
                     $val_unix = (float) $value;
                 } else {
                     $val_unix = strtotime($value);
@@ -276,7 +280,7 @@ class GraphQLUtils
                 // If it's a number, assume it's seconds.
                 if ($value === null) {
                     return $value;
-                } else if (is_numeric($value)) {
+                } elseif (is_numeric($value)) {
                     $interval = new \DateInterval("PT${value}S");
                 } else {
                     $data = date_parse($value);
@@ -298,7 +302,8 @@ class GraphQLUtils
         }
     }
 
-    public static function invokeNamed(\ReflectionMethod $meth, $object=null, $args=[]) {
+    public static function invokeNamed(\ReflectionMethod $meth, $object = null, $args = [])
+    {
         $methArgs = $meth->getParameters();
         // If it has no arguments, we can just invoke it directly.
         if (count($methArgs) === 0) {

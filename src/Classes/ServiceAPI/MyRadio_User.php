@@ -756,7 +756,8 @@ class MyRadio_User extends ServiceAPI implements APICaller
      *
      * @return MyRadio_EmailDestination[]
      */
-    public function getAllEmails() {
+    public function getAllEmails()
+    {
         return MyRadio_EmailDestination::getAllSourcesForUser(self::$db, $this->getID());
     }
 

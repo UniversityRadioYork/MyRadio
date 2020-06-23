@@ -245,9 +245,12 @@ class CoreUtils
         return $end - $start.' seconds';
     }
 
-    public static function intervalToSeconds($time) {
+    public static function intervalToSeconds($time)
+    {
         $sec = 0;
-        foreach (array_reverse(explode(':', $time)) as $k => $v) $sec += pow(60, $k) * $v;
+        foreach (array_reverse(explode(':', $time)) as $k => $v) {
+            $sec += pow(60, $k) * $v;
+        }
         return $sec;
     }
 
