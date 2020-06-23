@@ -29,7 +29,6 @@
         "\\MyRadio\\MyRadio\\AuthUtils": "auth",
         "\\MyRadio\\MyRadio\\CoreUtils": "utils",
         "\\MyRadio\\MyRadio\\MyRadioNews": "news",
-        "\\MyRadio\\ServiceAPI\\MyRadio_Quote": "quote",
         "\\MyRadio\\NIPSWeb\\NIPSWeb_ManagedUserPlaylist": "nipswebUserPlaylist",
         "\\MyRadio\\NIPSWeb\\NIPSWeb_ManagedPlaylist": "nipswebPlaylist",
         "\\MyRadio\\Config": "config"
