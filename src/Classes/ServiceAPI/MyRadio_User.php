@@ -436,8 +436,10 @@ class MyRadio_User extends ServiceAPI implements APICaller
 
     /**
      * Returns all the user's active permission flags.
+     * @todo this doesn't include permissions assigned by IP (cf. login.php#L86-L99)
+     * It seems like those are only used by scripts though
      *
-     * @return array
+     * @return int[]
      */
     public function getPermissions()
     {
@@ -472,6 +474,27 @@ class MyRadio_User extends ServiceAPI implements APICaller
         }
 
         return $this->permissions;
+    }
+
+    /**
+     * Returns information about this user's permission flags.
+     *
+     * The result has the format:
+     * - typeid: permission ID
+     * - descr: the permission's description
+     * - phpconstant: the PHP constant for that permission
+     *
+     * @return array
+     */
+    public function getPermissionsInfo()
+    {
+        $perms = $this->getPermissions();
+        return self::$db->fetchAll(
+          'SELECT typeid, descr, phpconstant
+          FROM l_action
+          WHERE typeid IN $1',
+            [$perms]
+        );
     }
 
     /**
