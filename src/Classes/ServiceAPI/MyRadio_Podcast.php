@@ -688,7 +688,6 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
             'status' => $this->getStatus(),
             'time' => $this->getSubmitted(),
             'uri' => $this->getURI(),
-            'photo' => Config::$public_media_uri.'/'.$this->getCover(),
             'editlink' => [
                 'display' => 'icon',
                 'value' => 'pencil',
@@ -702,6 +701,13 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
                 'url' => $this->getWebpage(),
             ],
         ];
+
+        $cover = $this->getCover();
+        if (!empty($cover)) {
+            $cover_path = Config::$public_media_uri . '/' . $cover;
+            $cover_path = preg_replace('(//)', '/', $cover_path);
+            $data['photo'] = $cover_path;
+        }
 
         $this->addMixins($data, $mixins, $mixin_funcs);
         return $data;
