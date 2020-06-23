@@ -489,12 +489,11 @@ class MyRadio_User extends ServiceAPI implements APICaller
     public function getPermissionsInfo()
     {
         $perms = $this->getPermissions();
-        $params = '{' . implode(',', range(1, count($perms))) . '}';
+        $params = '{' . implode(',', $perms) . '}';
         return self::$db->fetchAll(
           "SELECT typeid, descr, phpconstant
           FROM l_action
-          WHERE typeid = ANY($params::int[])", // I hate this
-            perms
+          WHERE typeid = ANY($params::int[])" // I hate this - but it's safe
         );
     }
 
