@@ -247,6 +247,11 @@ class MyRadio_Team extends ServiceAPI
         return $data;
     }
 
+    public static function getGraphQLTypeName()
+    {
+        return 'Team';
+    }
+
     /**
      * Get Users currently in the Team.
      *
