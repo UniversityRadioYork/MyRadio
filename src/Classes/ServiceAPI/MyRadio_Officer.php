@@ -804,4 +804,9 @@ class MyRadio_Officer extends ServiceAPI
 
         return $data;
     }
+
+    public static function getGraphQLTypeName()
+    {
+        return 'Officer';
+    }
 }

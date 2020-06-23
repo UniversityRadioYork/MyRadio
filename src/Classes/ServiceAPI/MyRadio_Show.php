@@ -882,7 +882,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
     /**
      * Returns all Shows of the given type. Caches for 1h.
      *
-     * @return Array[MyRadio_Show]
+     * @return MyRadio_Show[]
      */
     public static function getAllShows($show_type_id = 1, $current_term_only = false)
     {

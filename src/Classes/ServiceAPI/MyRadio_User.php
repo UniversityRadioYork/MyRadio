@@ -752,6 +752,16 @@ class MyRadio_User extends ServiceAPI implements APICaller
     }
 
     /**
+     * Finds all the email addresses and lists that go to this user.
+     *
+     * @return MyRadio_EmailDestination[]
+     */
+    public function getAllEmails()
+    {
+        return MyRadio_EmailDestination::getAllSourcesForUser(self::$db, $this->getID());
+    }
+
+    /**
      * Searches for Users with a name starting with $name.
      *
      * @param string $name  The name to search for. If there is a space, it is assumed the second word is the surname
@@ -841,9 +851,9 @@ class MyRadio_User extends ServiceAPI implements APICaller
      * Runs a super-long pSQL query that returns the information used to generate the Profile Timeline.
      *
      * @return array A 2D Array where every value of the first dimension is an Array as follows:<br>
-     *               timestamp: When the event occurred, formatted as d/m/Y<br>
+     *               timestamp: When the event occurred, as a Unix timestamp<br>
      *               message: A text description of the event<br>
-     *               photo: The photoid of a thumbnail to render with the event
+     *               photo: The relative web path of a thumbnail to render with the event, or null
      */
     public function getTimeline()
     {
@@ -854,13 +864,15 @@ class MyRadio_User extends ServiceAPI implements APICaller
             $events[] = [
                 'message' => 'became '.$officer['officer_name'],
                 'timestamp' => strtotime($officer['from_date']),
-                'photo' => Config::$photo_officership_get,
+                //'photo' => MyRadio_Photo::getInstance(Config::$photo_officership_get)->getRelativeWebPath(),
+                'photo' => null
             ];
             if ($officer['till_date'] != null) {
                 $events[] = [
                     'message' => 'stepped down as '.$officer['officer_name'],
                     'timestamp' => strtotime($officer['till_date']),
-                    'photo' => Config::$photo_officership_down,
+                    //'photo' => MyRadio_Photo::getInstance(Config::$photo_officership_down)->getRelativeWebPath(),
+                    'photo' => null
                 ];
             }
         }
@@ -880,7 +892,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
                 if ($season->getSeasonNumber() == 1) {
                     $events[] = [
                         'message' => 'started a new Show as '.$credit.' of '.$season->getMeta('title'),
-                        'timestamp' => strtotime($season->getAllTimeslots()[0]->getStartTime()),
+                        'timestamp' => $season->getAllTimeslots()[0]->getStartTime(),
                         'photo' => $show->getShowPhoto(),
                     ];
                 } else {
@@ -888,7 +900,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
                         'message' => 'was ' . $credit
                                      . ' on Season ' . $season->getSeasonNumber()
                                      . ' of '.$season->getMeta('title'),
-                        'timestamp' => strtotime($season->getAllTimeslots()[0]->getStartTime()),
+                        'timestamp' => $season->getAllTimeslots()[0]->getStartTime(),
                         'photo' => $show->getShowPhoto(),
                     ];
                 }
@@ -907,9 +919,10 @@ class MyRadio_User extends ServiceAPI implements APICaller
 
         //Get when they joined URY
         $events[] = [
-            'timestamp' => strtotime($this->joined),
+            'timestamp' => $this->joined,
             'message' => 'joined '.Config::$short_name,
-            'photo' => Config::$photo_joined,
+            //'photo' => MyRadio_Photo::getInstance(Config::$photo_joined)->getRelativeWebPath(),
+            'photo' => null
         ];
 
         return $events;
@@ -2161,5 +2174,10 @@ class MyRadio_User extends ServiceAPI implements APICaller
         $this->addMixins($data, $mixins, $mixin_funcs);
 
         return $data;
+    }
+
+    public static function getGraphQLTypeName()
+    {
+        return 'User';
     }
 }
