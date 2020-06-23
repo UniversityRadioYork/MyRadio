@@ -493,7 +493,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
         return self::$db->fetchAll(
           "SELECT typeid, descr, phpconstant
           FROM l_action
-          WHERE typeid = ANY($params::int[])" // I hate this - but it's safe
+          WHERE typeid = ANY('$params'::int[])" // I hate this - but it's safe
         );
     }
 
