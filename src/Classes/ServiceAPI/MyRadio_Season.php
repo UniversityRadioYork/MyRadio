@@ -75,6 +75,7 @@ class MyRadio_Season extends MyRadio_Metadata_Common
                 SELECT array_to_json(array(
                     SELECT show_season_timeslot_id FROM schedule.show_season_timeslot
                     WHERE show_season_id=$1
+                    AND cancelled_at IS NULL
                     ORDER BY start_time ASC
                 ))
             ) AS timeslots, (
