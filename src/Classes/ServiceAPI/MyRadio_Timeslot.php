@@ -34,6 +34,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
     private $timeslot_num;
     protected $owner;
     protected $credits;
+    private $cancelled_at;
 
     protected function __construct($timeslot_id)
     {
@@ -49,7 +50,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
         // Note that credits have different metadata timeranges to text
         // This is annoying, but needs to be this way.
         $result = self::$db->fetchOne(
-            'SELECT show_season_timeslot_id, show_season_id, start_time, duration, memberid, (
+            'SELECT show_season_timeslot_id, show_season_id, start_time, duration, memberid, cancelled_at, (
                 SELECT array_to_json(array(
                     SELECT metadata_key_id FROM schedule.timeslot_metadata
                     WHERE show_season_timeslot_id=$1
@@ -118,6 +119,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
         $this->duration = $result['duration'];
         $this->owner = MyRadio_User::getInstance($result['memberid']);
         $this->timeslot_num = (int)$result['timeslot_num'];
+        $this->cancelled_at = empty($result['cancelled_at']) ? null : $result['cancelled_at'];
 
         $metadata_types = json_decode($result['metadata_types']);
         $metadata = json_decode($result['metadata']);
@@ -234,6 +236,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             INNER JOIN schedule.show USING (show_id)
             WHERE start_time >= $1 AND start_time <= $2
             AND show_type_id = ANY ($3)
+            AND cancelled_at IS NULL
             ORDER BY start_time ASC LIMIT 1',
             [
                 CoreUtils::getTimestamp($this->getEndTime() - 300),
@@ -327,7 +330,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
      */
     public function toDataSource($mixins = [])
     {
-        return array_merge(
+        $data = array_merge(
             $this->getSeason()->toDataSource($mixins),
             [
                 'timeslot_id' => $this->getID(),
@@ -338,21 +341,39 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
                 'time' => $this->getStartTime(),
                 'start_time' => CoreUtils::happyTime($this->getStartTime()),
                 'duration' => $this->getDuration(),
+                'cancelled' => $this->isCancelled(),
                 'mixcloud_status' => $this->getMeta('upload_state'),
                 'mixcloud_starttime' => $this->getMeta('upload_starttime'),
                 'mixcloud_endtime' => $this->getMeta('upload_endtime'),
-                'rejectlink' => [
-                    'display' => 'icon',
-                    'value' => 'trash',
-                    'title' => 'Cancel Episode',
-                    'url' => URLUtils::makeURL(
-                        'Scheduler',
-                        'cancelEpisode',
-                        ['show_season_timeslot_id' => $this->getID()]
-                    ),
-                ],
             ]
         );
+
+        if ($this->isCancelled()) {
+            // overriding rejectlink to avoid nonsense
+            $data['rejectlink'] = [
+                'display' => 'icon',
+                'value' => 'repeat',
+                'title' => 'Reinstate Episode',
+                'url' => URLUtils::makeURL(
+                    'Scheduler',
+                    'reinstateEpisode',
+                    ['show_season_timeslot_id' => $this->getID()]
+                ),
+            ];
+        } else {
+            $data['rejectlink'] = [
+                'display' => 'icon',
+                'value' => 'trash',
+                'title' => 'Cancel Episode',
+                'url' => URLUtils::makeURL(
+                    'Scheduler',
+                    'cancelEpisode',
+                    ['show_season_timeslot_id' => $this->getID()]
+                ),
+            ];
+        }
+
+        return $data;
     }
 
     /**
@@ -622,6 +643,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
                     (start_time >= $1 AND start_time <= $2)
                 )
                 AND show_type_id = 1
+                AND cancelled_at IS NULL 
                 ORDER BY start_time ASC',
                 [$startTimestamp, $endTimestamp]
             );
@@ -749,7 +771,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
     }
 
     /**
-     * Deletes this Timeslot from the Schedule, and everything associated with it.
+     * Remove the current timeslot from the schedule. Keep it around in the database though.
      *
      * This is a proxy for several other methods, depending on the User and the current time:<br>
      * (1) If the User has Cancel Show Privileges, then they can remove it at any time, notifying Creditors
@@ -793,7 +815,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
 
     private function cancelTimeslotAdmin($reason)
     {
-        $r = $this->deleteTimeslot();
+        $r = $this->setCancelled($reason);
         if (!$r) {
             return false;
         }
@@ -815,7 +837,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
 
     private function cancelTimeslotSelfService($reason)
     {
-        $r = $this->deleteTimeslot();
+        $r = $this->setCancelled($reason);
         if (!$r) {
             return false;
         }
@@ -865,6 +887,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
     /**
      * Deletes the timeslot. Nothing else. See the cancelTimeslot... methods for recommended removal usage.
      *
+     * @deprecated This deletes it permanently. To cancel without deleting, use setCancelled
      * @return bool success/fail
      */
     private function deleteTimeslot()
@@ -876,6 +899,117 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
 
         $this->updateCacheObject();
         return $r;
+    }
+
+    /**
+     * Sets this timeslot as cancelled by the current user with the given reason.
+     * This is done by setting the `cancelled_at` field to the current time, and adding a `cancel-reason` meta field
+     *
+     * @todo do we just want to use the presence of the meta field as a sign that it's cancelled?
+     * Initially I went with no, because that requires another join on each listing - marks.polakovs@ury.org.uk
+     *
+     * @todo handle cancel requests - set the metadata "memberid" to who requested and "approvedid" to whoever approved it
+     * (not sure if it's that important)
+     *
+     * @param string $reason the cancellation reason
+     * @throws MyRadioException if the cancel failed for some reason
+     */
+    private function setCancelled(string $reason)
+    {
+        $r = self::$db->fetchOne(
+            'UPDATE schedule.show_season_timeslot
+             SET cancelled_at = NOW()
+             WHERE show_season_timeslot_id=$1',
+            [$this->getID()]
+        );
+
+        if (empty($r)) {
+            throw new MyRadioException("Couldn't cancel the timeslot");
+        }
+
+        $this->setMeta("cancel-reason", $reason);
+
+        $this->updateCacheObject();
+        return $r;
+    }
+
+    /**
+     * Reinstate this timeslot onto the schedule.
+     */
+    private function reinstate()
+    {
+        $r = self::$db->fetchOne(
+            'UPDATE schedule.show_season_timeslot
+             SET cancelled_at = NULL
+             WHERE show_season_timeslot_id=$1',
+            [$this->getID()]
+        );
+
+        if (empty($r)) {
+            throw new MyRadioException("Couldn't cancel the timeslot");
+        }
+
+        $this->setMeta('cancel-reason', null);
+
+        $this->updateCacheObject();
+        return $r;
+    }
+
+    private function reinstateRequest($reason)
+    {
+        $email = $this->getMeta('title')
+            . ' on ' . CoreUtils::happyTime($this->getStartTime())
+            . ' has requested to reinstate this episode, because ' . $reason
+            . "\r\n\r\n";
+        $email .= "To reinstate the timeslot, visit ";
+        $email .= URLUtils::makeURL(
+            'Scheduler',
+            'reinstateEpisode',
+            ['show_season_timeslot_id' => $this->getID(), 'reason' => base64_encode($reason)]
+        );
+
+        MyRadioEmail::sendEmailToList(MyRadio_List::getByName('presenting'), 'Show Reinstate Request', $email);
+        return true;
+    }
+
+    /**
+     * Reinstate previously cancelled timeslot.
+     *
+     * If the user has cancel show privileges (therefore, reinstate), put it back directly.
+     * Otherwise, send an email to programming.
+     *
+     * @param string $reason Why the episode should be reinstated. Ignored if the current user can reinstate.
+     * @return bool if it succeeded or not
+     */
+    public function reinstateTimeslot(string $reason)
+    {
+        if (empty($this->cancelled_at)) {
+            // This isn't even cancelled. What are you playing at?
+            return false;
+        }
+        //Get if the User has permission to drop the episode
+        if (MyRadio_User::getInstance()->hasAuth(AUTH_DELETESHOWS)) {
+            //Yep, do an administrative reinstate
+            $r = $this->reinstate();
+        } elseif ($this->getSeason()->getShow()->isCurrentUserAnOwner()) {
+            //Get if the User is a Creditor
+            // Reinstatement still requires approval of Programming
+            $r = $this->reinstateRequest($reason);
+        } else {
+            //They can't do this.
+            return false;
+        }
+
+        return !empty($r);
+    }
+
+    /**
+     * Has this timeslot been soft-cancelled?
+     * @return bool
+     */
+    public function isCancelled()
+    {
+        return !empty($this->cancelled_at);
     }
 
     /**
@@ -1185,6 +1319,33 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
                 ['value' => $_REQUEST['show_season_timeslot_id']]
             )
         );
+    }
+
+    public static function getReinstateRequest()
+    {
+        return (
+        new MyRadioForm(
+            'sched_cancel',
+            'Scheduler',
+            'reinstateEpisode',
+            [
+                'debug' => false,
+                'title' => 'Request to Reinstate Episode',
+            ]
+        )
+        )->addField(
+                new MyRadioFormField(
+                    'reason',
+                    MyRadioFormField::TYPE_BLOCKTEXT,
+                    ['label' => 'Please explain why this Episode should be reinstated on the Schedule']
+                )
+            )->addField(
+                new MyRadioFormField(
+                    'show_season_timeslot_id',
+                    MyRadioFormField::TYPE_HIDDEN,
+                    ['value' => $_REQUEST['show_season_timeslot_id']]
+                )
+            );
     }
 
     public function getMoveForm()
