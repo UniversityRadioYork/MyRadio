@@ -332,7 +332,7 @@ class MyRadioEmail extends ServiceAPI
      *
      * @param array  $to      An array of User objects
      * @param string $subject email subject
-     * @param sting  $message email message
+     * @param string  $message email message
      */
     public static function sendEmailToUserSet($to, $subject, $message, MyRadio_User $from = null)
     {

@@ -952,6 +952,21 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
         $this->setMeta('cancel-reason', null);
 
         $this->updateCacheObject();
+        self::$cache->purge();
+
+        // Email the people
+        $email = "Hi #NAME, \r\n\r\n Please note that an episode of your show, " . $this->getMeta('title')
+            . ' has been reinstated onto the schedule. The episode is now at the following time:  '
+            . CoreUtils::happyTime($this->getStartTime())
+            . "\r\n\r\n";
+        $email .= "Regards\r\n" . Config::$long_name . ' Programming Team';
+
+        MyRadioEmail::sendEmailToUserSet(
+            $this->getSeason()->getShow()->getCreditObjects(),
+            'Episode of ' . $this->getMeta('title') . ' Reinstated',
+            $email
+        );
+
         return $r;
     }
 
