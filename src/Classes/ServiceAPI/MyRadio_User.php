@@ -724,10 +724,9 @@ class MyRadio_User extends ServiceAPI implements APICaller
      *
      * @return array an array of Show objects attached to the given user
      */
-    public function getShows($show_type_id = 1)
+    public function getShows($show_type_id = 1, $current_term_only = false)
     {
-        $this->shows = self::$db->fetchColumn(
-            'SELECT show_id FROM schedule.show
+        $sql = 'SELECT show_id FROM schedule.show
             WHERE memberid=$1 OR show_id IN
             (SELECT show_id FROM schedule.show_credit
             WHERE creditid=$1 AND
@@ -736,12 +735,27 @@ class MyRadio_User extends ServiceAPI implements APICaller
             WHERE show_season_id IN
             (SELECT show_season_id FROM schedule.show_season WHERE show_id=schedule.show.show_id)
             ORDER BY start_time LIMIT 1)
-            ASC',
-            [$this->getID()]
-        ); //Wasn't that ORDER BY fun.
+            ASC'; //Wasn't that ORDER BY fun.
+        $params = [$this->getID()];
+
+        if ($current_term_only) {
+            $sql .= ' AND EXISTS (
+                            SELECT * FROM schedule.show_season
+                            WHERE schedule.show_season.show_id=schedule.show.show_id
+                            AND schedule.show_season.termid=$2
+                        )';
+            $params[] = MyRadio_Scheduler::getActiveApplicationTerm();
+        }
+
+        $result = self::$db->fetchColumn($sql, $params);
+
+        // Don't screw up the show cache with term-limited shows
+        if (!$current_term_only) {
+            $this->shows = $result;
+        }
 
         $return = [];
-        foreach ($this->shows as $show_id) {
+        foreach ($result as $show_id) {
             $show = MyRadio_Show::getInstance($show_id);
             if ($show->getShowType() == $show_type_id) {
                 $return[] = $show;
