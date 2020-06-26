@@ -107,7 +107,7 @@ type User implements Node & MyRadioObject {
     url: String
 
     # Public information
-    shows: [Show!] @auth(constants: [])
+    shows(current_term_only: Boolean): [Show!] @auth(constants: [])
     officerships: [MemberOfficership!] @auth(constants: [])
 
     timeline: [UserTimelineEntry!] @auth(constants: [])

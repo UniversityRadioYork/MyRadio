@@ -744,27 +744,44 @@ class MyRadio_User extends ServiceAPI implements APICaller
      * credit in. Guaranteed order by first broadcast date of the show.
      *
      * @param int $show_type_id
+     * @param bool $current_term_only if true, will only include shows with seasons this term
      *
      * @return array an array of Show objects attached to the given user
      */
-    public function getShows($show_type_id = 1)
+    public function getShows($show_type_id = 1, $current_term_only = false)
     {
-        $this->shows = self::$db->fetchColumn(
-            'SELECT show_id FROM schedule.show
+        $sql = 'SELECT show_id FROM schedule.show
             WHERE memberid=$1 OR show_id IN
             (SELECT show_id FROM schedule.show_credit
             WHERE creditid=$1 AND
             (effective_to >= NOW() OR effective_to IS NULL))
-            ORDER BY (SELECT start_time FROM schedule.show_season_timeslot
+            ';
+        $params = [$this->getID()];
+
+        if ($current_term_only) {
+            $sql .= ' AND EXISTS (
+                            SELECT * FROM schedule.show_season
+                            WHERE schedule.show_season.show_id=schedule.show.show_id
+                            AND schedule.show_season.termid=$2
+                        )';
+            $params[] = MyRadio_Scheduler::getActiveApplicationTerm();
+        }
+
+        $sql .= ' ORDER BY (SELECT start_time FROM schedule.show_season_timeslot
             WHERE show_season_id IN
             (SELECT show_season_id FROM schedule.show_season WHERE show_id=schedule.show.show_id)
             ORDER BY start_time LIMIT 1)
-            ASC',
-            [$this->getID()]
-        ); //Wasn't that ORDER BY fun.
+            ASC';//Wasn't that ORDER BY fun.
+
+        $result = self::$db->fetchColumn($sql, $params);
+
+        // Don't screw up the show cache with term-limited shows
+        if (!$current_term_only) {
+            $this->shows = $result;
+        }
 
         $return = [];
-        foreach ($this->shows as $show_id) {
+        foreach ($result as $show_id) {
             $show = MyRadio_Show::getInstance($show_id);
             if ($show->getShowType() == $show_type_id) {
                 $return[] = $show;
