@@ -731,11 +731,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
             (SELECT show_id FROM schedule.show_credit
             WHERE creditid=$1 AND
             (effective_to >= NOW() OR effective_to IS NULL))
-            ORDER BY (SELECT start_time FROM schedule.show_season_timeslot
-            WHERE show_season_id IN
-            (SELECT show_season_id FROM schedule.show_season WHERE show_id=schedule.show.show_id)
-            ORDER BY start_time LIMIT 1)
-            ASC'; //Wasn't that ORDER BY fun.
+            ';
         $params = [$this->getID()];
 
         if ($current_term_only) {
@@ -746,6 +742,12 @@ class MyRadio_User extends ServiceAPI implements APICaller
                         )';
             $params[] = MyRadio_Scheduler::getActiveApplicationTerm();
         }
+
+        $sql .= ' ORDER BY (SELECT start_time FROM schedule.show_season_timeslot
+            WHERE show_season_id IN
+            (SELECT show_season_id FROM schedule.show_season WHERE show_id=schedule.show.show_id)
+            ORDER BY start_time LIMIT 1)
+            ASC';//Wasn't that ORDER BY fun.
 
         $result = self::$db->fetchColumn($sql, $params);
 
