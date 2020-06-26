@@ -721,6 +721,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
      * credit in. Guaranteed order by first broadcast date of the show.
      *
      * @param int $show_type_id
+     * @param bool $current_term_only if true, will only include shows with seasons this term
      *
      * @return array an array of Show objects attached to the given user
      */
