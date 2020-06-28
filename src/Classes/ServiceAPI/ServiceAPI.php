@@ -129,7 +129,7 @@ abstract class ServiceAPI
 
     protected static function factoryMulti(array $itemids)
     {
-        $clazz = self::class;
+        $clazz = get_called_class();
         trigger_error("Using default factoryMulti for $clazz, this is slow", E_USER_NOTICE);
         $result = [];
         foreach ($itemids as $id) {
