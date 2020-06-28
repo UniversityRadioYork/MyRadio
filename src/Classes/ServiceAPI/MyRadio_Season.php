@@ -30,17 +30,10 @@ class MyRadio_Season extends MyRadio_Metadata_Common
     private $requested_weeks = [];
     private $season_num;
     private $subtype_id;
+
     protected $owner;
 
-    protected function __construct($season_id)
-    {
-        $this->season_id = (int) $season_id;
-        //Init Database
-        self::initDB();
-
-        //Get the basic info about the season
-        $result = self::$db->fetchOne(
-            'SELECT show_id, termid, submitted, memberid, (
+    private static $base_sql = 'SELECT show_season_id, show_id, termid, submitted, memberid, (
                 SELECT array_to_json(array(
                     SELECT metadata_key_id FROM schedule.season_metadata
                     WHERE show_season_id=$1 AND effective_from <= NOW()
@@ -96,13 +89,11 @@ class MyRadio_Season extends MyRadio_Metadata_Common
                 ORDER BY effective_from, season_id, show_id
                 LIMIT 1
             ) AS subtype_id
-            FROM schedule.show_season WHERE show_season_id=$1',
-            [$season_id]
-        );
-        if (empty($result)) {
-            //Invalid Season
-            throw new MyRadioException('The MyRadio_Season with instance ID #'.$season_id.' does not exist.');
-        }
+            FROM schedule.show_season';
+
+    protected function __construct($result)
+    {
+        $this->season_id = (int) $result['show_season_id'];
 
         //Deal with the easy bits
         $this->owner = MyRadio_User::getInstance($result['memberid']);
@@ -145,6 +136,44 @@ class MyRadio_Season extends MyRadio_Metadata_Common
 
         $this->timeslots = json_decode($result['timeslots']);
     }
+
+    protected static function factory($itemid)
+    {
+        $result = self::$db->fetchOne(
+            self::$base_sql . ' WHERE show_season_id=$1',
+            [$itemid]
+        );
+        if (empty($result)) {
+            //Invalid Season
+            throw new MyRadioException('The MyRadio_Season with instance ID #'.$itemid.' does not exist.');
+        }
+        return new self($result);
+    }
+
+    protected static function factoryMulti(array $itemids)
+    {
+        // creates {$1,$2,$3,...,$(count($itemids))}
+        $sql = self::$base_sql . ' WHERE show_season_id = ANY({'
+            . implode(',', preg_filter('/^', '$',  range(1, count($itemids))) )
+            . '})';
+        $data = self::$db->fetchAll(
+            $sql,
+            $itemids
+        );
+        $result = [];
+        $resultIds = [];
+        foreach ($data as $row) {
+            $result[] = new self($row);
+            $resultIds[] = $row['show_season_id'];
+        }
+        if (count($result) != count($itemids)) {
+            // We're missing some
+            $missing = implode(', ', array_diff($itemids, $resultIds));
+            throw new MyRadioException("The MyRadio_Seasons with IDs $missing don't exist");
+        }
+        return $result;
+    }
+
 
     /**
      * Creates a new MyRadio Season Application and returns an object representing it.
