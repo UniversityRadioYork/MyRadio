@@ -153,10 +153,12 @@ class MyRadio_Season extends MyRadio_Metadata_Common
     protected static function factoryMulti(array $itemids)
     {
         // creates {$1,$2,$3,...,$(count($itemids))}
-        $sql = self::$base_sql . ' WHERE show_season_id = ANY(json_array_elements($1))';
+        $sql = self::$base_sql . ' WHERE show_season_id IN ('
+            . implode(',', preg_filter('/^/', '$',  range(1, count($itemids))) )
+            . ')';
         $data = self::$db->fetchAll(
             $sql,
-            [json_encode($itemids)]
+            $itemids
         );
         $result = [];
         $resultIds = [];
