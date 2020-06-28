@@ -83,9 +83,59 @@ abstract class ServiceAPI
         return $cache;
     }
 
+    /**
+     * For each given id, gets an instance of this type.
+     *
+     * Note that the order of the returned items is not guaranteed to be the same as the order of $itemids.
+     * @param array $itemids
+     */
+    public static function getMulti(array $itemids)
+    {
+        self::initCache();
+        self::initDB();
+
+        // Try first from the cache.
+        $cacheHits = [];
+        $cacheMisses = [];
+        /** @var string $class */
+        $class = get_called_class();
+        foreach (itemids as $id) {
+            $key = self::getCacheKey($id);
+            $cached = self::$cache->get($key);
+            if ($cached) {
+                $cacheHits[] = $cached;
+            } else {
+                $cacheMisses[] = $id;
+            }
+        }
+
+        // Handle the misses
+        $missed = $class::factoryMulti($cacheMisses);
+        // And set them back in the cache
+        foreach ($missed as $obj) {
+            if (method_exists($obj, "getID")) {
+                $key = self::getCacheKey($obj->getID());
+                self::$cache->set($key, $obj);
+            }
+        }
+
+        return array_merge($cacheHits, $missed);
+    }
+
     protected static function factory($itemid)
     {
         return new static($itemid);
+    }
+
+    protected static function factoryMulti(array $itemids)
+    {
+        $clazz = self::class;
+        trigger_error("Using default factoryMulti for $clazz, this is slow", E_USER_NOTICE);
+        $result = [];
+        foreach ($itemids as $id) {
+            $result[] = self::factory($id);
+        }
+        return $result;
     }
 
     protected function addMixins(&$data, $mixins, $mixin_funcs, $strict = true)
@@ -126,16 +176,11 @@ abstract class ServiceAPI
      */
     public static function resultSetToObjArray($ids)
     {
-        $response = [];
-        $child = get_called_class();
         if (!is_array($ids) or empty($ids)) {
             return [];
         }
-        foreach ($ids as $id) {
-            $response[] = $child::getInstance($id);
-        }
-
-        return $response;
+        $child = get_called_class();
+        return $child::getMulti($ids);
     }
 
     /**

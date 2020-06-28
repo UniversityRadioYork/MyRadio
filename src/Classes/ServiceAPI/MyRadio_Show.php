@@ -585,12 +585,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
 
     public function getAllSeasons()
     {
-        $seasons = [];
-        foreach ($this->season_ids as $season_id) {
-            $seasons[] = MyRadio_Season::getInstance($season_id);
-        }
-
-        return $seasons;
+        return MyRadio_Season::getMulti($this->season_ids);
     }
 
     /**
