@@ -99,7 +99,7 @@ abstract class ServiceAPI
         $cacheMisses = [];
         /** @var string $class */
         $class = get_called_class();
-        foreach (itemids as $id) {
+        foreach ($itemids as $id) {
             $key = self::getCacheKey($id);
             $cached = self::$cache->get($key);
             if ($cached) {
