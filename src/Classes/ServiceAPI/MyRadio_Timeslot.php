@@ -36,21 +36,9 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
     protected $owner;
     protected $credits;
 
-    protected function __construct($timeslot_id)
-    {
-        if (empty($timeslot_id)) {
-            throw new MyRadioException('Timeslot ID must be provided.');
-        }
-
-        $this->timeslot_id = (int)$timeslot_id;
-        //Init Database
-        self::initDB();
-
-        //Get the basic info about the timeslot
-        // Note that credits have different metadata timeranges to text
-        // This is annoying, but needs to be this way.
-        $result = self::$db->fetchOne(
-            'SELECT show_season_timeslot_id, show_season_id, start_time, duration, memberid, (
+    // Note that credits have different metadata timeranges to text
+    // This is annoying, but needs to be this way.
+    private static $base_sql = 'SELECT show_season_timeslot_id, show_season_id, start_time, duration, memberid, (
                 SELECT array_to_json(array(
                     SELECT metadata_key_id FROM schedule.timeslot_metadata
                     WHERE show_season_timeslot_id=$1
@@ -100,18 +88,11 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
                     ORDER BY show_credit_id
                 ))
             ) AS credit_types
-            FROM schedule.show_season_timeslot
-            WHERE show_season_timeslot_id=$1',
-            [$timeslot_id]
-        );
-        if (empty($result)) {
-            //Invalid Season
-            throw new MyRadioException(
-                'The MyRadio_Timeslot with instance ID #' . $timeslot_id . ' does not exist.',
-                400
-            );
-        }
+            FROM schedule.show_season_timeslot';
 
+
+    protected function __construct($result)
+    {
         //Deal with the easy bits
         $this->timeslot_id = (int)$result['show_season_timeslot_id'];
         $this->season_id = (int)$result['show_season_id'];
@@ -142,6 +123,46 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             $this->credits[] = ['type' => (int)$credit_types[$i], 'memberid' => $credits[$i],
                 'User' => MyRadio_User::getInstance($credits[$i]),];
         }
+    }
+
+    protected static function factory($itemid)
+    {
+        $result = self::$db->fetchOne(
+            self::$base_sql . ' WHERE show_season_timeslot_id=$1',
+            [$itemid]
+        );
+        if (empty($result)) {
+            //Invalid Season
+            throw new MyRadioException(
+                'The MyRadio_Timeslot with instance ID #' . $itemid . ' does not exist.',
+                400
+            );
+        }
+        return new self($result);
+    }
+
+    protected static function factoryMulti(array $itemids)
+    {
+        // creates {$1,$2,$3,...,$(count($itemids))}
+        $sql = self::$base_sql . ' WHERE show_season_timeslot_id IN ('
+            . implode(',', preg_filter('/^/', '$',  range(1, count($itemids))) )
+            . ')';
+        $data = self::$db->fetchAll(
+            $sql,
+            $itemids
+        );
+        $result = [];
+        $resultIds = [];
+        foreach ($data as $row) {
+            $result[] = new self($row);
+            $resultIds[] = $row['show_season_timeslot_id'];
+        }
+        if (count($result) != count($itemids)) {
+            // We're missing some
+            $missing = implode(', ', array_diff($itemids, $resultIds));
+            throw new MyRadioException("The MyRadio_Timeslots with IDs $missing don't exist");
+        }
+        return $result;
     }
 
     public function getMeta($meta_string)
