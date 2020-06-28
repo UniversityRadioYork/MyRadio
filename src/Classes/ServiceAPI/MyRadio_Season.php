@@ -154,7 +154,7 @@ class MyRadio_Season extends MyRadio_Metadata_Common
     {
         // creates {$1,$2,$3,...,$(count($itemids))}
         $sql = self::$base_sql . ' WHERE show_season_id = ANY({'
-            . implode(',', preg_filter('/^', '$',  range(1, count($itemids))) )
+            . implode(',', preg_filter('/^/', '$',  range(1, count($itemids))) )
             . '})';
         $data = self::$db->fetchAll(
             $sql,
