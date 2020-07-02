@@ -124,6 +124,10 @@ $(".twig-datatable").dataTable({
     {
       "sTitle": "Length"
     },
+    // cancelled
+    {
+      "sTitle": "Cancelled"
+    },
     //mixcloud status
     {
       "sTitle": "Mixcloud Status",

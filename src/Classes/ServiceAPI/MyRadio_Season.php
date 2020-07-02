@@ -32,7 +32,7 @@ class MyRadio_Season extends MyRadio_Metadata_Common
     private $subtype_id;
     protected $owner;
 
-    protected function __construct($season_id)
+    protected function __construct($season_id, $include_cancelled_timeslots = false)
     {
         $this->season_id = (int) $season_id;
         //Init Database
@@ -74,8 +74,9 @@ class MyRadio_Season extends MyRadio_Metadata_Common
             ) AS requested_durations, (
                 SELECT array_to_json(array(
                     SELECT show_season_timeslot_id FROM schedule.show_season_timeslot
-                    WHERE show_season_id=$1
-                    ORDER BY start_time ASC
+                    WHERE show_season_id=$1 ' .
+                    $include_cancelled_timeslots ? '' : 'AND cancelled_at IS NULL' .
+'                   ORDER BY start_time ASC
                 ))
             ) AS timeslots, (
                 SELECT array_to_json(array(
