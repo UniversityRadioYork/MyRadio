@@ -129,7 +129,7 @@ function graphQlResolver($source, $args, GraphQLContext $context, ResolveInfo $i
         if (GraphQLUtils::isAuthorisedToAccess($info, $className, $methodName)) {
             // First, though, check if we should be using a calling convention
             if (isset($bindArgs['callingConvention'])) {
-                $cc = $bindArgs['callingConvention'];
+                $cc = $bindArgs['callingConvention']->value;
                 switch ($cc) {
                     case 'FirstArgCurrentUser':
                         $val = $source->{$methodName}(MyRadio_User::getInstance()->getID());
