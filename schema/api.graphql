@@ -367,7 +367,7 @@ input CreateShowInput {
     subtype: String! # TODO: not a string
     mixclouder: Boolean
     "Unused"
-    location: Int # unused
+    location: Int
 }
 
 schema {
