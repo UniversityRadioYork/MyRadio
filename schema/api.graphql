@@ -358,7 +358,7 @@ input ShowCreditInput { # this is icky
 }
 
 input CreateShowInput {
-    name: String!
+    title: String!
     description: HTMLString!
     credits: ShowCreditInput!
     genres: [Int!]
