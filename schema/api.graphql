@@ -18,7 +18,8 @@ directive @bind(
 ) on FIELD_DEFINITION | OBJECT
 
 enum CallingConvention {
-    FirstArgCurrentUser
+    FirstArgCurrentUser,
+    FirstArgInput
 }
 
 enum AuthHook {
@@ -347,6 +348,29 @@ type Query {
     mailingListByName(name: String!): MailingList @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_List", method: "getByName")
 }
 
+type Mutation {
+    createShow(input: CreateShowInput): Show @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Show", method: "create", callingConvention: FirstArgInput)
+}
+
+input ShowCreditInput { # this is icky
+    memberid: [Int!]!
+    credittype: [Int!]!
+}
+
+input CreateShowInput {
+    name: String!
+    description: HTMLString!
+    credits: ShowCreditInput!
+    genres: [Int!]
+    tags: String
+    podcast_explicit: Boolean
+    subtype: String! # TODO: not a string
+    mixclouder: Boolean
+    "Unused"
+    location: Int # unused
+}
+
 schema {
     query: Query
+    mutation: Mutation
 }
