@@ -132,10 +132,10 @@ function graphQlResolver($source, $args, GraphQLContext $context, ResolveInfo $i
                 $cc = $bindArgs['callingConvention']->value;
                 switch ($cc) {
                     case 'FirstArgCurrentUser':
-                        $val = $source->{$methodName}(MyRadio_User::getInstance()->getID());
+                        $val = $meth->invokeArgs(null, [MyRadio_User::getInstance()->getID()]);
                         break;
                     case 'FirstArgInput':
-                        $val = $source->{$methodName}($args['input']);
+                        $val = $meth->invokeArgs(null, $args['input']);
                         break;
                     default:
                         throw new MyRadioException("Unknown calling convention $cc");
