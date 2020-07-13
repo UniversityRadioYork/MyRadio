@@ -362,7 +362,7 @@ input CreateShowInput {
     description: HTMLString!
     credits: ShowCreditInput!
     genres: [Int!]
-    tags: [String]
+    tags: [String!]
     podcast_explicit: Boolean
     subtype: String! # TODO: not a string
     mixclouder: Boolean
@@ -395,7 +395,7 @@ input CreateSeasonInput {
     show_id: Int!
     weeks: CreateSeasonWeeks!
     times: CreateSeasonTimes!
-    tags: [String]
+    tags: [String!]
     description: HTMLString
     subtype: String
 }
