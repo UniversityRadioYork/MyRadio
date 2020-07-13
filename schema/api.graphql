@@ -362,7 +362,7 @@ input CreateShowInput {
     description: HTMLString!
     credits: ShowCreditInput!
     genres: [Int!]
-    tags: String
+    tags: [String]
     podcast_explicit: Boolean
     subtype: String! # TODO: not a string
     mixclouder: Boolean
