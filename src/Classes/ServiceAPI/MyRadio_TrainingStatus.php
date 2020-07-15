@@ -42,16 +42,16 @@ class MyRadio_TrainingStatus extends ServiceAPI
     private $ordering;
 
     /**
-     * The Training Status a member must have before achieving this one.
+     * The Training Status-es a member must have before achieving this one. Uses AND logic.
      *
-     * @var MyRadio_TrainingStatus
+     * @var int[]|null
      */
     private $depends;
 
     /**
-     * The Training Status a member must have in order to award this one.
+     * The Training Status-es a member must have in order to award this one. Uses AND logic.
      *
-     * @var MyRadio_TrainingStatus
+     * @var int[]|null
      */
     private $can_award;
 
@@ -89,20 +89,22 @@ class MyRadio_TrainingStatus extends ServiceAPI
     {
         $this->presenterstatusid = (int) $statusid;
 
-        $result = self::$db->fetchOne('SELECT * FROM public.l_presenterstatus WHERE presenterstatusid=$1', [$statusid]);
+        $result = self::$db->fetchOne(
+            'SELECT descr, ordering, detail, array_to_json(depends), array_to_json(can_award)
+            FROM public.l_presenterstatus WHERE presenterstatusid=$1',
+            [$statusid]
+        );
 
         if (empty($result)) {
             throw new MyRadioException('The specified Training Status ('.$statusid.') does not seem to exist', 404);
-
-            return;
         }
 
         $this->descr = $result['descr'];
         $this->ordering = (int) $result['ordering'];
         $this->detail = $result['detail'];
 
-        $this->depends = empty($result['depends']) ? null : $result['depends'];
-        $this->can_award = empty($result['can_award']) ? null : $result['can_award'];
+        $this->depends = empty($result['depends']) ? null : json_decode($result['depends']);
+        $this->can_award = empty($result['can_award']) ? null : json_decode($result['can_award']);
 
         $this->permissions = array_map(
             'intval',
@@ -160,15 +162,17 @@ class MyRadio_TrainingStatus extends ServiceAPI
      *
      * Returns null if there is no dependency.
      *
-     * @return MyRadio_TrainingStatus
+     * @return MyRadio_TrainingStatus[]
      */
     public function getDepends()
     {
-        return empty($this->depends) ? null : self::getInstance($this->depends);
+        return empty($this->depends)
+            ? []
+            : array_map(['MyRadio\ServiceAPI\MyRadio_TrainingStatus', 'getInstance'], $this->depends);
     }
 
     /**
-     * Checks if the user has the Training Status the one depends on.
+     * Checks if the user has all the Training Status-es the one depends on.
      *
      * @param MyRadio_User $user Default current User.
      *
@@ -180,17 +184,27 @@ class MyRadio_TrainingStatus extends ServiceAPI
             $user = MyRadio_User::getInstance();
         }
 
-        return $this->getDepends() == null or $this->getDepends()->isAwardedTo($user);
+        if (empty($this->depends)) {
+            return true;
+        }
+        foreach($this->getDepends() as $dep) {
+            if (!$dep->isAwardedTo($user)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
-     * Gets the TrainingStatus a member must have before awarding this one.
+     * Gets all the TrainingStatus-es a member must have before awarding this one.
      *
-     * @return MyRadio_TrainingStatus
+     * @return MyRadio_TrainingStatus[]
      */
     public function getAwarder()
     {
-        return self::getInstance($this->can_award);
+        return empty($this->canAward())
+            ? []
+            : array_map(['MyRadio\ServiceAPI\MyRadio_TrainingStatus', 'getInstance'], $this->can_award);
     }
 
     /**
@@ -211,7 +225,12 @@ class MyRadio_TrainingStatus extends ServiceAPI
             return true;
         }
 
-        return $this->getAwarder()->isAwardedTo($user);
+        foreach ($this->getAwarder() as $awarder) {
+            if (!$awarder->isAwardedTo($user)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -221,7 +240,7 @@ class MyRadio_TrainingStatus extends ServiceAPI
      * @param int $ids If true, just returns User Training Status IDs instead of
      *                 UserTrainingStatuses.
      *
-     * @return MyRadio_User[]|int
+     * @return MyRadio_UserTrainingStatus[]|int
      */
     public function getAwardedTo($ids = false)
     {
