@@ -241,6 +241,11 @@ type ShowCredit {
     User: User
 }
 
+type CreditType {
+    value: Int!
+    text: String!
+}
+
 type Genre {
     value: Int!
     text: String!
@@ -355,6 +360,7 @@ type Query {
     mailingListByName(name: String!): MailingList @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_List", method: "getByName")
 
     allGenres: [Genre!] @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Scheduler", method: "getGenres") @auth(constants: [])
+    allCreditTypes: [CreditType!] @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Scheduler", method: "getCreditTypes") @auth(constants: [])
 }
 
 type Mutation {
