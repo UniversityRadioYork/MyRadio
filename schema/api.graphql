@@ -333,6 +333,14 @@ type EmailDestination {
     alias: Alias
 }
 
+type MemberSearchResult {
+    memberid: Int!
+    fname: String!
+    sname: String!
+    eduroam: String
+    local_alias: String
+}
+
 type Query {
     node(id: ID): Node
 
@@ -361,6 +369,8 @@ type Query {
 
     allGenres: [Genre!] @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Scheduler", method: "getGenres") @auth(constants: [])
     allCreditTypes: [CreditType!] @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Scheduler", method: "getCreditTypes") @auth(constants: [])
+    
+    findMemberByName(name: String!, limit: Int): [MemberSearchResult]! @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_User", method: "findByName") @auth(constants: ["AUTH_APPLYFORSHOW"]) # TODO not 100% sure this is the best constant
 }
 
 type Mutation {
