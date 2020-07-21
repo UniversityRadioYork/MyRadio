@@ -370,7 +370,7 @@ type Query {
     allGenres: [Genre!] @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Scheduler", method: "getGenres") @auth(constants: [])
     allCreditTypes: [CreditType!] @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Scheduler", method: "getCreditTypes") @auth(constants: [])
     
-    findMemberByName(name: String!, limit: Int): [MemberSearchResult]! @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_User", method: "findByName") @auth(constants: ["AUTH_APPLYFORSHOW"]) # TODO not 100% sure this is the best constant
+    findMemberByName(name: String!, limit: Int): [MemberSearchResult!]! @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_User", method: "findByName") @auth(constants: ["AUTH_APPLYFORSHOW"]) # TODO not 100% sure this is the best constant
 }
 
 type Mutation {
