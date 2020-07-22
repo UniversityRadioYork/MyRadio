@@ -707,6 +707,13 @@ EOT;
 
 EOT;
 
+    public static $new_officer_email = <<<EOT
+
+    This email will be sent to someone when they get elected to a new officership.
+
+    Here you should probably tell them how to do their job.
+EOT;
+
     /**
      * The MyRadio features that are under maintenance.
      *
