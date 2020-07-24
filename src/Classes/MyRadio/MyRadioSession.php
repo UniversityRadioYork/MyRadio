@@ -80,7 +80,9 @@ class MyRadioSession implements \SessionHandlerInterface
         if (empty($result)) {
             return '';
         } else {
-            return $result[0];
+            $sessData = json_decode($result[0], true);
+            $_SESSION = $sessData;
+            // intentionally return nothing, lolphp
         }
     }
 
@@ -95,10 +97,14 @@ class MyRadioSession implements \SessionHandlerInterface
         if (empty($data)) {
             return true;
         }
+        /*
+         * lolphp: $data is in a custom, undocumented serialisation format that doesn't work with anything sane.
+         * That's why we just json_encode($_SESSION) directly.
+         */
         $result = $this->db->query(
             'UPDATE sso_session SET data=$2, timestamp=NOW()
             WHERE id=$1',
-            [$id, $data]
+            [$id, json_encode($_SESSION)]
         );
 
         return $result !== false;
