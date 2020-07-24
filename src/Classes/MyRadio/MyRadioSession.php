@@ -81,8 +81,12 @@ class MyRadioSession implements \SessionHandlerInterface
             return '';
         } else {
             $sessData = json_decode($result[0], true);
-            $_SESSION = $sessData;
-            // intentionally return nothing, lolphp
+            if (json_last_error() === JSON_ERROR_NONE) {
+                $_SESSION = $sessData;
+                // intentionally return nothing, lolphp
+            } else {
+                return '';
+            }
         }
     }
 
