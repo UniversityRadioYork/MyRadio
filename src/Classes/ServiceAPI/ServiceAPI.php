@@ -6,6 +6,7 @@ namespace MyRadio\ServiceAPI;
 
 use MyRadio\Config;
 use MyRadio\Database;
+use MyRadio\Iface\CacheProvider;
 use MyRadio\MyRadioException;
 
 /**
@@ -26,7 +27,7 @@ abstract class ServiceAPI
     /**
      * All ServiceAPI subclasses will contain a reference to the CacheProvider Singleton.
      *
-     * @var \CacheProvider
+     * @var CacheProvider
      */
     protected static $cache = null;
 
