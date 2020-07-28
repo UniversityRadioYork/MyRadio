@@ -668,9 +668,9 @@ class MyRadio_User extends ServiceAPI implements APICaller
      */
     public function getOfficerships($includeMemberships=false)
     {
-        if (!$this->officerships) {
-            // Get the User's officerships
-            $this->officerships = self::$db->fetchAll(
+        // We don't want it to be cached with includeMemberships
+        if (empty($this->officerships) || $includeMemberships) {
+            $result = self::$db->fetchAll(
                 'SELECT officerid,officer_name,teamid,from_date,till_date
                 FROM member_officer
                 INNER JOIN officer
@@ -680,11 +680,15 @@ class MyRadio_User extends ServiceAPI implements APICaller
                 .' ORDER BY from_date,till_date;',
                 [$this->getID()]
             );
-
-            $this->updateCacheObject();
+            if (!$includeMemberships) {
+                $this->officerships = $result;
+                $this->updateCacheObject();
+            }
+        } else {
+            $result = $this->officerships;
         }
 
-        return $this->officerships;
+        return $result;
     }
 
     /**
