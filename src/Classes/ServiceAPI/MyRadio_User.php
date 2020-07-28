@@ -675,7 +675,8 @@ class MyRadio_User extends ServiceAPI implements APICaller
                 FROM member_officer
                 INNER JOIN officer
                 USING (officerid)
-                WHERE memberid = $1' . (!$includeMemberships) ? ' AND type!=\'m\'' : ''
+                WHERE memberid = $1'
+                . (!$includeMemberships ? ' AND type!=\'m\'' : '')
                 .' ORDER BY from_date,till_date;',
                 [$this->getID()]
             );
