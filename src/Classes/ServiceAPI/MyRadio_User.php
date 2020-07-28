@@ -663,26 +663,32 @@ class MyRadio_User extends ServiceAPI implements APICaller
 
     /**
      * Get all the User's past, present and future officerships.
+     * @param bool $includeMemberships if true, non-officer team memberships will be included
+     * @return array
      */
-    public function getOfficerships()
+    public function getOfficerships($includeMemberships=false)
     {
-        if (!$this->officerships) {
-            // Get the User's officerships
-            $this->officerships = self::$db->fetchAll(
+        // We don't want it to be cached with includeMemberships
+        if (empty($this->officerships) || $includeMemberships) {
+            $result = self::$db->fetchAll(
                 'SELECT officerid,officer_name,teamid,from_date,till_date
                 FROM member_officer
                 INNER JOIN officer
                 USING (officerid)
-                WHERE memberid = $1
-                AND type!=\'m\'
-                ORDER BY from_date,till_date;',
+                WHERE memberid = $1'
+                . (!$includeMemberships ? ' AND type!=\'m\'' : '')
+                .' ORDER BY from_date,till_date;',
                 [$this->getID()]
             );
-
-            $this->updateCacheObject();
+            if (!$includeMemberships) {
+                $this->officerships = $result;
+                $this->updateCacheObject();
+            }
+        } else {
+            $result = $this->officerships;
         }
 
-        return $this->officerships;
+        return $result;
     }
 
     /**
@@ -1854,7 +1860,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
         } else {
             $welcome_from = null;
         }
-        
+
         //Send the emails
         MyRadioEmail::sendEmailToUser(
             self::getInstance($memberid),
@@ -2174,6 +2180,9 @@ class MyRadio_User extends ServiceAPI implements APICaller
         $mixin_funcs = [
             'officerships' => function (&$data) {
                 $data['officerships'] = $this->getOfficerships();
+            },
+            'all_officerships' => function (&$data) {
+                $data['officerships'] = $this->getOfficerships(true);
             },
             'training' => function (&$data) {
                 $data['training'] = CoreUtils::dataSourceParser($this->getAllTraining());
