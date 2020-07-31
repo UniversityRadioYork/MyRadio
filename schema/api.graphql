@@ -108,7 +108,7 @@ type User implements Node & MyRadioObject {
 
     # Public information
     shows(current_term_only: Boolean): [Show!] @auth(constants: [])
-    officerships: [MemberOfficership!] @auth(constants: [])
+    officerships(includeMemberships: Boolean): [UserOfficership!] @auth(constants: [])
 
     timeline: [UserTimelineEntry!] @auth(constants: [])
 
@@ -191,10 +191,11 @@ type Officer implements Node & MyRadioObject {
     history: [Officership]
 }
 
-type MemberOfficership {
-    officerid: Int!
-    officer_name: String!
-    teamid: Int!
+type UserOfficership implements Node & MyRadioObject {
+    id: ID!
+    itemId: Int! @bind(method: "getID")
+    user: User!
+    officer: Officer!
     from_date: Date!
     till_date: Date
 }
@@ -340,6 +341,10 @@ type Query {
     nineDaySchedule(weekno: Int!, year: Int): Timeslot @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Timeslot", method: "get9DaySchedule")
 
     user(itemid: Int!): User @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_User", method: "getInstance")
+
+    officer(itemid: Int!): User @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Officer", method: "getInstance")
+
+    team(itemid: Int!): User @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Team", method: "getInstance")
 
     allTrainingStatuses: [TrainingStatus!] @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_TrainingStatus", method: "getAll")
 
