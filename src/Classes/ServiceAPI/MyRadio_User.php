@@ -726,6 +726,32 @@ class MyRadio_User extends ServiceAPI implements APICaller
     }
 
     /**
+     * Get the User's radio time, calculated from timeslot signins
+     */
+    public function getRadioTime()
+    {
+        if (!$this->radiotime) {
+            $this->radiotime = self::$db->fetchOne(
+                'SELECT sum(duration)         
+                FROM schedule.show_season_timeslot
+         INNER JOIN schedule.show_season USING (show_season_id)
+         INNER JOIN schedule.show_credit USING (show_id)
+         INNER JOIN sis2.member_signin USING(show_season_timeslot_id)
+         WHERE show_credit.creditid = $1
+         AND member_signin.memberid = $1
+         AND show_credit.effective_from <= show_season_timeslot.start_time
+         AND (show_credit.effective_to > show_season_timeslot.start_time OR show_credit.effective_to IS NULL)
+         AND show_credit.approvedid IS NOT NULL;',
+         [$this->getID()]
+            );
+
+            $this->updateCacheObject();
+        }
+
+        return $this->radiotime;
+    }
+
+    /**
      * Gets the User's MyRadio Profile page URL.
      *
      * @return string
