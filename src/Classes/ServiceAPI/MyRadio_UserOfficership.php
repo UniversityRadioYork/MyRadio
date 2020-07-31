@@ -75,7 +75,7 @@ class MyRadio_UserOfficership extends ServiceAPI
         if (empty($data)) {
             throw new MyRadioException("Couldn't track down MyRadio_UserOfficership#$itemid", 404);
         }
-        return new self($itemid);
+        return new self($data);
     }
 
     public function toDataSource($mixins = [])
