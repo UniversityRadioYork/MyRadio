@@ -177,7 +177,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
      * 
      * @var mixed
      */
-    private $radiotime;
+    private $radioTime;
 
     /**
      * The Authentication Provider that should be used when logging this user in
@@ -674,8 +674,8 @@ class MyRadio_User extends ServiceAPI implements APICaller
      */
     public function getRadioTime()
     {
-        if (!$this->radiotime) {
-            $this->radiotime = self::$db->fetchColumn(
+        if (!$this->radioTime) {
+            $this->radioTime = self::$db->fetchColumn(
                 'SELECT sum(duration)         
                 FROM schedule.show_season_timeslot
          INNER JOIN schedule.show_season USING (show_season_id)
@@ -692,7 +692,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
             $this->updateCacheObject();
         }
 
-        return $this->radiotime;
+        return $this->radioTime;
     }
 
     /**
@@ -2190,7 +2190,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
         $data['photo'] = $this->getProfilePhoto() === null ?
             Config::$default_person_uri : $this->getProfilePhoto()->getURL();
         $data['bio'] = $this->getBio();
-        $data['radio-time'] = $this->getRadioTime();
+        $data['radioTime'] = $this->getRadioTime();
 
         $this->addMixins($data, $mixins, $mixin_funcs);
 
