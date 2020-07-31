@@ -83,8 +83,8 @@ class MyRadio_UserOfficership extends ServiceAPI
         return [
             'id' => $this->id,
             // Ensure we don't get infinite recursion
-            'member' => $this->getUser()->toDataSource(array_diff($mixins, ['officerships'])),
-            'officer' => $this->getOfficer()->toDataSource($mixins),
+            'member' => $this->getUser()->toDataSource(),
+            'officer' => $this->getOfficer()->toDataSource(),
             'from_date' => $this->from_date,
             'till_date' => $this->till_date
         ];
