@@ -196,8 +196,8 @@ type UserOfficership implements Node & MyRadioObject {
     itemId: Int! @bind(method: "getID")
     user: User!
     officer: Officer!
-    from_date: Date!
-    till_date: Date
+    fromDate: Date!
+    tillDate: Date
 }
 
 type TrainingStatus implements Node & MyRadioObject {
