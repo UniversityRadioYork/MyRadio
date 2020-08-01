@@ -398,59 +398,6 @@ type Query {
     allCreditTypes: [CreditType!] @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Scheduler", method: "getCreditTypes") @auth(constants: [])
 }
 
-type Mutation {
-    createShow(input: CreateShowInput): Show @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Show", method: "create", callingConvention: FirstArgInput)
-}
-
-input ShowCreditInput { # this is icky
-    memberid: [Int!]!
-    credittype: [Int!]!
-}
-
-input CreateShowInput {
-    title: String!
-    description: HTMLString!
-    credits: ShowCreditInput!
-    genres: [Int!]
-    tags: [String!]
-    podcast_explicit: Boolean
-    subtype: String! # TODO: not a string
-    mixclouder: Boolean
-    "Unused"
-    location: Int
-}
-
-input CreateSeasonWeeks {
-    wk1: Boolean!
-    wk2: Boolean!
-    wk3: Boolean!
-    wk4: Boolean!
-    wk5: Boolean!
-    wk6: Boolean!
-    wk7: Boolean!
-    wk8: Boolean!
-    wk9: Boolean!
-    wk10: Boolean!
-}
-
-input CreateSeasonTimes {
-    day: [Int!]!
-    "Seconds since midnight"
-    stime: [Int!]!
-    "Seconds since midnight"
-    etime: [Int!]!
-}
-
-input CreateSeasonInput {
-    show_id: Int!
-    weeks: CreateSeasonWeeks!
-    times: CreateSeasonTimes!
-    tags: [String!]
-    description: HTMLString
-    subtype: String
-}
-
 schema {
     query: Query
-    mutation: Mutation
 }
