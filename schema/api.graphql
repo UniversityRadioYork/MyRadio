@@ -19,7 +19,6 @@ directive @bind(
 
 enum CallingConvention {
     FirstArgCurrentUser,
-    FirstArgInput,
     FirstArgCurrentObject
 }
 
