@@ -18,7 +18,9 @@ directive @bind(
 ) on FIELD_DEFINITION | OBJECT
 
 enum CallingConvention {
-    FirstArgCurrentUser
+    FirstArgCurrentUser,
+    FirstArgInput,
+    FirstArgCurrentObject
 }
 
 enum AuthHook {
@@ -227,6 +229,32 @@ type UserTrainingStatus implements Node & MyRadioObject @auth(hook: ViewMember) 
     revokedTime: DateTime @coerce(hooks: [FalseToNull])
 }
 
+type Album implements Node & MyRadioObject {
+    id: ID!
+    itemId: Int! @bind(method: "getID")
+
+    title: String!
+    artist: String!
+    tracks: [Track]
+}
+
+type Track implements Node & MyRadioObject {
+    id: ID!
+    itemId: Int! @bind(method: "getID")
+
+    artist: String!
+    album: Album!
+    title: String!
+    intro: Int
+    clean: Boolean
+    digitised: Boolean!
+    length: Duration!
+    genre: String # TODO enum
+    digitisedBy: User
+    lastEditedTime: DateTime
+    lastEditedUser: User @bind(method: "getLastEditedMemberID")
+}
+
 type ShowSubtype implements Node & MyRadioObject {
     id: ID!
     itemId: Int! @bind(method: "getID")
@@ -238,6 +266,23 @@ type ShowSubtype implements Node & MyRadioObject {
 type ShowCredit {
     type: String
     User: User
+}
+
+type CreditType {
+    value: Int!
+    text: String!
+}
+
+type Genre {
+    value: Int!
+    text: String!
+}
+
+type TracklistItem implements Node & MyRadioObject {
+    id: ID!
+    itemId: Int! @bind(method: "getID")
+    track: Track
+    startTime: DateTime!
 }
 
 type Show implements Node & MyRadioObject @auth(hook: ViewShow) {
@@ -282,6 +327,8 @@ type Timeslot implements Node & MyRadioObject @auth(hook: ViewShow) {
     duration: Duration!
     messages: [Message]
     webpage: String!
+
+    tracklist: [TracklistItem!] @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_TracklistItem", method: "getTracklistForTimeslot", callingConvention: FirstArgCurrentObject)
 }
 
 type Quote implements Node {
@@ -335,6 +382,8 @@ type Query {
 
     allShows(current_term_only: Boolean): [Show] @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Show", method: "getAllShows")
 
+    allSubtypes: [ShowSubtype!] @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_ShowSubtype", method: "getAll") @auth(constants: [])
+
     currentTimeslot: Timeslot @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Timeslot", method: "getCurrentTimeslot")
     nextTimeslot: Timeslot @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Timeslot", method: "getNextTimeslot")
     nineDaySchedule(weekno: Int!, year: Int): Timeslot @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Timeslot", method: "get9DaySchedule")
@@ -345,8 +394,64 @@ type Query {
 
     allMailingLists: [MailingList!] @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_List", method: "getAllLists")
     mailingListByName(name: String!): MailingList @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_List", method: "getByName")
+
+    allGenres: [Genre!] @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Scheduler", method: "getGenres") @auth(constants: [])
+    allCreditTypes: [CreditType!] @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Scheduler", method: "getCreditTypes") @auth(constants: [])
+}
+
+type Mutation {
+    createShow(input: CreateShowInput): Show @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Show", method: "create", callingConvention: FirstArgInput)
+}
+
+input ShowCreditInput { # this is icky
+    memberid: [Int!]!
+    credittype: [Int!]!
+}
+
+input CreateShowInput {
+    title: String!
+    description: HTMLString!
+    credits: ShowCreditInput!
+    genres: [Int!]
+    tags: [String!]
+    podcast_explicit: Boolean
+    subtype: String! # TODO: not a string
+    mixclouder: Boolean
+    "Unused"
+    location: Int
+}
+
+input CreateSeasonWeeks {
+    wk1: Boolean!
+    wk2: Boolean!
+    wk3: Boolean!
+    wk4: Boolean!
+    wk5: Boolean!
+    wk6: Boolean!
+    wk7: Boolean!
+    wk8: Boolean!
+    wk9: Boolean!
+    wk10: Boolean!
+}
+
+input CreateSeasonTimes {
+    day: [Int!]!
+    "Seconds since midnight"
+    stime: [Int!]!
+    "Seconds since midnight"
+    etime: [Int!]!
+}
+
+input CreateSeasonInput {
+    show_id: Int!
+    weeks: CreateSeasonWeeks!
+    times: CreateSeasonTimes!
+    tags: [String!]
+    description: HTMLString
+    subtype: String
 }
 
 schema {
     query: Query
+    mutation: Mutation
 }

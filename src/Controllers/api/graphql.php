@@ -222,16 +222,26 @@ function graphQlResolver($source, $args, GraphQLContext $context, ResolveInfo $i
             // Great. Can we access it?
             if (GraphQLUtils::isAuthorisedToAccess($info, get_class($source), $methodName, $source)) {
                 // Yay. Call it!
+                // (We'll get a ReflectionException here if it's inaccessible. But That's Okay.
+                $meth = new ReflectionMethod(
+                    // Assume we know what we're doing.
+                    get_class($source),
+                    $methodName
+                );
                 // First, though, check if we should be using a calling convention
                 if (isset($bindArgs['callingConvention'])) {
-                    $val = $source->{$methodName}(MyRadio_User::getInstance()->getID());
+                    switch ($bindArgs['callingConvention']) {
+                        case 'FirstArgCurrentUser':
+                            $val = $source->{$methodName}(MyRadio_User::getInstance()->getID());
+                        break;
+                        case 'FirstArgCurrentObject':
+                            // Find the name of the first argument, set that as the source, and pass in the rest to invokeNamed
+                            $firstArg = $meth->getParameters()[0];
+                            $args[$firstArg->getName()] = $source;
+                            $val = GraphQLUtils::invokeNamed($meth, $source, $args);
+                        break;
+                    }
                 } else {
-                    // (We'll get a ReflectionException here if it's inaccessible. But That's Okay.
-                    $meth = new ReflectionMethod(
-                    // Assume we know what we're doing.
-                        get_class($source),
-                        $methodName
-                    );
                     $val = GraphQLUtils::invokeNamed($meth, $source, $args);
                 }
                 return GraphQLUtils::processScalarIfNecessary($info, $val);
