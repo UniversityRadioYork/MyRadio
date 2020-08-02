@@ -38,5 +38,6 @@ $(".twig-datatable").dataTable({
       sTitle: "View Archive"
     }
   ],
-  "bPaginate": false
+  "bPaginate": false,
+  "bSort": false
 });
