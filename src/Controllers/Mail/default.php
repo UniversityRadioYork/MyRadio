@@ -14,7 +14,7 @@ CoreUtils::getTemplateObject()->setTemplate('table.twig')
     ->addVariable('tablescript', 'myradio.mail.default')
     ->addVariable('title', 'All Mailing Lists')
     ->addVariable('tabledata',
-        CoreUtils::dataSourceParser(MyRadio_List::getAllLists(MyRadio_User::getCurrentUser()->isOfficer()),
+        CoreUtils::dataSourceParser(MyRadio_List::getAllLists(!MyRadio_User::getCurrentUser()->isOfficer()),
         ['actions']))
     ->addInfo(
         'You will only get any messages from '
