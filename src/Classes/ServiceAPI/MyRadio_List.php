@@ -347,7 +347,7 @@ class MyRadio_List extends ServiceAPI
     {
         $r = self::$db->fetchColumn('SELECT listid FROM mail_list '
             . ($hideExcluded ? 'WHERE ordering >= 0' : '')
-            .' ORDER BY ordering, listname');
+            .' ORDER BY ordering, listid');
 
         $lists = [];
         foreach ($r as $list) {
