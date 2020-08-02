@@ -340,11 +340,14 @@ class MyRadio_List extends ServiceAPI
     /**
      * Return all mailing lists.
      *
+     * @param bool $hideExcluded if true, will exclude lists with a negative ordering
      * @return MyRadio_List[]
      */
-    public static function getAllLists()
+    public static function getAllLists($hideExcluded=false)
     {
-        $r = self::$db->fetchColumn('SELECT listid FROM mail_list');
+        $r = self::$db->fetchColumn('SELECT listid FROM mail_list '
+            . ($hideExcluded ? 'WHERE ordering >= 0' : '')
+            .' ORDER BY ordering, listname');
 
         $lists = [];
         foreach ($r as $list) {
