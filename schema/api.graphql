@@ -296,6 +296,7 @@ type Timeslot implements Node & MyRadioObject @auth(hook: ViewShow) {
     startTime: DateTime!
     endTime: DateTime!
     duration: Duration!
+    photo: String
     messages: [Message]
     webpage: String!
     uploadState: String @meta(key: "upload_state")
