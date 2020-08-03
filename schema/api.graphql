@@ -298,6 +298,7 @@ type Timeslot implements Node & MyRadioObject @auth(hook: ViewShow) {
     duration: Duration!
     messages: [Message]
     webpage: String!
+    uploadState: String @meta(key: "upload_state")
 }
 
 type Quote implements Node {
