@@ -310,6 +310,9 @@ type Show implements Node & MyRadioObject @auth(hook: ViewShow) {
 type Season implements Node & MyRadioObject @auth(hook: ViewShow) {
     id: ID!
     itemId: Int! @bind(method: "getID")
+    title: String! @meta(key: "title")
+    description: HTMLString! @meta(key: "description")
+    credits: [ShowCredit]
     show: Show!
     subtype: ShowSubtype!
     seasonNumber: Int!
@@ -332,6 +335,8 @@ type Message {
 type Timeslot implements Node & MyRadioObject @auth(hook: ViewShow) {
     id: ID!
     itemId: Int! @bind(method: "getID")
+    title: String! @meta(key: "title")
+    description: HTMLString! @meta(key: "description")
     season: Season!
     timeslotNumber: Int!
     startTime: DateTime!
@@ -379,6 +384,19 @@ type EmailDestination {
     reason: String! # TODO enum
     destination: EmailDestinationType! @auth(constants: [])
     alias: Alias
+}
+
+type MemberSearchResult {
+    memberid: Int!
+    fname: String!
+    sname: String!
+    eduroam: String
+    local_alias: String
+}
+
+type FindShowByTitleResult { # TODO: icky
+    show_id: Int!
+    title: String!
 }
 
 type Query {
