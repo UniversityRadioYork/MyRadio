@@ -265,6 +265,9 @@ type Show implements Node & MyRadioObject @auth(hook: ViewShow) {
 type Season implements Node & MyRadioObject @auth(hook: ViewShow) {
     id: ID!
     itemId: Int! @bind(method: "getID")
+    title: String! @meta(key: "title")
+    description: HTMLString! @meta(key: "description")
+    credits: [ShowCredit]
     show: Show!
     subtype: ShowSubtype!
     seasonNumber: Int!
@@ -286,6 +289,8 @@ type Message {
 type Timeslot implements Node & MyRadioObject @auth(hook: ViewShow) {
     id: ID!
     itemId: Int! @bind(method: "getID")
+    title: String! @meta(key: "title")
+    description: HTMLString! @meta(key: "description")
     season: Season!
     timeslotNumber: Int!
     startTime: DateTime!
@@ -374,7 +379,7 @@ type Query {
 
     allGenres: [Genre!] @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Scheduler", method: "getGenres") @auth(constants: [])
     allCreditTypes: [CreditType!] @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Scheduler", method: "getCreditTypes") @auth(constants: [])
-    
+
     findMemberByName(name: String!, limit: Int): [MemberSearchResult!] @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_User", method: "findByName") @auth(constants: ["AUTH_APPLYFORSHOW"]) # TODO not 100% sure this is the best constant
     findShowByTitle(term: String!, limit: Int!): [FindShowByTitleResult!] @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Scheduler", method: "findShowByTitle") @auth(constants: ["AUTH_APPLYFORSHOW"]) # TODO ditto
 }
