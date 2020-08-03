@@ -345,6 +345,7 @@ type Timeslot implements Node & MyRadioObject @auth(hook: ViewShow) {
     webpage: String!
 
     tracklist: [TracklistItem!] @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_TracklistItem", method: "getTracklistForTimeslot", callingConvention: FirstArgCurrentObject)
+    uploadState: String @meta(key: "upload_state")
 }
 
 type Quote implements Node {
