@@ -109,6 +109,11 @@ class MyRadio_Album extends ServiceAPI
         return $this->title;
     }
 
+    public function getArtist()
+    {
+        return $this->artist;
+    }
+
     public function getFolder()
     {
         $dir = Config::$music_central_db_path.'/records/'.$this->getID();
