@@ -44,7 +44,7 @@ $typeConfigDecorator = function ($typeConfig, TypeDefinitionNode $typeDefinition
                     $candidates[] = $test->name;
                 }
             }
-            if (count($candidates) === 0) {
+            if (count($candidates) === 1) {
                 return $candidates[0];
             } else {
                 $typeName = $info->returnType->name;
