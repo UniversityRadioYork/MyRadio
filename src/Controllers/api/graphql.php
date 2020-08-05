@@ -40,7 +40,7 @@ $typeConfigDecorator = function ($typeConfig, TypeDefinitionNode $typeDefinition
             $myRadioObjectType = $info->schema->getType('MyRadioObject');
             $candidates = [];
             foreach ($union->getTypes() as $test) {
-                if (!($test->implementsInterface())) {
+                if (!($test->implementsInterface($myRadioObjectType))) {
                     $candidates[] = $test->name;
                 }
             }
