@@ -313,6 +313,7 @@ type Season implements Node & MyRadioObject @auth(hook: ViewShow) {
     subtype: ShowSubtype!
     seasonNumber: Int!
     allTimeslots: [Timeslot]
+    credits: [ShowCredit]
     firstTime: DateTime @coerce(hooks: [FalseToNull])
 }
 
