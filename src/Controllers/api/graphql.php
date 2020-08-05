@@ -4,12 +4,15 @@ use GraphQL\Error\FormattedError;
 use GraphQL\GraphQL;
 use GraphQL\Language\AST\TypeDefinitionNode;
 use GraphQL\Language\AST\UnionTypeDefinitionNode;
+use GraphQL\Type\Definition\InterfaceType;
 use GraphQL\Type\Definition\ResolveInfo;
+use GraphQL\Type\Definition\UnionType;
 use GraphQL\Utils\BuildSchema;
 use MyRadio\MyRadio\GraphQLContext;
 use MyRadio\MyRadio\GraphQLUtils;
 use MyRadio\MyRadioException;
 use MyRadio\ServiceAPI\MyRadio_User;
+use MyRadio\ServiceAPI\ServiceAPI;
 
 $debug = ($_GET['debug'] ?? 'false') === 'true';
 
@@ -23,12 +26,32 @@ $typeConfigDecorator = function ($typeConfig, TypeDefinitionNode $typeDefinition
     if ($typeDefinitionNode instanceof UnionTypeDefinitionNode) {
         $typeConfig['resolveType'] = function ($value, $context, ResolveInfo $info) {
             // If it's a Node, it'll implement ServiceAPI, and thus we can use getGraphQLTypeName
-            $className = get_class($value);
-            if ($className === false) {
-                throw new MyRadioException('Tried to resolve a node that isn\'t a class!');
+            if ($value instanceof ServiceAPI) {
+                $typeName = $value::getGraphQLTypeName();
+                return $info->schema->getType($typeName);
             }
-            $typeName = $className::getGraphQLTypeName();
-            return $info->schema->getType($typeName);
+            // If not, we need to get a bit crafty - in this case it might be an array.
+            // Go through all the possible types of the union, exclude all the ones that are MyRadioObjects
+            // (as they would be ServiceAPIs, and thus caught above)
+            // If only one is left, use that, otherwise it's ambiguous
+            /** @var UnionType $union */
+            $union = $info->returnType;
+            /** @var InterfaceType $myRadioObjectType */
+            $myRadioObjectType = $info->schema->getType('MyRadioObject');
+            $candidates = [];
+            foreach ($union->getTypes() as $test) {
+                if (!($test->implementsInterface())) {
+                    $candidates[] = $test->name;
+                }
+            }
+            if (count($candidates) === 0) {
+                return $candidates[0];
+            } else {
+                $typeName = $info->returnType->name;
+                $parent = $info->parentType->name;
+                $field = $info->fieldName;
+                throw new MyRadioException("Ambiguous union type $typeName for $parent.$field - candidates " . implode(', ', $candidates));
+            }
         };
     }
     $name = $typeConfig['name'];
@@ -41,7 +64,7 @@ $typeConfigDecorator = function ($typeConfig, TypeDefinitionNode $typeDefinition
                     throw new MyRadioException('Tried to resolve a node that isn\'t a class!');
                 }
                 $rc = new ReflectionClass($className);
-                if (!($rc->isSubclassOf(\MyRadio\ServiceAPI\ServiceAPI::class))) {
+                if (!($rc->isSubclassOf(ServiceAPI::class))) {
                     throw new MyRadioException("Tried to resolve $className through Node, but it's not a ServiceAPI");
                 }
                 $typeName = $className::getGraphQLTypeName();
@@ -63,7 +86,7 @@ $typeConfigDecorator = function ($typeConfig, TypeDefinitionNode $typeDefinition
                                     $type = '\\' . $type;
                                 }
                                 $rc = new ReflectionClass($type);
-                                if (!($rc->isSubclassOf(\MyRadio\ServiceAPI\ServiceAPI::class))) {
+                                if (!($rc->isSubclassOf(ServiceAPI::class))) {
                                     throw new MyRadioException(
                                         "Tried to resolve node $type#$id but it's not a ServiceAPI"
                                     );
