@@ -277,10 +277,21 @@ type Genre {
     text: String!
 }
 
+type TrackNotRec {
+    title: String!
+    artist: String!
+    album: String!
+    trackno: Int
+    length: Duration
+    record_label: String
+}
+
+union TracklistTrack = Track | TrackNotRec
+
 type TracklistItem implements Node & MyRadioObject {
     id: ID!
     itemId: Int! @bind(method: "getID")
-    track: Track
+    track: TracklistTrack
     startTime: DateTime!
 }
 
