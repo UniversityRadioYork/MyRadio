@@ -1552,4 +1552,9 @@ class MyRadio_Track extends ServiceAPI
             'SELECT genre_code AS value, genre_descr AS text FROM public.rec_genrelookup ORDER BY genre_descr ASC'
         );
     }
+
+    public static function getGraphQLTypeName()
+    {
+        return 'Track';
+    }
 }

@@ -141,7 +141,7 @@ class MyRadio_TracklistItem extends ServiceAPI
                 );
             }
         }
-        
+
         // Table is timestamp with no timezone, so we need to account for BST
         $dst_offset = timezone_offset_get(timezone_open(Config::$timezone), date_create('@'.$starttime));
         if ($dst_offset !== false) {
@@ -237,13 +237,16 @@ class MyRadio_TracklistItem extends ServiceAPI
     /**
      * Returns an array of all TracklistItems played during the given Timeslot.
      *
-     * @param int $timeslotid The ID of the Timeslot
+     * @param int|MyRadio_Timeslot $timeslotid The ID of the Timeslot
      * @param int $offset     Skip items with an audiologid <= this
      *
      * @return array
      */
     public static function getTracklistForTimeslot($timeslotid, $offset = 0)
     {
+        if ($timeslotid instanceof MyRadio_Timeslot) {
+            $timeslotid = $timeslotid->getID();
+        }
         $result = self::$db->fetchAll(
             self::BASE_TRACKLISTITEM_SQL
             .' WHERE timeslotid=$1'
