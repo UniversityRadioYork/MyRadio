@@ -149,7 +149,43 @@ function graphQlResolver($source, $args, GraphQLContext $context, ResolveInfo $i
         }
     }
     // Okay, we're in the Wild West. We're on an object and we need to get a field.
-    // First, check if we're on an array
+    // Before we start, check if the bind directive has a class - in that case, it's a static method
+    if (isset($bindArgs['class']) && isset($bindArgs['method'])) {
+        // It's a static method, short-circuit the rest of the resolver
+        $className = $bindArgs['class']->value;
+        $methodName = $bindArgs['method']->value;
+
+        if (GraphQLUtils::isAuthorisedToAccess($info, get_class($source), $methodName, $source)) {
+            $meth = new ReflectionMethod($className, $methodName);
+
+            if (isset($bindArgs['callingConvention'])) {
+                $callingConvention = $bindArgs['callingConvention']->value;
+                switch ($callingConvention) {
+                    case 'FirstArgCurrentUser':
+                        $val = $className::{$methodName}(MyRadio_User::getInstance()->getID());
+                        break;
+                    case 'FirstArgCurrentObject':
+                        // Find the name of the first argument, set that as the source, and pass in the rest to invokeNamed
+                        $firstArg = $meth->getParameters()[0];
+                        $args[$firstArg->getName()] = $source;
+                        $val = GraphQLUtils::invokeNamed($meth, null, $args);
+                        break;
+                    default:
+                        throw new MyRadioException("Unsupported calling convention $callingConvention for static method");
+                }
+
+            } else {
+                $val = GraphQLUtils::invokeNamed($meth, null, $args);
+            }
+
+            return GraphQLUtils::processScalarIfNecessary($info, $val);
+
+        } else {
+            $context->addWarning("Unauthorised to access $typeName::$fieldName");
+            return GraphQLUtils::returnNullOrThrowForbiddenException($info);
+        }
+    }
+    // Next, check if we're on an array
     if (is_array($source)) {
         if (array_key_exists($fieldName, $source)) {
             if (GraphQLUtils::isAuthorisedToAccess($info, null, null)) {
@@ -230,7 +266,8 @@ function graphQlResolver($source, $args, GraphQLContext $context, ResolveInfo $i
                 );
                 // First, though, check if we should be using a calling convention
                 if (isset($bindArgs['callingConvention'])) {
-                    switch ($bindArgs['callingConvention']) {
+                    $callingConvention = $bindArgs['callingConvention']->value;
+                    switch ($callingConvention) {
                         case 'FirstArgCurrentUser':
                             $val = $source->{$methodName}(MyRadio_User::getInstance()->getID());
                         break;
@@ -240,6 +277,8 @@ function graphQlResolver($source, $args, GraphQLContext $context, ResolveInfo $i
                             $args[$firstArg->getName()] = $source;
                             $val = GraphQLUtils::invokeNamed($meth, $source, $args);
                         break;
+                        default:
+                            throw new MyRadioException("Unsupported calling convention $callingConvention for dynamic field");
                     }
                 } else {
                     $val = GraphQLUtils::invokeNamed($meth, $source, $args);
