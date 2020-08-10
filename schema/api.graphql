@@ -19,7 +19,8 @@ directive @bind(
 
 enum CallingConvention {
     FirstArgCurrentUser,
-    FirstArgInput
+    FirstArgInput,
+    FirstArgCurrentObject
 }
 
 enum AuthHook {
