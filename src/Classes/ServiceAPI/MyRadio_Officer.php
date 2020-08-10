@@ -530,7 +530,7 @@ class MyRadio_Officer extends ServiceAPI
         }
         $officerships = $member->getOfficerships();
         foreach ($officerships as $officership) {
-            if ($officership['officerid'] === $this->getID() && !empty($officership['till_date'])) {
+            if ($officership->getOfficer()->getID() === $this->getID() && !empty($officership->getTillDate())) {
                 return;
             }
         }
