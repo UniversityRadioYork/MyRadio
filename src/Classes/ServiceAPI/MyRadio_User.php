@@ -29,6 +29,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
 
     /**
      * Stores the currently logged in User's object after first use.
+     * @var MyRadio_User|boolean
      */
     private static $current_user;
     /**
@@ -258,7 +259,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
     public function isOfficer()
     {
         foreach ($this->getOfficerships() as $officership) {
-            if (empty($officership['till_date']) or $officership['till_date'] >= time()) {
+            if (empty($officership->getTillDate()) or $officership->getTillDate() >= time()) {
                 return true;
             }
         }
@@ -664,28 +665,28 @@ class MyRadio_User extends ServiceAPI implements APICaller
     /**
      * Get all the User's past, present and future officerships.
      * @param bool $includeMemberships if true, non-officer team memberships will be included
-     * @return array
+     * @return MyRadio_UserOfficership[]
      */
     public function getOfficerships($includeMemberships=false)
     {
+        if(!empty($this->officerships) && !$includeMemberships) {
+            return $this->officerships;
+        }
         // We don't want it to be cached with includeMemberships
-        if (empty($this->officerships) || $includeMemberships) {
-            $result = self::$db->fetchAll(
-                'SELECT officerid,officer_name,teamid,from_date,till_date
-                FROM member_officer
-                INNER JOIN officer
-                USING (officerid)
-                WHERE memberid = $1'
-                . (!$includeMemberships ? ' AND type!=\'m\'' : '')
-                .' ORDER BY from_date,till_date;',
-                [$this->getID()]
-            );
-            if (!$includeMemberships) {
-                $this->officerships = $result;
-                $this->updateCacheObject();
-            }
-        } else {
-            $result = $this->officerships;
+        $ids = self::$db->fetchColumn(
+            'SELECT member_officerid
+            FROM member_officer
+            INNER JOIN officer
+            USING (officerid)
+            WHERE memberid = $1'
+            . (!$includeMemberships ? ' AND type!=\'m\'' : '')
+            .' ORDER BY from_date,till_date;',
+            [$this->getID()]
+        );
+        $result = MyRadio_UserOfficership::resultSetToObjArray($ids);
+
+        if (!$includeMemberships) {
+            $this->officerships = $result;
         }
 
         return $result;
@@ -908,15 +909,15 @@ class MyRadio_User extends ServiceAPI implements APICaller
         //Get Officership history
         foreach ($this->getOfficerships() as $officer) {
             $events[] = [
-                'message' => 'became '.$officer['officer_name'],
-                'timestamp' => strtotime($officer['from_date']),
+                'message' => 'became '.$officer->getOfficer()->getName(),
+                'timestamp' => strtotime($officer->getFromDate()),
                 //'photo' => MyRadio_Photo::getInstance(Config::$photo_officership_get)->getRelativeWebPath(),
                 'photo' => null
             ];
             if ($officer['till_date'] != null) {
                 $events[] = [
-                    'message' => 'stepped down as '.$officer['officer_name'],
-                    'timestamp' => strtotime($officer['till_date']),
+                    'message' => 'stepped down as '.$officer->getOfficer()->getName(),
+                    'timestamp' => strtotime($officer->getTillDate()),
                     //'photo' => MyRadio_Photo::getInstance(Config::$photo_officership_down)->getRelativeWebPath(),
                     'photo' => null
                 ];
@@ -2178,11 +2179,11 @@ class MyRadio_User extends ServiceAPI implements APICaller
     public function toDataSource($mixins = [])
     {
         $mixin_funcs = [
-            'officerships' => function (&$data) {
-                $data['officerships'] = $this->getOfficerships();
+            'officerships' => function (&$data) use ($mixins) {
+                $data['officerships'] = CoreUtils::setToDataSource($this->getOfficerships(), $mixins);
             },
-            'all_officerships' => function (&$data) {
-                $data['officerships'] = $this->getOfficerships(true);
+            'all_officerships' => function (&$data) use ($mixins) {
+                $data['officerships'] = CoreUtils::setToDataSource($this->getOfficerships(true), $mixins);
             },
             'training' => function (&$data) {
                 $data['training'] = CoreUtils::dataSourceParser($this->getAllTraining());

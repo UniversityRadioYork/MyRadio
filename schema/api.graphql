@@ -110,7 +110,7 @@ type User implements Node & MyRadioObject {
 
     # Public information
     shows(current_term_only: Boolean): [Show!] @auth(constants: [])
-    officerships(includeMemberships: Boolean): [MemberOfficership!] @auth(constants: [])
+    officerships(includeMemberships: Boolean): [UserOfficership!] @auth(constants: [])
 
     timeline: [UserTimelineEntry!] @auth(constants: [])
 
@@ -193,12 +193,13 @@ type Officer implements Node & MyRadioObject {
     history: [Officership]
 }
 
-type MemberOfficership {
-    officerid: Int!
-    officer_name: String!
-    teamid: Int!
-    from_date: Date!
-    till_date: Date
+type UserOfficership implements Node & MyRadioObject {
+    id: ID!
+    itemId: Int! @bind(method: "getID")
+    user: User! @auth(constants: [])
+    officer: Officer! @auth(constants: [])
+    fromDate: Date!
+    tillDate: Date
 }
 
 type TrainingStatus implements Node & MyRadioObject {
@@ -317,6 +318,7 @@ type Season implements Node & MyRadioObject @auth(hook: ViewShow) {
     subtype: ShowSubtype!
     seasonNumber: Int!
     allTimeslots: [Timeslot]
+    credits: [ShowCredit]
     firstTime: DateTime @coerce(hooks: [FalseToNull])
 }
 
@@ -422,6 +424,10 @@ type Query {
     isTerm: Boolean @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Scheduler", method: "isTerm") @auth(constants: [])
 
     user(itemid: Int!): User @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_User", method: "getInstance")
+
+    officer(itemid: Int!): User @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Officer", method: "getInstance")
+
+    team(itemid: Int!): User @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Team", method: "getInstance")
 
     allTrainingStatuses: [TrainingStatus!] @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_TrainingStatus", method: "getAll")
 
