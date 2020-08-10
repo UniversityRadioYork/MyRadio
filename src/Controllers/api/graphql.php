@@ -370,7 +370,12 @@ try {
 
 $warnings = $ctx->getWarnings();
 if (count($warnings) > 0) {
-    $result['warnings'] = $warnings;
+    $result['extensions'] = array_merge(
+        $result['extensions'] ?? [],
+        [
+            'warnings' => $warnings
+        ]
+    );
 }
 
 $corsWhitelistOrigins = [
