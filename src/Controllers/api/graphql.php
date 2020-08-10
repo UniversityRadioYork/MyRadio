@@ -4,12 +4,15 @@ use GraphQL\Error\FormattedError;
 use GraphQL\GraphQL;
 use GraphQL\Language\AST\TypeDefinitionNode;
 use GraphQL\Language\AST\UnionTypeDefinitionNode;
+use GraphQL\Type\Definition\InterfaceType;
 use GraphQL\Type\Definition\ResolveInfo;
+use GraphQL\Type\Definition\UnionType;
 use GraphQL\Utils\BuildSchema;
 use MyRadio\MyRadio\GraphQLContext;
 use MyRadio\MyRadio\GraphQLUtils;
 use MyRadio\MyRadioException;
 use MyRadio\ServiceAPI\MyRadio_User;
+use MyRadio\ServiceAPI\ServiceAPI;
 
 $debug = ($_GET['debug'] ?? 'false') === 'true';
 
@@ -23,12 +26,32 @@ $typeConfigDecorator = function ($typeConfig, TypeDefinitionNode $typeDefinition
     if ($typeDefinitionNode instanceof UnionTypeDefinitionNode) {
         $typeConfig['resolveType'] = function ($value, $context, ResolveInfo $info) {
             // If it's a Node, it'll implement ServiceAPI, and thus we can use getGraphQLTypeName
-            $className = get_class($value);
-            if ($className === false) {
-                throw new MyRadioException('Tried to resolve a node that isn\'t a class!');
+            if ($value instanceof ServiceAPI) {
+                $typeName = $value::getGraphQLTypeName();
+                return $info->schema->getType($typeName);
             }
-            $typeName = $className::getGraphQLTypeName();
-            return $info->schema->getType($typeName);
+            // If not, we need to get a bit crafty - in this case it might be an array.
+            // Go through all the possible types of the union, exclude all the ones that are MyRadioObjects
+            // (as they would be ServiceAPIs, and thus caught above)
+            // If only one is left, use that, otherwise it's ambiguous
+            /** @var UnionType $union */
+            $union = $info->returnType;
+            /** @var InterfaceType $myRadioObjectType */
+            $myRadioObjectType = $info->schema->getType('MyRadioObject');
+            $candidates = [];
+            foreach ($union->getTypes() as $test) {
+                if (!($test->implementsInterface($myRadioObjectType))) {
+                    $candidates[] = $test->name;
+                }
+            }
+            if (count($candidates) === 1) {
+                return $candidates[0];
+            } else {
+                $typeName = $info->returnType->name;
+                $parent = $info->parentType->name;
+                $field = $info->fieldName;
+                throw new MyRadioException("Ambiguous union type $typeName for $parent.$field - candidates " . implode(', ', $candidates));
+            }
         };
     }
     $name = $typeConfig['name'];
@@ -41,7 +64,7 @@ $typeConfigDecorator = function ($typeConfig, TypeDefinitionNode $typeDefinition
                     throw new MyRadioException('Tried to resolve a node that isn\'t a class!');
                 }
                 $rc = new ReflectionClass($className);
-                if (!($rc->isSubclassOf(\MyRadio\ServiceAPI\ServiceAPI::class))) {
+                if (!($rc->isSubclassOf(ServiceAPI::class))) {
                     throw new MyRadioException("Tried to resolve $className through Node, but it's not a ServiceAPI");
                 }
                 $typeName = $className::getGraphQLTypeName();
@@ -63,7 +86,7 @@ $typeConfigDecorator = function ($typeConfig, TypeDefinitionNode $typeDefinition
                                     $type = '\\' . $type;
                                 }
                                 $rc = new ReflectionClass($type);
-                                if (!($rc->isSubclassOf(\MyRadio\ServiceAPI\ServiceAPI::class))) {
+                                if (!($rc->isSubclassOf(ServiceAPI::class))) {
                                     throw new MyRadioException(
                                         "Tried to resolve node $type#$id but it's not a ServiceAPI"
                                     );
@@ -160,7 +183,43 @@ function graphQlResolver($source, $args, GraphQLContext $context, ResolveInfo $i
         }
     }
     // Okay, we're in the Wild West. We're on an object and we need to get a field.
-    // First, check if we're on an array
+    // Before we start, check if the bind directive has a class - in that case, it's a static method
+    if (isset($bindArgs['class']) && isset($bindArgs['method'])) {
+        // It's a static method, short-circuit the rest of the resolver
+        $className = $bindArgs['class']->value;
+        $methodName = $bindArgs['method']->value;
+
+        if (GraphQLUtils::isAuthorisedToAccess($info, get_class($source), $methodName, $source)) {
+            $meth = new ReflectionMethod($className, $methodName);
+
+            if (isset($bindArgs['callingConvention'])) {
+                $callingConvention = $bindArgs['callingConvention']->value;
+                switch ($callingConvention) {
+                    case 'FirstArgCurrentUser':
+                        $val = $className::{$methodName}(MyRadio_User::getInstance()->getID());
+                        break;
+                    case 'FirstArgCurrentObject':
+                        // Find the name of the first argument, set that as the source, and pass in the rest to invokeNamed
+                        $firstArg = $meth->getParameters()[0];
+                        $args[$firstArg->getName()] = $source;
+                        $val = GraphQLUtils::invokeNamed($meth, null, $args);
+                        break;
+                    default:
+                        throw new MyRadioException("Unsupported calling convention $callingConvention for static method");
+                }
+
+            } else {
+                $val = GraphQLUtils::invokeNamed($meth, null, $args);
+            }
+
+            return GraphQLUtils::processScalarIfNecessary($info, $val);
+
+        } else {
+            $context->addWarning("Unauthorised to access $typeName::$fieldName");
+            return GraphQLUtils::returnNullOrThrowForbiddenException($info);
+        }
+    }
+    // Next, check if we're on an array
     if (is_array($source)) {
         if (array_key_exists($fieldName, $source)) {
             if (GraphQLUtils::isAuthorisedToAccess($info, null, null)) {
@@ -233,16 +292,29 @@ function graphQlResolver($source, $args, GraphQLContext $context, ResolveInfo $i
             // Great. Can we access it?
             if (GraphQLUtils::isAuthorisedToAccess($info, get_class($source), $methodName, $source)) {
                 // Yay. Call it!
+                // (We'll get a ReflectionException here if it's inaccessible. But That's Okay.
+                $meth = new ReflectionMethod(
+                    // Assume we know what we're doing.
+                    get_class($source),
+                    $methodName
+                );
                 // First, though, check if we should be using a calling convention
                 if (isset($bindArgs['callingConvention'])) {
-                    $val = $source->{$methodName}(MyRadio_User::getInstance()->getID());
+                    $callingConvention = $bindArgs['callingConvention']->value;
+                    switch ($callingConvention) {
+                        case 'FirstArgCurrentUser':
+                            $val = $source->{$methodName}(MyRadio_User::getInstance()->getID());
+                        break;
+                        case 'FirstArgCurrentObject':
+                            // Find the name of the first argument, set that as the source, and pass in the rest to invokeNamed
+                            $firstArg = $meth->getParameters()[0];
+                            $args[$firstArg->getName()] = $source;
+                            $val = GraphQLUtils::invokeNamed($meth, $source, $args);
+                        break;
+                        default:
+                            throw new MyRadioException("Unsupported calling convention $callingConvention for dynamic field");
+                    }
                 } else {
-                    // (We'll get a ReflectionException here if it's inaccessible. But That's Okay.
-                    $meth = new ReflectionMethod(
-                    // Assume we know what we're doing.
-                        get_class($source),
-                        $methodName
-                    );
                     $val = GraphQLUtils::invokeNamed($meth, $source, $args);
                 }
                 return GraphQLUtils::processScalarIfNecessary($info, $val);

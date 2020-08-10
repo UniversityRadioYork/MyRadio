@@ -228,6 +228,32 @@ type UserTrainingStatus implements Node & MyRadioObject @auth(hook: ViewMember) 
     revokedTime: DateTime @coerce(hooks: [FalseToNull])
 }
 
+type Album implements Node & MyRadioObject {
+    id: ID!
+    itemId: Int! @bind(method: "getID")
+
+    title: String!
+    artist: String!
+    tracks: [Track]
+}
+
+type Track implements Node & MyRadioObject {
+    id: ID!
+    itemId: Int! @bind(method: "getID")
+
+    artist: String!
+    album: Album!
+    title: String!
+    intro: Int
+    clean: Boolean
+    digitised: Boolean!
+    length: Duration
+    genre: String # TODO enum
+    digitisedBy: User
+    lastEditedTime: DateTime
+    lastEditedUser: User @bind(method: "getLastEditedMemberID")
+}
+
 type ShowSubtype implements Node & MyRadioObject {
     id: ID!
     itemId: Int! @bind(method: "getID")
@@ -249,6 +275,24 @@ type CreditType {
 type Genre {
     value: Int!
     text: String!
+}
+
+type TrackNotRec {
+    title: String!
+    artist: String!
+    album: String!
+    trackno: Int
+    length: Duration
+    record_label: String
+}
+
+union TracklistTrack = Track | TrackNotRec
+
+type TracklistItem implements Node & MyRadioObject {
+    id: ID!
+    itemId: Int! @bind(method: "getID")
+    track: TracklistTrack
+    startTime: DateTime!
 }
 
 type Show implements Node & MyRadioObject @auth(hook: ViewShow) {
@@ -300,6 +344,7 @@ type Timeslot implements Node & MyRadioObject @auth(hook: ViewShow) {
     messages: [Message]
     webpage: String!
     uploadState: String @meta(key: "upload_state")
+    tracklist: [TracklistItem!] @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_TracklistItem", method: "getTracklistForTimeslot", callingConvention: FirstArgCurrentObject)
 }
 
 type Quote implements Node {
