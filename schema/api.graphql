@@ -398,7 +398,7 @@ type FindShowByTitleResult { # TODO: icky
     title: String!
 }
 
-type CurrentAndNext_PseudoShow {
+type CurrentAndNext_PseudoTimeslot {
     title: String!
     desc: String!
     photo: String!
@@ -406,7 +406,7 @@ type CurrentAndNext_PseudoShow {
     end_time: DateTime!
 }
 
-union CurrentAndNextObject = Timeslot | CurrentAndNext_PseudoShow
+union CurrentAndNextObject = Timeslot | CurrentAndNext_PseudoTimeslot
 
 type CurrentAndNext {
     current: CurrentAndNextObject!
