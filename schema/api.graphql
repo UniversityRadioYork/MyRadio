@@ -437,6 +437,8 @@ type Query {
     currentAndNext(time: Int, n: Int, filter: [Int]): CurrentAndNext @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Timeslot", method: "getCurrentAndNextObjects") @auth(constants: [])
     previousTimeslots(time: Int, n: Int, filter: [Int]): [Timeslot] @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Timeslot", method: "getPreviousTimeslots")
 
+    nowPlaying(include_playout: Boolean): TracklistItem @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_TracklistItem", method: "getNowPlaying") @auth(constants: [])
+
     isTerm: Boolean @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Scheduler", method: "isTerm") @auth(constants: [])
 
     user(itemid: Int!): User @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_User", method: "getInstance")
