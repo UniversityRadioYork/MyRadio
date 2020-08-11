@@ -776,6 +776,8 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
         } else {
             if (isset($value['next']['id'])) {
                 $value['next'] = [MyRadio_Timeslot::getInstance($value['next']['id'])];
+            } else {
+                $value['next'] = [$value['next']];
             }
         }
 
