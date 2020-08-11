@@ -409,8 +409,8 @@ type CurrentAndNext_PseudoShow {
 union CurrentAndNextObject = Timeslot | CurrentAndNext_PseudoShow
 
 type CurrentAndNext {
-    current: CurrentAndNext_PseudoShow!
-    next: [CurrentAndNext_PseudoShow!]!
+    current: CurrentAndNextObject!
+    next: [CurrentAndNextObject!]!
 }
 
 type Query {
