@@ -769,11 +769,10 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
 
         // next can be either an array, or an array of arrays, and because PHP, count($assoc_array) returns the number
         // of keys. So we check the number of non-string keys to decide.
-        if (count(array_filter(array_keys($value['next']), 'is_string')) > 0) {
+        if (count(array_filter(array_keys($value['next']), 'is_string')) === 0) {
             $value['next'] = array_map(function($show) {
                 return isset($show['id']) ? MyRadio_Timeslot::getInstance($show['id']) : $show;
             }, $value['next']);
-
         } else {
             if (isset($value['next']['id'])) {
                 $value['next'] = [MyRadio_Timeslot::getInstance($value['next']['id'])];
