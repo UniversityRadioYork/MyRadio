@@ -405,7 +405,8 @@ type CurrentAndNext_PseudoTimeslot {
     desc: String!
     photo: String!
     start_time: DateTime
-    end_time: DateTime!
+    "This will be a string containing either a Unix timestamp, or \"The End of Time\"."
+    end_time: String!
 }
 
 union CurrentAndNextObject = Timeslot | CurrentAndNext_PseudoTimeslot
