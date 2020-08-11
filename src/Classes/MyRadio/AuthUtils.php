@@ -5,6 +5,7 @@
  */
 namespace MyRadio\MyRadio;
 
+use MyRadio\ServiceAPI\MyRadio_Swagger2;
 use ReCaptcha\ReCaptcha;
 use MyRadio\Config;
 use MyRadio\Database;
@@ -108,7 +109,12 @@ class AuthUtils
         if (isset($_SESSION['memberid'])) {
             return MyRadio_User::getInstance()->hasAuth($permission);
         } else {
-            return false;
+            $apiCaller = MyRadio_Swagger2::getAPICaller();
+            if (!empty($apiCaller)) {
+                return $apiCaller->hasAuth($permission);
+            } else {
+                return false;
+            }
         }
     }
 
