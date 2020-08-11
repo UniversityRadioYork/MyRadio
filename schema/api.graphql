@@ -292,7 +292,7 @@ union TracklistTrack = Track | TrackNotRec
 type TracklistItem implements Node & MyRadioObject {
     id: ID!
     itemId: Int! @bind(method: "getID")
-    track: TracklistTrack
+    track: TracklistTrack @auth(constants: [])
     startTime: DateTime!
 }
 
