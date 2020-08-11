@@ -7,6 +7,7 @@ use GraphQL\Language\AST\UnionTypeDefinitionNode;
 use GraphQL\Type\Definition\InterfaceType;
 use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\UnionType;
+use GraphQL\Type\Definition\WrappingType;
 use GraphQL\Utils\BuildSchema;
 use MyRadio\MyRadio\GraphQLContext;
 use MyRadio\MyRadio\GraphQLUtils;
@@ -36,6 +37,9 @@ $typeConfigDecorator = function ($typeConfig, TypeDefinitionNode $typeDefinition
             // If only one is left, use that, otherwise it's ambiguous
             /** @var UnionType $union */
             $union = $info->returnType;
+            if ($union instanceof WrappingType) {
+                $union = $union->getWrappedType(true);
+            }
             /** @var InterfaceType $myRadioObjectType */
             $myRadioObjectType = $info->schema->getType('MyRadioObject');
             $candidates = [];

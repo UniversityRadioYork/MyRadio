@@ -750,6 +750,41 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
     }
 
     /**
+     * Returns the current timeslot, and the n after it - returning the Timeslot objects for real shows,
+     * or simplified dataSource-ish arrays for non-shows.
+     *
+     * Note that, unlike getCurrentAndNext, $result['next'] will always be an array - either of Timeslots or
+     * of arrays.
+     *
+     * @param int|null $time time to check, defaults to current time
+     * @param int $n number of next shows to return
+     * @param int[] $filter defines a filter of show_type ids
+     */
+    public static function getCurrentAndNextObjects($time = null, $n = 1, $filter = [1])
+    {
+        $value = self::getCurrentAndNext($time, $n, $filter);
+        if (isset($value['current']['id'])) {
+            $value['current'] = MyRadio_Timeslot::getInstance($value['current']['id']);
+        }
+
+        // next can be either an array, or an array of arrays, and because PHP, count($assoc_array) returns the number
+        // of keys. So we check the number of non-string keys to decide.
+        if (count(array_filter(array_keys($value['next']), 'is_string')) === 0) {
+            $value['next'] = array_map(function($show) {
+                return isset($show['id']) ? MyRadio_Timeslot::getInstance($show['id']) : $show;
+            }, $value['next']);
+        } else {
+            if (isset($value['next']['id'])) {
+                $value['next'] = [MyRadio_Timeslot::getInstance($value['next']['id'])];
+            } else {
+                $value['next'] = [$value['next']];
+            }
+        }
+
+        return $value;
+    }
+
+    /**
      * Deletes this Timeslot from the Schedule, and everything associated with it.
      *
      * This is a proxy for several other methods, depending on the User and the current time:<br>
@@ -1235,4 +1270,10 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             ['value' => $this->getID()]
         ));
     }
+
+    public static function getGraphQLTypeName()
+    {
+        return 'Timeslot';
+    }
+
 }
