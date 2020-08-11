@@ -221,6 +221,16 @@ function graphQlResolver($source, $args, GraphQLContext $context, ResolveInfo $i
                 $context->addWarning("Unauthorised to access $typeName::$fieldName");
                 return GraphQLUtils::returnNullOrThrowForbiddenException($info);
             }
+        } else {
+            // We're on an array, but the key we're looking for doesn't exist. No hope of doing the rest
+            // of the checks, for fear of returning the array itself.
+            // Do an authz check just for the warning, but return null.
+            if (GraphQLUtils::isAuthorisedToAccess($info, null, null)) {
+                return null;
+            } else {
+                $context->addWarning("Unauthorised to access $typeName::$fieldName");
+                return GraphQLUtils::returnNullOrThrowForbiddenException($info);
+            }
         }
     }
     // Next, check if it's an object
