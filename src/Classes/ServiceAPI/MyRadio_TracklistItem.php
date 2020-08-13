@@ -374,7 +374,7 @@ class MyRadio_TracklistItem extends ServiceAPI
     {
         $item = self::$db->fetchOne(
             'SELECT audiologid FROM tracklist.tracklist
-            WHERE timestart <= NOW() AND timestop IS NULL
+            WHERE timestart <= NOW() AND timestart > (NOW() - interval \'30 minutes\') AND timestop IS NULL
             AND (state IS NULL OR state = \'c\'' .($include_playout ? ' OR state = \'o\'' : '') . ')
             ORDER BY timestart DESC
             LIMIT 1',
