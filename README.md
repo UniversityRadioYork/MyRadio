@@ -36,7 +36,6 @@ CONNECT:
 DATABASE:
  - On the intro screen press "Click here to continue"
  - Enter the database details (see Database Credentials) and press Next
- - Enter the database details AGAIN and press next
  - Press "run task"
  
 USER:
