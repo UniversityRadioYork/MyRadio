@@ -18,25 +18,43 @@ If you have [Vagrant](https://www.vagrantup.com) installed and want to get
 developing or playing right away, just run `vagrant up` and a few minutes
 later [you'll have a working server](https://localhost:4443/myradio/).
 
-During setup, you'll be asked for database credentials - you can use:
-* Hostname: localhost
-* Database: myradio
-* Username: myradio
-* Password: myradio
+Steps
+-----
+Items in [Square Brackets] give notes and advice if things don't work
 
-Note that the Vagrant bootstrap script gives the myradio user CREATEDB
-permissions, so be sure to never run this in a production environment, or remove
-the permission before doing so.
+INSTALL:
+ - Make sure you have both "vagrant" and "virtualbox" installed and configured
+ - [Try reinstalling vagrant after virtualbox, or downloading an installer]
+ - Clone myradio, open the folder in console and run "vagrant up"
+ - [This may take a long time and use up all processing power]
+
+CONNECT:
+ - Open up "https://localhost:4443/myradio/" in a browser
+ - [Use Chrome as this often fails to run on Firefox]
+ - It will say "connection not private" so press "advanced" and then "proceed"
+
+DATABASE:
+ - On the intro screen press "Click here to continue"
+ - Enter the database details (see Database Credentials) and press Next
+ - Enter the database details AGAIN and press next
+ - [If you get a database error wipe the VM and rerun "vagrant up"]
+ 
+USER:
+ - Click on the "standard user" option (top) and confirm the config section without changing values (unless you wish to)
+ - Input any first name and last name, an email (NOT a @york.ac.uk email) and a password
+ - If you enter a @york.ac.uk email you will not be able to login at all
 
 Notes
 -----
-- Make sure you have both "vagrant" and "virtualbox" installed
-- Process may take a long time and use up all processing power
-- It will ask for database credentials TWICE, enter it both times as normal
-- Click on the "standard user" option (top) and confirm the config section without
-changing values (unless you wish to)
-- Input any first name and last name, an email (NOT a @york.ac.uk email) and a password
-- If you enter a @york.ac.uk email you will not be able to login at all
+Database Credentials:
+ - Hostname: localhost
+ - Database: myradio
+ - Username: myradio
+ - Password: myradio
+
+Other:
+ - To open up the virtual machine, find it in virtualbox and login with "vagrant", "vagrant"
+ - Vagrant bootstrap script gives the myradio user CREATEDB permissions so be sure to never run this in a production environment, or remove the permission before doing so.
 
 Quickstart
 ==========
