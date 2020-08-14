@@ -675,21 +675,25 @@ class MyRadio_User extends ServiceAPI implements APICaller
     public function getRadioTime()
     {
         if (!$this->radioTime) {
-            $this->radioTime = self::$db->fetchColumn(
-                'SELECT sum(duration)         
-                FROM schedule.show_season_timeslot
-         INNER JOIN schedule.show_season USING (show_season_id)
-         INNER JOIN schedule.show_credit USING (show_id)
-         INNER JOIN sis2.member_signin USING(show_season_timeslot_id)
-         WHERE show_credit.creditid = $1
-         AND member_signin.memberid = $1
-         AND show_credit.effective_from <= show_season_timeslot.start_time
-         AND (show_credit.effective_to > show_season_timeslot.start_time OR show_credit.effective_to IS NULL)
-         AND show_credit.approvedid IS NOT NULL;',
-         [$this->getID()]
-            )[0];
+            try{
+                $this->radioTime = self::$db->fetchColumn(
+                    'SELECT sum(duration)         
+                    FROM schedule.show_season_timeslot
+            INNER JOIN schedule.show_season USING (show_season_id)
+            INNER JOIN schedule.show_credit USING (show_id)
+            INNER JOIN sis2.member_signin USING(show_season_timeslot_id)
+            WHERE show_credit.creditid = $1
+            AND member_signin.memberid = $1
+            AND show_credit.effective_from <= show_season_timeslot.start_time
+            AND (show_credit.effective_to > show_season_timeslot.start_time OR show_credit.effective_to IS NULL)
+            AND show_credit.approvedid IS NOT NULL;',
+            [$this->getID()]
+                )[0];
 
-            $this->updateCacheObject();
+                $this->updateCacheObject();
+            }catch (MyRadioException $e){
+                $this->radioTime = null;
+            }
         }
 
         return $this->radioTime;
