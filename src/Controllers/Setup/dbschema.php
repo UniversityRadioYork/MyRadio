@@ -14,7 +14,11 @@ try {
 
 // What does the database currently look like?
 $action = 'ERROR';
-$result = Database::getInstance()->fetchColumn('SELECT value FROM myradio.schema WHERE attr=\'version\'');
+try {
+    $result = Database::getInstance()->fetchColumn('SELECT value FROM myradio.schema WHERE attr=\'version\'');
+} catch (Exception $e) {
+    $result = 0;
+}
 if (!isset($result[0])) {
     //Well, it looks like MyRadio isn't installed here.
     $operation = 'NEW';
