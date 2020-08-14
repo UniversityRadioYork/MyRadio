@@ -37,12 +37,14 @@ DATABASE:
  - On the intro screen press "Click here to continue"
  - Enter the database details (see Database Credentials) and press Next
  - Enter the database details AGAIN and press next
- - [If you get a database error wipe the VM and rerun "vagrant up"]
+ - Press "run task"
  
 USER:
- - Click on the "standard user" option (top) and confirm the config section without changing values (unless you wish to)
+ - [Here you can make config changes but the defaults are autofilled]
+ - Press "complete starting set", scroll and press "save and continue"
  - Input any first name and last name, an email (NOT a @york.ac.uk email) and a password
- - If you enter a @york.ac.uk email you will not be able to login at all
+ - [If you enter a @york.ac.uk email you will not be able to login at all]
+ - Login using the email and password you just enterted
 
 Notes
 -----
