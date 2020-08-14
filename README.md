@@ -55,7 +55,7 @@ Database Credentials:
  - Password: myradio
 
 Other:
- - To open up the virtual machine, find it in virtualbox and login with "vagrant", "vagrant"
+ - To connect to the VM directly, login (with "vagrant", "vagrant") using SSH or VirtualBox
  - Vagrant bootstrap script gives the myradio user CREATEDB permissions so be sure to never run this in a production environment, or remove the permission before doing so.
 
 Quickstart
