@@ -1573,6 +1573,7 @@ class MyRadio_Track extends ServiceAPI
                 AND timestopped IS NULL
                 AND trackid IS NOT NULL
                 AND timeplayed <= NOW() AND timeplayed > (NOW() - interval \'30 minutes\')
+                ORDER BY timeplayed DESC
                 LIMIT 1
                 ',
                 [ $selAction ]
