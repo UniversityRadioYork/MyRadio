@@ -174,6 +174,13 @@ class MyRadio_User extends ServiceAPI implements APICaller
     private $shows;
 
     /**
+     * Users radio time, calculated from signed in shows
+     * 
+     * @var mixed
+     */
+    private $radioTime;
+
+    /**
      * The Authentication Provider that should be used when logging this user in
      * default Null (any).
      *
@@ -690,6 +697,36 @@ class MyRadio_User extends ServiceAPI implements APICaller
         }
 
         return $result;
+    }
+
+    /**
+     * Get the User's radio time, calculated from timeslot signins
+     */
+    public function getRadioTime()
+    {
+        if (!$this->radioTime) {
+            try{
+                $this->radioTime = self::$db->fetchColumn(
+                    'SELECT sum(duration)         
+                    FROM schedule.show_season_timeslot
+            INNER JOIN schedule.show_season USING (show_season_id)
+            INNER JOIN schedule.show_credit USING (show_id)
+            INNER JOIN sis2.member_signin USING(show_season_timeslot_id)
+            WHERE show_credit.creditid = $1
+            AND member_signin.memberid = $1
+            AND show_credit.effective_from <= show_season_timeslot.start_time
+            AND (show_credit.effective_to > show_season_timeslot.start_time OR show_credit.effective_to IS NULL)
+            AND show_credit.approvedid IS NOT NULL;',
+            [$this->getID()]
+                )[0];
+
+                $this->updateCacheObject();
+            }catch (MyRadioException $e){
+                $this->radioTime = null;
+            }
+        }
+
+        return $this->radioTime;
     }
 
     /**
@@ -2220,6 +2257,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
         $data['photo'] = $this->getProfilePhoto() === null ?
             Config::$default_person_uri : $this->getProfilePhoto()->getURL();
         $data['bio'] = $this->getBio();
+        $data['radioTime'] = $this->getRadioTime();
 
         $this->addMixins($data, $mixins, $mixin_funcs);
 
