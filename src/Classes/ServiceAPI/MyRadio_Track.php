@@ -1580,8 +1580,8 @@ class MyRadio_Track extends ServiceAPI
                 [ $selAction ]
             );
             if (!empty($lastBapsLogged)) {
-                if (strtotime($lastBapsLogged['timestart']) > strtotime($lastTracklisted['timestart'])) {
-                    // Last BAPS entry is newer than last tracklist entry.
+                if (empty($lastTracklisted) || strtotime($lastBapsLogged['timestart']) > strtotime($lastTracklisted['timestart'])) {
+                    // Last BAPS entry is newer than last tracklist entry (if there is one).
                     $lastTracklisted = $lastBapsLogged;
                 }
             }
