@@ -246,7 +246,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
                 MyRadioFormField::TYPE_TEXT,
                 [
                     'label' => 'Tags',
-                    'explanation' => 'A set of keywords to describe your podcast generally, seperated with spaces.',
+                    'explanation' => 'A set of keywords to describe your podcast generally, seperated with commas.',
                 ]
             )
         );
@@ -331,8 +331,8 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
                 [
                     'label' => 'Existing Cover Photo',
                     'explanation' => 'To use an existing cover photo of another podcast, '
-                                     . 'copy the Existing Cover Photo file of another '
-                                     . 'podcast with that photo into here. For new images, keep blank.',
+                        . 'copy the Existing Cover Photo file of another '
+                        . 'podcast with that photo into here. For new images, keep blank.',
                     'required' => false,
                 ]
             )
@@ -342,7 +342,8 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
                 MyRadioFormField::TYPE_FILE,
                 [
                     'label' => 'Upload New Cover Photo',
-                    'explanation' => 'If you haven\'t specified an existing cover photo, upload one here.',
+                    'explanation' => 'If you haven\'t specified an existing cover photo, upload one '
+                    . 'here - it should be square and at least 400x400 pixels.',
                     'required' => false,
                 ]
             )
@@ -354,6 +355,8 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
                     'label' => 'I have read and confirm that this audio file complies'
                     .' with <a href="/wiki/Podcasting_Policy" target="_blank">'
                     .Config::$short_name.'\'s Podcasting Policy</a>.',
+                    'explanation' => 'Once the podcast upload is complete, please notify the '
+                    . 'Computing Team in Slack as they may need to clear the cache. Thank you!'
                 ]
             )
         );
@@ -370,7 +373,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
                 [
                     'title' => $this->getMeta('title'),
                     'description' => $this->getMeta('description'),
-                    'tags' => is_null($this->getMeta('tag')) ? null : implode(' ', $this->getMeta('tag')),
+                    'tags' => is_null($this->getMeta('tag')) ? null : implode(', ', $this->getMeta('tag')),
                     'show' => empty($this->show_id) ? null : $this->show_id,
                     'credits.member' => array_map(
                         function ($credit) {
@@ -408,6 +411,10 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
         MyRadio_Show $show = null,
         $credits = null
     ) {
+        //Validate the tags
+        $tags = CoreUtils::explodeTags($tags);
+
+        self::$db->query('BEGIN');
 
         //Get an ID for the new Podcast
         $id = (int) self::$db->fetchColumn(
@@ -416,6 +423,8 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
             .'RETURNING podcast_id',
             [MyRadio_User::getInstance()->getID()]
         )[0];
+
+        self::$db->query('COMMIT');
 
         $podcast = self::getInstance($id);
 
@@ -524,6 +533,17 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
     }
 
     /**
+     * Whether this podcast should be live right now
+     * @return bool
+     */
+    public function isPublished()
+    {
+        return !$this->isSuspended()
+            && !empty($this->submitted)
+            && $this->submitted < time();
+    }
+
+    /**
      * Get the file system path to where the original file is stored.
      *
      * @return string
@@ -605,7 +625,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
      *
      * @param MyRadio_Show $show
      */
-    public function setShow(MyRadio_Show $show)
+    public function setShow($show)
     {
         self::$db->query(
             'DELETE FROM schedule.show_podcast_link
@@ -614,17 +634,30 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
         );
 
         if (!empty($show)) {
-            self::$db->query(
-                'INSERT INTO schedule.show_podcast_link
-                (show_id, podcast_id) VALUES ($1, $2)',
-                [$show->getID(), $this->getID()]
-            );
-            $this->show_id = $show->getID();
+            if ($show instanceof MyRadio_Show) {
+                self::$db->query(
+                    'INSERT INTO schedule.show_podcast_link
+                    (show_id, podcast_id) VALUES ($1, $2)',
+                    [$show->getID(), $this->getID()]
+                );
+                $this->show_id = $show->getID();
+            } else {
+                throw new MyRadioException("The parameter provided is not a MyRadio_Show instance.", 500);
+            }
         } else {
             $this->show_id = null;
         }
 
         return $this;
+    }
+
+    /**
+     * Get a GUID for iTunes
+     * @return string
+     */
+    public function getGUID()
+    {
+        return 'https:' . Config::$website_url . $this->getWebpage();
     }
 
     /**
@@ -639,7 +672,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
     public function toDataSource($mixins = [])
     {
         $mixin_funcs = [
-            'show' => function (&$data) {
+            'show' => function (&$data) use ($mixins) {
                 $data['show'] = $this->getShow() ?
                     $this->getShow()->toDataSource($mixins) : null;
             },
@@ -655,7 +688,6 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
             'status' => $this->getStatus(),
             'time' => $this->getSubmitted(),
             'uri' => $this->getURI(),
-            'photo' => Config::$public_media_uri.'/'.$this->getCover(),
             'editlink' => [
                 'display' => 'icon',
                 'value' => 'pencil',
@@ -669,6 +701,13 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
                 'url' => $this->getWebpage(),
             ],
         ];
+
+        $cover = $this->getCover();
+        if (!empty($cover)) {
+            $cover_path = Config::$public_media_uri . '/' . $cover;
+            $cover_path = preg_replace('(//)', '/', $cover_path);
+            $data['photo'] = $cover_path;
+        }
 
         $this->addMixins($data, $mixins, $mixin_funcs);
         return $data;
@@ -811,6 +850,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
             WHERE podcast_id=$2',
             [CoreUtils::getTimestamp($time), $this->getID()]
         );
+        $this->updateCacheObject();
 
         return $this;
     }
@@ -826,7 +866,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
     {
         $tmpfile = $this->getArchiveFile();
         $dbfile = $this->getWebFile();
-        shell_exec("nice -n 15 ffmpeg -i '{$tmpfile}' -ab 192k -f mp3 -map 0:a '{$dbfile}'");
+        shell_exec("nice -n 15 ffmpeg -i '{$tmpfile}' -ab 128k -f mp3 -map 0:a '{$dbfile}'");
 
         self::$db->query(
             'UPDATE uryplayer.podcast SET file=$1 WHERE podcast_id=$2',
@@ -842,18 +882,36 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
      *
      * @param int $num_results The number of results to return per page. 0 for all podcasts.
      * @param int $page The page required.
+     * @param bool $include_suspended Whether to include suspended podcasts in the result
+     * @param bool $include_pending Whether to include pending (future publish/processing) podcasts in the result
      *
      * @return Array[MyRadio_Podcast]
      */
-    public static function getAllPodcasts($num_results = 0, $page = 1)
-    {
-        $query = "SELECT podcast_id FROM uryplayer.podcast
-                  ORDER BY submitted DESC OFFSET ";
+    public static function getAllPodcasts(
+        $num_results = 0,
+        $page = 1,
+        $include_suspended = false,
+        $include_pending = false
+    ) {
+        $where = '';
+        if (!$include_suspended || !$include_pending) {
+            $where = 'WHERE ';
+            if (!$include_suspended) {
+                $where .= 'suspended = false';
+            }
+            if (!$include_suspended && !$include_pending) {
+                $where .= ' AND ';
+            }
+            if (!$include_pending) {
+                $where .= 'submitted IS NOT NULL';
+            }
+        }
 
         $filterLimit = $num_results == 0 ? 'ALL' : $num_results;
         $filterOffset = $num_results * $page;
+        $query = "SELECT podcast_id FROM uryplayer.podcast $where ";
+        $query .= "ORDER BY submitted DESC OFFSET $filterOffset LIMIT $filterLimit;";
 
-        $query .= $filterOffset . " LIMIT " . $filterLimit;
         $result = self::$db->fetchColumn($query);
 
         $podcasts = [];

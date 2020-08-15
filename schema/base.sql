@@ -11,7 +11,7 @@ COMMENT ON SCHEMA music IS 'Charts and possibly other stuff too.';
 CREATE SCHEMA myury;
 COMMENT ON SCHEMA myury IS 'Schema for new/migrated data for the Members Internal replacement';
 CREATE SCHEMA people;
-COMMENT ON SCHEMA people IS 'Tables for the LeRouge Extensible Roles (Or User Groups) Engine, as well as the quotes board.';
+COMMENT ON SCHEMA people IS 'Tables for the LeRouge Extensible Roles (Or User Groups).';
 CREATE SCHEMA schedule;
 COMMENT ON SCHEMA schedule IS 'Schema for the MyRadio schedule.';
 CREATE SCHEMA sis2;
@@ -740,19 +740,6 @@ As of writing the metadata schema is:
 COMMENT ON COLUMN metadata.roleid IS 'The unique ID of the role this metadatum concerns.';
 COMMENT ON COLUMN metadata.key IS 'The key of the metadatum; should fit the site schema.';
 COMMENT ON COLUMN metadata.value IS 'The value of the metadatum.';
-CREATE TABLE quote (
-    quote_id integer NOT NULL,
-    text text NOT NULL,
-    source integer NOT NULL,
-    date timestamp with time zone DEFAULT now() NOT NULL
-);
-CREATE SEQUENCE quote_quote_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-ALTER SEQUENCE quote_quote_id_seq OWNED BY quote.quote_id;
 CREATE TABLE role (
     role_id integer NOT NULL,
     alias character varying(100) NOT NULL,
@@ -2380,7 +2367,6 @@ SET search_path = people, pg_catalog;
 ALTER TABLE ONLY credit_type ALTER COLUMN credit_type_id SET DEFAULT nextval('"schedule.showcredittype_id_seq"'::regclass);
 ALTER TABLE ONLY group_root_role ALTER COLUMN group_root_role_id SET DEFAULT nextval('group_root_role_group_root_role_id_seq'::regclass);
 ALTER TABLE ONLY group_type ALTER COLUMN group_type_id SET DEFAULT nextval('group_type_group_type_id_seq'::regclass);
-ALTER TABLE ONLY quote ALTER COLUMN quote_id SET DEFAULT nextval('quote_quote_id_seq'::regclass);
 ALTER TABLE ONLY role ALTER COLUMN role_id SET DEFAULT nextval('roles_id_seq'::regclass);
 ALTER TABLE ONLY role_inheritance ALTER COLUMN role_inheritance_id SET DEFAULT nextval('role_inheritance_role_inheritance_id_seq'::regclass);
 ALTER TABLE ONLY role_text_metadata ALTER COLUMN role_text_metadata_id SET DEFAULT nextval('role_metadata_role_metadata_id_seq'::regclass);
@@ -2959,13 +2945,6 @@ ALTER TABLE ONLY group_type
 ALTER TABLE ONLY metadata
     ADD CONSTRAINT metadata_pkey PRIMARY KEY (roleid, key);
 
-
---
--- Name: quote_pkey; Type: CONSTRAINT; Schema: people
---
-
-ALTER TABLE ONLY quote
-    ADD CONSTRAINT quote_pkey PRIMARY KEY (quote_id);
 
 
 --
@@ -3733,7 +3712,7 @@ ALTER TABLE ONLY selector
 --
 
 ALTER TABLE ONLY sso_session
-    ADD CONSTRAINT sso_session_pkey PRIMARY KEY (id, "timestamp");
+    ADD CONSTRAINT sso_session_pkey PRIMARY KEY (id);
 
 
 --
@@ -5610,13 +5589,6 @@ ALTER TABLE ONLY role_inheritance
     ADD CONSTRAINT parents_parentid_fkey FOREIGN KEY (parent_id) REFERENCES role(role_id) ON UPDATE CASCADE ON DELETE RESTRICT;
 
 
---
--- Name: quote_source_fkey; Type: FK CONSTRAINT; Schema: people
---
-
-ALTER TABLE ONLY quote
-    ADD CONSTRAINT quote_source_fkey FOREIGN KEY (source) REFERENCES public.member(memberid);
-
 
 --
 -- Name: role_metadata_approvedid_fkey; Type: FK CONSTRAINT; Schema: people
@@ -7116,3 +7088,74 @@ CREATE TABLE myury.api_mixin_auth (
     mixin_name CHARACTER VARYING,
     typeid INT REFERENCES l_action(typeid)
 );
+
+
+SET search_path = schedule, pg_catalog;
+CREATE TABLE show_subtypes
+(
+    show_subtype_id INTEGER NOT NULL PRIMARY KEY,
+    name            text    NOT NULL,
+    class           text    NOT NULL,
+    description     text
+);
+
+COMMENT ON TABLE show_subtypes IS 'The various subtypes of show (music, news etc.)';
+COMMENT ON COLUMN show_subtypes.name IS 'The publicly visible name of the subtype.';
+COMMENT ON COLUMN show_subtypes.class IS 'The CSS class of the subtype - similar to the name, but not intended for humans';
+COMMENT ON COLUMN show_subtypes.description IS 'A description of the shows that are in this subtype, for the subtype pages';
+
+INSERT INTO show_subtypes (show_subtype_id, name, class)
+VALUES (1,
+        'Regular',
+        'regular'),
+       (2,
+        'Primetime',
+        'primetime'),
+       (3,
+        'Events',
+        'event'),
+       (4,
+        'News',
+        'news'),
+       (5,
+        'Speech',
+        'speech'),
+       (6,
+        'Music',
+        'music'),
+       (7,
+        'Alumni/Collaboration',
+        'collab');
+
+CREATE SEQUENCE show_subtype_id_seq
+    START WITH 8
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+ALTER SEQUENCE show_subtype_id_seq OWNED BY show_subtypes.show_subtype_id;
+ALTER TABLE ONLY show_subtypes ALTER COLUMN show_subtype_id SET DEFAULT nextval('show_subtype_id_seq');
+
+CREATE TABLE show_season_subtype (
+                                     show_season_subtype_id INTEGER NOT NULL PRIMARY KEY,
+                                     show_id INTEGER DEFAULT NULL,
+                                     season_id INTEGER DEFAULT NULL,
+                                     show_subtype_id INTEGER NOT NULL DEFAULT 1,
+                                     effective_from TIMESTAMP WITH TIME ZONE,
+                                     effective_to TIMESTAMP WITH TIME ZONE
+);
+ALTER TABLE show_season_subtype ADD CONSTRAINT chk_subtype_show_or_season_id CHECK (show_id IS NOT NULL OR season_id IS NOT NULL);
+ALTER TABLE show_season_subtype ADD CONSTRAINT fk_show_subtype FOREIGN KEY (show_subtype_id) REFERENCES show_subtypes (show_subtype_id) ON DELETE SET DEFAULT;
+ALTER TABLE show_season_subtype ADD CONSTRAINT fk_subtype_show FOREIGN KEY (show_id) REFERENCES show (show_id) ON DELETE CASCADE;
+ALTER TABLE show_season_subtype ADD CONSTRAINT fk_subtype_season FOREIGN KEY (season_id) REFERENCES show_season (show_season_id) ON DELETE CASCADE;
+
+CREATE SEQUENCE show_season_subtype_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+ALTER SEQUENCE show_season_subtype_id_seq OWNED BY show_season_subtype.show_season_subtype_id;
+ALTER TABLE ONLY show_season_subtype ALTER COLUMN show_season_subtype_id SET DEFAULT nextval('show_season_subtype_id_seq');
+
+INSERT INTO myury.api_method_auth (class_name, method_name, typeid) VALUES ('\MyRadio\ServiceAPI\MyRadio_ShowSubtype', 'getAll', NULL);

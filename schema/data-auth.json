@@ -77,5 +77,10 @@
     ["[API Only] Test login credentials","AUTH_VALIDUSER", false],
     ["Stop Broadcast","AUTH_STOPBROADCAST", true],
     ["Add Quotes","AUTH_ADD_QUOTES", true],
-    ["Upload Music - Manual","AUTH_UPLOADMUSICMANUAL", true]
+    ["Upload Music - Manual","AUTH_UPLOADMUSICMANUAL", true],
+    ["Tracklist own/current show","AUTH_TRACKLIST_OWN", true],
+    ["Tracklist for any show/timeslot","AUTH_TRACKLIST_ALL", true],
+    ["Access WebStudio", "AUTH_ACCESS_WEBSTUDIO", true],
+    ["View Messages for Any Show", "AUTH_ANY_SHOW_MESSAGES", true],
+    ["Give Anyone Any Training Status", "AUTH_AWARDANYTRAINING", true]
 ]

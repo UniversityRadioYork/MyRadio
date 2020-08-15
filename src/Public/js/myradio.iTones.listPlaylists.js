@@ -1,3 +1,7 @@
+$("#categoryPicker").change(function() {
+  $("#categoryForm").submit();
+});
+
 $(".twig-datatable").dataTable({
   "aoColumns": [
     //title
@@ -11,6 +15,10 @@ $(".twig-datatable").dataTable({
     //description
     {
       "sTitle": "Description"
+    },
+    // category
+    {
+      sTitle: "Category"
     },
     //edittrackslink
     {

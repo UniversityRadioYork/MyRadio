@@ -12,21 +12,50 @@ MyRadio is part of a suite of upcoming public projects, including:
 - Bootstrapping scripts for setting up and configuring all the dependencies
 
 Super Quickstart
-----------------
-MyRadio comes with a Vagrantfile based on Ubuntu 16.04.
+==========
+MyRadio comes with a Vagrantfile based on Ubuntu 19.10.
 If you have [Vagrant](https://www.vagrantup.com) installed and want to get
 developing or playing right away, just run `vagrant up` and a few minutes
 later [you'll have a working server](https://localhost:4443/myradio/).
 
-During setup, you'll be asked for database credentials - you can use:
-* Hostname: localhost
-* Database: myradio
-* Username: myradio
-* Password: myradio
+Steps
+-----
+Items in [Square Brackets] give notes and advice if things don't work
 
-Note that the Vagrant bootstrap script gives the myradio user CREATEDB
-permissions, so be sure to never run this in a production environment, or remove
-the permission before doing so.
+INSTALL:
+ - Make sure you have both "vagrant" and "virtualbox" installed and configured
+ - [Try reinstalling vagrant after virtualbox, or downloading an installer]
+ - Clone myradio, open the folder in console and run "vagrant up"
+ - [This may take a long time and use up all processing power]
+
+CONNECT:
+ - Open up "https://localhost:4443/myradio/" in a browser
+ - [Use Chrome as this often fails to run on Firefox]
+ - It will say "connection not private" so press "advanced" and then "proceed"
+
+DATABASE:
+ - On the intro screen press "Click here to continue"
+ - Enter the database details (see Database Credentials) and press Next
+ - Press "run task"
+ 
+USER:
+ - [Here you can make config changes but the defaults are autofilled]
+ - Press "complete starting set", scroll and press "save and continue"
+ - Input any first name and last name, an email (NOT a @york.ac.uk email) and a password
+ - [If you enter a @york.ac.uk email you will not be able to login at all]
+ - Login using the email and password you just enterted
+
+Notes
+-----
+Database Credentials:
+ - Hostname: localhost
+ - Database: myradio
+ - Username: myradio
+ - Password: myradio
+
+Other:
+ - To connect to the VM directly, login (with "vagrant", "vagrant") using SSH or VirtualBox
+ - Vagrant bootstrap script gives the myradio user CREATEDB permissions so be sure to never run this in a production environment, or remove the permission before doing so.
 
 Quickstart
 ==========

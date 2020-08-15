@@ -99,7 +99,7 @@ fieldset { padding:0; border:0; margin-top:25px; }
   display: inline-block;
 }
 .poweredon { cursor:pointer; }
-.s1on, .s2on, .s3on, .s4on, .s8on {
+.s1on, .s2on, .s3on, .s4on, .s5on, .s8on {
   border: 5px solid gold;
   height: 25px;
   box-sizing: content-box;
@@ -112,6 +112,8 @@ fieldset { padding:0; border:0; margin-top:25px; }
 .poweredon.s3off { background-color: #080; }
 .poweredon.s4on { background-color: #6b00a3; }
 .poweredon.s4off { background-color: #5f0093; }
+.poweredon.s5on { background-color: #b5009b; }
+.poweredon.s5off { background-color: #650058; }
 .poweredon.s8on { background-color: #ffa500; }
 .poweredon.s8off { background-color: #9c6600; }
 

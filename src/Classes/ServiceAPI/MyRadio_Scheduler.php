@@ -211,7 +211,7 @@ class MyRadio_Scheduler extends ServiceAPI
         self::wakeup();
 
         return self::$db->fetchAll(
-            'SELECT credit_type_id AS value, name AS text
+            'SELECT credit_type_id AS value, name AS text, is_in_byline
             FROM people.credit_type ORDER BY name ASC'
         );
     }
@@ -231,7 +231,8 @@ class MyRadio_Scheduler extends ServiceAPI
         self::initDB();
 
         return self::$db->fetchAll(
-            'SELECT schedule.show.show_id, metadata_value AS title
+            'SELECT DISTINCT ON (schedule.show.show_id)
+            schedule.show.show_id, metadata_value AS title
             FROM schedule.show, schedule.show_metadata
             WHERE schedule.show.show_id = schedule.show_metadata.show_id
             AND metadata_key_id IN (SELECT metadata_key_id FROM metadata.metadata_key WHERE name=\'title\')

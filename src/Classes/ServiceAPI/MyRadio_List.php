@@ -30,6 +30,11 @@ class MyRadio_List extends ServiceAPI
      */
     private $name;
 
+    public static function getGraphQLTypeName()
+    {
+        return 'MailingList';
+    }
+
     /**
      * If non-optin, stores the SQL query that returns the member memberids.
      *
@@ -192,7 +197,7 @@ class MyRadio_List extends ServiceAPI
         }
 
         return sizeof(
-            self::$db->query(
+            self::$db->fetchColumn(
                 'SELECT memberid FROM public.mail_subscription WHERE memberid=$1 AND listid=$2',
                 [$userid, $this->getID()]
             )
@@ -314,6 +319,10 @@ class MyRadio_List extends ServiceAPI
         return MyRadioEmail::resultSetToObjArray($this->archive);
     }
 
+    /**
+     * @param $str
+     * @return MyRadio_List|null
+     */
     public static function getByName($str)
     {
         self::initDB();
@@ -322,7 +331,7 @@ class MyRadio_List extends ServiceAPI
             [$str]
         );
         if (empty($r)) {
-            return;
+            return null;
         } else {
             return self::getInstance($r[0]);
         }
@@ -331,11 +340,14 @@ class MyRadio_List extends ServiceAPI
     /**
      * Return all mailing lists.
      *
-     * @return MyRadio_User[]
+     * @param bool $hideExcluded if true, will exclude lists with a negative ordering
+     * @return MyRadio_List[]
      */
-    public static function getAllLists()
+    public static function getAllLists($hideExcluded=false)
     {
-        $r = self::$db->fetchColumn('SELECT listid FROM mail_list');
+        $r = self::$db->fetchColumn('SELECT listid FROM mail_list '
+            . ($hideExcluded ? 'WHERE ordering >= 0' : '')
+            .' ORDER BY NULLIF(ordering, -1), ordering, listid');
 
         $lists = [];
         foreach ($r as $list) {

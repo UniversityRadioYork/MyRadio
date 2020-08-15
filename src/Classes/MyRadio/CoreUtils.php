@@ -161,6 +161,23 @@ class CoreUtils
     }
 
     /**
+     * Returns an RFC 2822-formatted timestamp (for JavaScript).
+     *
+     * @param int $time The time to get the timestamp for. Default right now.
+     *
+     * @return string a timestamp
+     * @assert (30) == 'Thu, 01 Jan 1970 00:00:30 +0000'
+     */
+    public static function getRfc2822Timestamp($time = null)
+    {
+        if ($time === null) {
+            $time = time();
+        }
+
+        return gmdate('r', $time);
+    }
+
+    /**
      * Returns the ISO8601 Year and Week Number for the given time.
      *
      * @param int $time The time to get the info for, default now.
@@ -226,6 +243,15 @@ class CoreUtils
     public static function makeInterval($start, $end)
     {
         return $end - $start.' seconds';
+    }
+
+    public static function intervalToSeconds($time)
+    {
+        $sec = 0;
+        foreach (array_reverse(explode(':', $time)) as $k => $v) {
+            $sec += pow(60, $k) * $v;
+        }
+        return $sec;
     }
 
     /**
@@ -626,6 +652,70 @@ class CoreUtils
         return $needle === '' || strrpos($haystack, $needle, -strlen($haystack)) !== false;
     }
 
+    /**
+     * Explode tags from string to array.
+     * We want to handle the case when people delimit with commas, spaces, or commas and
+     * spaces, as well as handling extended spaces.
+     *
+     * @param string $tags A tags string, comma separated.
+     *
+     * @return array The exploded tags.
+     *
+     * @throws MyRadioException when tags are longer than 24 characters.
+    **/
+    public static function explodeTags($tags)
+    {
+        $tags = preg_split('/[, ] */', $tags, null, PREG_SPLIT_NO_EMPTY);
+        $exploded_tags = [];
+        foreach ($tags as $tag) {
+            if (empty($tag)) {
+                continue;
+            }
+            if (strlen($tag) > 24) {
+                throw new MyRadioException(
+                    "Sorry, individual tags longer than 24 characters aren't allowed. Please try again.",
+                    400
+                );
+            }
+            // Add the valid tag to the returned array.
+            $exploded_tags[] = trim($tag);
+        }
+        return $exploded_tags;
+    }
+
+    public static function checkUploadPostSize()
+    {
+        // Check that any files don't go over the PHP post_max_size
+        // Otherwise, sometimes PHP won't return an error, causing an empty $_POST.
+        // This would cause confusing errors relating to empty fields.
+        // https://stackoverflow.com/questions/2133652/how-to-gracefully-handle-files-that-exceed-phps-post-max-size
+        $post_size = trim(ini_get('post_max_size'));
+        if ($post_size != '') {
+            $last = strtolower(substr($post_size, -1));
+        } else {
+            $last = '';
+        }
+        $post_size = intval($post_size); // Convert to int (strips any suffix letters)
+        switch ($last) {
+            // The 'G' modifier is available since PHP 5.1.0
+            case 'g':
+                $post_size *= 1024;
+                // fall through
+            case 'm':
+                $post_size *= 1024;
+                // fall through
+            case 'k':
+                $post_size *= 1024;
+                // fall through
+        }
+        if ($_SERVER['CONTENT_LENGTH'] > $post_size) {
+            throw new MyRadioException(
+                "The content uploaded in this form was too large for the server's configuration.",
+                500
+            );
+        }
+    }
+
     private function __construct()
     {
     }
@@ -686,4 +776,83 @@ class CoreUtils
         'Vinyl',
         'Broadcasting',
     ];
+
+    /**
+     * This whole thing is a bodge that needs to die.
+     *
+     * Duplicate the name-match-based subtype identification logic from 2016-site, until it is configured to
+     * properly use the [show, season]Subtype field from MyRadio, and MyRadio has a proper GUI for setting them.
+     *
+     * It sucks, but that's the cost of progress.
+     * @param $show_name string
+     * @return string
+     */
+    public static function getSubtypeForShow($show_name)
+    {
+        $blockMatches = [
+            ["ury: early morning", "primetime"],
+            ["ury breakfast", "primetime"],
+            ["ury lunch", "primetime"],
+            ["ury brunch", "primetime"],
+            ["URY Brunch", "primetime"],
+            ["URY Afternoon Tea:", "primetime"],
+            ["URY:PM", "primetime"],
+            ["Alumni Takeover:", "primetime"],
+
+            ["ury news", "news"],
+            ["ury sports", "news"],
+            ["ury football", "news"],
+            ["york sport report", "news"],
+            ["university radio talk", "news"],
+            ["candidate interview night", "news"],
+            ["election results night", "news"],
+            ["yusu election", "news"],
+            ["The Second Half With Josh Kerr", "news"],
+            ["URY SPORT", "news"],
+            ["URY News & Sport:", "news"],
+            ["URY N&S:", "news"],
+
+            ["ury speech", "speech"],
+            ["yorworld", "speech"],
+            ["in the stalls", "speech"],
+            ["screen", "speech"],
+            ["stage", "speech"],
+            ["game breaking", "speech"],
+            ["radio drama", "speech"],
+            ["Book Corner", "speech"],
+            ["Saturated Facts", "speech"],
+            ["URWatch", "speech"],
+            ["Society Challenge", "speech"],
+            ["Speech Showcase", "speech"],
+            ["URY Speech:", "speech"],
+
+            ["URY Music:", "music"],
+
+            ["roses live 20", "event"],
+            ["roses 20", "event"],
+            ["freshers 20", "event"],
+            ["woodstock", "event"],
+            ["movember", "event"],
+            ["panto", "event"],
+            ["101:", "event"],
+            ["Vanbrugh Chair Debate", "event"],
+            ["URY Does RAG Courtyard Takeover", "event"],
+            ["URY Presents", "event"],
+            ["URYOnTour", "event"],
+            ["URY On Tour", "event"],
+
+            ["YSTV", "collab"],
+            ["Nouse", "collab"],
+            ["York Politics Digest", "collab"],
+            ["Breakz", "collab"],
+        ];
+
+        $name = strtolower($show_name);
+        foreach ($blockMatches as $match) {
+            if (strpos($name, strtolower($match[0])) !== false /* bloody PHP */) {
+                return $match[1];
+            }
+        }
+        return 'regular';
+    }
 }

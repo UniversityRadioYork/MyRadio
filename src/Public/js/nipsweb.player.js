@@ -86,9 +86,12 @@ var NIPSWeb = function (d) {
                 $("ul.baps-channel li[timeslotitemid=\"findme\"]").attr("timeslotitemid", data.payload[i].timeslotitemid);
               }
               if (!data.payload[i].status) {
-                myradio.showAlert("Save failed! Reloading in 5 seconds.", "danger");
+                $(".baps-channel.ui-sortable").sortable("disable");
                 if (!debug) {
+                  myradio.showAlert("Save failed! Reloading in 5 seconds.", "danger");
                   setTimeout(function(){ reload(); }, 5000);
+                } else {
+                  myradio.showAlert("Save failed! Debug mode, please reload manually.", "danger");
                 }
               } else {
                 myradio.showAlert("Changes Saved Successfully", "success");
@@ -115,7 +118,7 @@ var NIPSWeb = function (d) {
    * Detect what changes have been made to the show plan
    */
   var calcChanges = function (li) {
-    if (!li.hasOwnProperty("attr")) {
+    if (!Object.prototype.hasOwnProperty.call(li, "attr")) {
       li = $(li);
     }
     changeQueue.queue(
@@ -745,7 +748,7 @@ var NIPSWeb = function (d) {
     var outputDevice = "default";
 
     try {
-      if (localStorage && localStorage.hasOwnProperty("nipsWebDeviceMapping")) {
+      if (localStorage && Object.prototype.hasOwnProperty.call(localStorage, "nipsWebDeviceMapping")) {
         var audioSinks = JSON.parse(localStorage.nipsWebDeviceMapping);
         if (audioSinks[channel]) {
           outputDevice = audioSinks[channel];

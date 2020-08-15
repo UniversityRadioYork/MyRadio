@@ -2,6 +2,7 @@
 
 namespace MyRadio\MyRadio;
 
+use MyRadio\MyRadio\CoreUtils;
 use MyRadio\MyRadioException;
 use MyRadio\Config;
 
@@ -206,9 +207,9 @@ class MyRadioForm
      * Adds a new MyRadioFormField to this MyRadioForm. You should initialise a new MyRadioFormField and pass the object
      * straight into the parameter of this method.
      *
-     * @param \MyRadioFormField $field The new MyRadioFormField to add to this MyRadioForm
+     * @param MyRadioFormField $field The new MyRadioFormField to add to this MyRadioForm
      *
-     * @return \MyRadioForm Returns this MyRadioForm for easy chaining
+     * @return MyRadioForm
      *
      * @throws MyRadioException Thrown if there are duplicate fields with the same name
      */
@@ -379,6 +380,8 @@ class MyRadioForm
      */
     public function readValues()
     {
+        CoreUtils::checkUploadPostSize();
+
         //If there was a captcha, verify it
         if ($this->captcha) {
             $valid = AuthUtils::verifyRecaptcha($_POST['g-recaptcha-response'], $_SERVER['REMOTE_ADDR']);

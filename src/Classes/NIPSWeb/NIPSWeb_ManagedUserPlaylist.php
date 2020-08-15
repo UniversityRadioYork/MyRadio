@@ -5,6 +5,8 @@
  */
 namespace MyRadio\NIPSWeb;
 
+use MyRadio\ServiceAPI\MyRadio_User;
+
 /**
  * The NIPSWeb_ManagedUserPlaylist class provide My Jingles and My Beds for users.
  *
@@ -26,11 +28,11 @@ class NIPSWeb_ManagedUserPlaylist extends NIPSWeb_ManagedPlaylist
     }
 
     /**
-     * Get the User Playlist Name from the Folder path. This is "My Beds" or "My Jingles".
+     * Get the User Playlist Name from the Folder path.
      *
      * @param string $id Folder
      *
-     * @return string "My Beds" or "My Jingles"
+     * @return string the playlist name
      */
     public static function getNameFromFolder($id)
     {
@@ -41,6 +43,15 @@ class NIPSWeb_ManagedUserPlaylist extends NIPSWeb_ManagedPlaylist
                 break;
             case 'beds':
                 return 'My Beds';
+                break;
+            case 'links':
+                return 'My Links';
+                break;
+            case 'sfx':
+                return 'My Sound Effects';
+                break;
+            case 'other':
+                return 'My Misc Things';
                 break;
             default:
                 return 'ERR_USR_PRESET_NOT_FOUND: '.$id;
@@ -88,15 +99,18 @@ class NIPSWeb_ManagedUserPlaylist extends NIPSWeb_ManagedPlaylist
     /**
      * Returns the managed user playlists for the given user.
      *
-     * @param MyRadio_User $user
      *
-     * @return array of My Beds and My Jingles playlists for the user
+     * @return array of Managed User Playlists for the current user.
      */
-    public static function getAllManagedUserPlaylistsFor($user)
+    public static function getAllManagedUserPlaylists()
     {
+        $user = MyRadio_User::getInstance();
         return [
             self::getInstance($user->getID().'/beds'),
             self::getInstance($user->getID().'/jingles'),
+            self::getInstance($user->getID().'/links'),
+            self::getInstance($user->getID().'/sfx'),
+            self::getInstance($user->getID().'/other')
         ];
     }
 }

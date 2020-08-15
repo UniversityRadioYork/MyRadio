@@ -875,12 +875,9 @@ class MyRadio_Track extends ServiceAPI
         }
 
         //Intersect with iTones if necessary, then return
-        return empty($options['itonesplaylistid']) ? $response :
-            array_intersect(
-                $response,
-                iTones_Playlist::getInstance($options['itonesplaylistid'])
-                ->getTracks()
-            );
+        return empty($options['itonesplaylistid']) ?
+            $response :
+            array_intersect($response, iTones_Playlist::getInstance($options['itonesplaylistid'])->getTracks());
     }
 
     /**
@@ -1120,7 +1117,7 @@ class MyRadio_Track extends ServiceAPI
         if (empty($options['number'])) {
             $options['number'] = 0;
         }
-        //Other Genre
+        //Other Genre (can be automatically updated later on the weekly genres updater)
         if (empty($options['genre'])) {
             $options['genre'] = 'o';
         }
@@ -1141,8 +1138,8 @@ class MyRadio_Track extends ServiceAPI
 
         $result = self::$db->query(
             'INSERT INTO rec_track (number, title, artist, length, genre, intro,
-            clean, recordid, digitised, digitisedby, duration)
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *',
+            clean, recordid, digitised, digitisedby, duration, last_edited_time, last_edited_memberid)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $10) RETURNING *',
             [
                 $options['number'],
                 trim($options['title']),
@@ -1155,6 +1152,7 @@ class MyRadio_Track extends ServiceAPI
                 $options['digitised'],
                 $_SESSION['memberid'],
                 $options['duration'],
+                CoreUtils::getTimestamp(),
             ]
         );
 
@@ -1554,5 +1552,10 @@ class MyRadio_Track extends ServiceAPI
         return self::$db->fetchAll(
             'SELECT genre_code AS value, genre_descr AS text FROM public.rec_genrelookup ORDER BY genre_descr ASC'
         );
+    }
+
+    public static function getGraphQLTypeName()
+    {
+        return 'Track';
     }
 }

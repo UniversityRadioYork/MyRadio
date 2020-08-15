@@ -5,6 +5,7 @@
  */
 namespace MyRadio;
 
+use GraphQL\Error\ClientAware;
 use MyRadio\MyRadio\AuthUtils;
 use MyRadio\MyRadio\CoreUtils;
 
@@ -12,7 +13,7 @@ use MyRadio\MyRadio\CoreUtils;
  * Extends the standard Exception class to provide additional functionality
  * and logging.
  */
-class MyRadioException extends \RuntimeException
+class MyRadioException extends \RuntimeException implements ClientAware
 {
     const FATAL = -1;
 
@@ -66,12 +67,17 @@ class MyRadioException extends \RuntimeException
         }
 
         //Set up the Exception
-        $this->error = "<p>MyRadio has encountered a problem processing this request.</p>
+        if ($code === 403) {
+            $this->error = "<p>I'm sorry, but you don't have permission to access this page.</p>
+                            <p>{$this->getMessage()}</p>";
+        } else {
+            $this->error = "<p>MyRadio has encountered a problem processing this request.</p>
                 <table class='errortable' style='color:#633'>
                   <tr><td>Message: </td><td>{$this->getMessage()}</td></tr>
                   <tr><td>Location: </td><td>{$this->getFile()}:{$this->getLine()}</td></tr>
-                  <tr><td>Trace: </td><td>".nl2br($this->traceStr).'</td></tr>
+                  <tr><td>Trace: </td><td>" . nl2br($this->traceStr) . '</td></tr>
                 </table>';
+        }
     }
 
     /**
@@ -91,6 +97,7 @@ class MyRadioException extends \RuntimeException
                 && class_exists('\MyRadio\MyRadioEmail')
                 && $this->code !== 400
                 && $this->code !== 401
+                && $this->code !== 403
             ) {
                 MyRadioEmail::sendEmailToComputing(
                     '[MyRadio] Exception Thrown',
@@ -141,7 +148,7 @@ class MyRadioException extends \RuntimeException
                         $twig = CoreUtils::getTemplateObject();
                         $twig->setTemplate('error.twig')
                             ->addVariable('serviceName', 'Error')
-                            ->addVariable('title', 'Internal Server Error')
+                            ->addVariable('title', $this->getCodeName())
                             ->addVariable('body', $this->error)
                             ->addVariable('uri', $_SERVER['REQUEST_URI'])
                             ->render();
@@ -176,8 +183,8 @@ class MyRadioException extends \RuntimeException
                         //We can use a pretty full-page output
                         $twig = CoreUtils::getTemplateObject();
                         $twig->setTemplate('error.twig')
-                            ->addVariable('title', '')
-                            ->addVariable('body', $error)
+                            ->addVariable('title', $this->getCodeName())
+                            ->addVariable('body', $this->error)
                             ->addVariable('uri', $_SERVER['REQUEST_URI'])
                             ->render();
                     } else {
@@ -194,5 +201,15 @@ class MyRadioException extends \RuntimeException
     public static function resetExceptionCount()
     {
         self::$count = 0;
+    }
+
+    public function isClientSafe()
+    {
+        return $this->code < 500;
+    }
+
+    public function getCategory()
+    {
+        return 'oh_dear';
     }
 }

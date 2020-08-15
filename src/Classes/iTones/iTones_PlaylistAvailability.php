@@ -181,6 +181,15 @@ class iTones_PlaylistAvailability extends \MyRadio\MyRadio\MyRadio_Availability
                         'explanation' => 'A heavier playlist is more likely to be played.',
                     ]
                 )
+            )
+            ->addField(
+                new MyRadioFormField(
+                    'playlistid',
+                    MyRadioFormField::TYPE_HIDDEN,
+                    [
+                        'value' => $playlistid,
+                    ]
+                )
             );
     }
 

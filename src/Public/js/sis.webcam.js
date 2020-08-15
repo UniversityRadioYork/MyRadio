@@ -21,7 +21,7 @@ var Webcam = function () {
         this.innerHTML = "It looks like webcams haven't been set up yet.";
       } else {
         for (var i in data["streams"]) {
-          if (!webcams.hasOwnProperty(data["streams"][i]["streamid"])) {
+          if (!Object.prototype.hasOwnProperty.call(webcams, data["streams"][i]["streamid"])) {
             var button = document.createElement("button"),
               figure = document.createElement("figure"),
               caption = document.createElement("figcaption"),

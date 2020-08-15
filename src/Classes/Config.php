@@ -269,11 +269,11 @@ final class Config
 
     /**
      * The full web address to the image that will be served on a member's profile page if they do not have a profile
-     * photo. The original value, /static/img/default_show_player.png is the main website's placeholder for shows.
+     * photo. The original value, /images/default_show_profile.png is the main website's placeholder for shows.
      *
      * @var string
      */
-    public static $default_person_uri = '/static/img/default_show_player.png';
+    public static $default_person_uri = '/images/default_show_profile.png';
 
     /**
      * The full web address of the image that will be shown for a vacant officer position.
@@ -306,6 +306,12 @@ final class Config
      * @var string
      */
     public static $jukebox_obit_file = '/jukebox/OBIT.mp3';
+
+    /**
+     * The category of playlists that Jukebox should get songs from.
+     * @var int
+     */
+    public static $jukebox_playlist_category_id = 2;
 
     /**
      * The Samba File Share path to the Central Database.
@@ -657,6 +663,11 @@ final class Config
      */
     public static $obit_list_id = 36;
 
+    /**
+     * @var bool Enable analytics?
+     */
+    public static $enable_analytics = false;
+
     /**** DAEMON CONFIGURATION ****/
     public static $d_BAPSSync_enabled = false;
     public static $d_EmailQueue_enabled = true;
@@ -673,12 +684,57 @@ final class Config
     public static $long_name = 'University Radio York';
     public static $founded = '1967';
     public static $facebook = 'https://www.facebook.com/URY1350';
+
+    /**** SIGNUP EMAILS ****/
+    public static $welcome_email_sender_memberid = null;
     public static $welcome_email = <<<EOT
 
-   This is a welcome email. You can use #NAME to get the user's first name,
-   and include #USER and #PASS to tell them their newly created login details.
+   This is a welcome (sign-up) email. You can use #NAME to get the user's first name.
+   
+   Here you should probably tell people about what they should do next to get started.
+   
+   You can set the ($)welcome_email_sender_memberid variable to send this email from/reply to
+   someone important, maybe the head of station, so they can ask questions!
 
 EOT;
+    public static $account_details_email = <<<EOT
+
+   This is an email to give a newly signed-up member their new login details.
+   You can use #NAME to get the new member's first name.
+   You can use #USER and #PASS to tell them their newly created login details.
+   
+   This email will send from a no-reply email so that user's don't spread their login details.
+
+EOT;
+
+    public static $new_officer_email = <<<EOT
+
+    This email will be sent to someone when they get elected to a new officership.
+
+    Here you should probably tell them how to do their job.
+EOT;
+
+    /**
+     * The MyRadio features that are under maintenance.
+     *
+     * This should be an associative array of arrays, where the keys are module names
+     * and the values are the actions in that module that are under maintenance and should be disabled for users.
+     *
+     * For example,
+     *
+     *     [
+     *      'scheduler' => ['editShow', 'editSeason']
+     *     ]
+     *
+     * would disable editing (and creation) of shows and seasons.
+     *
+     * Instead of passing an array of action names, you can pass '*', which would treat all actions in that module
+     * as under maintenance.
+     *
+     * You can also set $maintenance_modules to '*' to shut down MyRadio altogether (don't do that).
+     *
+     */
+    public static $maintenance_modules = [];
 
     /**
      * The constructor doesn't do anything practical.

@@ -5,6 +5,7 @@
  */
 namespace MyRadio\ServiceAPI;
 
+use MyRadio\MyRadio\MyRadioSession;
 use ReflectionClass;
 use MyRadio\Config;
 use MyRadio\MyRadioException;
