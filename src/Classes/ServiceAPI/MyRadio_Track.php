@@ -1537,6 +1537,7 @@ class MyRadio_Track extends ServiceAPI
     {
         // Start a transaction. We're gonna have some fun.
         self::$db->query('BEGIN');
+        // Use repeatable read - to ensure that all queries in this TX read at the same "point in time"
         self::$db->query('SET TRANSACTION ISOLATION LEVEL REPEATABLE READ');
         // Get the last thing that was tracklisted - this is either jukebox or WebStudio
         // The 30 minutes check is to avoid having something linger for too long if WS forgets to end the tracklist
@@ -1572,6 +1573,7 @@ class MyRadio_Track extends ServiceAPI
                 AND timestopped IS NULL
                 AND trackid IS NOT NULL
                 AND timeplayed <= NOW() AND timeplayed > (NOW() - interval \'30 minutes\')
+                LIMIT 1
                 ',
                 [ $selAction ]
             );
