@@ -1573,7 +1573,8 @@ class MyRadio_Track extends ServiceAPI
                 WHERE selaction = $1
                 AND timestopped IS NULL
                 AND trackid IS NOT NULL
-                AND timeplayed <= (NOW() - interval \'30 seconds\') AND timeplayed > (NOW() - interval \'30 minutes\')
+                AND timeplayed <= (NOW() AT TIME ZONE \'Europe/London\' - interval \'30 seconds\')
+                AND timeplayed > (NOW() AT TIME ZONE \'Europe/London\' - interval \'30 minutes\')
                 ORDER BY timeplayed DESC
                 LIMIT 1
                 ',
