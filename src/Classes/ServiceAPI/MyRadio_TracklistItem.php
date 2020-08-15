@@ -365,28 +365,6 @@ class MyRadio_TracklistItem extends ServiceAPI
     }
 
     /**
-     * Gets the TracklistItem that's on air *right now*.
-     *
-     * @param bool $include_playout if true, will include tracks played by Jukebox while off air
-     * @return null|MyRadio_TracklistItem the current TracklistItem, or null if there is none
-     */
-    public static function getNowPlaying($include_playout=false)
-    {
-        $item = self::$db->fetchOne(
-            'SELECT audiologid FROM tracklist.tracklist
-            WHERE timestart <= NOW() AND timestart > (NOW() - interval \'30 minutes\') AND timestop IS NULL
-            AND (state IS NULL OR state = \'c\'' .($include_playout ? ' OR state = \'o\'' : '') . ')
-            ORDER BY timestart DESC
-            LIMIT 1',
-            []
-        );
-        if (empty($item)) {
-            return null;
-        }
-        return self::getInstance($item['audiologid']);
-    }
-
-    /**
      * Takes as input a result set of num_plays and trackid, and generates the extended Datasource output used by
      * getTracklistStats(.*)().
      *

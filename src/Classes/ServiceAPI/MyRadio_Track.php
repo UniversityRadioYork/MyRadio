@@ -1528,6 +1528,91 @@ class MyRadio_Track extends ServiceAPI
     }
 
     /**
+     * Gets the track that's on air *right now*.
+     *
+     * @param bool $include_playout if true, will include tracks played by Jukebox while off air
+     * @return null|array
+     */
+    public static function getNowPlaying($include_playout=false)
+    {
+        // Start a transaction. We're gonna have some fun.
+        self::$db->query('BEGIN');
+        self::$db->query('SET TRANSACTION ISOLATION LEVEL REPEATABLE READ');
+        // Get the last thing that was tracklisted - this is either jukebox or WebStudio
+        // The 30 minutes check is to avoid having something linger for too long if WS forgets to end the tracklist
+        $lastTracklisted = self::$db->fetchOne(
+            'SELECT audiologid, timestart, trackid, track, artist, album
+            FROM tracklist.tracklist
+            LEFT OUTER JOIN tracklist.track_rec USING (audiologid)
+            LEFT OUTER JOIN tracklist.track_notrec USING (audiologid)
+            WHERE timestart <= NOW() AND timestart > (NOW() - interval \'30 minutes\') AND timestop IS NULL
+            AND (state IS NULL OR state = \'c\'' .($include_playout ? ' OR state = \'o\'' : '') . ')
+            ORDER BY timestart DESC
+            LIMIT 1',
+            []
+        );
+        // Check what's currently on air - if it's a physical studio or OB we'll need to check BAPS
+        // We do this in SQL, rather than via MyRadio_Selector, to maintain transaction consistency
+        $result = self::$db->fetchColumn(
+            'SELECT action FROM public.selector WHERE time <= NOW()
+            AND action >= 4 AND action <= 11
+            ORDER BY time DESC
+            LIMIT 1',
+            []
+        );
+        $selAction = $result[0] ?? 0;
+        if ($selAction === 4 /* Studio 1 */ || $selAction === 5 /* Studio 2 */ || $selAction == 7 /* OB */) {
+            // Ditto on the 30 minutes
+            $lastBapsLogged = self::$db->fetchOne(
+                'SELECT audiologid, timeplayed AS timestart, trackid
+                FROM public.baps_audiolog
+                INNER JOIN public.baps_audio USING (audioid)
+                INNER JOIN tracklist.selbaps ON baps_audiolog.serverid = selbaps.bapsloc
+                WHERE selaction = $1
+                AND timestopped IS NULL
+                AND trackid IS NOT NULL
+                AND timeplayed <= NOW() AND timeplayed > (NOW() - interval \'30 minutes\')
+                ',
+                [ $selAction ]
+            );
+            if (!empty($lastBapsLogged)) {
+                if (strtotime($lastBapsLogged['timestart']) > strtotime($lastTracklisted['timestart'])) {
+                    // Last BAPS entry is newer than last tracklist entry.
+                    $lastTracklisted = $lastBapsLogged;
+                }
+            }
+        }
+        // We're done querying
+        self::$db->query('COMMIT');
+
+        if (empty($lastTracklisted)) {
+            // Nothing playing right now
+            return null;
+        } else if (!empty($lastTracklisted['trackid'])) {
+            // track_rec
+            return [
+                'track' => self::getInstance($lastTracklisted['trackid']),
+                'start_time' => $lastTracklisted['timestart']
+            ];
+        } else {
+            // track_notrec (manual tracklisting)
+            // Double-check it was in the last five minutes
+            if (strtotime($lastTracklisted['timestart']) > (time() - 300)) {
+                return [
+                    'track' => [
+                        'title' => $lastTracklisted['track'],
+                        'artist' => $lastTracklisted['artist'],
+                        'album' => $lastTracklisted['album']
+                    ],
+                    'start_time' => $lastTracklisted['timestart']
+                ];
+            } else {
+                return null;
+            }
+        }
+    }
+
+    /**
      * Returns a list of potential clean statuses, organised so
      * they can be used as a SELECT MyRadioFormField data source.
      */
