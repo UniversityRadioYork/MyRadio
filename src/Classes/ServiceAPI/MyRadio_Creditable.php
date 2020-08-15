@@ -104,13 +104,13 @@ trait MyRadio_Creditable
         $credit_types = MyRadio_Scheduler::getCreditTypes();
         $credit_types_in_byline = [];
         foreach ($credit_types as $type) {
-            if ($type["is_in_byline"]) {
+            if ($type["is_in_byline"] == "t") {
                 $credit_types_in_byline[] = $type["value"];
             }
         }
         $str = '';
         foreach ($this->getCredits() as $credit) {
-            if (inarray($credit['type'], $credit_types_in_byline)) {
+            if (in_array($credit['type'], $credit_types_in_byline)) {
                 $str .= $credit['User']->getName().', ';
             } else {
                 continue;
