@@ -211,7 +211,7 @@ class MyRadio_Scheduler extends ServiceAPI
         self::wakeup();
 
         return self::$db->fetchAll(
-            'SELECT credit_type_id AS value, name AS text
+            'SELECT credit_type_id AS value, name AS text, is_in_byline
             FROM people.credit_type ORDER BY name ASC'
         );
     }

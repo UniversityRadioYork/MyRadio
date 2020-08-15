@@ -5,6 +5,7 @@
 namespace MyRadio\ServiceAPI;
 
 use MyRadio\ServiceAPI\MyRadio_User;
+use MyRadio\ServiceAPI\MyRadio_Scheduler;
 
 /**
  * The MyRadio_Creditable trait adds credits functionality to an object.
@@ -100,12 +101,19 @@ trait MyRadio_Creditable
      */
     public function getPresenterString()
     {
+        $credit_types = MyRadio_Scheduler::getCreditTypes();
+        $credit_types_in_byline = [];
+        foreach ($credit_types as $type) {
+            if ($type["is_in_byline"]) {
+                $credit_types_in_byline[] = $type["value"];
+            }
+        }
         $str = '';
         foreach ($this->getCredits() as $credit) {
-            if ($credit['type'] !== 1) {
-                continue;
-            } else {
+            if (inarray($credit['type'], $credit_types_in_byline)) {
                 $str .= $credit['User']->getName().', ';
+            } else {
+                continue;
             }
         }
 
