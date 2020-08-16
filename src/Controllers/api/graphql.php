@@ -7,6 +7,7 @@ use GraphQL\Language\AST\UnionTypeDefinitionNode;
 use GraphQL\Type\Definition\InterfaceType;
 use GraphQL\Type\Definition\ResolveInfo;
 use GraphQL\Type\Definition\UnionType;
+use GraphQL\Type\Definition\WrappingType;
 use GraphQL\Utils\BuildSchema;
 use MyRadio\MyRadio\GraphQLContext;
 use MyRadio\MyRadio\GraphQLUtils;
@@ -36,6 +37,9 @@ $typeConfigDecorator = function ($typeConfig, TypeDefinitionNode $typeDefinition
             // If only one is left, use that, otherwise it's ambiguous
             /** @var UnionType $union */
             $union = $info->returnType;
+            if ($union instanceof WrappingType) {
+                $union = $union->getWrappedType(true);
+            }
             /** @var InterfaceType $myRadioObjectType */
             $myRadioObjectType = $info->schema->getType('MyRadioObject');
             $candidates = [];
@@ -224,6 +228,16 @@ function graphQlResolver($source, $args, GraphQLContext $context, ResolveInfo $i
         if (array_key_exists($fieldName, $source)) {
             if (GraphQLUtils::isAuthorisedToAccess($info, null, null)) {
                 return GraphQLUtils::processScalarIfNecessary($info, $source[$fieldName]);
+            } else {
+                $context->addWarning("Unauthorised to access $typeName::$fieldName");
+                return GraphQLUtils::returnNullOrThrowForbiddenException($info);
+            }
+        } else {
+            // We're on an array, but the key we're looking for doesn't exist. No hope of doing the rest
+            // of the checks, for fear of returning the array itself.
+            // Do an authz check just for the warning, but return null.
+            if (GraphQLUtils::isAuthorisedToAccess($info, null, null)) {
+                return null;
             } else {
                 $context->addWarning("Unauthorised to access $typeName::$fieldName");
                 return GraphQLUtils::returnNullOrThrowForbiddenException($info);

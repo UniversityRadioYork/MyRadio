@@ -318,7 +318,6 @@ type Season implements Node & MyRadioObject @auth(hook: ViewShow) {
     subtype: ShowSubtype!
     seasonNumber: Int!
     allTimeslots: [Timeslot]
-    credits: [ShowCredit]
     firstTime: DateTime @coerce(hooks: [FalseToNull])
 }
 
@@ -348,6 +347,7 @@ type Timeslot implements Node & MyRadioObject @auth(hook: ViewShow) {
     webpage: String!
     uploadState: String @meta(key: "upload_state")
     tracklist: [TracklistItem!] @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_TracklistItem", method: "getTracklistForTimeslot", callingConvention: FirstArgCurrentObject)
+    uploadState: String @meta(key: "upload_state")
 }
 
 type Quote implements Node {
@@ -401,6 +401,22 @@ type FindShowByTitleResult { # TODO: icky
     title: String!
 }
 
+type CurrentAndNext_PseudoTimeslot {
+    title: String!
+    desc: String!
+    photo: String!
+    start_time: DateTime
+    "This will be a string containing either a Unix timestamp, or \"The End of Time\"."
+    end_time: String!
+}
+
+union CurrentAndNextObject = Timeslot | CurrentAndNext_PseudoTimeslot
+
+type CurrentAndNext {
+    current: CurrentAndNextObject!
+    next: [CurrentAndNextObject!]
+}
+
 type Query {
     node(id: ID): Node
 
@@ -419,6 +435,7 @@ type Query {
     currentTimeslot: Timeslot @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Timeslot", method: "getCurrentTimeslot")
     nextTimeslot: Timeslot @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Timeslot", method: "getNextTimeslot")
     nineDaySchedule(weekno: Int!, year: Int): Timeslot @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Timeslot", method: "get9DaySchedule")
+    currentAndNext(time: Int, n: Int, filter: [Int]): CurrentAndNext @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Timeslot", method: "getCurrentAndNextObjects") @auth(constants: [])
     previousTimeslots(time: Int, n: Int, filter: [Int]): [Timeslot] @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Timeslot", method: "getPreviousTimeslots")
 
     isTerm: Boolean @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Scheduler", method: "isTerm") @auth(constants: [])
