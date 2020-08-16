@@ -126,11 +126,11 @@ function graphQlResolver($source, $args, GraphQLContext $context, ResolveInfo $i
     $fieldName = $info->fieldName;
     // Query and Mutation deserve special handling
     if ($typeName === 'Query' || $typeName === 'Mutation') {
-        // If we're on the Query type, we're entering the graph, so we'll want a static method.
-        // Unlike elsewhere in the graph, we can assume everything on Query will have an @bind.
+        // If we're on the Query or Mutation type, we're entering the graph, so we'll want a static method.
+        // Unlike elsewhere in the graph, we can assume everything on Query/Mutation will have an @bind.
         $bindDirective = GraphQLUtils::getDirectiveByName($info, 'bind');
         if (!$bindDirective) {
-            throw new MyRadioException("Tried to resolve $fieldName on Query but it didn't have an @bind");
+            throw new MyRadioException("Tried to resolve $fieldName on $typeName but it didn't have an @bind");
         }
         $bindArgs = GraphQLUtils::getDirectiveArguments($bindDirective);
         if (isset($bindArgs['class'])) {
@@ -139,14 +139,14 @@ function graphQlResolver($source, $args, GraphQLContext $context, ResolveInfo $i
             $className = $bindArgs['class']->value;
         } else {
             throw new MyRadioException(
-                "Tried to resolve $fieldName on Query but its @bind didn't have a class"
+                "Tried to resolve $fieldName on $typeName but its @bind didn't have a class"
             );
         }
         if (isset($bindArgs['method'])) {
             $methodName = $bindArgs['method']->value;
         } else {
             throw new MyRadioException(
-                "Tried to resolve $fieldName on Query but its @bind didn't have a method"
+                "Tried to resolve $fieldName on $typeName but its @bind didn't have a method"
             );
         }
         // Wonderful!
