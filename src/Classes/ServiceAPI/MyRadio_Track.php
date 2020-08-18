@@ -1561,7 +1561,7 @@ class MyRadio_Track extends ServiceAPI
             LIMIT 1',
             []
         );
-        $selAction = $result[0] ?? 0;
+        $selAction = isset($result[0]) ? intval($result[0]) : 0;
         if ($selAction === 4 /* Studio 1 */ || $selAction === 5 /* Studio 2 */ || $selAction == 7 /* OB */) {
             // Ditto on the 30 minutes
             // The 30 *seconds* is to (hopefully) catch PFLs
