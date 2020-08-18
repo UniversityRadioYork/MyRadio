@@ -1542,7 +1542,7 @@ class MyRadio_Track extends ServiceAPI
         // Get the last thing that was tracklisted - this is either jukebox or WebStudio
         // The 30 minutes check is to avoid having something linger for too long if WS forgets to end the tracklist
         $lastTracklisted = self::$db->fetchOne(
-            'SELECT audiologid, timestart, trackid, track, artist, album
+            'SELECT audiologid, timestart AT TIME ZONE 'Europe/London' as timestart, trackid, track, artist, album
             FROM tracklist.tracklist
             LEFT OUTER JOIN tracklist.track_rec USING (audiologid)
             LEFT OUTER JOIN tracklist.track_notrec USING (audiologid)
@@ -1566,7 +1566,7 @@ class MyRadio_Track extends ServiceAPI
             // Ditto on the 30 minutes
             // The 30 *seconds* is to (hopefully) catch PFLs
             $lastBapsLogged = self::$db->fetchOne(
-                'SELECT audiologid, timeplayed AS timestart, trackid
+                'SELECT audiologid, timeplayed AT TIME ZONE 'Europe/London' AS timestart, trackid
                 FROM public.baps_audiolog
                 INNER JOIN public.baps_audio USING (audioid)
                 INNER JOIN tracklist.selbaps ON baps_audiolog.serverid = selbaps.bapsloc
