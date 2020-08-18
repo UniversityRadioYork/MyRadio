@@ -282,9 +282,6 @@ type TrackNotRec {
     title: String!
     artist: String!
     album: String!
-    trackno: Int
-    length: Duration
-    record_label: String
 }
 
 union TracklistTrack = Track | TrackNotRec
@@ -292,8 +289,13 @@ union TracklistTrack = Track | TrackNotRec
 type TracklistItem implements Node & MyRadioObject {
     id: ID!
     itemId: Int! @bind(method: "getID")
-    track: TracklistTrack
+    track: TracklistTrack @auth(constants: [])
     startTime: DateTime!
+}
+
+type NowPlayingTrack @auth(constants: []) {
+    track: TracklistTrack!
+    start_time: DateTime
 }
 
 type Show implements Node & MyRadioObject @auth(hook: ViewShow) {
@@ -436,6 +438,8 @@ type Query {
     nineDaySchedule(weekno: Int!, year: Int): Timeslot @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Timeslot", method: "get9DaySchedule")
     currentAndNext(time: Int, n: Int, filter: [Int]): CurrentAndNext @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Timeslot", method: "getCurrentAndNextObjects") @auth(constants: [])
     previousTimeslots(time: Int, n: Int, filter: [Int]): [Timeslot] @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Timeslot", method: "getPreviousTimeslots")
+
+    nowPlaying(include_playout: Boolean): NowPlayingTrack @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Track", method: "getNowPlaying") @auth(constants: [])
 
     isTerm: Boolean @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Scheduler", method: "isTerm") @auth(constants: [])
 
