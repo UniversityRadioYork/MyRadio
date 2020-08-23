@@ -27,6 +27,10 @@ class MyRadio_User extends ServiceAPI implements APICaller
 {
     use MyRadio_APICaller_Common;
 
+    public const EOL_STATE_NONE = 0;
+    public const EOL_STATE_DEACTIVATED = 10;
+    public const EOL_STATE_ARCHIVED = 20;
+
     /**
      * Stores the currently logged in User's object after first use.
      * @var MyRadio_User|boolean
@@ -175,7 +179,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
 
     /**
      * Users radio time, calculated from signed in shows
-     * 
+     *
      * @var mixed
      */
     private $radioTime;
@@ -203,6 +207,13 @@ class MyRadio_User extends ServiceAPI implements APICaller
     private $contract_signed;
 
     /**
+     * The user profile's end-of-life state.
+     *
+     * @var int
+     */
+    private $eol_state;
+
+    /**
      * Initiates the User variables.
      *
      * @param int $memberid The ID of the member to initialise
@@ -215,7 +226,8 @@ class MyRadio_User extends ServiceAPI implements APICaller
             'SELECT fname, sname, college AS collegeid, l_college.descr AS college,
             phone, email, receive_email::boolean::text, local_name, local_alias, eduroam,
             account_locked::boolean::text, last_login, joined, profile_photo, bio,
-            auth_provider, require_password_change::boolean::text, contract_signed::boolean::text
+            auth_provider, require_password_change::boolean::text, contract_signed::boolean::text,
+            eol_state
             FROM member, l_college
             WHERE memberid=$1
             AND member.college = l_college.collegeid
@@ -670,6 +682,18 @@ class MyRadio_User extends ServiceAPI implements APICaller
     }
 
     /**
+     * Returns this User account's end-of-life state.
+     *
+     * Use the MyRadio_User::EOL_STATE_* constants to compare, using >= if appropriate.
+     *
+     * @return int
+     */
+    public function getEolState()
+    {
+        return $this->eol_state;
+    }
+
+    /**
      * Get all the User's past, present and future officerships.
      * @param bool $includeMemberships if true, non-officer team memberships will be included
      * @return MyRadio_UserOfficership[]
@@ -707,7 +731,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
         if (!$this->radioTime) {
             try{
                 $this->radioTime = self::$db->fetchColumn(
-                    'SELECT sum(duration)         
+                    'SELECT sum(duration)
                     FROM schedule.show_season_timeslot
             INNER JOIN schedule.show_season USING (show_season_id)
             INNER JOIN schedule.show_credit USING (show_id)
@@ -870,15 +894,17 @@ class MyRadio_User extends ServiceAPI implements APICaller
             return self::$db->fetchAll(
                 'SELECT memberid, fname, sname, eduroam, local_alias FROM member
                 WHERE fname ILIKE $1 || \'%\' AND sname ILIKE $2 || \'%\'
+                AND eol_state < $4
                 ORDER BY sname, fname LIMIT $3',
-                [$names[0], $names[1], $limit]
+                [$names[0], $names[1], $limit, self::EOL_STATE_DEACTIVATED]
             );
         } else {
             return self::$db->fetchAll(
                 'SELECT memberid, fname, sname, eduroam, local_alias FROM member
                 WHERE fname ILIKE $1 || \'%\' OR sname ILIKE $1 || \'%\'
+                AND eol_state < $3
                 ORDER BY sname, fname LIMIT $2',
-                [$name, $limit]
+                [$name, $limit, self::EOL_STATE_DEACTIVATED]
             );
         }
     }
@@ -2050,6 +2076,93 @@ class MyRadio_User extends ServiceAPI implements APICaller
         if (($from === null || $from < time()) && ($to === null || $to > time())) {
             $this->permissions[] = (int) $authid;
         }
+    }
+
+    /**
+     * Deactivates this user (EOL Tier 1). They will not be able to sign in, receive email, receive credits for
+     * any shows, and any officerships will be ended.
+     *
+     * Note: DO NOT CALL THIS DIRECTLY outside of the relevant daemon! Instead use requestDeactivation, as it
+     * properly enqueues the request and sends a warning email.
+     */
+    public function deactivate()
+    {
+        // Start a transaction.
+        self::$db->query('BEGIN');
+
+        // Update profile
+        self::$db->query('
+            UPDATE public.member
+            SET eol_state = $2,
+                receive_email = FALSE,
+                account_locked = TRUE
+            WHERE memberid = $1
+            ', [
+            $this->getID(),
+            MyRadio_User::EOL_STATE_DEACTIVATED
+        ]);
+
+        // End all officerships
+        self::$db->query('
+            UPDATE public.member_officer
+            SET till_date = NOW()
+            WHERE memberid = $1
+            AND till_date IS NULL
+            ', [
+            $this->getID()
+        ]);
+
+        // Unsub from all email
+        self::$db->query('
+            DELETE FROM public.mail_subscription
+            WHERE memberid = $1
+            AND (SELECT subscribable FROM public.mail_list WHERE mail_list.listid = mail_subscription.listid)
+            ', [
+            $this->getID()
+        ]);
+
+        // Don't forget!
+        self::$db->query('COMMIT');
+
+        // Sync up local changes
+        $this->eol_state = MyRadio_User::EOL_STATE_DEACTIVATED;
+        $this->receive_email = false;
+        $this->account_locked = true;
+
+        // Yeet the entire cache
+        self::$cache->purge();
+
+        // And send a goodbye email
+        // We use mail() manually to avoid hacking with the innards of MyRadioEmail
+        // (as it'd refuse to send due to receive_email being false)
+        // TODO: is this a good idea?
+        $domain = Config::$email_domain;
+        $long_name = Config::$long_name;
+        $short_name = Config::$short_name;
+        mail(
+            $this->getName() . ' <' . $this->getEmail() . '>',
+            'MyRadio Account Deactivated',
+            utf8_encode(<<<EMAIL
+Hello,
+
+As requested, your MyRadio account has been deactivated. You can no longer sign in, and you will not receive any email after this.
+
+If you ever wish to re-activate your account, please email computing@$domain.
+
+If you did not request the deactivation of your account, please contact us immediately at computing@$domain.
+
+Thank you for all your contributions to $long_name.
+
+Yours sincerely,
+$short_name Computing Team
+EMAIL
+),
+          implode('\r\n', [
+              'From: '.Config::$long_name.' <no-reply@'.Config::$email_domain.'>',
+              'Return-Path: no-reply@'.Config::$email_domain,
+              'Content-Type: text/plain; charset=utf-8'
+          ])
+        );
     }
 
     /**
