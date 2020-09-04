@@ -4,6 +4,7 @@
         "\\MyRadio\\ServiceAPI\\MyRadio_Show": "show",
         "\\MyRadio\\ServiceAPI\\MyRadio_Season": "season",
         "\\MyRadio\\ServiceAPI\\MyRadio_Timeslot": "timeslot",
+        "\\MyRadio\\ServiceAPI\\MyRadio_Event": "event",
         "\\MyRadio\\ServiceAPI\\MyRadio_Album": "album",
         "\\MyRadio\\ServiceAPI\\MyRadio_Demo": "demo",
         "\\MyRadio\\ServiceAPI\\MyRadio_List": "list",
@@ -145,11 +146,12 @@
                 }
             },
             "anyOf": [{
-                "required": ["eduroam"]
-            },
-            {
-                "required": ["email"]
-            }]
+                    "required": ["eduroam"]
+                },
+                {
+                    "required": ["email"]
+                }
+            ]
         }
     }
 }

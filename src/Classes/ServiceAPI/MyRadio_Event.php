@@ -86,7 +86,7 @@ class MyRadio_Event extends ServiceAPI
             ORDER BY start_time";
             $rows = self::$db->fetchAll($sql, [$this->getID()]);
             foreach ($rows as $row) {
-                $this->timeslots[] = $row["show_season_timeslot_id"];
+                $this->timeslots[] = intval($row["show_season_timeslot_id"]);
             }
         }
         return MyRadio_Timeslot::resultSetToObjArray($this->timeslots);
