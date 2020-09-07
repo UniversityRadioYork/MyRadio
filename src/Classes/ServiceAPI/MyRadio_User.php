@@ -2139,6 +2139,45 @@ EOL
         );
     }
 
+    public function requestArchival()
+    {
+        // Update profile
+        self::$db->query('
+            UPDATE public.member
+            SET eol_state = $2,
+                eol_requested_at = NOW()
+            WHERE memberid = $1
+            ', [
+            $this->getID(),
+            MyRadio_User::EOL_STATE_PENDING_ARCHIVE
+        ]);
+
+        $this->eol_state = MyRadio_User::EOL_STATE_PENDING_ARCHIVE;
+
+        // Send warning email
+        // TODO: this won't send if they have receive email disabled. Normally we'd respect that,
+        // but account EOL is a serious enough thing that I'd consider overriding it?
+        $domain = Config::$email_domain;
+        $short_name = Config::$short_name;
+        MyRadioEmail::sendEmailToUser(
+            $this,
+            'MyRadio account archival requested',
+            <<<EOL
+Hello,
+
+This is to confirm that you have requested to archive your MyRadio account.
+
+Your account will be archived automatically in two days (give or take a few hours). You do not need to do anything else.
+
+If you did not request this archival, please contact computing@$domain IMMEDIATELY, as your account may have been compromised.
+
+Yours sincerely,
+$short_name Computing Team
+EOL
+
+        );
+    }
+
     /**
      * Deactivates this user (EOL Tier 1). They will not be able to sign in, receive email, receive credits for
      * any shows, and any officerships will be ended.
