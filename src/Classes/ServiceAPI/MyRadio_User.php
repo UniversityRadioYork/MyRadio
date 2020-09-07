@@ -31,6 +31,21 @@ class MyRadio_User extends ServiceAPI implements APICaller
     public const EOL_STATE_DEACTIVATED = 10;
     public const EOL_STATE_ARCHIVED = 20;
 
+    public const EOL_STATE_PENDING_DEACTIVATE = 1;
+    public const EOL_STATE_PENDING_ARCHIVE = 2;
+    public const EOL_STATE_PENDING_DELETE = 3;
+
+    /**
+     * A mapping of eol_state values to times when the EOL should take place.
+     *
+     * Times are stored as number of seconds.
+     */
+    public const EOL_PENDING_TIMES = [
+        self::EOL_STATE_PENDING_DEACTIVATE => 60 * 60 * 24 * 2, // deactivate
+        self::EOL_STATE_PENDING_ARCHIVE => 60 * 60 * 24 * 2, // archive
+        self::EOL_STATE_PENDING_DELETE => 60 * 60 * 24 * 7  // delete - higher risk of abuse so longer
+    ];
+
     /**
      * Stores the currently logged in User's object after first use.
      * @var MyRadio_User|boolean
@@ -2163,6 +2178,28 @@ EMAIL
               'Content-Type: text/plain; charset=utf-8'
           ])
         );
+    }
+
+    /**
+     * Find all users with a pending end-of-life action.
+     * @return MyRadio_User[]
+     */
+    public static function getPendingEOLMembers()
+    {
+        $conditions = implode(
+            ' OR ',
+            array_map(
+                function($type, $time) {
+                    return "eol_state = $type AND eol_requested_at > NOW() - interval '$time seconds'";
+                },
+                array_keys(self::EOL_PENDING_TIMES), // lolphp
+                self::EOL_PENDING_TIMES
+            )
+        );
+
+        $sql = "SELECT memberid FROM public.member WHERE $conditions";
+        $ids = self::$db->fetchColumn($sql, []);
+        return self::resultSetToObjArray($ids);
     }
 
     /**
