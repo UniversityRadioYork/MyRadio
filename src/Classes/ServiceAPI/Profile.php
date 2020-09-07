@@ -4,6 +4,7 @@
  */
 namespace MyRadio\ServiceAPI;
 
+use MyRadio\MyRadio\AuthUtils;
 use MyRadio\MyRadio\CoreUtils;
 
 /**
@@ -72,12 +73,18 @@ class Profile extends ServiceAPI
     {
         self::wakeup();
 
+        $archiveState = MyRadio_User::EOL_STATE_ARCHIVED;
+        $archiveFilter = AuthUtils::hasPermission(AUTH_VIEWARCHIVEDMEMBERS)
+            ? ''
+            : " AND eol_state < $archiveState ";
+
         return self::$db->fetchAll(
             'SELECT member.memberid, sname || \', \' || fname AS name, l_college.descr AS college, paid
             FROM member INNER JOIN (SELECT * FROM member_year WHERE year = $1) AS member_year
             ON ( member.memberid = member_year.memberid ), l_college
-            WHERE member.college = l_college.collegeid
-            ORDER BY sname ASC',
+            WHERE member.college = l_college.collegeid'
+            . $archiveFilter
+            . 'ORDER BY sname ASC',
             [$year]
         );
     }

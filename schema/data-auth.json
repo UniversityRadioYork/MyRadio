@@ -82,5 +82,6 @@
     ["Tracklist for any show/timeslot","AUTH_TRACKLIST_ALL", true],
     ["Access WebStudio", "AUTH_ACCESS_WEBSTUDIO", true],
     ["View Messages for Any Show", "AUTH_ANY_SHOW_MESSAGES", true],
-    ["Give Anyone Any Training Status", "AUTH_AWARDANYTRAINING", true]
+    ["Give Anyone Any Training Status", "AUTH_AWARDANYTRAINING", true],
+    ["View Archived Members", "AUTH_VIEWARCHIVEDMEMBERS", true]
 ]

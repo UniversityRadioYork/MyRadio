@@ -941,7 +941,14 @@ class MyRadio_User extends ServiceAPI implements APICaller
 
             return self::$current_user;
         } else {
-            return parent::getInstance($itemid);
+            $user = parent::getInstance($itemid);
+            if ($user->canWeSeeThisUser()) {
+                return $user;
+            } else {
+                // This exception is a lie. It lies intentionally, to ensure that you can't tell whether a user
+                // is archived or actually doesn't exist, just by the message.
+                throw new MyRadioException('The specified User does not appear to exist.', 404);
+            }
         }
     }
 
@@ -2145,6 +2152,7 @@ EOL
         self::$db->query('BEGIN');
 
         // Update profile
+        // If you change this, make sure to change archive() as well!
         self::$db->query('
             UPDATE public.member
             SET eol_state = $2,
@@ -2217,6 +2225,104 @@ EMAIL
               'Content-Type: text/plain; charset=utf-8'
           ])
         );
+    }
+
+    /**
+     * Deactivates this user (EOL Tier 2). In addition to deactivation, their profile will no longer be visible
+     * without the AUTH_VIEWARCHIVEDMEMBERS permission.
+     *
+     * Note: DO NOT CALL THIS DIRECTLY outside of the relevant daemon! Instead use requestArchival, as it
+     * properly enqueues the request and sends a warning email.
+     */
+    public function archive()
+    {
+        // Start a transaction.
+        self::$db->query('BEGIN');
+
+        // Update profile
+        // If you change this, make sure to change deactivate() as well!
+        self::$db->query('
+            UPDATE public.member
+            SET eol_state = $2,
+                receive_email = FALSE,
+                account_locked = TRUE
+            WHERE memberid = $1
+            ', [
+            $this->getID(),
+            MyRadio_User::EOL_STATE_PENDING_ARCHIVE
+        ]);
+
+        // End all officerships
+        self::$db->query('
+            UPDATE public.member_officer
+            SET till_date = NOW()
+            WHERE memberid = $1
+            AND till_date IS NULL
+            ', [
+            $this->getID()
+        ]);
+
+        // Unsub from all email
+        self::$db->query('
+            DELETE FROM public.mail_subscription
+            WHERE memberid = $1
+            AND (SELECT subscribable FROM public.mail_list WHERE mail_list.listid = mail_subscription.listid)
+            ', [
+            $this->getID()
+        ]);
+
+        // Don't forget!
+        self::$db->query('COMMIT');
+
+        // Sync up local changes
+        $this->eol_state = MyRadio_User::EOL_STATE_ARCHIVED;
+        $this->receive_email = false;
+        $this->account_locked = true;
+
+        // Yeet the entire cache
+        self::$cache->purge();
+
+        // And send a goodbye email
+        // TODO: yeah, this really needs refactoring, I'll do it in the next commit.
+        $domain = Config::$email_domain;
+        $long_name = Config::$long_name;
+        $short_name = Config::$short_name;
+        mail(
+            $this->getName() . ' <' . $this->getEmail() . '>',
+            'MyRadio Account Deactivated',
+            utf8_encode(<<<EMAIL
+Hello,
+
+As requested, your MyRadio account has been deactivated. You can no longer sign in, and you will not receive any email after this.
+
+If you ever wish to re-activate your account, please email computing@$domain.
+
+If you did not request the deactivation of your account, please contact us immediately at computing@$domain.
+
+Thank you for all your contributions to $long_name.
+
+Yours sincerely,
+$short_name Computing Team
+EMAIL
+            ),
+            implode('\r\n', [
+                'From: '.Config::$long_name.' <no-reply@'.Config::$email_domain.'>',
+                'Return-Path: no-reply@'.Config::$email_domain,
+                'Content-Type: text/plain; charset=utf-8'
+            ])
+        );
+    }
+
+    /**
+     * Is the current user publicly viewable, or, failing that, do we have the permission to see archived users?
+     * @return bool
+     */
+    public function canWeSeeThisUser()
+    {
+        if ($this->getEolState() <= self::EOL_STATE_ARCHIVED) {
+            return true;
+        }
+        return AuthUtils::hasPermission(AUTH_VIEWARCHIVEDMEMBERS);
     }
 
     /**
