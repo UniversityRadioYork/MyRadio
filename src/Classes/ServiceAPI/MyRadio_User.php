@@ -2229,7 +2229,7 @@ EMAIL
             ' OR ',
             array_map(
                 function($type, $time) {
-                    return "eol_state = $type AND eol_requested_at > NOW() - interval '$time seconds'";
+                    return "(eol_state = $type AND eol_requested_at > NOW() - interval '$time seconds')";
                 },
                 array_keys(self::EOL_PENDING_TIMES), // lolphp
                 self::EOL_PENDING_TIMES
