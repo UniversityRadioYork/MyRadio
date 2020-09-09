@@ -2332,11 +2332,13 @@ EMAIL
             utf8_encode(<<<EMAIL
 Hello,
 
-As requested, your MyRadio account has been deactivated. You can no longer sign in, and you will not receive any email after this.
+As requested, your MyRadio account has been archived. You can no longer sign in, and you will not receive any email after this.
+
+In addition, your profile is now hidden from public view. Note that it may take search engines a little while to fully remove your information.
 
 If you ever wish to re-activate your account, please email computing@$domain.
 
-If you did not request the deactivation of your account, please contact us immediately at computing@$domain.
+If you did not request the archival of your account, please contact us immediately at computing@$domain.
 
 Thank you for all your contributions to $long_name.
 
@@ -2358,7 +2360,7 @@ EMAIL
      */
     public function canWeSeeThisUser()
     {
-        if ($this->getEolState() <= self::EOL_STATE_ARCHIVED) {
+        if ($this->getEolState() < self::EOL_STATE_ARCHIVED) {
             return true;
         }
         return AuthUtils::hasPermission(AUTH_VIEWARCHIVEDMEMBERS);

@@ -1,4 +1,4 @@
-<?php
+myradi<?php
 
 /**
  * This file provides the URLUtils class for MyRadio.
