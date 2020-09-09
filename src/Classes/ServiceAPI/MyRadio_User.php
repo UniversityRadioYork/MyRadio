@@ -175,7 +175,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
 
     /**
      * Users radio time, calculated from signed in shows
-     * 
+     *
      * @var mixed
      */
     private $radioTime;
@@ -707,7 +707,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
         if (!$this->radioTime) {
             try{
                 $this->radioTime = self::$db->fetchColumn(
-                    'SELECT sum(duration)         
+                    'SELECT sum(duration)
                     FROM schedule.show_season_timeslot
             INNER JOIN schedule.show_season USING (show_season_id)
             INNER JOIN schedule.show_credit USING (show_id)
@@ -951,7 +951,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
                 //'photo' => MyRadio_Photo::getInstance(Config::$photo_officership_get)->getRelativeWebPath(),
                 'photo' => null
             ];
-            if ($officer['till_date'] != null) {
+            if ($officer->getTillDate() != null) {
                 $events[] = [
                     'message' => 'stepped down as '.$officer->getOfficer()->getName(),
                     'timestamp' => strtotime($officer->getTillDate()),
