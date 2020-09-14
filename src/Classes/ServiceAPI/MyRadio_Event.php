@@ -133,6 +133,19 @@ class MyRadio_Event extends ServiceAPI
         return $this->masterId;
     }
 
+    /**
+     * Get the next N events.
+     *
+     * @param $n int the number of events to get
+     * @return MyRadio_Event[] events
+     */
+    public static function getNext($n=5)
+    {
+        $sql = 'SELECT eventid FROM public.events WHERE start_time >= NOW() ORDER BY start_time ASC LIMIT $1';
+        $rows = self::$db->fetchColumn($sql, [$n]);
+        return self::resultSetToObjArray($rows);
+    }
+
     public static function create($data = [])
     {
         // Validate
