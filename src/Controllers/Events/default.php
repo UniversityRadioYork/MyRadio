@@ -1,3 +1,7 @@
 <?php
 
-echo "nyi, sorry";
+use MyRadio\MyRadio\CoreUtils;
+
+CoreUtils::getTemplateObject()
+    ->setTemplate('Events/calendar.twig')
+    ->render();

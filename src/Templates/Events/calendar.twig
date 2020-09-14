@@ -1,0 +1,28 @@
+{% extends 'stripe.twig' %}
+
+{% import 'macros.twig' as MyRadio %}
+{% block head %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{baseurl}}css/vendor/fullcalendar-main.min.css">
+{% endblock %}
+
+{% block stripecontent %}
+    <div id="calendar"></div>
+{% endblock %}
+
+{% block foot %}
+    {{ parent() }}
+    <script type="text/javascript" src="{{baseurl}}js/vendor/fullcalendar-main.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('calendar');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                events: '{{ makeURL('Events', 'a-getevents') }}',
+                initialView: 'dayGridMonth'
+            });
+            calendar.render();
+        });
+    </script>
+{% endblock %}
+
+

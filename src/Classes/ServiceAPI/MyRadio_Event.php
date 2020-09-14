@@ -3,7 +3,6 @@
 
 namespace MyRadio\ServiceAPI;
 
-
 use MyRadio\MyRadio\CoreUtils;
 use MyRadio\MyRadioException;
 use Recurr\Rule;
@@ -147,10 +146,23 @@ class MyRadio_Event extends ServiceAPI
      * @param $n int the number of events to get
      * @return MyRadio_Event[] events
      */
-    public static function getNext($n=5)
+    public static function getNext($n = 5)
     {
         $sql = 'SELECT eventid FROM public.events WHERE start_time >= NOW() ORDER BY start_time ASC LIMIT $1';
         $rows = self::$db->fetchColumn($sql, [$n]);
+        return self::resultSetToObjArray($rows);
+    }
+
+    public static function getInRange($start, $end)
+    {
+        $sql = 'SELECT eventid FROM public.events WHERE start_time >= $1 AND end_time <= $2 ORDER BY start_time ASC';
+        $rows = self::$db->fetchColumn(
+            $sql,
+            [
+                CoreUtils::getTimestamp(strtotime($start)),
+                CoreUtils::getTimestamp(strtotime($end))
+            ]
+        );
         return self::resultSetToObjArray($rows);
     }
 
@@ -228,5 +240,4 @@ class MyRadio_Event extends ServiceAPI
             'master' => (is_null($this->masterId) ? null : self::getInstance($this->masterId)->toDataSource($mixins))
         ];
     }
-
 }
