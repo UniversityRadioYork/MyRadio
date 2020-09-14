@@ -178,6 +178,23 @@ class CoreUtils
     }
 
     /**
+     * Returns an ISO 8601-formatted timestamp (for JavaScript).
+     *
+     * @param int $time The time to get the timestamp for. Default right now.
+     *
+     * @return string a timestamp
+     * @assert (30) == 'Thu, 01 Jan 1970 00:00:30 +0000'
+     */
+    public static function getIso8601Timestamp($time = null)
+    {
+        if ($time === null) {
+            $time = time();
+        }
+
+        return gmdate('c', $time);
+    }
+
+    /**
      * Returns the ISO8601 Year and Week Number for the given time.
      *
      * @param int $time The time to get the info for, default now.

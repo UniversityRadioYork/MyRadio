@@ -25,9 +25,12 @@
                         eventDataTransform: function(obj) {
                             console.log("transforming", obj);
                             return {
+                                id: obj.id,
                                 title: obj.title,
                                 start: obj.start,
-                                end: obj.end
+                                end: obj.end,
+                                allDay: false,
+                                url: myradio.makeURL("Events", "viewEvent", { eventid: obj.id })
                             };
                         }
                     }

@@ -233,8 +233,8 @@ class MyRadio_Event extends ServiceAPI
             'id' => $this->getID(),
             'title' => $this->title,
             'description_html' => $this->descriptionHtml,
-            'start' => CoreUtils::getRfc2822Timestamp($this->startTime),
-            'end' => CoreUtils::getRfc2822Timestamp($this->endTime),
+            'start' => CoreUtils::getIso8601Timestamp($this->startTime),
+            'end' => CoreUtils::getIso8601Timestamp($this->endTime),
             'host' => MyRadio_User::getInstance($this->hostId)->toDataSource($mixins),
             'rrule' => $this->rrule,
             'master' => (is_null($this->masterId) ? null : self::getInstance($this->masterId)->toDataSource($mixins))
