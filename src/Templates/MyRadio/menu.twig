@@ -7,8 +7,9 @@
     <div class="well col-md-12">
       <h2>Upcoming Events</h2>
       {% for event in events %}
-        <div class="row">
-          <div class="col-12">{{ event.Title() }}</div>
+        <div class="event">
+          <h3>{{ event.Title() }}</h3>
+          <p>{{ event.StartTime() | format_datetime('short', 'short') }}</p>
         </div>
       {% endfor %}
     </div>
