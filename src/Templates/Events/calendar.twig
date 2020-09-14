@@ -21,7 +21,15 @@
                     {
                         url: '{{ baseurl }}Events/a-getevents',
                         startParam: "start",
-                        endParam: "end"
+                        endParam: "end",
+                        eventDataTransform: function(obj) {
+                            console.log("transforming", obj);
+                            return {
+                                title: obj.title,
+                                start: obj.start,
+                                end: obj.end
+                            };
+                        }
                     }
                 ],
                 initialView: 'dayGridMonth'
