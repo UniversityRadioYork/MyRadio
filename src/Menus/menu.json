@@ -223,6 +223,11 @@
                             "title": "Wiki",
                             "url": "/wiki/",
                             "description": "A huge repository of information about URY."
+                        },
+                        {
+                            "title": "Events Calendar",
+                            "url": "module=Events",
+                            "description": "View upcoming station events."
                         }
                     ]
                 },
