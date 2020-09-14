@@ -9,7 +9,7 @@
       {% for event in events %}
         <div class="event">
           <h3>{{ event.Title() }}</h3>
-          <p>{{ event.StartTime() | format_datetime('short', 'short') }}</p>
+          <p>{{ event.StartTime() | date('d/m/y H:i') }}</p>
         </div>
       {% endfor %}
     </div>
