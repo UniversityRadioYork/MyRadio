@@ -118,6 +118,14 @@ class MyRadio_Event extends ServiceAPI
     }
 
     /**
+     * @return MyRadio_User
+     */
+    public function getHost(): MyRadio_User
+    {
+        return MyRadio_User::getInstance($this->hostId);
+    }
+
+    /**
      * @return string|null
      */
     public function getRrule(): ?string

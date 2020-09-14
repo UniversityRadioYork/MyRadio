@@ -1,0 +1,13 @@
+{% extends 'stripe.twig' %}
+
+{% block stripecontent %}
+    <h1>{{ event.Title() }}</h1>
+    <h2>{{ event.StartTime() | date('d F y H:i') }}&mdash;{{ event.EndTime() | date('d F y H:i') }}</h2>
+
+    <p>Hosted by {{ event.Host().Name() }}</p>
+
+    <p>
+        {{ event.DescriptionHtml() | raw }}
+    </p>
+{% endblock %}
+
