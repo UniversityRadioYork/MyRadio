@@ -17,7 +17,13 @@
         document.addEventListener('DOMContentLoaded', function() {
             var calendarEl = document.getElementById('calendar');
             window.myradio_calendar = new FullCalendar.Calendar(calendarEl, {
-                events: '{{ baseurl }}Events/a-getevents',
+                eventSources: [
+                    {
+                        url: '{{ baseurl }}Events/a-getevents',
+                        startParam: "start",
+                        endParam: "end"
+                    }
+                ],
                 initialView: 'dayGridMonth'
             });
             window.myradio_calendar.render();
