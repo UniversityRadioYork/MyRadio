@@ -19,7 +19,7 @@ $menu = (new MyRadioMenu())->getMenuForUser();
 $news = MyRadioNews::getLatestNewsItem(Config::$news_feed, $user);
 $news_clickthrough = Config::$members_news_enable && empty($news['seen']);
 
-$events = MyRadio_Event::getNext(5);
+$events = MyRadio_Event::getNext(3);
 
 $twig = CoreUtils::getTemplateObject()->setTemplate('MyRadio/menu.twig')
         ->addVariable('title', 'Menu')
