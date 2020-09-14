@@ -17,7 +17,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             var calendarEl = document.getElementById('calendar');
             var calendar = new FullCalendar.Calendar(calendarEl, {
-                events: '{{ MyRadio.makeURL('Events', 'a-getevents') }}',
+                events: '{{ MyRadio.makeURL(config, 'Events', 'a-getevents') }}',
                 initialView: 'dayGridMonth'
             });
             calendar.render();
