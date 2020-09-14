@@ -72,7 +72,7 @@ class MyRadio_Event extends ServiceAPI
     /**
      * @return int
      */
-    public function getEventid(): int
+    public function getID(): int
     {
         return $this->eventid;
     }
@@ -210,7 +210,7 @@ class MyRadio_Event extends ServiceAPI
     public function toDataSource($mixins = [])
     {
         return [
-            'eventid' => $this->eventid,
+            'eventid' => $this->getID(),
             'title' => $this->title,
             'description_html' => $this->descriptionHtml,
             'start_time' => CoreUtils::happyTime($this->startTime),
