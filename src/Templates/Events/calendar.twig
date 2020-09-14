@@ -16,11 +16,11 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             var calendarEl = document.getElementById('calendar');
-            var calendar = new FullCalendar.Calendar(calendarEl, {
+            window.myradio_calendar = new FullCalendar.Calendar(calendarEl, {
                 events: '{{ baseurl }}Events/a-getevents',
                 initialView: 'dayGridMonth'
             });
-            calendar.render();
+            window.myradio_calendar.render();
         });
     </script>
 {% endblock %}
