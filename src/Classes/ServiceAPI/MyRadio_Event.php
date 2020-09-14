@@ -230,7 +230,7 @@ class MyRadio_Event extends ServiceAPI
     public function toDataSource($mixins = [])
     {
         return [
-            'eventid' => $this->getID(),
+            'id' => $this->getID(),
             'title' => $this->title,
             'description_html' => $this->descriptionHtml,
             'start' => CoreUtils::getRfc2822Timestamp($this->startTime),
