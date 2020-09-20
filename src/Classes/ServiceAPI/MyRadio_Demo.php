@@ -153,8 +153,8 @@ class MyRadio_Demo extends ServiceAPI
         if (count(self::$db->fetchColumn(
             "SELECT demoid FROM schedule.demo_attendee
             INNER JOIN schedule.demo USING (demo_id)
-            WHERE demo_attendee.memberid = $1
-            AND demo.demo_time (NOW() + INTERVAL \'1 week\')",
+            WHERE schedule.demo_attendee.memberid = $1
+            AND demo_time <= (NOW() + INTERVAL '1 week')",
             [$_SESSION['memberid']]
         )) !== 0) {
             return 2;
