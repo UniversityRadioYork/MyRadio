@@ -183,7 +183,7 @@ class CoreUtils
      * @param int $time The time to get the timestamp for. Default right now.
      *
      * @return string a timestamp
-     * @assert (30) == 'Thu, 01 Jan 1970 00:00:30 +0000'
+     * @assert (30) == '1970-01-01T00:30:00Z'
      */
     public static function getIso8601Timestamp($time = null)
     {
