@@ -744,6 +744,10 @@ div.scheduleview div.now-marker {
   padding: 1px;
 }
 
+header.page-header {
+  margin: 10px 0 20px
+}
+
 .events {
   padding: 9px 19px;
 }
