@@ -18,7 +18,7 @@ use MyRadio\MyRadioEmail;
  */
 class MyRadio_Demo extends ServiceAPI
 {
-    public static function registerDemo($time)
+    public static function registerDemo($time, $link = null)
     {
         self::initDB();
         date_default_timezone_set('UTC');
@@ -26,13 +26,18 @@ class MyRadio_Demo extends ServiceAPI
         /*
          * Check for conflicts
          */
-        $r = MyRadio_Scheduler::getScheduleConflict($time, $time + 3600);
-        if (!empty($r)) {
-            //There's a conflict
-            throw new MyRadioException('There is already something scheduled at that time', 400);
 
-            return false;
-        }
+         /*
+         * Realistically now, stuff can happen simultaneously.
+         * 
+         *$r = MyRadio_Scheduler::getScheduleConflict($time, $time + 3600);
+         *if (!empty($r)) {
+         *   //There's a conflict
+         *   throw new MyRadioException('There is already something scheduled at that time', 400);
+         *
+         *   return false;
+         *}
+         */
 
         /*
          * Demos use the timeslot member as the credit for simplicity
@@ -42,6 +47,18 @@ class MyRadio_Demo extends ServiceAPI
             VALUES (0, $1, $2, $2, \'01:00:00\')',
             [CoreUtils::getTimestamp($time), $_SESSION['memberid']]
         );
+        if ($link){
+            // Adding link with most recent demo from that user
+            self::$db->query(
+                "INSERT INTO schedule.demo_link (show_season_timeslot_id, link)
+                SELECT show_season_timeslot_id, $1
+                FROM schedule.show_season_timeslot
+                WHERE memberid = $2
+                AND show_season_id = 0
+                LIMIT 1",
+                [$link, $_SESSION["memberid"]]
+            );
+        }
         date_default_timezone_set(Config::$timezone);
 
         return true;
@@ -64,6 +81,13 @@ class MyRadio_Demo extends ServiceAPI
                 'demo-datetime',
                 MyRadioFormField::TYPE_DATETIME,
                 ['label' => 'Date and Time of the session']
+            )
+        )->addField(
+            new MyRadioFormField(
+                'demo-link',
+                MyRadioFormField::TYPE_TEXT,
+                ['label' => "Zoom/Google Meets Link",
+                "required" => false]
             )
         );
     }
@@ -164,20 +188,22 @@ class MyRadio_Demo extends ServiceAPI
         $time = self::getDemoTime($demoid);
         $user = self::getDemoer($demoid);
         $attendee = MyRadio_User::getInstance();
+        $link = self::getLink($demoid);
         MyRadioEmail::sendEmailToUser(
             $user,
             'New Training Attendee',
             $attendee->getName() . ' has joined your session at ' . $time . '.'
+            . $link ? " The training session is at " . $link : ""
         );
         MyRadioEmail::sendEmailToUser(
             $attendee,
             'Attending Training',
             'Hi '
-            .$attendee->getFName(a) . ",\r\n\r\n"
+            .$attendee->getFName() . ",\r\n\r\n"
             ."Thanks for joining a training session at $time. You will be trained by "
             .$user->getName()
-            .'. Just head over to the station in Vanbrugh College just before your slot '
-            .' and the trainer will be waiting for you.'
+            . $link?('. The training session will be available at ' . $link):('. Just head over to the station in Vanbrugh College just before your slot '
+            .' and the trainer will be waiting for you.')
             ."\r\n\r\nSee you on air soon!\r\n"
             .Config::$long_name
             .' Training'
@@ -238,4 +264,14 @@ class MyRadio_Demo extends ServiceAPI
         );
         return MyRadio_User::getInstance($r[0]);
     }
+
+    public static function getLink($demoid){
+        self::initDB();
+        $r = self::$db->fetchOne(
+            "SELECT link FROM schedule.demo_link WHERE show_season_timeslot_id = $1",
+            [$demoid]
+        );
+        return $r['link'];
+    }
+
 }
