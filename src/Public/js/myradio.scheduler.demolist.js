@@ -1,12 +1,13 @@
 $(".twig-datatable").dataTable({
   "aoColumns": [
-    //timeslot
+    //demo id
     {
       "bVisible" : false
     },
     // online/in person
     {
-      "sTitle": ""
+      "sTitle": "",
+      "bSortable": false
     },
     //training type
     {

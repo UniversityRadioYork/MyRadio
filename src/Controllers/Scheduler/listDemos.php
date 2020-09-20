@@ -44,14 +44,14 @@ foreach ($demos as $demo) {
         }
     }
 
-    if ($data['link']){
-        $data['link'] = [
+    if ($demo['demo_link']){
+        $demo['demo_link'] = [
             "display" => "icon",
             "value" => "headphones",
             "title" => "Online Training"
         ];
     }else{
-        $data['link'] = [
+        $demo['demo_link'] = [
             "display" => "icon",
             "value" => "user",
             "title" => "In Person Training"

@@ -35,6 +35,11 @@
                 "title": "Manage Terms",
                 "url": "module=Scheduler,action=listTerms",
                 "description": "Seasons are applied to in relation to Terms. Manage Terms here."
+            },
+            {
+                "title": "View Training Sessions",
+                "url": "module=Scheduler,action=listDemos",
+                "description": "View available training sessions"
             }
         ]
 }

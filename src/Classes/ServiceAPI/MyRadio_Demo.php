@@ -135,7 +135,7 @@ class MyRadio_Demo extends ServiceAPI
         self::initDB();
         
         $result = self::$db->fetchAll(
-            "SELECT link, demo_id, presenterstatusid, demo_time, memberid FROM schedule.demo
+            "SELECT demo_id, demo_link, presenterstatusid, demo_time, memberid FROM schedule.demo
             WHERE demo_time > NOW() ORDER BY demo_time ASC"
         );
 
