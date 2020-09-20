@@ -255,4 +255,23 @@ class MyRadio_Demo extends ServiceAPI
         return $r['link'];
     }
 
+    public static function getTrainingType($demoid){
+        self::initDB();
+        $r = self::$db->fetchOne(
+            "SELECT presenterstatusid FROM schedule.demo WHERE demo_id = $1",
+            [$demoid]
+        );
+        return MyRadio_TrainingStatus::getInstance($r['presenterstatusid']);
+    }
+
+    public static function markTrained($demoid){
+        $attendees = self::usersAttendingDemo($demoid);
+        foreach ($attendees as $attendee){
+            MyRadio_UserTrainingStatus::create(MyRadio_Demo::getTrainingType($demoid),
+            $attendee,
+            MyRadio_User::getInstance($_SESSION['memberid'])
+        );
+        }
+    }
+
 }

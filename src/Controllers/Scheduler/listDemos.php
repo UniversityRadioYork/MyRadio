@@ -18,6 +18,11 @@ $currentUser = MyRadio_User::getInstance();
 foreach ($demos as $demo) {
     if ($currentUser->hasAuth(AUTH_ADDDEMOS)) {
         $demo['attending'] = MyRadio_Demo::usersAttendingDemo($demo['demo_id']);
+        $demo['join'] = [
+            'display' => 'text',
+            'value' => 'Mark Trained',
+            'url' => URLUtils::makeURL('Scheduler', 'finishDemo', ['demoid' => $demo['demo_id']]),
+        ];
     } else {
         if (MyRadio_Demo::isUserAttendingDemo($demo['demo_id'], $currentUser->getID())) {
             $demo['attending'] = 'You are attending this demo';
@@ -64,6 +69,10 @@ if (isset($_REQUEST['msg'])) {
             break;
         case 3: // Left session
             $twig->addInfo('You have left the training session.');
+            break;
+        case 4: // Mark attendees as trained
+            $twig->addInfo("You have marked the attendees as trained.");
+            break;
     }
 }
 
