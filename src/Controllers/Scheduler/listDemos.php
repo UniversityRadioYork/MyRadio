@@ -79,7 +79,7 @@ if (isset($_REQUEST['msg'])) {
             $twig->addError('Sorry, but a maximum two people can join a session.');
             break;
         case 2: //attending already
-            $twig->addError('You can only attend one session at a time.');
+            $twig->addError('You can only attend one session for that training at a time.');
             break;
         case 3: // Left session
             $twig->addInfo('You have left the training session.');

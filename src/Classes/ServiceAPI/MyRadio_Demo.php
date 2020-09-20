@@ -166,11 +166,12 @@ class MyRadio_Demo extends ServiceAPI
 
         //Check they aren't already attending one in the next week
         if (count(self::$db->fetchColumn(
-            "SELECT demoid FROM schedule.demo_attendee
+            "SELECT demo_id FROM schedule.demo_attendee
             INNER JOIN schedule.demo USING (demo_id)
             WHERE schedule.demo_attendee.memberid = $1
-            AND demo_time <= (NOW() + INTERVAL '1 week')",
-            [$_SESSION['memberid']]
+            AND demo_time <= (NOW() + INTERVAL '1 week')
+            AND presenterstatusid = $2",
+            [$_SESSION['memberid'], self::getTrainingType($demoid)->getID()]
         )) !== 0) {
             return 2;
         }
