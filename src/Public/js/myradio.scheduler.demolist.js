@@ -4,6 +4,10 @@ $(".twig-datatable").dataTable({
     {
       "bVisible" : false
     },
+    // online/in person
+    {
+      "sTitle": ""
+    },
     //training type
     {
       "sTitle": "Training"

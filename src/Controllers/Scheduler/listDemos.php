@@ -43,6 +43,20 @@ foreach ($demos as $demo) {
             $demo['join'] = ['display' => 'none'];
         }
     }
+
+    if ($data['link']){
+        $data['link'] = [
+            "display" => "icon",
+            "value" => "headphones",
+            "title" => "Online Training"
+        ];
+    }else{
+        $data['link'] = [
+            "display" => "icon",
+            "value" => "user",
+            "title" => "In Person Training"
+        ];
+    }
     $tabledata[] = $demo;
 }
 
