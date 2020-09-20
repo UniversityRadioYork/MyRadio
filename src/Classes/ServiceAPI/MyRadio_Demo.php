@@ -29,6 +29,8 @@ class MyRadio_Demo extends ServiceAPI
     {
         $this->demo_id =  (int) $demoid;
         
+        self::initDB();
+
         $result = self::$db->fetchOne(
             "SELECT * FROM schedule.demo WHERE demo_id = $1", [$demoid]
         );
@@ -55,6 +57,19 @@ class MyRadio_Demo extends ServiceAPI
             [$training_type, CoreUtils::getTimestamp($time), $link, $_SESSION["memberid"]]
         );
         date_default_timezone_set(Config::$timezone);
+
+        // Let people waiting for this know
+        $training = MyRadio_TrainingStatus::getInstance($training_type);
+        $waiters = self::trainingWaitingList($training_type);
+        foreach($waiters as $waiter){
+            $user = MyRadio_User::getInstance($waiter['memberid']);
+            MyRadioEmail::sendEmailToUser(
+                $user,
+            "Available Training Session",
+            "Hi " . $user->getFName() . ",
+            \r\n\r\n A session to get you " . $training->getTitle() . "has opened up. Check it out on MyRadio.\r\n\r\n" . Config::$long_name . " Training"
+        );
+        }
 
         return true;
     }
@@ -184,7 +199,6 @@ class MyRadio_Demo extends ServiceAPI
      */
     public function attend()
     {
-        self::initDB();
         //Get # of attendees
         if ($this->attendingDemoCount() >= 2) {
             return 1;
@@ -231,6 +245,11 @@ class MyRadio_Demo extends ServiceAPI
             .' Training'
         );
 
+        // Take off waiting list
+        if (self::onWaitingList($this->presenterstatusid)){
+            self::leaveWaitingList($this->presenterstatusid);
+        }
+
         return 0;
     }
 
@@ -239,7 +258,6 @@ class MyRadio_Demo extends ServiceAPI
      */
     public function leave()
     {
-        self::initDB();
 
         self::$db->query(
             "DELETE FROM schedule.demo_attendee
@@ -257,11 +275,15 @@ class MyRadio_Demo extends ServiceAPI
             $attendee,
             'Training Cancellation',
             'Hi ' . $attendee->getFName() . ",\r\n\r\n"
-            ."Just to confirm that you have left the training session at " . $this->getDemoTime() . ". If this was accidental, simply rejoin."
+            ."Just to confirm that you have left the training session at " . $this->getDemoTime() . ". If this was accidental, simply rejoin. "
+            . "Meanwhile, you've been added to the waiting list, and we'll let you know if a session becomes available."
             ."\r\n\r\nThanks!\r\n"
             .Config::$long_name
             .' Training'
         );
+
+        // Add to waiting list
+        self::joinWaitingList($this->presenterstatusid);
 
         return 0;
     }
@@ -294,4 +316,66 @@ class MyRadio_Demo extends ServiceAPI
         }
     }
 
+    public static function joinWaitingList($presenterstatusid){
+        self::initDB();
+        
+        $r = self::$db->fetchColumn(
+            "SELECT memberid FROM schedule.demo_waiting_list
+            WHERE memberid = $1 AND presenterstatusid = $2",
+            [$_SESSION['memberid'], $presenterstatusid]
+        );
+        
+        if (count($r) != 0){
+            // Already waiting for this training status
+            return 1;
+        }else{
+            self::$db->query(
+                "INSERT INTO schedule.demo_waiting_list (memberid, presenterstatusid, date_added)
+                VALUES $1, $2, NOW()", [$_SESSION['memberid'], $presenterstatusid]
+            );
+        }
+        
+        return 0;
+
+    }
+
+    public static function leaveWaitingList($presenterstatusid){
+        self::initDB();
+        self::$db->query(
+            "DELETE FROM schedule.demo_waiting_list
+            WHERE memberid = $1
+            AND presenterstatusid = $2",
+            [$_SESSION['memberid'], $presenterstatusid]
+        );
+    }
+
+    public static function userWaitingList(){
+        self::initDB();
+        return self::$db->fetchAll(
+            "SELECT presenterstatusid, date_added FROM schedule.demo_waiting_list
+            WHERE memberid = $1
+            ORDER BY date_added ASC",
+            [$_SESSION['memberid']]
+        );
+    }
+
+    public static function trainingWaitingList($presenterstatusid){
+        self::initDB();
+        return self::$db->fetchAll(
+            "SELECT memberid, date_added FROM schedule.demo_waiting_list
+            WHERE presenterstatus = $1
+            ORDER BY date_added ASC",
+            [$presenterstatusid]
+        );
+    }
+
+    public static function onWaitingList($presenterstatusid){
+        $list = self::userWaitingList();
+        foreach($list as $entry){
+            if ($entry['presenterstatusid'] == $presenterstatusid){
+                return true;
+            }
+        }
+        return false;
+    }
 }

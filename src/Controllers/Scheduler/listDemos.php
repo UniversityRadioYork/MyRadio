@@ -62,7 +62,7 @@ foreach ($demos as $demo) {
 }
 
 if (empty($tabledata)) {
-    $tabledata = [['', '', '', '', 'Error' => 'There are currently no training slots available.']];
+    $tabledata = [['', '', '', '', '', '', 'Error' => 'There are currently no training slots available.']];
 }
 
 //print_r($tabledata);

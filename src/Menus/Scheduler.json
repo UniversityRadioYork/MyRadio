@@ -40,6 +40,11 @@
                 "title": "View Training Sessions",
                 "url": "module=Scheduler,action=listDemos",
                 "description": "View available training sessions"
+            },
+            {
+                "title": "My Waiting Lists",
+                "url": "module=Scheduler,action=listWaitingLists",
+                "description": "Join a waiting list for training"
             }
         ]
 }

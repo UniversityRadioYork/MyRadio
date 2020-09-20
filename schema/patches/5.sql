@@ -25,4 +25,17 @@ create table schedule.demo_attendee
 			references member
 );
 
+create table schedule.demo_waiting_list
+(
+	memberid int
+		constraint demo_waiting_list_member_memberid_fk
+			references member (memberid),
+	presenterstatusid int
+		constraint demo_waiting_list_l_presenterstatus_presenterstatusid_fk
+			references l_presenterstatus (presenterstatusid),
+	date_added timestamp with time zone
+);
+
+
+
 COMMIT;
