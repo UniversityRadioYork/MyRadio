@@ -120,7 +120,7 @@ class MyRadio_Demo extends ServiceAPI
         self::initDB();
         
         $result = self::$db->fetchAll(
-            "SELECT demo_id, demo_time, memberid FROM schedule.demo
+            "SELECT demo_id, presenterstatusid, demo_time, memberid FROM schedule.demo
             WHERE demo_time > NOW() ORDER BY demo_time ASC"
         );
 
@@ -129,6 +129,7 @@ class MyRadio_Demo extends ServiceAPI
         foreach ($result as $demo) {
             $demo['demo_time'] = date('d M H:i', strtotime($demo['demo_time']));
             $demo['memberid'] = MyRadio_User::getInstance($demo['memberid'])->getName();
+            $demo['presenterstatusid'] = MyRadio_TrainingStatus::getInstance($demo['presenterstatusid'])->getTitle();
             $demos[] = $demo;
         }
         return $demos;
@@ -148,25 +149,22 @@ class MyRadio_Demo extends ServiceAPI
             return 1;
         }
 
-        // ################################################
-        // TODO: Update from here on to New Database Schema
-        // ################################################
-
         //Check they aren't already attending one in the next week
         if (count(self::$db->fetchColumn(
-            'SELECT creditid FROM schedule.show_credit
-            WHERE show_id=0 AND creditid=$1 AND effective_from >= NOW()
-              AND effective_from <= (NOW() + INTERVAL \'1 week\')',
+            "SELECT demoid FROM schedule.demo_attendee
+            INNER JOIN schedule.demo USING (demo_id)
+            WHERE demo_attendee.memberid = $1
+            AND demo.demo_time (NOW() + INTERVAL \'1 week\')",
             [$_SESSION['memberid']]
         )) !== 0) {
             return 2;
         }
 
         self::$db->query(
-            'INSERT INTO schedule.show_credit
-            (show_id, credit_type_id, creditid, effective_from, effective_to, memberid, approvedid)
-            VALUES (0, 7, $1, $2, $2, $1, $1)',
-            [$_SESSION['memberid'], self::getDemoTime($demoid)]
+            "INSERT INTO schedule.demo_attendee
+            (demo_id, memberid)
+            VALUES ($1, $2)",
+            [$demoid, $_SESSION['memberid']]
         );
         $time = self::getDemoTime($demoid);
         $user = self::getDemoer($demoid);
@@ -203,9 +201,9 @@ class MyRadio_Demo extends ServiceAPI
         self::initDB();
 
         self::$db->query(
-            'DELETE FROM schedule.show_credit
-            WHERE show_id=0 AND credit_type_id=7 AND creditid=$1 AND effective_from=$2 AND effective_to=$2',
-            [$_SESSION['memberid'], self::getDemoTime($demoid)]
+            "DELETE FROM schedule.demo_attendee
+            WHERE demo_id = $1 AND memberid = $2",
+            [$demoid, $_SESSION['memberid']]
         );
         $time = self::getDemoTime($demoid);
         $user = self::getDemoer($demoid);
@@ -231,18 +229,18 @@ class MyRadio_Demo extends ServiceAPI
     public static function getDemoTime($demoid)
     {
         self::initDB();
-        $r = self::$db->fetchColumn(
-            'SELECT start_time FROM schedule.show_season_timeslot WHERE show_season_timeslot_id=$1',
+        $r = self::$db->fetchOne(
+            "SELECT demo_time FROM schedule.demo WHERE demo_id = $1",
             [$demoid]
         );
-        return $r[0];
+        return $r['demo_time'];
     }
 
     public static function getDemoer($demoid)
     {
         self::initDB();
         $r = self::$db->fetchColumn(
-            'SELECT memberid FROM schedule.show_season_timeslot WHERE show_season_timeslot_id=$1',
+            'SELECT memberid FROM schedule.demo WHERE demo_id=$1',
             [$demoid]
         );
         return MyRadio_User::getInstance($r[0]);
@@ -251,7 +249,7 @@ class MyRadio_Demo extends ServiceAPI
     public static function getLink($demoid){
         self::initDB();
         $r = self::$db->fetchOne(
-            "SELECT link FROM schedule.demo_link WHERE show_season_timeslot_id = $1",
+            "SELECT link FROM schedule.demo WHERE demo_id = $1",
             [$demoid]
         );
         return $r['link'];

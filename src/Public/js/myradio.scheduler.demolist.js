@@ -4,6 +4,10 @@ $(".twig-datatable").dataTable({
     {
       "bVisible" : false
     },
+    //training type
+    {
+      "sTitle": "Training"
+    },
     //start time
     {
       "sTitle": "Time"

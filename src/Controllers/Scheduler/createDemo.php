@@ -9,7 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     //Submitted
     $demoinfo = MyRadio_Demo::getForm()->readValues();
 
-    MyRadio_Demo::registerDemo($demoinfo['demo-datetime'], $demoinfo['demo-link']);
+    MyRadio_Demo::registerDemo($demoinfo['demo-datetime'], $demoinfo['demo-link'], $demoinfo['demo-training-type']);
 
     URLUtils::backWithMessage('Session Updated!');
 } else {
