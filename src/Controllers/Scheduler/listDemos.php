@@ -17,21 +17,21 @@ $currentUser = MyRadio_User::getInstance();
 
 foreach ($demos as $demo) {
     if ($currentUser->hasAuth(AUTH_ADDDEMOS)) {
-        $demo['attending'] = MyRadio_Demo::usersAttendingDemo($demo['show_season_timeslot_id']);
+        $demo['attending'] = MyRadio_Demo::usersAttendingDemo($demo['demo_id']);
     } else {
-        if (MyRadio_Demo::isUserAttendingDemo($demo['show_season_timeslot_id'], $currentUser->getID())) {
+        if (MyRadio_Demo::isUserAttendingDemo($demo['demo_id'], $currentUser->getID())) {
             $demo['attending'] = 'You are attending this demo';
             $demo['join'] = [
                 'display' => 'text',
                 'value' => 'Leave',
-                'url' => URLUtils::makeURL('Scheduler', 'leaveDemo', ['demoid' => $demo['show_season_timeslot_id']]),
+                'url' => URLUtils::makeURL('Scheduler', 'leaveDemo', ['demoid' => $demo['demo_id']]),
             ];
-        } elseif (MyRadio_Demo::isSpaceOnDemo($demo['show_season_timeslot_id'])) {
+        } elseif (MyRadio_Demo::isSpaceOnDemo($demo['demo_id'])) {
             $demo['attending'] = 'Space available!';
             $demo['join'] = [
                 'display' => 'text',
                 'value' => 'Join',
-                'url' => URLUtils::makeURL('Scheduler', 'attendDemo', ['demoid' => $demo['show_season_timeslot_id']]),
+                'url' => URLUtils::makeURL('Scheduler', 'attendDemo', ['demoid' => $demo['demo_id']]),
             ];
         } else {
             $demo['attending'] = 'Demo full';
