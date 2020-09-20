@@ -14,3 +14,4 @@ src/vendor
 composer.lock
 node_modules/
 src/Public/img/stats_training_*.svg
+.idea/
