@@ -18,6 +18,32 @@ use MyRadio\MyRadioEmail;
  */
 class MyRadio_Demo extends ServiceAPI
 {
+
+    private $demo_id;
+    private $demo_time;
+    private $demo_link;
+    private $presenterstatusid;
+    private $memberid;
+
+    protected function __construct($demoid)
+    {
+        $this->demo_id =  (int) $demoid;
+        
+        $result = self::$db->fetchOne(
+            "SELECT * FROM schedule.demo WHERE demo_id = $1", [$demoid]
+        );
+
+        if (empty($result)){
+            throw new MyRadioException("The specified demo ". $demoid . "doesn't exist.");
+            return;
+        }
+
+        $this->demo_time = $result['demo_time'];
+        $this->demo_link = $result['demo_link'];
+        $this->presenterstatusid = $result['presenterstatusid'];
+        $this->memberid = $result["memberid"];
+    }
+
     public static function registerDemo($time, $link = null, $training_type)
     {
         self::initDB();
@@ -69,30 +95,30 @@ class MyRadio_Demo extends ServiceAPI
         );
     }
 
-    public static function isUserAttendingDemo($demoid, $userid)
+    public function isUserAttendingDemo($userid)
     {
         $r = self::$db->fetchColumn(
             "SELECT (1) FROM schedule.demo_attendee
             WHERE demo_id = $1 AND memberid = $2",
-            [$demoid, $userid]
+            [$this->demo_id, $userid]
         );
         return count($r) > 0;
     }
 
-    public static function isSpaceOnDemo($demoid)
+    public function isSpaceOnDemo()
     {
-        return self::attendingDemoCount($demoid) < 2;
+        return $this->attendingDemoCount() < 2;
     }
 
     // Grrr...this returns names, not users.
-    public static function usersAttendingDemo($demoid)
+    public function usersAttendingDemo()
     {
         // First, retrieve all the memberids attending this demo
         
         $r = self::$db->fetchColumn(
             "SELECT memberid FROM schedule.demo_attendee
             WHERE demo_id = $1",
-            [$demoid]
+            [$this->demo_id]
         );
 
         if (empty($r)) {
@@ -107,11 +133,11 @@ class MyRadio_Demo extends ServiceAPI
     }
 
     // Lets fix the above with this...grrr....
-    public static function myRadioUsersAttendingDemo($demoid){
+    public function myRadioUsersAttendingDemo(){
         $r = self::$db->fetchColumn(
             "SELECT memberid FROM schedule.demo_attendee
             WHERE demo_id = $1",
-            [$demoid]
+            [$this->demo_id]
         );
         $attendees = [];
         foreach($r as $attendee){
@@ -120,10 +146,10 @@ class MyRadio_Demo extends ServiceAPI
         return $attendees;
     }
 
-    public static function attendingDemoCount($demoid)
+    public function attendingDemoCount()
     {
         return count(self::$db->fetchColumn(
-            "SELECT memberid FROM schedule.demo_attendee WHERE demo_id = $1", [$demoid]
+            "SELECT memberid FROM schedule.demo_attendee WHERE demo_id = $1", [$this->demo_id]
         ));
     }
 
@@ -156,11 +182,11 @@ class MyRadio_Demo extends ServiceAPI
      * Return 1: Demo Full
      * Return 2: Already Attending a Demo.
      */
-    public static function attend($demoid)
+    public function attend()
     {
         self::initDB();
         //Get # of attendees
-        if (self::attendingDemoCount($demoid) >= 2) {
+        if ($this->attendingDemoCount() >= 2) {
             return 1;
         }
 
@@ -171,7 +197,7 @@ class MyRadio_Demo extends ServiceAPI
             WHERE schedule.demo_attendee.memberid = $1
             AND demo_time <= (NOW() + INTERVAL '1 week')
             AND presenterstatusid = $2",
-            [$_SESSION['memberid'], self::getTrainingType($demoid)->getID()]
+            [$_SESSION['memberid'], $this->presenterstatusid]
         )) !== 0) {
             return 2;
         }
@@ -180,26 +206,25 @@ class MyRadio_Demo extends ServiceAPI
             "INSERT INTO schedule.demo_attendee
             (demo_id, memberid)
             VALUES ($1, $2)",
-            [$demoid, $_SESSION['memberid']]
+            [$this->demo_id, $_SESSION['memberid']]
         );
-        $time = self::getDemoTime($demoid);
-        $user = self::getDemoer($demoid);
+
+        $user = $this->getDemoer();
         $attendee = MyRadio_User::getInstance();
-        $link = self::getLink($demoid);
         MyRadioEmail::sendEmailToUser(
             $user,
             'New Training Attendee',
-            $attendee->getName() . ' has joined your session at ' . $time . '.'
-            . ($link ? " The training session is at " . $link : "")
+            $attendee->getName() . ' has joined your session at ' . $this->getDemoTime() . '.'
+            . ($this->getLink() ? " The training session is at " . $this->getLink() : "")
         );
         MyRadioEmail::sendEmailToUser(
             $attendee,
             'Attending Training',
             'Hi '
             .$attendee->getFName() . ",\r\n\r\n"
-            ."Thanks for joining a training session at $time. You will be trained by "
+            ."Thanks for joining a training session at " . $this->getDemoTime() . ". You will be trained by "
             .$user->getName()
-            . ($link?'. The training session will be available at ' . $link:'. Just head over to the station in Vanbrugh College just before your slot '
+            . ($this->getLink() ?'. The training session will be available at ' . $this->getLink() :'. Just head over to the station in Vanbrugh College just before your slot '
             .' and the trainer will be waiting for you.')
             ."\r\n\r\nSee you on air soon!\r\n"
             .Config::$long_name
@@ -212,28 +237,27 @@ class MyRadio_Demo extends ServiceAPI
     /**
      * The current user is unmarked as attending a demo.
      */
-    public static function leave($demoid)
+    public function leave()
     {
         self::initDB();
 
         self::$db->query(
             "DELETE FROM schedule.demo_attendee
             WHERE demo_id = $1 AND memberid = $2",
-            [$demoid, $_SESSION['memberid']]
+            [$this->demo_id, $_SESSION['memberid']]
         );
-        $time = self::getDemoTime($demoid);
-        $user = self::getDemoer($demoid);
+
         $attendee = MyRadio_User::getInstance();
         MyRadioEmail::sendEmailToUser(
-            $user,
+            $this->getDemoer(),
             'Training Attendee Left',
-            $attendee->getName() . ' has left your session at ' . $time . '.'
+            $attendee->getName() . ' has left your session at ' . $this->getDemoTime() . '.'
         );
         MyRadioEmail::sendEmailToUser(
             $attendee,
             'Training Cancellation',
             'Hi ' . $attendee->getFName() . ",\r\n\r\n"
-            ."Just to confirm that you have left the training session at $time. If this was accidental, simply rejoin."
+            ."Just to confirm that you have left the training session at " . $this->getDemoTime() . ". If this was accidental, simply rejoin."
             ."\r\n\r\nThanks!\r\n"
             .Config::$long_name
             .' Training'
@@ -242,48 +266,28 @@ class MyRadio_Demo extends ServiceAPI
         return 0;
     }
 
-    public static function getDemoTime($demoid)
+    public function getDemoTime()
     {
-        self::initDB();
-        $r = self::$db->fetchOne(
-            "SELECT demo_time FROM schedule.demo WHERE demo_id = $1",
-            [$demoid]
-        );
-        return $r['demo_time'];
+        return $this->demo_time;
     }
 
-    public static function getDemoer($demoid)
+    public function getDemoer()
     {
-        self::initDB();
-        $r = self::$db->fetchColumn(
-            'SELECT memberid FROM schedule.demo WHERE demo_id=$1',
-            [$demoid]
-        );
-        return MyRadio_User::getInstance($r[0]);
+        return MyRadio_User::getInstance($this->memberid);
     }
 
-    public static function getLink($demoid){
-        self::initDB();
-        $r = self::$db->fetchOne(
-            "SELECT link FROM schedule.demo WHERE demo_id = $1",
-            [$demoid]
-        );
-        return $r['link'];
+    public function getLink(){
+        return $this->link;
     }
 
-    public static function getTrainingType($demoid){
-        self::initDB();
-        $r = self::$db->fetchOne(
-            "SELECT presenterstatusid FROM schedule.demo WHERE demo_id = $1",
-            [$demoid]
-        );
-        return MyRadio_TrainingStatus::getInstance($r['presenterstatusid']);
+    public function getTrainingType(){
+        return MyRadio_TrainingStatus::getInstance($this->presenterstatusid);
     }
 
-    public static function markTrained($demoid){
-        $attendees = self::myRadioUsersAttendingDemo($demoid);
+    public function markTrained(){
+        $attendees = $this->myRadioUsersAttendingDemo();
         foreach ($attendees as $attendee){
-            MyRadio_UserTrainingStatus::create(MyRadio_Demo::getTrainingType($demoid),
+            MyRadio_UserTrainingStatus::create($this->getTrainingType(),
             $attendee,
             MyRadio_User::getInstance($_SESSION['memberid'])
         );

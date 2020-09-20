@@ -16,22 +16,23 @@ $tabledata = [];
 $currentUser = MyRadio_User::getInstance();
 
 foreach ($demos as $demo) {
+    $demo_object = MyRadio_Demo::getInstance($demo["demo_id"]);
     if ($currentUser->hasAuth(AUTH_ADDDEMOS)) {
-        $demo['attending'] = MyRadio_Demo::usersAttendingDemo($demo['demo_id']);
+        $demo['attending'] = $demo_object->usersAttendngDemo();
         $demo['join'] = [
             'display' => 'text',
             'value' => 'Mark Trained',
             'url' => URLUtils::makeURL('Scheduler', 'finishDemo', ['demoid' => $demo['demo_id']]),
         ];
     } else {
-        if (MyRadio_Demo::isUserAttendingDemo($demo['demo_id'], $currentUser->getID())) {
+        if ($demo_object->isUserAttendingDemo($currentUser->getID())){
             $demo['attending'] = 'You are attending this demo';
             $demo['join'] = [
                 'display' => 'text',
                 'value' => 'Leave',
                 'url' => URLUtils::makeURL('Scheduler', 'leaveDemo', ['demoid' => $demo['demo_id']]),
             ];
-        } elseif (MyRadio_Demo::isSpaceOnDemo($demo['demo_id'])) {
+        } elseif ($demo_object->isSpaceOnDemo()){
             $demo['attending'] = 'Space available!';
             $demo['join'] = [
                 'display' => 'text',

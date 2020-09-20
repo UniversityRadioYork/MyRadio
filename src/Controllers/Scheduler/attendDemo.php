@@ -5,5 +5,5 @@
 use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_Demo;
 
-$result = MyRadio_Demo::attend($_REQUEST['demoid']);
+$result = MyRadio_Demo::getInstance($_REQUEST['demoid'])->attend();
 URLUtils::redirect($module, 'listDemos', ['msg' => $result]);
