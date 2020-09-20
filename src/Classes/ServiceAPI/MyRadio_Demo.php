@@ -84,6 +84,7 @@ class MyRadio_Demo extends ServiceAPI
         return self::attendingDemoCount($demoid) < 2;
     }
 
+    // Grrr...this returns names, not users.
     public static function usersAttendingDemo($demoid)
     {
         // First, retrieve all the memberids attending this demo
@@ -103,6 +104,20 @@ class MyRadio_Demo extends ServiceAPI
         }
 
         return $str;
+    }
+
+    // Lets fix the above with this...grrr....
+    public static function myRadioUsersAttendingDemo($demoid){
+        $r = self::$db->fetchColumn(
+            "SELECT memberid FROM schedule.demo_attendee
+            WHERE demo_id = $1",
+            [$demoid]
+        );
+        $attendees = [];
+        foreach($r as $attendee){
+            $attendees[] = MyRadio_User::getInstance($attendee);
+        }
+        return $attendees;
     }
 
     public static function attendingDemoCount($demoid)
@@ -265,7 +280,7 @@ class MyRadio_Demo extends ServiceAPI
     }
 
     public static function markTrained($demoid){
-        $attendees = self::usersAttendingDemo($demoid);
+        $attendees = self::myRadioUsersAttendingDemo($demoid);
         foreach ($attendees as $attendee){
             MyRadio_UserTrainingStatus::create(MyRadio_Demo::getTrainingType($demoid),
             $attendee,
