@@ -18,20 +18,21 @@ $tabledata = [];
 $currentUser = MyRadio_User::getInstance();
 
 foreach ($lists as $list) {
-    $list['presenterstatusid'] = MyRadio_UserTrainingStatus::getInstance($list['presenterstatusid']->getTitle());
+    $presenterstatusid = $list['presenterstatusid'];
+    $list['presenterstatusid'] = MyRadio_TrainingStatus::getInstance($presenterstatusid)->getTitle();
     $list['link'] = [
         "display" => "text",
         "value" => "Leave Waiting List",
-        "url" => URLUtils::makeURL("Scheduler", "leaveList", ["presenterstatusid" => $list["presenterstatusid"]])
+        "url" => URLUtils::makeURL("Scheduler", "leaveList", ["presenterstatusid" => $presenterstatusid])
     ];
     
     $tabledata[] = $list;
 }
 
-$can_be_awarded = MyRadio_TrainingStatus::getAllAwardableTo($_SESSION['memberid']);
+$can_be_awarded = MyRadio_TrainingStatus::getAllToBeEarned(MyRadio_User::getCurrentUser());
 foreach ($can_be_awarded as $status){
     $list = [
-        "presenterstatusid" => $status->getID(),
+        "presenterstatusid" => $status->getTitle(),
         "date_added" => "",
         "link" => [
             "display" => "text",

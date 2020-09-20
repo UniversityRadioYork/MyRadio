@@ -339,4 +339,25 @@ class MyRadio_TrainingStatus extends ServiceAPI
 
         return $statuses;
     }
+
+    /**
+     * All the Training Status a User can be awarded, regardless of who's awarding
+     * 
+     * @param MyRadio_User $to The User being awarded the training
+     * 
+     * @return MyRadio_TrainingStatus[]
+     */
+
+     public static function getAllToBeEarned(MyRadio_User $to){
+        $statuses = [];
+        foreach (self::getAll() as $status) {
+            if ((!$status->isAwardedTo($to))
+                && $status->hasDependency($to)
+            ) {
+                $statuses[] = $status;
+            }
+        }
+
+        return $statuses;
+     }
 }

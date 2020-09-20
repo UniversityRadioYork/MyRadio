@@ -66,8 +66,9 @@ class MyRadio_Demo extends ServiceAPI
             MyRadioEmail::sendEmailToUser(
                 $user,
             "Available Training Session",
-            "Hi " . $user->getFName() . ",
-            \r\n\r\n A session to get you " . $training->getTitle() . "has opened up. Check it out on MyRadio.\r\n\r\n" . Config::$long_name . " Training"
+            "Hi " . $user->getFName() . "," 
+            . "\r\n\r\n A session to get you " . $training->getTitle() . " has opened up. Check it out on MyRadio.\r\n\r\n"
+            . Config::$long_name . " Training"
         );
         }
 
@@ -331,7 +332,7 @@ class MyRadio_Demo extends ServiceAPI
         }else{
             self::$db->query(
                 "INSERT INTO schedule.demo_waiting_list (memberid, presenterstatusid, date_added)
-                VALUES $1, $2, NOW()", [$_SESSION['memberid'], $presenterstatusid]
+                VALUES ($1, $2, NOW())", [$_SESSION['memberid'], $presenterstatusid]
             );
         }
         
@@ -363,7 +364,7 @@ class MyRadio_Demo extends ServiceAPI
         self::initDB();
         return self::$db->fetchAll(
             "SELECT memberid, date_added FROM schedule.demo_waiting_list
-            WHERE presenterstatus = $1
+            WHERE presenterstatusid = $1
             ORDER BY date_added ASC",
             [$presenterstatusid]
         );

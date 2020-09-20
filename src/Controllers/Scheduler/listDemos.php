@@ -18,7 +18,7 @@ $currentUser = MyRadio_User::getInstance();
 foreach ($demos as $demo) {
     $demo_object = MyRadio_Demo::getInstance($demo["demo_id"]);
     if ($currentUser->hasAuth(AUTH_ADDDEMOS)) {
-        $demo['attending'] = $demo_object->usersAttendngDemo();
+        $demo['attending'] = $demo_object->usersAttendingDemo();
         $demo['join'] = [
             'display' => 'text',
             'value' => 'Mark Trained',

@@ -5,5 +5,5 @@
 use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_Demo;
 
-MyRadio_Demo::leaveWaitingList($_SESSION["presenterstatusid"]);
-URLUtils::redirect($module, 'listDemos', ['msg' => 1]);
+MyRadio_Demo::leaveWaitingList($_REQUEST["presenterstatusid"]);
+URLUtils::redirect($module, 'listWaitingLists', ['msg' => 1]);
