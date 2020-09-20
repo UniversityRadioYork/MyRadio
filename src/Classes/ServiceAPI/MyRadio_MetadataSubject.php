@@ -292,7 +292,7 @@ trait MyRadio_MetadataSubject
         $query = urldecode($query);
 
         $results = self::$db->fetchColumn(
-            'SELECT '.$id_field
+            'SELECT DISTINCT '.$id_field
             .' FROM '.$table
             .' WHERE metadata_value ILIKE \'%\' || $1 || \'%\''
             .' AND metadata_key_id IN '.$meta_keys /* safe - we control keys via getMetadataKey */
