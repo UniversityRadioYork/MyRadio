@@ -5,11 +5,11 @@
 
 {% if events %}
   <div class="row">
-    <div class="well col-md-12">
+    <div class="well col-md-12 events">
       <h2>Upcoming Events</h2>
-      <ul class="list-group">
+      <ul class="list-group events-list">
         {% for event in events %}
-          <li class="list-group-item">
+          <li class="list-group-item event">
             <h3>
               <a
                 href="{{MyRadio.makeURL(config, 'Events', 'viewEvent', {eventid: event.ID()})}}"
