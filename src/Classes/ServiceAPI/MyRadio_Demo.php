@@ -18,48 +18,16 @@ use MyRadio\MyRadioEmail;
  */
 class MyRadio_Demo extends ServiceAPI
 {
-    public static function registerDemo($time, $link = null)
+    public static function registerDemo($time, $link = null, $training_type)
     {
         self::initDB();
         date_default_timezone_set('UTC');
 
-        /*
-         * Check for conflicts
-         */
-
-         /*
-         * Realistically now, stuff can happen simultaneously.
-         * 
-         *$r = MyRadio_Scheduler::getScheduleConflict($time, $time + 3600);
-         *if (!empty($r)) {
-         *   //There's a conflict
-         *   throw new MyRadioException('There is already something scheduled at that time', 400);
-         *
-         *   return false;
-         *}
-         */
-
-        /*
-         * Demos use the timeslot member as the credit for simplicity
-         */
         self::$db->query(
-            'INSERT INTO schedule.show_season_timeslot (show_season_id, start_time, memberid, approvedid, duration)
-            VALUES (0, $1, $2, $2, \'01:00:00\')',
-            [CoreUtils::getTimestamp($time), $_SESSION['memberid']]
+            "INSERT INTO schedule.demo (presenterstatusid, demo_time, demo_link, memberid)
+            VALUES ($1, $2, $3, $4)",
+            [$training_type, CoreUtils::getTimestamp($time), $link, $_SESSION["memberid"]]
         );
-        if ($link){
-            // Adding link with most recent demo from that user
-            self::$db->query(
-                "INSERT INTO schedule.demo_link (show_season_timeslot_id, link)
-                SELECT show_season_timeslot_id, $1
-                FROM schedule.show_season_timeslot
-                WHERE memberid = $2
-                AND show_season_id = 0
-                ORDER BY show_season_timeslot_id DESC
-                LIMIT 1",
-                [$link, $_SESSION["memberid"]]
-            );
-        }
         date_default_timezone_set(Config::$timezone);
 
         return true;
@@ -75,6 +43,14 @@ class MyRadio_Demo extends ServiceAPI
                 [
                     'title' => 'Scheduler',
                     'subtitle' => 'Create Training Session',
+                ]
+            )
+        )->addField(
+            new MyRadioFormField(
+                'demo-training-type',
+                MyRadioFormField::TYPE_SELECT,
+                ["label" => "Training Type",
+                "options" => MyRadio_TrainingStatus::getOptionsToTrain(MyRadio_User::getCurrentUser())
                 ]
             )
         )->addField(
@@ -96,9 +72,9 @@ class MyRadio_Demo extends ServiceAPI
     public static function isUserAttendingDemo($demoid, $userid)
     {
         $r = self::$db->fetchColumn(
-            'SELECT creditid FROM schedule.show_credit
-            WHERE show_id = 0 AND effective_from=$1 AND credit_type_id=7 AND creditid=$2',
-            [self::getDemoTime($demoid), $userid]
+            "SELECT (1) FROM schedule.demo_attendee
+            WHERE demo_id = $1 AND memberid = $2",
+            [$demoid, $userid]
         );
         return count($r) > 0;
     }
@@ -111,9 +87,11 @@ class MyRadio_Demo extends ServiceAPI
     public static function usersAttendingDemo($demoid)
     {
         // First, retrieve all the memberids attending this demo
+        
         $r = self::$db->fetchColumn(
-            'SELECT creditid FROM schedule.show_credit WHERE show_id = 0 AND effective_from=$1 AND credit_type_id=7',
-            [self::getDemoTime($demoid)]
+            "SELECT memberid FROM schedule.demo_attendee
+            WHERE demo_id = $1",
+            [$demoid]
         );
 
         if (empty($r)) {
@@ -130,8 +108,7 @@ class MyRadio_Demo extends ServiceAPI
     public static function attendingDemoCount($demoid)
     {
         return count(self::$db->fetchColumn(
-            'SELECT creditid FROM schedule.show_credit WHERE show_id = 0 AND effective_from=$1 AND credit_type_id=7',
-            [self::getDemoTime($demoid)]
+            "SELECT memberid FROM schedule.demo_attendee WHERE demo_id = $1", [$demoid]
         ));
     }
 
@@ -141,15 +118,16 @@ class MyRadio_Demo extends ServiceAPI
     public static function listDemos()
     {
         self::initDB();
+        
         $result = self::$db->fetchAll(
-            'SELECT show_season_timeslot_id, start_time, memberid FROM schedule.show_season_timeslot
-            WHERE show_season_id = 0 AND start_time > NOW() ORDER BY start_time ASC'
+            "SELECT demo_id, demo_time, memberid FROM schedule.demo
+            WHERE demo_time > NOW() ORDER BY demo_time ASC"
         );
 
         //Add the credits for each member
         $demos = [];
         foreach ($result as $demo) {
-            $demo['start_time'] = date('d M H:i', strtotime($demo['start_time']));
+            $demo['demo_time'] = date('d M H:i', strtotime($demo['demo_time']));
             $demo['memberid'] = MyRadio_User::getInstance($demo['memberid'])->getName();
             $demos[] = $demo;
         }
@@ -169,6 +147,10 @@ class MyRadio_Demo extends ServiceAPI
         if (self::attendingDemoCount($demoid) >= 2) {
             return 1;
         }
+
+        // ################################################
+        // TODO: Update from here on to New Database Schema
+        // ################################################
 
         //Check they aren't already attending one in the next week
         if (count(self::$db->fetchColumn(

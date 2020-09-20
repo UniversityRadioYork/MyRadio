@@ -291,6 +291,23 @@ class MyRadio_TrainingStatus extends ServiceAPI
         );
     }
 
+    /** Get all Training Statuses the user can train as options for MyRadioFormField
+     * 
+     * @param MyRadio_User $user The user trying to award status
+     * 
+     * @return array
+    */
+
+    public static function getOptionsToTrain($user){
+        $options = [];
+        foreach (self::getAll() as $status){
+            if ($status->canAward($user)){
+                $options[] = ["value" => $status->getID(), "text" => $status->getTitle()];
+            }
+        }
+        return $options;
+    }
+
     /**
      * The all the Training Statuses the User can currently be awarded.
      *
