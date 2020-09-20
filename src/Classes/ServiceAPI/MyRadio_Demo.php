@@ -55,6 +55,7 @@ class MyRadio_Demo extends ServiceAPI
                 FROM schedule.show_season_timeslot
                 WHERE memberid = $2
                 AND show_season_id = 0
+                ORDER BY show_season_timeslot_id DESC
                 LIMIT 1",
                 [$link, $_SESSION["memberid"]]
             );
@@ -86,7 +87,7 @@ class MyRadio_Demo extends ServiceAPI
             new MyRadioFormField(
                 'demo-link',
                 MyRadioFormField::TYPE_TEXT,
-                ['label' => "Zoom/Google Meets Link",
+                ['label' => "Zoom/Google Meets Link (Optional)",
                 "required" => false]
             )
         );
@@ -193,7 +194,7 @@ class MyRadio_Demo extends ServiceAPI
             $user,
             'New Training Attendee',
             $attendee->getName() . ' has joined your session at ' . $time . '.'
-            . $link ? " The training session is at " . $link : ""
+            . ($link ? " The training session is at " . $link : "")
         );
         MyRadioEmail::sendEmailToUser(
             $attendee,
@@ -202,7 +203,7 @@ class MyRadio_Demo extends ServiceAPI
             .$attendee->getFName() . ",\r\n\r\n"
             ."Thanks for joining a training session at $time. You will be trained by "
             .$user->getName()
-            . $link?('. The training session will be available at ' . $link):('. Just head over to the station in Vanbrugh College just before your slot '
+            . ($link?'. The training session will be available at ' . $link:'. Just head over to the station in Vanbrugh College just before your slot '
             .' and the trainer will be waiting for you.')
             ."\r\n\r\nSee you on air soon!\r\n"
             .Config::$long_name
