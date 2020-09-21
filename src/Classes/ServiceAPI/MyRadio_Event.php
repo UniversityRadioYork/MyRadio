@@ -204,6 +204,53 @@ class MyRadio_Event extends ServiceAPI
     }
 
     /**
+     * Updates this event's data.
+     *
+     * Note that this method does not do any authorisation of its own.
+     *
+     * @param array $data same shape as {@link MyRadio_Event::create}
+     */
+    public function update(array $data)
+    {
+        $requiredFields = ['title', 'description_html', 'start_time', 'end_time'];
+        foreach ($requiredFields as $field) {
+            if (!(isset($data[$field]))) {
+                throw new MyRadioException("Missing $field", 400);
+            }
+        }
+
+        $intFields = ['start_time', 'end_time'];
+        foreach ($intFields as $intField) {
+            if (!is_int($data[$intField])) {
+                throw new MyRadioException("Expected $intField to be an integer", 400);
+            }
+        }
+
+        self::$db->query(
+            'UPDATE public.events
+            SET title = $2,
+            description_html = $3,
+            start_time = $4,
+            end_time = $5
+            WHERE eventid = $1',
+            [
+                $this->getID(),
+                $data['title'],
+                $data['description_html'],
+                CoreUtils::getTimestamp(['start_time']),
+                CoreUtils::getTimestamp($data['end_time'])
+            ]
+        );
+
+        $this->title = $data['title'];
+        $this->descriptionHtml = $data['description_html'];
+        $this->startTime = $data['start_time'];
+        $this->endTime = $data['end_time'];
+
+        $this->updateCacheObject();
+    }
+
+    /**
      * Deletes this event. MAKE SURE TO CHECK AUTHORISATION BEFOREHAND!
      */
     public function delete()
@@ -395,7 +442,7 @@ class MyRadio_Event extends ServiceAPI
 
     public function canWeEdit()
     {
-        return $this->getHost()->getID() !== MyRadio_User::getCurrentOrSystemUser()->getID()
+        return $this->getHost()->getID() === MyRadio_User::getCurrentOrSystemUser()->getID()
             || AuthUtils::hasPermission(AUTH_EDITANYEVENT);
     }
 

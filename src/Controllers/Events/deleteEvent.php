@@ -15,6 +15,6 @@ $event->delete();
 
 URLUtils::redirectWithMessage(
     'Events',
-    'calendar',
+    'default',
     'Event deleted.'
 );

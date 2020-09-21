@@ -26,18 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // check permissions
         $event->checkEditPermissions();
 
-        if ($data['title'] !== $event->getTitle()) {
-            $event->setTitle($data['title']);
-        }
-        if ($data['description_html'] !== $event->getDescriptionHtml()) {
-            $event->setDescriptionHtml($data['description_html']);
-        }
-        if ($data['start_time'] !== $event->getStartTime()) {
-            $event->setStartTime($data['start_time']);
-        }
-        if ($data['end_time'] !== $event->getEndTime()) {
-            $event->setEndTime($data['end_time']);
-        }
+        $event->update($data);
 
         URLUtils::redirectWithMessage(
             'Events',
