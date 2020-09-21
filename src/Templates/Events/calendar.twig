@@ -1,0 +1,52 @@
+{% extends 'stripe.twig' %}
+
+{% import 'macros.twig' as MyRadio %}
+{% block head %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{baseurl}}css/vendor/fullcalendar-main.min.css">
+{% endblock %}
+
+{% block stripecontent %}
+    <div id="calendar"></div>
+{% endblock %}
+
+{% block foot %}
+    {{ parent() }}
+    <script type="text/javascript" src="{{baseurl}}js/vendor/fullcalendar-main.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var calendarEl = document.getElementById('calendar');
+            window.myradio_calendar = new FullCalendar.Calendar(calendarEl, {
+                eventSources: [
+                    {
+                        url: '{{ baseurl }}Events/a-getevents',
+                        startParam: "start",
+                        endParam: "end",
+                        eventDataTransform: function(obj) {
+                            return {
+                                id: obj.id,
+                                title: obj.title,
+                                start: obj.start,
+                                end: obj.end,
+                                allDay: false,
+                                url: myradio.makeURL("Events", "viewEvent", { eventid: obj.id })
+                            };
+                        }
+                    }
+                ],
+                initialView: 'dayGridMonth',
+                firstDay: 1,
+                eventTimeFormat: {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: false,
+                    omitZeroMinute: false,
+                    meridiem: false
+                }
+            });
+            window.myradio_calendar.render();
+        });
+    </script>
+{% endblock %}
+
+

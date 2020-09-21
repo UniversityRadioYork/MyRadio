@@ -9,6 +9,7 @@ use MyRadio\MyRadio\URLUtils;
 use MyRadio\MyRadio\MyRadioMenu;
 use MyRadio\MyRadioException;
 use MyRadio\MyRadioError;
+use Twig\TwigFunction;
 use Twig_Loader_Filesystem;
 use Twig_Environment;
 use Twig_Extension_Debug;
@@ -38,6 +39,15 @@ class MyRadioTwig implements \MyRadio\Iface\TemplateEngine
             $this->twig->addExtension(new Twig_Extension_Debug());
             $this->twig->enableDebug();
         }
+
+        $this->twig
+            /**
+             * Returns true if $date2 is on the calendar day after $date1. Both must be
+             * UNIX timestamps.
+             */
+            ->addFunction(new TwigFunction('is_next_day', function ($date1, $date2) {
+                return $date2 > ($date1 + 86400) || ($date1 % 86400) > ($date2 % 86400);
+            }));
 
         $this->addVariable('memberid', isset($_SESSION['memberid']) ? $_SESSION['memberid'] : 0)
             ->addVariable(

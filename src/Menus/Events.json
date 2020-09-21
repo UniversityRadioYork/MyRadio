@@ -1,0 +1,10 @@
+{
+  "menu":
+  [
+    {
+      "title": "Calendar",
+      "url": "module=Events",
+      "description": "View upcoming events."
+    }
+  ]
+}

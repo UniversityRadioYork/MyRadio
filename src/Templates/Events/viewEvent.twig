@@ -1,0 +1,21 @@
+{% extends 'stripe.twig' %}
+
+{% block stripecontent %}
+    <h1>{{ event.Title() }}</h1>
+    <h2>
+        {{ event.StartTime() | date('d F y H:i') }}
+        &mdash;
+        {% if is_next_day(event.StartTime(), event.EndTime) %}
+            {{ event.EndTime() | date('d F Y H:i') }}
+        {% else %}
+            {{ event.EndTime() | date('H:i') }}
+        {% endif %}
+    </h2>
+
+    <p>Hosted by {{ event.Host().Name() }}</p>
+
+    <p>
+        {{ event.DescriptionHtml() | raw }}
+    </p>
+{% endblock %}
+
