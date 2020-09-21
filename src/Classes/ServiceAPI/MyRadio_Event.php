@@ -361,8 +361,8 @@ class MyRadio_Event extends ServiceAPI
                 [
                     'title' => $this->getTitle(),
                     'description_html' => $this->getDescriptionHtml(),
-                    'start_time' => $this->getStartTime(),
-                    'end_time' => $this->getEndTime()
+                    'start_time' => strftime('%d/%m/%Y %H:%M', $this->getStartTime()),
+                    'end_time' => strftime('%d/%m/%Y %H:%M', $this->getEndTime())
                 ]
             );
     }
