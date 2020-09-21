@@ -176,11 +176,20 @@ class MyRadio_Event extends ServiceAPI
             }
         }
 
+        $intFields = ['start_time', 'end_time'];
+        foreach ($intFields as $intField) {
+            if (!is_int($data[$intField])) {
+                throw new MyRadioException("Expected $intField to be an integer", 400);
+            }
+        }
+
         // First, create the master
         $hostid = MyRadio_User::getCurrentOrSystemUser()->getID();
 
         $sql = "INSERT INTO public.events (title, description_html, start_time, end_time, hostid, rrule)
                 VALUES ($1, $2, $3, $4, $5, $6) RETURNING eventid";
+
+        self::$db->query('BEGIN');
 
         $result = self::$db->fetchColumn($sql, [
             $data['title'], $data['description_html'],
@@ -202,14 +211,17 @@ class MyRadio_Event extends ServiceAPI
             foreach ($rrule->getRDates() as $date) {
                 self::$db->fetchOne('INSERT INTO public.events
                         (title, description_html, start_time, end_time, hostid, rrule, master_id)
-                        VALUES ($1, $2, $3, $4, $5, $6, $7)' . [
+                        VALUES ($1, $2, $3, $4, $5, $6, $7)', [
                     $data['title'], $data['description_html'],
-                    CoreUtils::getTimestamp($date->date->getTimestamp()), CoreUtils::getTimestamp($date->date->getTimestamp() + $length),
+                    CoreUtils::getTimestamp($date->date->getTimestamp()),
+                    CoreUtils::getTimestamp($date->date->getTimestamp() + $length),
                     $hostid, $data['rrule'],
                     $newEventId
                 ]);
             }
         }
+
+        self::$db->query('COMMIT');
 
         // Return the master
         return self::factory($newEventId);
