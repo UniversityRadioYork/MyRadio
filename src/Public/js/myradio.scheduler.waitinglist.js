@@ -15,5 +15,5 @@ $(".twig-datatable").dataTable({
     }
   ],
   "bPaginate": false,
-  "aaSorting": [[ 1, "asc" ]]
+  "aaSorting": [[ 1, "desc" ]]
 });

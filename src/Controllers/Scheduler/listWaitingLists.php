@@ -1,13 +1,14 @@
 <?php
+
 /**
  * @todo Proper Documentation
  */
+
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_Demo;
 use MyRadio\ServiceAPI\MyRadio_TrainingStatus;
 use \MyRadio\ServiceAPI\MyRadio_User;
-use MyRadio\ServiceAPI\MyRadio_UserTrainingStatus;
 
 $lists = MyRadio_Demo::userWaitingList();
 
@@ -17,6 +18,8 @@ $tabledata = [];
 
 $currentUser = MyRadio_User::getInstance();
 
+$waiting_statuses = [];
+
 foreach ($lists as $list) {
     $presenterstatusid = $list['presenterstatusid'];
     $list['presenterstatusid'] = MyRadio_TrainingStatus::getInstance($presenterstatusid)->getTitle();
@@ -25,24 +28,26 @@ foreach ($lists as $list) {
         "value" => "Leave Waiting List",
         "url" => URLUtils::makeURL("Scheduler", "leaveList", ["presenterstatusid" => $presenterstatusid])
     ];
-    
+    $list['date_added'] = date('d M Y', strtotime($list['date_added']));
     $tabledata[] = $list;
+    $waiting_statuses[] = $presenterstatusid;
 }
 
 $can_be_awarded = MyRadio_TrainingStatus::getAllToBeEarned(MyRadio_User::getCurrentUser());
-foreach ($can_be_awarded as $status){
-    $list = [
-        "presenterstatusid" => $status->getTitle(),
-        "date_added" => "",
-        "link" => [
-            "display" => "text",
-            "value" => "Join Waiting List",
-            "url" => URLUtils::makeURL("Scheduler", "joinList", ["presenterstatusid" => $status->getID()])
-        ]
-    ];
+foreach ($can_be_awarded as $status) {
+    if (!in_array($status->getID(), $waiting_statuses)) {
+        $list = [
+            "presenterstatusid" => $status->getTitle(),
+            "date_added" => "",
+            "link" => [
+                "display" => "text",
+                "value" => "Join Waiting List",
+                "url" => URLUtils::makeURL("Scheduler", "joinList", ["presenterstatusid" => $status->getID()])
+            ]
+        ];
 
-    $tabledata[] = $list;
-
+        $tabledata[] = $list;
+    }
 }
 
 $twig->setTemplate('table.twig')
