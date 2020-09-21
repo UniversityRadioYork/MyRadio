@@ -28,6 +28,10 @@ $(".twig-datatable").dataTable({
     {
       "bVisible": false
     },
+    //Outro
+    {
+      "bVisible": false
+    },
     //Clean
     {
       "sTitle": "Clean",

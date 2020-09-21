@@ -1010,6 +1010,7 @@ CREATE TABLE rec_track (
     length time without time zone DEFAULT '00:00:00'::time without time zone NOT NULL,
     genre character(1) DEFAULT 'o'::bpchar NOT NULL,
     intro time without time zone DEFAULT '00:00:00'::time without time zone NOT NULL,
+    outro time without time zone DEFAULT '00:00:00'::time without time zone NOT NULL,
     clean character(1) DEFAULT 'u'::bpchar NOT NULL,
     trackid integer DEFAULT nextval(('"rec_track_trackid_seq"'::text)::regclass) NOT NULL,
     recordid integer NOT NULL,
