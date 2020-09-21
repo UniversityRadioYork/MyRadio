@@ -35,6 +35,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
     private $timeslot_num;
     protected $owner;
     protected $credits;
+    private $events;
 
     protected function __construct($timeslot_id)
     {
@@ -142,6 +143,11 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             $this->credits[] = ['type' => (int)$credit_types[$i], 'memberid' => $credits[$i],
                 'User' => MyRadio_User::getInstance($credits[$i]),];
         }
+
+        // Deal with Events the timeslot could be a part of
+        $this->events = self::$db->fetchColumn("SELECT event_id FROM schedule.event_timeslots
+        WHERE show_season_timeslot_id = $1", [$this->timeslot_id]);
+
     }
 
     public function getMeta($meta_string)
@@ -215,6 +221,35 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
 
         return $this->getStartTime() + $duration;
     }
+
+    /**
+     * Returns the events the timeslot is a part of
+     * 
+     * @return MyRadio_Event[]
+     */
+    public function getEvents(){
+        return MyRadio_Event::resultSetToObjArray($this->events);
+    }
+
+    /**
+     * Can add this timeslot to an event
+     * 
+     * @param $event_id
+     * 
+     * @return MyRadio_Event
+     * 
+     * @throws MyRadioException
+     */
+
+     public function addEvent($event_id){
+         try{
+             $event = MyRadio_Event::getInstance($event_id);
+             $event->addTimeslot($this->getID());
+             return $event;
+         }catch (MyRadioException $e){
+             throw $e;
+         }
+     }
 
     /**
      * Gets the Timeslot that is on after this.
@@ -342,6 +377,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
                 'mixcloud_status' => $this->getMeta('upload_state'),
                 'mixcloud_starttime' => $this->getMeta('upload_starttime'),
                 'mixcloud_endtime' => $this->getMeta('upload_endtime'),
+                'events' => $this->events,
                 'rejectlink' => [
                     'display' => 'icon',
                     'value' => 'trash',
