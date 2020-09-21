@@ -153,9 +153,10 @@ class MyRadio_Track extends ServiceAPI
      *                      digitisedby int
      *                      genre int
      *                      intro string HH:ii:ss
+     *                      outro string HH:ii:ss
      *                      length string HH:ii:ss
      *                      duration int
-     *                      intro int
+     *                      number int
      *                      recordid int
      *                      title string
      *
@@ -1157,7 +1158,7 @@ class MyRadio_Track extends ServiceAPI
         }
         //No outro
         if (empty($options['outro'])) {
-            $options['outro'] = $options['duration'];
+            $options['outro'] = 0;
         }
         //Clean unknown
         if (empty($options['clean'])) {
