@@ -23,7 +23,6 @@
                         startParam: "start",
                         endParam: "end",
                         eventDataTransform: function(obj) {
-                            console.log("transforming", obj);
                             return {
                                 id: obj.id,
                                 title: obj.title,
@@ -36,7 +35,14 @@
                     }
                 ],
                 initialView: 'dayGridMonth',
-                firstDay: 1
+                firstDay: 1,
+                eventTimeFormat: {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    hour12: false,
+                    omitZeroMinute: false,
+                    meridiem: false
+                }
             });
             window.myradio_calendar.render();
         });
