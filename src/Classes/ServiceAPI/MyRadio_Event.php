@@ -237,7 +237,7 @@ class MyRadio_Event extends ServiceAPI
                 $this->getID(),
                 $data['title'],
                 $data['description_html'],
-                CoreUtils::getTimestamp(['start_time']),
+                CoreUtils::getTimestamp($data['start_time']),
                 CoreUtils::getTimestamp($data['end_time'])
             ]
         );
