@@ -4,7 +4,7 @@
 {% block stripecontent %}
     <h1>{{ event.Title() }}</h1>
     <h2>
-        {{ event.StartTime() | date('d F y H:i') }}
+        {{ event.StartTime() | date('d F Y H:i') }}
         &mdash;
         {% if is_next_day(event.StartTime(), event.EndTime) %}
             {{ event.EndTime() | date('d F Y H:i') }}
