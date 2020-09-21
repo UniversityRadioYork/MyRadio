@@ -3,7 +3,10 @@
 
 namespace MyRadio\ServiceAPI;
 
+use MyRadio\MyRadio\AuthUtils;
 use MyRadio\MyRadio\CoreUtils;
+use MyRadio\MyRadio\MyRadioForm;
+use MyRadio\MyRadio\MyRadioFormField;
 use MyRadio\MyRadioException;
 use Recurr\Rule;
 
@@ -82,6 +85,66 @@ class MyRadio_Event extends ServiceAPI
     public function getTitle(): string
     {
         return $this->title;
+    }
+
+    /**
+     * @param string $title
+     */
+    public function setTitle(string $title): void
+    {
+        self::$db->query('UPDATE public.events
+            SET title = $2
+            WHERE eventid = $1', [
+                $this->getID(),
+            $title
+        ]);
+        $this->title = $title;
+        $this->updateCacheObject();
+    }
+
+    /**
+     * @param string $descriptionHtml
+     */
+    public function setDescriptionHtml(string $descriptionHtml): void
+    {
+        self::$db->query('UPDATE public.events
+            SET description_html = $2
+            WHERE eventid = $1', [
+            $this->getID(),
+            $descriptionHtml
+        ]);
+        $this->descriptionHtml = $descriptionHtml;
+        $this->updateCacheObject();
+    }
+
+    /**
+     * @param int $startTime
+     */
+    public function setStartTime(int $startTime): void
+    {
+        self::$db->query('UPDATE public.events
+            SET start_time = $2
+            WHERE eventid = $1', [
+            $this->getID(),
+            CoreUtils::getTimestamp($startTime)
+        ]);
+        $this->startTime = $startTime;
+        $this->updateCacheObject();
+    }
+
+    /**
+     * @param int $endTime
+     */
+    public function setEndTime(int $endTime): void
+    {
+        self::$db->query('UPDATE public.events
+            SET end_time = $2
+            WHERE eventid = $1', [
+            $this->getID(),
+            CoreUtils::getTimestamp($endTime)
+        ]);
+        $this->endTime = $endTime;
+        $this->updateCacheObject();
     }
 
     /**
@@ -239,6 +302,71 @@ class MyRadio_Event extends ServiceAPI
         return new self($result);
     }
 
+    public static function getForm()
+    {
+        return (
+            new MyRadioForm(
+                'event',
+                'Events',
+                'editEvent',
+                [
+                    'title' => 'Events',
+                    'subtitle' => 'Create Event'
+                ]
+            )
+        )->addField(new MyRadioFormField(
+            'title',
+            MyRadioFormField::TYPE_TEXT,
+            [
+                'label' => 'Event Title',
+                'explanation' => 'Give this event a name.'
+            ]
+        ))->addField(
+                new MyRadioFormField(
+                    'description_html',
+                    MyRadioFormField::TYPE_BLOCKTEXT,
+                    [
+                        'explanation' => 'Describe your event as best you can.',
+                        'label' => 'Description',
+                    ]
+                )
+            )->addField(
+                new MyRadioFormField(
+                    'start_time',
+                    MyRadioFormField::TYPE_DATETIME,
+                    [
+                        'required' => true,
+                        'label' => 'Start Time',
+                    ]
+                )
+            )
+            ->addField(
+                new MyRadioFormField(
+                    'end_time',
+                    MyRadioFormField::TYPE_DATETIME,
+                    [
+                        'required' => false,
+                        'label' => 'End Time',
+                    ]
+                )
+            );
+    }
+
+    public function getEditForm()
+    {
+        return self::getForm()
+            ->setSubtitle('Edit Event')
+            ->editMode(
+                $this->getID(),
+                [
+                    'title' => $this->getTitle(),
+                    'description_html' => $this->getDescriptionHtml(),
+                    'start_time' => $this->getStartTime(),
+                    'end_time' => $this->getEndTime()
+                ]
+            );
+    }
+
     public function toDataSource($mixins = [])
     {
         return [
@@ -251,5 +379,18 @@ class MyRadio_Event extends ServiceAPI
             'rrule' => $this->rrule,
             'master' => (is_null($this->masterId) ? null : self::getInstance($this->masterId)->toDataSource($mixins))
         ];
+    }
+
+    public function canWeEdit()
+    {
+        return $this->getHost()->getID() !== MyRadio_User::getCurrentOrSystemUser()->getID()
+            || AuthUtils::hasPermission(AUTH_EDITANYEVENT);
+    }
+
+    public function checkEditPermissions()
+    {
+        if ($this->getHost()->getID() !== MyRadio_User::getCurrentOrSystemUser()->getID()) {
+            AuthUtils::requirePermission(AUTH_EDITANYEVENT);
+        }
     }
 }
