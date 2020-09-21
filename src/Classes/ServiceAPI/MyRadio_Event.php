@@ -204,6 +204,18 @@ class MyRadio_Event extends ServiceAPI
     }
 
     /**
+     * Deletes this event. MAKE SURE TO CHECK AUTHORISATION BEFOREHAND!
+     */
+    public function delete()
+    {
+        self::$db->query(
+            'DELETE FROM public.events WHERE eventid = $1',
+            [$this->getID()]
+        );
+        self::$cache->purge();
+    }
+
+    /**
      * Get the next N events.
      *
      * @param $n int the number of events to get
