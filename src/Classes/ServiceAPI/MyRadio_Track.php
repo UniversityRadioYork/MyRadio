@@ -73,6 +73,13 @@ class MyRadio_Track extends ServiceAPI
     private $intro;
 
     /**
+     * The start time of an ending segment to the track, in seconds.
+     *
+     * @var int
+     */
+    private $outro;
+
+    /**
      * Whether the track is clean:<br>
      * y: The track is verified as clean<br>
      * n: The track is verified as unclean<br>
@@ -110,14 +117,14 @@ class MyRadio_Track extends ServiceAPI
      */
     private $digitisedby;
 
-     /**
+    /**
      * The time when this track was last edited.
      *
      * @var int
      */
     private $last_edited_time;
 
-     /**
+    /**
      * The member who last edited this track.
      *
      * @var int
@@ -169,6 +176,7 @@ class MyRadio_Track extends ServiceAPI
             null : (int) $result['last_edited_memberid'];
         $this->genre = $result['genre'];
         $this->intro = strtotime('1970-01-01 '.$result['intro'].'+00');
+        $this->outro = strtotime('1970-01-01 '.$result['outro'].'+00');
         $this->length = $result['length'];
         $this->duration = (int) $result['duration'];
         $this->number = (int) $result['number'];
@@ -232,7 +240,16 @@ class MyRadio_Track extends ServiceAPI
                 MyRadioFormField::TYPE_NUMBER,
                 [
                     'label' => 'Intro',
-                    'explanation' => 'The track intro time in seconds.'
+                    'explanation' => 'The track intro end time in seconds.'
+                ]
+            )
+        )->addField(
+            new MyRadioFormField(
+                'outro',
+                MyRadioFormField::TYPE_NUMBER,
+                [
+                    'label' => 'Outro',
+                    'explanation' => 'The track outro start time in seconds.'
                 ]
             )
         )->addField(
@@ -332,6 +349,7 @@ class MyRadio_Track extends ServiceAPI
                     'album' => $this->getAlbum(),
                     'position' => $this->getPosition(),
                     'intro' => $this->getIntro(),
+                    'outro' => $this->getOutro(),
                     'clean' => $this->getClean(),
                     'genre' => $this->getGenre(),
                     'digitised' => $this->getDigitised(),
@@ -393,6 +411,16 @@ class MyRadio_Track extends ServiceAPI
     public function getIntro()
     {
         return $this->intro;
+    }
+
+    /**
+     * Get the outro start-time of the Track, in seconds.
+     *
+     * @return int
+     */
+    public function getOutro()
+    {
+        return $this->outro;
     }
 
     /**
@@ -567,6 +595,7 @@ class MyRadio_Track extends ServiceAPI
             'trackid' => $this->getID(),
             'length' => $this->getLength(),
             'intro' => $this->getIntro(),
+            'outro' => $this->getOutro(),
             'clean' => $this->clean !== 'n',
             'digitised' => $this->getDigitised(),
             'editlink' => [
@@ -1095,6 +1124,7 @@ class MyRadio_Track extends ServiceAPI
      *                       number: Position of track on album
      *                       genre: Character code genre of track
      *                       intro: Length of track intro, in seconds
+     *                       outro: Start time of track outro, in seconds
      *                       clean: 'y' yes, 'n' no, 'u' unknown lyric cleanliness status
      *                       digitised: boolean digitised status
      *
@@ -1125,6 +1155,10 @@ class MyRadio_Track extends ServiceAPI
         if (empty($options['intro'])) {
             $options['intro'] = 0;
         }
+        //No outro
+        if (empty($options['outro'])) {
+            $options['outro'] = $options['duration'];
+        }
         //Clean unknown
         if (empty($options['clean'])) {
             $options['clean'] = 'u';
@@ -1137,7 +1171,7 @@ class MyRadio_Track extends ServiceAPI
         }
 
         $result = self::$db->query(
-            'INSERT INTO rec_track (number, title, artist, length, genre, intro,
+            'INSERT INTO rec_track (number, title, artist, length, genre, intro, outro
             clean, recordid, digitised, digitisedby, duration, last_edited_time, last_edited_memberid)
             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $10) RETURNING *',
             [
@@ -1147,6 +1181,7 @@ class MyRadio_Track extends ServiceAPI
                 CoreUtils::intToTime($options['duration']),
                 $options['genre'],
                 CoreUtils::intToTime($options['intro']),
+                CoreUtils::intToTime($options['outro']),
                 $options['clean'],
                 $options['recordid'],
                 $options['digitised'],
@@ -1273,6 +1308,26 @@ class MyRadio_Track extends ServiceAPI
             'UPDATE rec_track SET intro=$1 WHERE trackid=$2',
             [
             CoreUtils::intToTime($this->intro),
+            $this->getID(),
+            ]
+        );
+        $this->updateCacheObject();
+    }
+
+    /**
+     * Set the start-time of the track outro, in seconds.
+     *
+     * @param int $start_time Start-time of the outro
+     *
+     * @api POST
+     */
+    public function setOutro($start_time)
+    {
+        $this->outro = (int) $start_time;
+        self::$db->query(
+            'UPDATE rec_track SET outro=$1 WHERE trackid=$2',
+            [
+            CoreUtils::intToTime($this->outro),
             $this->getID(),
             ]
         );
