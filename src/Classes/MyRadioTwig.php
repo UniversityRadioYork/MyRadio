@@ -46,7 +46,7 @@ class MyRadioTwig implements \MyRadio\Iface\TemplateEngine
              * UNIX timestamps.
              */
             ->addFunction(new TwigFunction('is_next_day', function ($date1, $date2) {
-                return $date2 > ($date1 + 86400) || ($date1 % 86400) > ($date2 % 86400);
+                return $date2 >= ($date1 + 86400) || ($date1 % 86400) > ($date2 % 86400);
             }));
 
         $this->addVariable('memberid', isset($_SESSION['memberid']) ? $_SESSION['memberid'] : 0)
