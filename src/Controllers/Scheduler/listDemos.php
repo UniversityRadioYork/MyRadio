@@ -22,7 +22,7 @@ foreach ($demos as $demo) {
         $demo['join'] = [
             'display' => 'text',
             'value' => 'Mark Trained',
-            'url' => URLUtils::makeURL('Scheduler', 'finishDemo', ['demoid' => $demo['demo_id']]),
+            'url' => URLUtils::makeURL('Scheduler', 'createDemo', ['demo_id' => $demo['demo_id']]),
         ];
     } else {
         if ($demo_object->isUserAttendingDemo($currentUser->getID())){

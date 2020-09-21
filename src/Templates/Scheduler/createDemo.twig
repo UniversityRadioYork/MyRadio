@@ -5,5 +5,8 @@
 {% block stripecontent %}
 <p>All sessions will last one hour, take a maximum of two participants and happen in a free studio. You will be registered as the Trainer for this session.</p>
 {{ parent() }}
+{{% if demo_id %}}
+<a href="{{MyRadio.makeURL(config, 'Scheduler', 'finishDemo')}}?demo_id={{demo_id}}">Mark Attendees as Trained</a>
+{{% endif %}}
 <iframe src="{{ config.schedule_url }}" style="width:100%; height: 1500px"></iframe>
 {% endblock %}
