@@ -296,7 +296,7 @@ class MyRadioEmail extends ServiceAPI
      *
      * @param MyRadio_User $to
      * @param string       $subject email subject
-     * @param sting        $message email message
+     * @param string        $message email message
      *
      * @todo Check if "Receive Emails" is enabled for the User
      */

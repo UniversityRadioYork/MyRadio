@@ -27,6 +27,25 @@ class MyRadio_User extends ServiceAPI implements APICaller
 {
     use MyRadio_APICaller_Common;
 
+    public const EOL_STATE_NONE = 0;
+    public const EOL_STATE_DEACTIVATED = 10;
+    public const EOL_STATE_ARCHIVED = 20;
+
+    public const EOL_STATE_PENDING_DEACTIVATE = 1;
+    public const EOL_STATE_PENDING_ARCHIVE = 2;
+    public const EOL_STATE_PENDING_DELETE = 3;
+
+    /**
+     * A mapping of eol_state values to times when the EOL should take place.
+     *
+     * Times are stored as number of seconds.
+     */
+    public const EOL_PENDING_TIMES = [
+        self::EOL_STATE_PENDING_DEACTIVATE => 60 * 60 * 24 * 2, // deactivate
+        self::EOL_STATE_PENDING_ARCHIVE => 60 * 60 * 24 * 2, // archive
+        self::EOL_STATE_PENDING_DELETE => 60 * 60 * 24 * 7  // delete - higher risk of abuse so longer
+    ];
+
     /**
      * Stores the currently logged in User's object after first use.
      * @var MyRadio_User|boolean
@@ -203,6 +222,13 @@ class MyRadio_User extends ServiceAPI implements APICaller
     private $contract_signed;
 
     /**
+     * The user profile's end-of-life state.
+     *
+     * @var int
+     */
+    private $eol_state;
+
+    /**
      * Initiates the User variables.
      *
      * @param int $memberid The ID of the member to initialise
@@ -215,7 +241,8 @@ class MyRadio_User extends ServiceAPI implements APICaller
             'SELECT fname, sname, college AS collegeid, l_college.descr AS college,
             phone, email, receive_email::boolean::text, local_name, local_alias, eduroam,
             account_locked::boolean::text, last_login, joined, profile_photo, bio,
-            auth_provider, require_password_change::boolean::text, contract_signed::boolean::text
+            auth_provider, require_password_change::boolean::text, contract_signed::boolean::text,
+            eol_state
             FROM member, l_college
             WHERE memberid=$1
             AND member.college = l_college.collegeid
@@ -670,6 +697,18 @@ class MyRadio_User extends ServiceAPI implements APICaller
     }
 
     /**
+     * Returns this User account's end-of-life state.
+     *
+     * Use the MyRadio_User::EOL_STATE_* constants to compare, using >= if appropriate.
+     *
+     * @return int
+     */
+    public function getEolState()
+    {
+        return $this->eol_state;
+    }
+
+    /**
      * Get all the User's past, present and future officerships.
      * @param bool $includeMemberships if true, non-officer team memberships will be included
      * @return MyRadio_UserOfficership[]
@@ -870,15 +909,17 @@ class MyRadio_User extends ServiceAPI implements APICaller
             return self::$db->fetchAll(
                 'SELECT memberid, fname, sname, eduroam, local_alias FROM member
                 WHERE fname ILIKE $1 || \'%\' AND sname ILIKE $2 || \'%\'
+                AND eol_state < $4
                 ORDER BY sname, fname LIMIT $3',
-                [$names[0], $names[1], $limit]
+                [$names[0], $names[1], $limit, self::EOL_STATE_DEACTIVATED]
             );
         } else {
             return self::$db->fetchAll(
                 'SELECT memberid, fname, sname, eduroam, local_alias FROM member
                 WHERE fname ILIKE $1 || \'%\' OR sname ILIKE $1 || \'%\'
+                AND eol_state < $3
                 ORDER BY sname, fname LIMIT $2',
-                [$name, $limit]
+                [$name, $limit, self::EOL_STATE_DEACTIVATED]
             );
         }
     }
@@ -900,7 +941,14 @@ class MyRadio_User extends ServiceAPI implements APICaller
 
             return self::$current_user;
         } else {
-            return parent::getInstance($itemid);
+            $user = parent::getInstance($itemid);
+            if ($user->canWeSeeThisUser()) {
+                return $user;
+            } else {
+                // This exception is a lie. It lies intentionally, to ensure that you can't tell whether a user
+                // is archived or actually doesn't exist, just by the message.
+                throw new MyRadioException('The specified User does not appear to exist.', 404);
+            }
         }
     }
 
@@ -2050,6 +2098,294 @@ class MyRadio_User extends ServiceAPI implements APICaller
         if (($from === null || $from < time()) && ($to === null || $to > time())) {
             $this->permissions[] = (int) $authid;
         }
+    }
+
+    public function requestDeactivation()
+    {
+        // Update profile
+        self::$db->query('
+            UPDATE public.member
+            SET eol_state = $2,
+                eol_requested_at = NOW()
+            WHERE memberid = $1
+            ', [
+            $this->getID(),
+            MyRadio_User::EOL_STATE_PENDING_DEACTIVATE
+        ]);
+
+        $this->eol_state = MyRadio_User::EOL_STATE_PENDING_DEACTIVATE;
+
+        // Send warning email
+        // TODO: this won't send if they have receive email disabled. Normally we'd respect that,
+        // but account EOL is a serious enough thing that I'd consider overriding it?
+        $domain = Config::$email_domain;
+        $short_name = Config::$short_name;
+        MyRadioEmail::sendEmailToUser(
+            $this,
+            'MyRadio account deactivation requested',
+            <<<EOL
+Hello,
+
+This is to confirm that you have requested to deactivate your MyRadio account.
+
+Your account will be deactivated automatically in two days (give or take a few hours). You do not need to do anything else.
+
+If you did not request this deactivation, please contact computing@$domain IMMEDIATELY, as your account may have been compromised.
+
+Yours sincerely,
+$short_name Computing Team
+EOL
+
+        );
+    }
+
+    public function requestArchival()
+    {
+        // Update profile
+        self::$db->query('
+            UPDATE public.member
+            SET eol_state = $2,
+                eol_requested_at = NOW()
+            WHERE memberid = $1
+            ', [
+            $this->getID(),
+            MyRadio_User::EOL_STATE_PENDING_ARCHIVE
+        ]);
+
+        $this->eol_state = MyRadio_User::EOL_STATE_PENDING_ARCHIVE;
+
+        // Send warning email
+        // TODO: this won't send if they have receive email disabled. Normally we'd respect that,
+        // but account EOL is a serious enough thing that I'd consider overriding it?
+        $domain = Config::$email_domain;
+        $short_name = Config::$short_name;
+        MyRadioEmail::sendEmailToUser(
+            $this,
+            'MyRadio account archival requested',
+            <<<EOL
+Hello,
+
+This is to confirm that you have requested to archive your MyRadio account.
+
+Your account will be archived automatically in two days (give or take a few hours). You do not need to do anything else.
+
+If you did not request this archival, please contact computing@$domain IMMEDIATELY, as your account may have been compromised.
+
+Yours sincerely,
+$short_name Computing Team
+EOL
+
+        );
+    }
+
+    /**
+     * Deactivates this user (EOL Tier 1). They will not be able to sign in, receive email, receive credits for
+     * any shows, and any officerships will be ended.
+     *
+     * Note: DO NOT CALL THIS DIRECTLY outside of the relevant daemon! Instead use requestDeactivation, as it
+     * properly enqueues the request and sends a warning email.
+     */
+    public function deactivate()
+    {
+        // Start a transaction.
+        self::$db->query('BEGIN');
+
+        // Update profile
+        // If you change this, make sure to change archive() as well!
+        self::$db->query('
+            UPDATE public.member
+            SET eol_state = $2,
+                receive_email = FALSE,
+                account_locked = TRUE
+            WHERE memberid = $1
+            ', [
+            $this->getID(),
+            MyRadio_User::EOL_STATE_DEACTIVATED
+        ]);
+
+        // End all officerships
+        self::$db->query('
+            UPDATE public.member_officer
+            SET till_date = NOW()
+            WHERE memberid = $1
+            AND till_date IS NULL
+            ', [
+            $this->getID()
+        ]);
+
+        // Unsub from all email
+        self::$db->query('
+            DELETE FROM public.mail_subscription
+            WHERE memberid = $1
+            AND (SELECT subscribable FROM public.mail_list WHERE mail_list.listid = mail_subscription.listid)
+            ', [
+            $this->getID()
+        ]);
+
+        // Don't forget!
+        self::$db->query('COMMIT');
+
+        // Sync up local changes
+        $this->eol_state = MyRadio_User::EOL_STATE_DEACTIVATED;
+        $this->receive_email = false;
+        $this->account_locked = true;
+
+        // Yeet the entire cache
+        self::$cache->purge();
+
+        // And send a goodbye email
+        // We use mail() manually to avoid hacking with the innards of MyRadioEmail
+        // (as it'd refuse to send due to receive_email being false)
+        // TODO: is this a good idea?
+        $domain = Config::$email_domain;
+        $long_name = Config::$long_name;
+        $short_name = Config::$short_name;
+        mail(
+            $this->getName() . ' <' . $this->getEmail() . '>',
+            'MyRadio Account Deactivated',
+            utf8_encode(<<<EMAIL
+Hello,
+
+As requested, your MyRadio account has been deactivated. You can no longer sign in, and you will not receive any email after this.
+
+If you ever wish to re-activate your account, please email computing@$domain.
+
+If you did not request the deactivation of your account, please contact us immediately at computing@$domain.
+
+Thank you for all your contributions to $long_name.
+
+Yours sincerely,
+$short_name Computing Team
+EMAIL
+),
+          implode('\r\n', [
+              'From: '.Config::$long_name.' <no-reply@'.Config::$email_domain.'>',
+              'Return-Path: no-reply@'.Config::$email_domain,
+              'Content-Type: text/plain; charset=utf-8'
+          ])
+        );
+    }
+
+    /**
+     * Deactivates this user (EOL Tier 2). In addition to deactivation, their profile will no longer be visible
+     * without the AUTH_VIEWARCHIVEDMEMBERS permission.
+     *
+     * Note: DO NOT CALL THIS DIRECTLY outside of the relevant daemon! Instead use requestArchival, as it
+     * properly enqueues the request and sends a warning email.
+     */
+    public function archive()
+    {
+        // Start a transaction.
+        self::$db->query('BEGIN');
+
+        // Update profile
+        // If you change this, make sure to change deactivate() as well!
+        self::$db->query('
+            UPDATE public.member
+            SET eol_state = $2,
+                receive_email = FALSE,
+                account_locked = TRUE
+            WHERE memberid = $1
+            ', [
+            $this->getID(),
+            MyRadio_User::EOL_STATE_PENDING_ARCHIVE
+        ]);
+
+        // End all officerships
+        self::$db->query('
+            UPDATE public.member_officer
+            SET till_date = NOW()
+            WHERE memberid = $1
+            AND till_date IS NULL
+            ', [
+            $this->getID()
+        ]);
+
+        // Unsub from all email
+        self::$db->query('
+            DELETE FROM public.mail_subscription
+            WHERE memberid = $1
+            AND (SELECT subscribable FROM public.mail_list WHERE mail_list.listid = mail_subscription.listid)
+            ', [
+            $this->getID()
+        ]);
+
+        // Don't forget!
+        self::$db->query('COMMIT');
+
+        // Sync up local changes
+        $this->eol_state = MyRadio_User::EOL_STATE_ARCHIVED;
+        $this->receive_email = false;
+        $this->account_locked = true;
+
+        // Yeet the entire cache
+        self::$cache->purge();
+
+        // And send a goodbye email
+        // TODO: yeah, this really needs refactoring, I'll do it in the next commit.
+        $domain = Config::$email_domain;
+        $long_name = Config::$long_name;
+        $short_name = Config::$short_name;
+        mail(
+            $this->getName() . ' <' . $this->getEmail() . '>',
+            'MyRadio Account Deactivated',
+            utf8_encode(<<<EMAIL
+Hello,
+
+As requested, your MyRadio account has been archived. You can no longer sign in, and you will not receive any email after this.
+
+In addition, your profile is now hidden from public view. Note that it may take search engines a little while to fully remove your information.
+
+If you ever wish to re-activate your account, please email computing@$domain.
+
+If you did not request the archival of your account, please contact us immediately at computing@$domain.
+
+Thank you for all your contributions to $long_name.
+
+Yours sincerely,
+$short_name Computing Team
+EMAIL
+            ),
+            implode('\r\n', [
+                'From: '.Config::$long_name.' <no-reply@'.Config::$email_domain.'>',
+                'Return-Path: no-reply@'.Config::$email_domain,
+                'Content-Type: text/plain; charset=utf-8'
+            ])
+        );
+    }
+
+    /**
+     * Is the current user publicly viewable, or, failing that, do we have the permission to see archived users?
+     * @return bool
+     */
+    public function canWeSeeThisUser()
+    {
+        if ($this->getEolState() < self::EOL_STATE_ARCHIVED) {
+            return true;
+        }
+        return AuthUtils::hasPermission(AUTH_VIEWARCHIVEDMEMBERS);
+    }
+
+    /**
+     * Find all users with a pending end-of-life action.
+     * @return MyRadio_User[]
+     */
+    public static function getPendingEOLMembers()
+    {
+        $conditions = implode(
+            ' OR ',
+            array_map(
+                function($type, $time) {
+                    return "(eol_state = $type AND eol_requested_at > NOW() - interval '$time seconds')";
+                },
+                array_keys(self::EOL_PENDING_TIMES), // lolphp
+                self::EOL_PENDING_TIMES
+            )
+        );
+
+        $sql = "SELECT memberid FROM public.member WHERE $conditions";
+        $ids = self::$db->fetchColumn($sql, []);
+        return self::resultSetToObjArray($ids);
     }
 
     /**

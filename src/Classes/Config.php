@@ -678,6 +678,7 @@ final class Config
     public static $d_Podcast_enabled = true;
     public static $d_StatsGen_enabled = true;
     public static $d_Explicit_enabled = false;
+    public static $d_MemberEOL_enabled = false;
 
     /**** STRINGS ****/
     public static $short_name = 'URY';
@@ -690,9 +691,9 @@ final class Config
     public static $welcome_email = <<<EOT
 
    This is a welcome (sign-up) email. You can use #NAME to get the user's first name.
-   
+
    Here you should probably tell people about what they should do next to get started.
-   
+
    You can set the ($)welcome_email_sender_memberid variable to send this email from/reply to
    someone important, maybe the head of station, so they can ask questions!
 
@@ -702,7 +703,7 @@ EOT;
    This is an email to give a newly signed-up member their new login details.
    You can use #NAME to get the new member's first name.
    You can use #USER and #PASS to tell them their newly created login details.
-   
+
    This email will send from a no-reply email so that user's don't spread their login details.
 
 EOT;

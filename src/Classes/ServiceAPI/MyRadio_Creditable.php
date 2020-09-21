@@ -4,6 +4,7 @@
  */
 namespace MyRadio\ServiceAPI;
 
+use MyRadio\MyRadioException;
 use MyRadio\ServiceAPI\MyRadio_User;
 use MyRadio\ServiceAPI\MyRadio_Scheduler;
 
@@ -210,7 +211,13 @@ trait MyRadio_Creditable
         foreach ($new as $credit) {
             //Look for an existing credit
             if (!in_array($credit, $old)) {
-                //Doesn't seem to exist.
+                // Doesn't seem to exist.
+                // Double-check they're not EOL'd
+                $creditedUser = MyRadio_User::getInstance($credit['memberid']);
+                if ($creditedUser->getEolState() >= MyRadio_User::EOL_STATE_DEACTIVATED) {
+                    $name = $creditedUser->getName();
+                    throw new MyRadioException("Cannot credit $name as their profile is deactivated or archived.", 400);
+                }
                 self::$db->query(
                     'INSERT INTO '.$table.' ('.$pkey.', credit_type_id, creditid, effective_from,'
                     .'memberid, approvedid) VALUES ($1, $2, $3, NOW(), $4, $4)',
