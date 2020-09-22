@@ -26,7 +26,7 @@ foreach ($demos as $demo) {
         ];
         $demo["finish"] = [
             "display" => "icon",
-            "value" => "tick",
+            "value" => "ok",
             "title" => "Mark Attendees as Trained",
             "url" => URLUtils::makeURL("Scheduler", "finishDemo", ["demo_id" => $demo["demo_id"]])
         ];

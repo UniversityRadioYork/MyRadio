@@ -7,7 +7,6 @@
 namespace MyRadio\ServiceAPI;
 
 use MyRadio\Config;
-use MyRadio\MyRadio\AuthUtils;
 use MyRadio\MyRadioException;
 use MyRadio\MyRadio\CoreUtils;
 use MyRadio\MyRadio\MyRadioForm;
@@ -96,12 +95,12 @@ class MyRadio_Demo extends ServiceAPI
         if ($time == null || $training_type == null) {
             throw new MyRadioException("A training demo must have a time and training date.", 400);
         } else {
-            if ($time != $this->demo_time && $link != $this->demo_link && $training_type != $this->presenterstatusid) {
+            if ($time != $this->demo_time || $link != $this->demo_link || $training_type != $this->presenterstatusid) {
                 // Do the Update
                 self::$db->query(
-                    "UPDATE schedule.demo SET demo_time = $1 demo_link = $2, presenterstatusid = $3
+                    "UPDATE schedule.demo SET demo_time = $1, demo_link = $2, presenterstatusid = $3
                 WHERE demo_id = $4",
-                    [$time, $link, $training_type, $this->getID()]
+                    [CoreUtils::getTimestamp($time), $link, $training_type, $this->getID()]
                 );
                 // Email People
                 $attendees = $this->myRadioUsersAttendingDemo();
@@ -113,13 +112,13 @@ class MyRadio_Demo extends ServiceAPI
                         "Hi " . $attendee->getFName()
                             . "\r\n\r\n There's been a change to your training session on " . $this->demo_time
                             . ".\r\n\r\n"
-                            . ($time != $this->demo_time ? "It is now at " . $time . ".\r\n\r\n" : "")
+                            . ($time != $this->demo_time ? "It is now at " . CoreUtils::happyTime($time) . ".\r\n\r\n" : "")
                             . (($link == null && $this->demo_link != null) ? "It is now in person at our studios in Vanbrugh College.\r\n\r\n" : (($link != null && $this->demo_link == null) ? "It is now online and will be hosted at " . $link . "\r\n\r\n" : (($link != null) ? "The session is now at " . $link . "\r\n\r\n" : "\r\n\r\n")))
                             . Config::$long_name . " Training Team"
                     );
                 }
                 $this->demo_link = $link;
-                $this->demo_time = $time;
+                $this->demo_time = CoreUtils::getTimestamp($time);
                 $this->presenterstatusid = $training_type;
             }
         }
@@ -169,8 +168,8 @@ class MyRadio_Demo extends ServiceAPI
             ->editMode(
                 $this->getID(),
                 [
-                    "demo-training-type" => ["value" => $this->getTrainingType()->getID(), "text" => $this->getTrainingType()->getTitle()],
-                    "demo-datetime" => strftime('%d/%m/%Y %H:%M', $this->getDemoTime()),
+                    "demo-training-type" => $this->getTrainingType()->getID(),
+                    "demo-datetime" => CoreUtils::happyTime($this->getDemoTime()),
                     "demo-link" => $this->getLink()
                 ]
             );
@@ -368,7 +367,7 @@ class MyRadio_Demo extends ServiceAPI
 
     public function getLink()
     {
-        return $this->link;
+        return $this->demo_link;
     }
 
     public function getTrainingType()
