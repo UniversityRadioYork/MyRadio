@@ -121,7 +121,7 @@ class NIPSWeb_TimeslotItem extends \MyRadio\ServiceAPI\ServiceAPI
     {
         $this->cue = (int) $secs;
         self::$db->query(
-            'UPDATE bapsplanner.timeslot_items SET cue=$1, WHERE timeslot_item_id=$2',
+            'UPDATE bapsplanner.timeslot_items SET cue=$1 WHERE timeslot_item_id=$2',
             [$this->cue, $this->getID()]
         );
         $this->updateCacheObject();
