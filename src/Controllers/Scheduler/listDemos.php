@@ -21,8 +21,14 @@ foreach ($demos as $demo) {
         $demo['attending'] = $demo_object->usersAttendingDemo();
         $demo['join'] = [
             'display' => 'text',
-            'value' => 'Mark Trained',
+            'value' => 'Edit Demo',
             'url' => URLUtils::makeURL('Scheduler', 'createDemo', ['demo_id' => $demo['demo_id']]),
+        ];
+        $demo["finish"] = [
+            "display" => "icon",
+            "value" => "tick",
+            "title" => "Mark Attendees as Trained",
+            "url" => URLUtils::makeURL("Scheduler", "finishDemo", ["demo_id" => $demo["demo_id"]])
         ];
     } else {
         if ($demo_object->isUserAttendingDemo($currentUser->getID())){
@@ -43,6 +49,7 @@ foreach ($demos as $demo) {
             $demo['attending'] = 'Demo full';
             $demo['join'] = ['display' => 'none'];
         }
+        $demo["finish"] = "";
     }
 
     if ($demo['demo_link']){
@@ -62,7 +69,7 @@ foreach ($demos as $demo) {
 }
 
 if (empty($tabledata)) {
-    $tabledata = [['', '', '', '', '', '', 'Error' => 'There are currently no training slots available.']];
+    $tabledata = [['', '', '', '', '', '', 'Error' => 'There are currently no training slots available.', '']];
 }
 
 //print_r($tabledata);

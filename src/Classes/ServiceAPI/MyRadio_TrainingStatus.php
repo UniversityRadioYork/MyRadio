@@ -104,13 +104,7 @@ class MyRadio_TrainingStatus extends ServiceAPI
         $this->depends = empty($result['depends']) ? null : $result['depends'];
         $this->can_award = empty($result['can_award']) ? null : $result['can_award'];
 
-        $this->permissions = array_map(
-            'intval',
-            self::$db->fetchColumn(
-                'SELECT typeid FROM public.auth_trainingstatus WHERE presenterstatusid=$1',
-                [$statusid]
-            )
-        );
+        
     }
 
     /**
@@ -152,6 +146,15 @@ class MyRadio_TrainingStatus extends ServiceAPI
      */
     public function getPermissions()
     {
+        if (!isset($this->permissions)){
+            $this->permissions = array_map(
+                'intval',
+                self::$db->fetchColumn(
+                    'SELECT typeid FROM public.auth_trainingstatus WHERE presenterstatusid=$1',
+                    [$this->presenterstatusid]
+                )
+            );
+        }
         return $this->permissions;
     }
 

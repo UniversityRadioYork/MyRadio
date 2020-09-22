@@ -23,7 +23,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         MyRadio_Demo::getInstance($_REQUEST["demo_id"])
         ->getEditForm()
         ->setTemplate("Scheduler/createDemo.twig")
-        ->addVariable("demo_id", $_REQUEST["demo_id"])
         ->render();
     } else {
         // Create New Demo

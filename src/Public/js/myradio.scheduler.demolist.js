@@ -29,6 +29,11 @@ $(".twig-datatable").dataTable({
     {
       "sTitle": "",
       "bSortable": false
+    },
+    //finish and marked trained
+    {
+      "sTitle": "",
+      "bSortable": false
     }
   ],
   "bPaginate": false,
