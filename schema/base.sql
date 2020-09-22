@@ -221,6 +221,7 @@ CREATE TABLE bapsplanner.timeslot_items (
     timeslot_id integer NOT NULL,
     channel_id smallint NOT NULL,
     weight integer NOT NULL,
+    cue integer NOT NULL DEFAULT 0,
     rec_track_id integer,
     managed_item_id integer,
     user_item_id integer,

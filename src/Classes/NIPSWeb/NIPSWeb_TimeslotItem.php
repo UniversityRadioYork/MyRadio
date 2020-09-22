@@ -65,7 +65,7 @@ class NIPSWeb_TimeslotItem extends \MyRadio\ServiceAPI\ServiceAPI
 
         $this->channel = (int) $result['channel_id'];
         $this->weight = (int) $result['weight'];
-        $this->cue = (int) 10; // TODO: Implement this.
+        $this->cue = (int) $result['cue'];
 
     }
 
@@ -120,7 +120,10 @@ class NIPSWeb_TimeslotItem extends \MyRadio\ServiceAPI\ServiceAPI
     public function setCue($secs)
     {
         $this->cue = (int) $secs;
-        // TODO: DB Query.
+        self::$db->query(
+            'UPDATE bapsplanner.timeslot_items SET cue=$1, WHERE timeslot_item_id=$2',
+            [$this->cue, $this->getID()]
+        );
         $this->updateCacheObject();
     }
 
