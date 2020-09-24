@@ -1063,6 +1063,13 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
     /**
      * Get information about the Users signed into this Timeslot.
      *
+     * @return array with the following keys:
+     * * signedby - who signed in the user - MyRadio_User|null
+     * * location - the name of the sign-in location
+     * * time - the sign-in time, as a UNIX timestamp
+     * * EITHER user - the member signed in (for members)
+     * * OR guest_info - the guest details given at sign-in (for guests)
+     *
      * @todo Cache this data?
      */
     public function getSigninInfo()
@@ -1081,21 +1088,49 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
                 AND (effective_to IS NULL OR effective_to > NOW())
             ) AS t1
             LEFT JOIN (
-                SELECT memberid, signerid FROM sis2.member_signin
+                SELECT memberid, signerid, location, sign_time FROM sis2.member_signin
                 WHERE show_season_timeslot_id=$1
-            ) AS t2 USING (memberid)',
+            ) AS t2 USING (memberid)
+            INNER JOIN schedule.location ON t2.location = location.location_id',
             [$this->getID()]
         );
 
-        return array_map(
+        $data = array_map(
             function ($x) {
                 return [
                     'user' => MyRadio_User::getInstance($x['memberid']),
                     'signedby' => $x['signerid'] ? MyRadio_User::getInstance($x['signerid']) : null,
+                    'location' => $x['location_name'],
+                    'time' => strtotime($x['sign_time'])
                 ];
             },
             $result
         );
+
+        // Now handle guests
+        $result = self::$db->fetchAll(
+            'SELECT signerid, guest_info, sign_time, location_id, location_name FROM sis2.guest_signin
+                INNER JOIN schedule.location ON guest_signin.location = location.location_id
+                WHERE show_season_timeslot_id=$1',
+            [$this->getID()]
+        );
+
+        $data = array_merge(
+            $data,
+            array_map(
+                function ($x) {
+                    return [
+                        'signedby' => $x['signerid'] ? MyRadio_User::getInstance($x['signerid']) : null,
+                        'location' => $x['location_name'],
+                        'guest_info' => $x['guest_info'],
+                        'time' => strtotime($x['sign_time'])
+                    ];
+                },
+                $result
+            )
+        );
+
+        return $data;
     }
 
     public function getMessages($offset = 0)
@@ -1181,8 +1216,9 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
      * on air at this time, if they haven't been signed in already.
      *
      * @param MyRadio_User $member
+     * @param int|string $locationid
      */
-    public function signIn(MyRadio_User $member)
+    public function signIn(MyRadio_User $member, $locationid)
     {
         // If member already signed in for whatever reason, don't bother trying again.
         $signedIn = !empty(self::$db->fetchOne(
@@ -1192,11 +1228,20 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
         ));
         if (!$signedIn) {
             self::$db->query(
-                'INSERT INTO sis2.member_signin (show_season_timeslot_id, memberid, signerid)
+                'INSERT INTO sis2.member_signin (show_season_timeslot_id, memberid, signerid, location)
                 VALUES ($1, $2, $3)',
-                [$this->getID(), $member->getID(), MyRadio_User::getInstance()->getID()]
+                [$this->getID(), $member->getID(), MyRadio_User::getInstance()->getID(), $locationid]
             );
         }
+    }
+
+    public function signInGuests(string $guestInfo, $locationid)
+    {
+        self::$db->query(
+            'INSERT INTO sis2.guest_signin (show_season_timeslot_id, signerid, location, guest_info)
+                VALUES ($1, $2, $3, $4)',
+            [$this->getID(), MyRadio_User::getInstance()->getID(), $locationid, $guestInfo]
+        );
     }
 
     public static function getCancelForm()

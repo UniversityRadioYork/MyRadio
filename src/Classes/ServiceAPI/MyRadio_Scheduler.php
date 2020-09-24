@@ -194,6 +194,20 @@ class MyRadio_Scheduler extends ServiceAPI
     }
 
     /**
+     * Returns a list of show locations, organised so they can be used as a SELECT MyRadioFormField data source.
+     */
+    public static function getLocations()
+    {
+        self::wakeup();
+
+        return self::$db->fetchAll(
+            'SELECT location_id AS value, location_name AS text
+                FROM schedule.location
+                ORDER BY location_name ASC'
+        );
+    }
+
+    /**
      * Returns a list of potential genres, organised so they can be used as a SELECT MyRadioFormField data source.
      */
     public static function getGenres()
