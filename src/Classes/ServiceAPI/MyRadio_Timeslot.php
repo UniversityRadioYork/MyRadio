@@ -1229,7 +1229,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
         if (!$signedIn) {
             self::$db->query(
                 'INSERT INTO sis2.member_signin (show_season_timeslot_id, memberid, signerid, location)
-                VALUES ($1, $2, $3)',
+                VALUES ($1, $2, $3, $4)',
                 [$this->getID(), $member->getID(), MyRadio_User::getInstance()->getID(), $locationid]
             );
         }
