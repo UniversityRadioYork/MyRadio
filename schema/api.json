@@ -32,6 +32,7 @@
         "\\MyRadio\\MyRadio\\MyRadioNews": "news",
         "\\MyRadio\\NIPSWeb\\NIPSWeb_ManagedUserPlaylist": "nipswebUserPlaylist",
         "\\MyRadio\\NIPSWeb\\NIPSWeb_ManagedPlaylist": "nipswebPlaylist",
+        "\\MyRadio\\NIPSWeb\\NIPSWeb_TimeslotItem": "timeslotItem",
         "\\MyRadio\\Config": "config"
     },
     "specs": {
