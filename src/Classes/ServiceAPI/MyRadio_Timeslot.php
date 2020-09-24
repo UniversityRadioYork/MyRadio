@@ -1091,7 +1091,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
                 SELECT memberid, signerid, location, sign_time FROM sis2.member_signin
                 WHERE show_season_timeslot_id=$1
             ) AS t2 USING (memberid)
-            INNER JOIN schedule.location ON t2.location = location.location_id',
+            LEFT JOIN schedule.location ON t2.location = location.location_id',
             [$this->getID()]
         );
 
