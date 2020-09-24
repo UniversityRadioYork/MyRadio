@@ -104,7 +104,7 @@ $("#timeslots").on(
                     var wrapper = $("<div>");
                     wrapper.append(
                       $("<p>Please enter the names of all guests on your show. " +
-                        "If any are not students, please enter their phone numbers.</p>")
+                        "If any are not students, please also enter their phone numbers.</p>")
                     );
                     wrapper.append(
                       $("<textarea rows='8' cols='50'>")
