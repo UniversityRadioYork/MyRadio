@@ -12,7 +12,10 @@ if ($ts->getSeason()->getShow()->isCurrentUserAnOwner()
     || AuthUtils::hasPermission(AUTH_EDITSHOWS)
 ) {
     $data = $ts->getSigninInfo();
-    URLUtils::dataToJSON($data);
+    URLUtils::dataToJSON(array_map(function($x) {
+        unset($x['guest_info']);
+        return $x;
+    }, $data));
 } else {
     require_once 'Controllers/Errors/403.php';
 }
