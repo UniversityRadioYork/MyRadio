@@ -58,7 +58,7 @@ $("#timeslots").on(
             success: function (data) {
               $("#signin-list")
                 .html("Sign in to your show:<br>" +
-                  "<div id='member-signins'></div><div id='guest-signins'></div>");
+                  "<div id='member-signins'></div><div id='guest-signins'></div><br>");
               var used_memberids = [];
               var has_guests = false;
               for (var row in data) {
@@ -90,7 +90,8 @@ $("#timeslots").on(
                   }
                   $("#guest-signins").append(
                     $("<span>")
-                      .text(data[row].signedby.fname + " " + data[row].signedby.sname)
+                      .text(data[row].signedby.fname + " " + data[row].signedby.sname
+                        + "(" + data[row].guest_data.replace(/[\r\n]*/g, ", ") + ")")
                       .append("<br>")
                   );
                 }
@@ -103,7 +104,7 @@ $("#timeslots").on(
                   .click(function() {
                     var wrapper = $("<div>");
                     wrapper.append(
-                      $("<p>Please enter the names of all guests on your show. " +
+                      $("<p>Please enter the names of all guests on your show, one on each line. " +
                         "If any are not students, please also enter their phone numbers.</p>")
                     );
                     wrapper.append(
