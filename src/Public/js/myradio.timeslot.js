@@ -97,9 +97,9 @@ $("#timeslots").on(
               }
               $("#signin-list").append(
                 $("<button>")
-                  .addClass("btn btn-primary")
+                  .addClass("btn btn-default")
                   .attr("id", "registerGuestsBtn")
-                  .text("Register Guests")
+                  .text("Register Guests (for studio shows only)")
                   .click(function() {
                     var wrapper = $("<div>");
                     wrapper.append(
@@ -114,6 +114,7 @@ $("#timeslots").on(
                       .replaceWith(wrapper);
                   })
               )
+                .append("<br>")
                 .append(
                   $("<label>")
                     .text("Show Location")
