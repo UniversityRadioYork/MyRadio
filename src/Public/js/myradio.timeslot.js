@@ -91,7 +91,7 @@ $("#timeslots").on(
                   $("#guest-signins").append(
                     $("<span>")
                       .text(data[row].signedby.fname + " " + data[row].signedby.sname
-                        + "(" + data[row].guest_data.replace(/[\r\n]*/g, ", ") + ")")
+                      + " (" + moment.unix(data[row].time).fromNow() + ")")
                       .append("<br>")
                   );
                 }
