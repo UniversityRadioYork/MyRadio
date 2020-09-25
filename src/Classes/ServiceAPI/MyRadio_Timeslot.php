@@ -1141,7 +1141,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             array_map(
                 function ($x) {
                     return [
-                        'signedby' => $x['signerid'] ? MyRadio_User::getIn  ance($x['signerid']) : null,
+                        'signedby' => $x['signerid'] ? MyRadio_User::getInstance($x['signerid']) : null,
                         'location' => $x['location_name'],
                         'guest_info' => $x['guest_info'],
                         'time' => strtotime($x['sign_time'])
