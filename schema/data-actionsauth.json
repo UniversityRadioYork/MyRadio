@@ -119,6 +119,7 @@
     ["Scheduler", "allocate", "AUTH_ALLOCATESLOTS"],
     ["Scheduler", "shows", "AUTH_VIEWMEMBERSHOWS"],
     ["Scheduler", "attendance", "AUTH_VIEWSISLOGININFO"],
+    ["Scheduler", "tracking", "AUTH_VIEWSISLOGININFO"],
     ["Scheduler", "attendDemo", "AUTH_ADDDEMOS"],
     ["Scheduler", "attendDemo", "AUTH_ATTENDDEMO"],
     ["Scheduler", "cancelEpisode", "AUTH_APPLYFORSHOW"],
