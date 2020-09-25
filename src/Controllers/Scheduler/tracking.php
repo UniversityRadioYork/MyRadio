@@ -6,14 +6,16 @@
 
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\ServiceAPI\MyRadio_Season;
+use MyRadio\ServiceAPI\MyRadio_Timeslot;
 
 $data = [];
+$no_track = MyRadio_Timeslot::getLocationName(5); //WebStudio
 
 foreach (MyRadio_Season::getAllSeasonsInLatestTerm() as $season) {
     foreach ($season->getAllTimeslots() as $timeslot) {
         if ($timeslot->getStartTime() < time()) {
             foreach ($timeslot->getSigninInfo() as $info) {
-                if ($info['location'] != 'Jukeboxland') {
+                if ($info['location'] != $no_track) {
                     if (isset($info['user'])) {
                         $data[] =
                             [
