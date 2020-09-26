@@ -1172,7 +1172,7 @@ class MyRadio_Track extends ServiceAPI
         }
 
         $result = self::$db->query(
-            'INSERT INTO rec_track (number, title, artist, length, genre, intro, outro
+            'INSERT INTO rec_track (number, title, artist, length, genre, intro, outro,
             clean, recordid, digitised, digitisedby, duration, last_edited_time, last_edited_memberid)
             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $10) RETURNING *',
             [
