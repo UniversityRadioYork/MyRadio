@@ -1174,7 +1174,7 @@ class MyRadio_Track extends ServiceAPI
         $result = self::$db->query(
             'INSERT INTO rec_track (number, title, artist, length, genre, intro, outro,
             clean, recordid, digitised, digitisedby, duration, last_edited_time, last_edited_memberid)
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $10) RETURNING *',
+            VALUES ($1, $2, $3, $4, $5, $6, $14, $7, $8, $9, $10, $11, $12, $10) RETURNING *',
             [
                 $options['number'],
                 trim($options['title']),
@@ -1189,6 +1189,7 @@ class MyRadio_Track extends ServiceAPI
                 $_SESSION['memberid'],
                 $options['duration'],
                 CoreUtils::getTimestamp(),
+                CoreUtils::intToTime($options['outro'])
             ]
         );
 
