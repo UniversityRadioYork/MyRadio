@@ -1,12 +1,20 @@
 /* global myradio */
 /* exported startImport,selectNone,selectAll,reload */
 
-// Queue up sending ajax requests one at a time
-var ajaxQueue = $({});
 
-var currentShowPlan;
 
-// Stage 1) Load the current user's shows.
+
+// The functions in this file are laid out in order of being called.
+// Because calling API resources should be asyncronous, most functions are called from the previous, once the result has been received.
+// myradio.X() calls are imported separately from the myradio.core.js file in this folder.
+
+var sourceShowPlan;
+
+//////////////////////////////////////
+// Stage 1) Opening the importer page.
+//////////////////////////////////////
+
+// Work out who is logged in right now.
 $(document).ready(
   function () {
     myradio.callAPI("GET", "user", "currentuser", "", "", "",
@@ -23,6 +31,7 @@ $(document).ready(
   }
 );
 
+// Get the shows they're credited on, so the user can select one to import previous items from. (First dropdown)
 function getUserShows(currentUserID) {
   myradio.callAPI("GET", "user", "shows", currentUserID, "", "",
     function (data) {
@@ -47,12 +56,16 @@ function getUserShows(currentUserID) {
   );
 };
 
-// Stage 2) Select the show & load its seasons
+//////////////////////////////////////
+// Stage 2) Selecting a source Show Plan to import
+//////////////////////////////////////
 
+// When the user selects a show, trigger polling that show for seasons.
 $("#import-show-selector").change(function () {
   updateSeasonList();
 });
 
+// Poll the selected show for it's seasons and populate the second dropdown.
 function updateSeasonList() {
   var selectedShowID = $("#import-show-selector").find(":selected").attr("value");
   //remove all the previously shown seasons (if any), without removing the placeholder option.
@@ -86,11 +99,12 @@ function updateSeasonList() {
   );
 }
 
-// Stage 3) Select this show's season & load its timeslots.
+// When the user selects a specific season from the second dropdown, load it's timeslots.
 $("#import-season-selector").change(function () {
   updateTimeslotList();
 });
 
+// Poll for the season's timeslots and populate the third drop down.
 function updateTimeslotList() {
   var selectedSeasonID = $("#import-season-selector").find(":selected").attr("value");
   //remove all the previously shown timeslots (if any), without removing the placeholder option.
@@ -132,12 +146,13 @@ function updateTimeslotList() {
   }
 }
 
-// Stage 4) Select the timeslot & load the showplan from it.
+// When the user selects the timeslot from the 3rd drop down, trigger loading the showplan for it.
 $("#import-timeslot-selector").change(function () {
   loadShowPlan();
   $("#import-showplan").fadeIn();
 });
 
+// Poll the API for the show plan and save it globally in sourceShowPlan. Trigger displaying the first channel.
 function loadShowPlan() {
   var selectedTimeslotID = $("#import-timeslot-selector").find(":selected").attr("value");
   myradio.callAPI("GET", "timeslot", "showplan", selectedTimeslotID, "", "",
@@ -148,27 +163,28 @@ function loadShowPlan() {
           continue;
         }
       }
-      currentShowPlan = data.payload;
+      sourceShowPlan = data.payload;
       loadChannelList();
     });
 }
 
+// Take the show plan we just got from loadShowPlan() and display the selected channel's items.
 function loadChannelList() {
   $("#import-channel-list").empty();
   var selectedChannelNo = $("#import-channel-selector a.active").attr("channel");
   var item, itemid, cleanStars, extraString, expired, disabled;
-  if (currentShowPlan[selectedChannelNo] == undefined || currentShowPlan[selectedChannelNo].length == 0) {
+
+  if (sourceShowPlan[selectedChannelNo] == undefined || sourceShowPlan[selectedChannelNo].length == 0) {
     $("#import-channel-list").append("<p>No items in this channel.</p>");
-    $("#import-channel-filter-btns").fadeOut();
+    $("#import-channel-filter-btns").fadeOut(); // Hide the select all / none buttons.
   } else {
-    for (item in currentShowPlan[selectedChannelNo]) {
-      item = currentShowPlan[selectedChannelNo][item];
+    // This channel has items. Loop through them
+    for (item in sourceShowPlan[selectedChannelNo]) {
+      item = sourceShowPlan[selectedChannelNo][item];
+
+      // Central items (music tracks) can be explicit, place the **'s, they also have artists and albums to display.
       if (item.type == "central") {
-        if (!item.clean) {
-          cleanStars = "**";
-        } else {
-          cleanStars = "";
-        }
+        cleanStars = item.clean ? "" : "**"
         expired = !(item.digitised);
         extraString = " - " + item.artist + " - " + item.album.title + " (" + item.length + ")";
         itemid = item["album"].recordid + "-" + item.trackid;
@@ -178,17 +194,19 @@ function loadChannelList() {
         itemid = "ManagedDB-" + item.managedid;
         expired = item.expired;
       }
+      // Undigitised items have been removed for one reason or another, so we're gonna mark these disabled.
       disabled = (expired ? "disabled" : "");
+
+      // Mush together the <li> element tick box and add it to the list.
       $("#import-channel-list").append("<li class=\"" + disabled + "\"><input type=\"checkbox\" class=\"channel-list-item\" "
         + disabled + " value=\"" + itemid + "\">"
         + cleanStars + item.title + extraString + "</li>");
-      $("#import-channel-filter-btns").fadeIn();
     }
+    $("#import-channel-filter-btns").fadeIn(); // Fade in the Select All / None buttons.
   }
 }
 
-// Stage 5) Select a channel to import from.
-
+// If the user selects a different channel to import from, trigger populating that channel's items;
 $("#import-channel-selector a").on("click", "", function () {
   selectChannel($(this).attr("channel"));
 }
@@ -200,8 +218,7 @@ function selectChannel(channelNo) {
   loadChannelList();
 }
 
-// Stage 6) Filter the tracks quickly.
-
+// Filter the tracks quickly (from the select all/none buttons).
 var selectAll = function () {  //"select all" change
   $(".channel-list-item").each(function () { //iterate all listed checkbox items
     this.checked = true; //change checkbox checked status
@@ -213,6 +230,12 @@ var selectNone = function () {  //"select none" change
   });
 };
 
+//////////////////////////////////////
+// Stage 3) Importing the selected source show plan items
+//////////////////////////////////////
+
+// Triggered from the destination channel import buttons.
+// Poll the API for the timeslot the user currently has selected (from the navbar)
 function startImport(channelNo) {
   myradio.callAPI("GET", "timeslot", "userselectedtimeslot", "", "", "",
     function (data) {
@@ -226,7 +249,8 @@ function startImport(channelNo) {
     });
 }
 
-// Stage 7) Get the new weights that new channel items need to be added to
+// To add items to a show plan, we need to know what index (weights) these new items are going to.
+// Get the selected destination show plan, and calculate the new starting weight for each channel based on the last existing item +1.
 function getExistingShowPlan(timeslotID, channelNo) {
 
   let nextChannelWeights = [];
@@ -238,9 +262,9 @@ function getExistingShowPlan(timeslotID, channelNo) {
           continue;
         }
       }
-      currentShowPlan = data.payload;
-      for (channelKey in currentShowPlan) {
-        const channel = currentShowPlan[channelKey];
+      sourceShowPlan = data.payload;
+      for (channelKey in sourceShowPlan) {
+        const channel = sourceShowPlan[channelKey];
         console.log(channel);
         if (channel.length > 0) {
           nextChannelWeights.push((channel[channel.length - 1].weight) + 1)
@@ -253,19 +277,18 @@ function getExistingShowPlan(timeslotID, channelNo) {
     });
 }
 
-// Stage 8) Actually import the selected tracks.
-
+// Calculate the list of add item operations we need to do for the items selected.
 function calculateOps(timeslotID, channelNo, nextChannelWeights) {
-
-
 
   var ops = [];
   if ($("input[type=checkbox]:checked").length > 0) {
-    myradio.showAlert("Importing Tracks...", "warning");
+    myradio.showAlert("Importing items...", "warning");
+    // For each checked item, give it a consecutive weight,
     $("input[type=checkbox]:checked").each(function () {
       const weight = nextChannelWeights[channelNo];
       nextChannelWeights[weight]++;
 
+      // Add this item's operation to the list.
       ops.push({
         op: "AddItem",
         id: $(this).val(), //format: album-track
@@ -273,17 +296,20 @@ function calculateOps(timeslotID, channelNo, nextChannelWeights) {
         weight: weight
       });
     });
+
+    // Now let's fire off these changes to the server!
     shipChanges(timeslotID, ops);
   } else {
-    myradio.showAlert("No tracks were selected.", "danger");
+    myradio.showAlert("No items were selected.", "danger");
   }
 }
-/**
- * Change shipping operates in a queue - this ensures that changes are sent atomically and sequentially.
- * ops: JSON changeset to send
- */
+
+// Change shipping operates in a queue - this ensures that changes are sent atomically and sequentially.
+// ops: JSON changeset to send
 var shipChanges = function (timeslotID, ops) {
 
+  // Queue up sending ajax requests one at a time
+  var ajaxQueue = $({});
 
   ajaxQueue.queue(
     function (next) {
@@ -299,9 +325,9 @@ var shipChanges = function (timeslotID, ops) {
         complete: function () {
           next();
           $("#import-to-channel-selector").fadeOut();
-          var text = "Tracks imported! <a onClick=\"reload()\" title=\"Reload the page\">Please reload your show plan.</a>";
+          var text = "Items imported! <a onClick=\"reload()\" title=\"Reload the page\">Please reload your show plan.</a>";
           myradio.showAlert(text, "success");
-          //Just in case the user clicks the "x" on the import modal.
+          // Just in case the user clicks the "x" on the import modal, display the import sucess on the parent window (only used for show planner).
           parent.myradio.showAlert(text, "success");
         },
         data: {
@@ -315,7 +341,7 @@ var shipChanges = function (timeslotID, ops) {
   );
 };
 
-// Stage 8) reload the page to show your newly imported tracks. Clicked from a showAlert.
+// Reload the page to show your newly imported item. Clicked from a showAlert.
 var reload = function () {
   parent.location.reload();
 };
