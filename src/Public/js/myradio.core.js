@@ -146,7 +146,7 @@ $(document).ajaxError(
 
       myradio.createDialog(
         "API Error",
-        `<p>Sorry, something just went a bit wrong and I'm not sure what to do about it.</p>
+        `<p>Sorry, something just went a bit wrong. Please report this issue if this is your first time seeing this message! Why not try again if you haven't done so already, too.</p>
         <details>
           <strong>Endpoint:</strong> `+ settings.url +`<br>
           <strong>Status Code:</strong> `+ xhr.status + `<br>
