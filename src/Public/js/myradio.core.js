@@ -142,11 +142,14 @@ $(document).ajaxError(
       report.addEventListener("click", errorVisibleReset);
 
       myradio.createDialog(
-        "Error",
-        `<p>Sorry, just went a bit wrong and I'm not sure what to do about it.</p>
-        <details>Endpoint: `+ settings.url +`
-        <br>Status Code: `+ xhr.status + `
-        <br>Error Messages: ` + error + "<br>" + message + "</details>",
+        "API Error",
+        `<p>Sorry, something just went a bit wrong and I'm not sure what to do about it.</p>
+        <details>
+          <strong>Endpoint:</strong> `+ settings.url +`<br>
+          <strong>Status Code:</strong> `+ xhr.status + `<br>
+          <strong>Response:</strong> ` + error + `<br>
+          ` + message + `
+        </details>`,
         [close, report]
       );
       errorVisible = true;
