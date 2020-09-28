@@ -110,6 +110,9 @@ class MyRadio_Webcam extends ServiceAPI
                 case 'cam2':
                     $location = 'Outside Broadcast';
                     break;
+                case 'webstudio':
+                    $location = 'WebStudio';
+                    break;
                 case 'offair':
                     $location = 'Off Air';
                     break;
