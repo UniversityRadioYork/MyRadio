@@ -222,7 +222,7 @@ function startImport(channelNo) {
         continue;
       }
     }
-    getExistingShowPlan(data.payload.show_id, channelNo);
+    getExistingShowPlan(data.payload.timeslot_id, channelNo);
   });
 }
 
