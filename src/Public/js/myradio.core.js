@@ -124,13 +124,16 @@ $(document).ajaxError(
       var report = myradio.reportButton(xhr, settings, error);
       var message = "";
 
-      if (xhr.responseJSON) {
-        if (xhr.responseJSON.error) {
-          message = xhr.responseJSON.error;
-        } else if (xhr.responseJSON.message) {
-          message = xhr.responseJSON.message;
-        } else if (xhr.responseJSON.myradio_errors) {
-          message = xhr.responseJSON.myradio_errors;
+      const response = xhr.responseJSON;
+      if (response) {
+        if (response.error) {
+          message = response.error;
+        } else if (response.message) {
+          message = response.message;
+        } else if (response.myradio_errors) {
+          message = response.myradio_errors;
+        } else if (response.status == "FAIL") {
+          message = "FAIL: " + response.payload;
         }
       }
 
