@@ -1,5 +1,5 @@
 /* global myradio */
-/* exported importSelectedTracks,selectNone,selectAll,reload */
+/* exported startImport,selectNone,selectAll,reload */
 
 // Queue up sending ajax requests one at a time
 var ajaxQueue = $({});
