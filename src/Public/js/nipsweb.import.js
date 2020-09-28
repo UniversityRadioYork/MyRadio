@@ -4,18 +4,11 @@
 // Queue up sending ajax requests one at a time
 var ajaxQueue = $({});
 
-//Get the GET variables for nextWeightChanneln.
-$.urlParam = function(name){
-  var results = new RegExp("[?&]" + name + "=([^&#]*)").exec(window.location.href);
-  return results[1] || 0;
-};
 var currentShowPlan;
 
+// Stage 1) Load the current user's shows.
 $(document).ready(
   function () {
-
-    // Stage 1) Load the current user's shows.
-    let currentUserID;
     myradio.callAPI("GET","user","currentuser", "","","",
       function (data) {
 
@@ -24,34 +17,35 @@ $(document).ready(
             continue;
           }
         }
-        currentUserID = data.payload.memberid;
-      }
-    );
-
-    myradio.callAPI("GET","user","shows",currentUserID,"","",
-      function (data) {
-        var show;
-        for (show in data) {
-          if (show === "myradio_errors") {
-            continue;
-          }
-        }
-        //we don't check for no shows here, since you're already in a show planner show.
-        for (show in data.payload) {
-          $("#import-show-selector").append("<option value='" + data.payload[show].show_id + "'>" + data.payload[show].title + "</option>");
-        }
-        $("#import-show-selector").prop("disabled", false);
-
-        //If we've only got one show, select that automatically.
-        if (data.payload.length == 1 ) {
-          $("#import-show-selector option").last().prop("selected",true);
-          updateSeasonList();
-        }
+        getUserShows(data.payload.memberid);
       }
     );
   }
 );
 
+function getUserShows(currentUserID) {
+  myradio.callAPI("GET","user","shows",currentUserID,"","",
+    function (data) {
+      var show;
+      for (show in data) {
+        if (show === "myradio_errors") {
+          continue;
+        }
+      }
+      //we don't check for no shows here, since you're already in a show planner show.
+      for (show in data.payload) {
+        $("#import-show-selector").append("<option value='" + data.payload[show].show_id + "'>" + data.payload[show].title + "</option>");
+      }
+      $("#import-show-selector").prop("disabled", false);
+
+      //If we've only got one show, select that automatically.
+      if (data.payload.length == 1 ) {
+        $("#import-show-selector option").last().prop("selected",true);
+        updateSeasonList();
+      }
+    }
+  );
+};
 
 // Stage 2) Select the show & load its seasons
 
@@ -219,10 +213,24 @@ var selectNone = function() {  //"select none" change
   });
 };
 
+function startImport(channelNo) {
+  myradio.callAPI("GET", "timeslot", "userselectedtimeslot", "", "", "",
+  function (data) {
+    var item;
+    for (item in data) {
+      if (item === "myradio_errors") {
+        continue;
+      }
+    }
+    getExistingShowPlan(data.payload.show_id, channelNo);
+  });
+}
+
 // Stage 7) Get the new weights that new channel items need to be added to
-function getCurrentShowPlanWeights(currentShowPlanID) {
+function getExistingShowPlan(timeslotID, channelNo) {
+
   let nextChannelWeights = [];
-  myradio.callAPI("GET", "timeslot", "showplan", currentShowPlanID, "", "",
+  myradio.callAPI("GET", "timeslot", "showplan", timeslotID, "", "",
   function (data) {
     var item;
     for (item in data) {
@@ -238,29 +246,16 @@ function getCurrentShowPlanWeights(currentShowPlanID) {
         nextChannelWeights.push(0);
       }
     }
+
+    calculateOps(channelNo, nextChannelWeights);
   });
-  return nextChannelWeights;
 }
 
 // Stage 8) Actually import the selected tracks.
 
-function importSelectedTracks(channelNo) {
+function calculateOps(channelNo, nextChannelWeights) {
 
 
-
-  let currentTimeslotID;
-  myradio.callAPI("GET", "timeslot", "userselectedtimeslot", "", "", "",
-  function (data) {
-    var item;
-    for (item in data) {
-      if (item === "myradio_errors") {
-        continue;
-      }
-    }
-    currentTimeslotID = data.payload.show_id;
-  });
-
-  var newChannelWeights = getCurrentShowPlanWeights(currentTimeslotID);
 
   var ops = [];
   if ($("input[type=checkbox]:checked").length > 0) {
