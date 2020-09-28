@@ -9,20 +9,26 @@ $.urlParam = function(name){
   var results = new RegExp("[?&]" + name + "=([^&#]*)").exec(window.location.href);
   return results[1] || 0;
 };
-var nextWeightChannel0;
-var nextWeightChannel1;
-var nextWeightChannel2;
 var currentShowPlan;
 
 $(document).ready(
   function () {
 
-    nextWeightChannel0 = parseInt($.urlParam("channel0lastweight"), 10)+1;
-    nextWeightChannel1 = parseInt($.urlParam("channel1lastweight"), 10)+1;
-    nextWeightChannel2 = parseInt($.urlParam("channel2lastweight"), 10)+1;
-
     // Stage 1) Load the current user's shows.
-    myradio.callAPI("GET","user","shows", window.myradio.memberid,"","",
+    let currentUserID;
+    myradio.callAPI("GET","user","currentuser", "","","",
+      function (data) {
+
+        for (item in data) {
+          if (item === "myradio_errors") {
+            continue;
+          }
+        }
+        currentUserID = data.payload.memberid;
+      }
+    );
+
+    myradio.callAPI("GET","user","shows",currentUserID,"","",
       function (data) {
         var show;
         for (show in data) {
@@ -213,24 +219,56 @@ var selectNone = function() {  //"select none" change
   });
 };
 
-// Stage 7) Actually import the selected tracks.
+// Stage 7) Get the new weights that new channel items need to be added to
+function getCurrentShowPlanWeights(currentShowPlanID) {
+  let nextChannelWeights = [];
+  myradio.callAPI("GET", "timeslot", "showplan", currentShowPlanID, "", "",
+  function (data) {
+    var item;
+    for (item in data) {
+      if (item === "myradio_errors") {
+        continue;
+      }
+    }
+    currentShowPlan = data.payload;
+    for (channel in currentShowPlan) {
+      if (channel.length > 0) {
+        nextChannelWeights.push((channel[-1].weight)+1)
+      } else {
+        nextChannelWeights.push(0);
+      }
+    }
+  });
+  return nextChannelWeights;
+}
+
+// Stage 8) Actually import the selected tracks.
 
 function importSelectedTracks(channelNo) {
+
+
+
+  let currentTimeslotID;
+  myradio.callAPI("GET", "timeslot", "userselectedtimeslot", "", "", "",
+  function (data) {
+    var item;
+    for (item in data) {
+      if (item === "myradio_errors") {
+        continue;
+      }
+    }
+    currentTimeslotID = data.payload.show_id;
+  });
+
+  var newChannelWeights = getCurrentShowPlanWeights(currentTimeslotID);
+
   var ops = [];
   if ($("input[type=checkbox]:checked").length > 0) {
     myradio.showAlert("Importing Tracks...", "warning");
     $("input[type=checkbox]:checked").each(function () {
-      var weight;
-      if (channelNo == 0){
-        weight = nextWeightChannel0;
-        nextWeightChannel0++;
-      } else if (channelNo == 1){
-        weight = nextWeightChannel1;
-        nextWeightChannel1++;
-      } else if (channelNo == 2){
-        weight = nextWeightChannel2;
-        nextWeightChannel2++;
-      }
+      const weight = newChannelWeights[channelNo];
+      newChannelWeights[weight]++;
+
       ops.push({
         op: "AddItem",
         id: $(this).val(), //format: album-track
@@ -238,7 +276,7 @@ function importSelectedTracks(channelNo) {
         weight: weight
       });
     });
-    shipChanges(ops);
+    shipChanges(currentTimeslotID, ops);
   } else {
     myradio.showAlert("No tracks were selected.", "danger");
   }
@@ -247,7 +285,9 @@ function importSelectedTracks(channelNo) {
  * Change shipping operates in a queue - this ensures that changes are sent atomically and sequentially.
  * ops: JSON changeset to send
  */
-var shipChanges = function (ops) {
+var shipChanges = function (timeslotID, ops) {
+
+
   ajaxQueue.queue(
     function (next) {
       $.ajax({
@@ -272,7 +312,7 @@ var shipChanges = function (ops) {
         },
         dataType: "json",
         type: "PUT",
-        url: myradio.getAPIURL("timeslot", "updateshowplan", window.myradio.timeslotid, "")
+        url: myradio.getAPIURL("timeslot", "updateshowplan", timeslotID, "")
       });
     }
   );
