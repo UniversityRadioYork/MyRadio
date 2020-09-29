@@ -1035,6 +1035,11 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
      */
     public function getShowPlan()
     {
+        // Check we can access it, if not, require permission
+        if (!($this->isCurrentUserAnOwner())) {
+            AuthUtils::requirePermission(AUTH_USENIPSWEB);
+        }
+
         /*
          * Find out if there's a NIPSWeb Schema listing for this timeslot.
          * If not, throw back an empty array
