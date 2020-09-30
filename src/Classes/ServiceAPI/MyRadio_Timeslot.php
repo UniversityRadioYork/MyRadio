@@ -1037,7 +1037,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
     {
         // Check we can access it, if not, require permission
         if (!($this->isCurrentUserAnOwner())) {
-            AuthUtils::requirePermission(AUTH_USENIPSWEB);
+            AuthUtils::requirePermission(AUTH_VIEWMEMBERSHOWS);
         }
 
         /*
