@@ -10,5 +10,11 @@ $(document).ready(
     planner.initialisePlayer("2");
     planner.initialisePlayer("3");
     myradio.showAlert("Welcome to Show Planner!", "success");
+
+    window.addEventListener("message", (event) => {
+      if (event.data == "reload_showplan") {
+        window.location.reload();
+      };
+    }, false);
   }
 );
