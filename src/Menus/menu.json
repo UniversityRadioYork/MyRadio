@@ -246,7 +246,7 @@
                         },
                         {
                             "title": "Track and Trace Information",
-                            "url": "module=Scheduler,action=attendance",
+                            "url": "module=Scheduler,action=tracking",
                             "description": "Check where people have been signing into shows"
                         },
                         {
