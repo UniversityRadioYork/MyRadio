@@ -1077,7 +1077,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
         if (isset($result['location_name'])){
             return $result['location_name'];
         }else{
-            throw new MyRadioException("The location with location_id " . $locationid . "doesn't exist.", 400);
+            throw new MyRadioException("The location with location_id " . $locationid . " doesn't exist.", 400);
         }
     }
 
@@ -1261,7 +1261,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
         self::$db->query(
             'INSERT INTO sis2.guest_signin (show_season_timeslot_id, signerid, location, guest_info)
                 VALUES ($1, $2, $3, $4)',
-            [$this->getID(), MyRadio_User::getInstance()->getID(), $locationid, $guestInfo]
+            [$this->getID(), MyRadio_User::getInstance()->getID(), $locationid, htmlspecialchars($guestInfo, ENT_QUOTES)]
         );
     }
 

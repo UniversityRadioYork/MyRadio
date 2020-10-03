@@ -15,22 +15,25 @@ foreach (MyRadio_Season::getAllSeasonsInLatestTerm() as $season) {
     foreach ($season->getAllTimeslots() as $timeslot) {
         if ($timeslot->getStartTime() < time()) {
             foreach ($timeslot->getSigninInfo() as $info) {
-                if ($info['location'] != $no_track) {
-                    if (isset($info['user'])) {
+                if (isset($info["location"]) && $info["location"] != $no_track) {
+                    if (isset($info["user"])) {
                         $data[] =
                             [
                                 "type" => "URY Member",
-                                "info" => $info['user']->getName() . ($info['user']->getEduroam() ? " (" . $info['user']->getEduroam() . ")" : ""),
-                                "location" => $info['location'],
-                                "time" => CoreUtils::happyTime($info['time'])
+                                "info" => $info["user"]->getName() . ($info["user"]->getEduroam() ? " (" . $info["user"]->getEduroam() . ")" : ""),
+                                "location" => $info["location"],
+                                "time" => CoreUtils::happyTime($info["time"])
                             ];
-                    } else if ($info['guest_info']) {
+                    } else if ($info["guest_info"]) {
                         $data[] =
                             [
                                 "type" => "Guest",
-                                "info" => $info['guest_info'],
-                                "location" => $info['location'],
-                                "time" => CoreUtils::happyTime($info['time'])
+                                "info" => [
+                                    "display" => "html",
+                                    "html" => nl2br($info["guest_info"])
+                                ],
+                                "location" => $info["location"],
+                                "time" => CoreUtils::happyTime($info["time"])
                             ];
                     }
                 }
@@ -39,8 +42,8 @@ foreach (MyRadio_Season::getAllSeasonsInLatestTerm() as $season) {
     }
 }
 
-CoreUtils::getTemplateObject()->setTemplate('table.twig')
-    ->addVariable('title', 'Tracking Information')
-    ->addVariable('tabledata', $data)
-    ->addVariable('tablescript', 'myradio.scheduler.tracking')
+CoreUtils::getTemplateObject()->setTemplate("table.twig")
+    ->addVariable("title", "Tracking Information")
+    ->addVariable("tabledata", $data)
+    ->addVariable("tablescript", "myradio.scheduler.tracking")
     ->render();
