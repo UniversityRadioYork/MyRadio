@@ -4,6 +4,16 @@
 {% block head %}
     {{ parent() }}
     <link rel="stylesheet" href="{{baseurl}}css/vendor/fullcalendar-main.min.css">
+    <style>
+        .fc-header-toolbar {
+            flex-wrap: nowrap;
+        }
+        @media all and (max-width: 600px) {
+            .fc-header-toolbar {
+                flex-direction: column;
+            }
+        }
+    </style>
 {% endblock %}
 
 {% block stripecontent %}
@@ -34,7 +44,13 @@
                         }
                     }
                 ],
-                initialView: 'dayGridMonth',
+                headerToolbar: {
+                  left: 'title',
+                  center: 'dayGridMonth,dayGridWeek,listMonth',
+                  right: 'today prev,next'
+                },
+                initialView: 'listMonth',
+                height: "auto",
                 firstDay: 1,
                 eventTimeFormat: {
                     hour: '2-digit',
