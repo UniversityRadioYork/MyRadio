@@ -1102,7 +1102,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
     {
         $result = self::$db->fetchAll(
             'SELECT * FROM (
-                SELECT creditid AS memberid
+                SELECT DISTINCT creditid AS memberid
                 FROM schedule.show_credit WHERE show_id IN (
                     SELECT show_id FROM schedule.show_season
                     WHERE show_season_id IN (
