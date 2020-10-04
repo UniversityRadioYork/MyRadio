@@ -36,10 +36,10 @@
                 ],
                 headerToolbar: {
                   left: 'title',
-                  center: 'dayGridMonth,dayGridWeek,dayGridDay',
+                  center: 'dayGridMonth,dayGridWeek,listWeek',
                   right: 'today prev,next'
                 },
-                initialView: window.matchMedia("(min-width: 800px)").matches ? 'dayGridMonth' : 'dayGridWeek',
+                initialView: window.matchMedia("(min-width: 800px)").matches ? 'dayGridMonth' : 'listWeek',
                 firstDay: 1,
                 eventTimeFormat: {
                     hour: '2-digit',
