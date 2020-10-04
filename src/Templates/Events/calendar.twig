@@ -6,7 +6,12 @@
     <link rel="stylesheet" href="{{baseurl}}css/vendor/fullcalendar-main.min.css">
     <style>
         .fc-header-toolbar {
-            flex-wrap: wrap;
+            flex-wrap: nowrap;
+        }
+        @media all and (max-width: 600px) {
+            .fc-header-toolbar {
+                flex-direction: column;
+            }
         }
     </style>
 {% endblock %}
