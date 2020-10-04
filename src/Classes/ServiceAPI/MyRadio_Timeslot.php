@@ -1066,6 +1066,27 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
     }
 
     /**
+     * Return location name
+     * 
+     * @param $locationid int - The ID of the location
+     * @return string Location Name
+     * @throws MyRadioException
+     */
+
+    public static function getLocationName($locationid){
+        self::wakeup();
+        $result = self::$db->fetchOne(
+            "SELECT location_name FROM schedule.location
+            WHERE location_id = $1", [$locationid]
+        );
+        if (isset($result['location_name'])){
+            return $result['location_name'];
+        }else{
+            throw new MyRadioException("The location with location_id " . $locationid . " doesn't exist.", 400);
+        }
+    }
+
+    /**
      * Get information about the Users signed into this Timeslot.
      *
      * @return array with the following keys:
@@ -1245,7 +1266,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
         self::$db->query(
             'INSERT INTO sis2.guest_signin (show_season_timeslot_id, signerid, location, guest_info)
                 VALUES ($1, $2, $3, $4)',
-            [$this->getID(), MyRadio_User::getInstance()->getID(), $locationid, $guestInfo]
+            [$this->getID(), MyRadio_User::getInstance()->getID(), $locationid, htmlspecialchars($guestInfo, ENT_QUOTES)]
         );
     }
 

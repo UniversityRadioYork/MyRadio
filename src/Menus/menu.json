@@ -245,6 +245,11 @@
                             "description": "Check who's been logging into their shows and if people have actually turned up to do radio."
                         },
                         {
+                            "title": "Track and Trace Information",
+                            "url": "module=Scheduler,action=tracking",
+                            "description": "Check where people have been signing into shows"
+                        },
+                        {
                             "title": "Track Statistics",
                             "url": "module=Stats,action=bapsPlayCounter",
                             "description": "View play count statistics for library tracks."
