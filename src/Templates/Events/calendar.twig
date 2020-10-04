@@ -34,7 +34,12 @@
                         }
                     }
                 ],
-                initialView: 'dayGridMonth',
+                headerToolbar: {
+                  left: 'title',
+                  center: 'dayGridMonth,dayGridWeek,dayGridDay',
+                  right: 'today prev,next'
+                },
+                initialView: window.matchMedia("(min-width: 800px)").matches ? 'dayGridMonth' : 'dayGridWeek',
                 firstDay: 1,
                 eventTimeFormat: {
                     hour: '2-digit',
