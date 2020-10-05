@@ -347,5 +347,5 @@ var shipChanges = function (timeslotID, ops) {
 
 // Reload the page to show your newly imported item. Clicked from a showAlert.
 var reload = function () {
-  window.parent.postMessage("reload_showplan")
+  window.parent.postMessage("reload_showplan", "*")
 };
