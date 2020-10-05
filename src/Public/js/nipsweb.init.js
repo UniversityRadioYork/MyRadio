@@ -12,6 +12,9 @@ $(document).ready(
     myradio.showAlert("Welcome to Show Planner!", "success");
 
     window.addEventListener("message", (event) => {
+      if (!event.origin.includes("ury.org.uk")) {
+        return;
+      }
       if (event.data == "reload_showplan") {
         window.location.reload();
       };
