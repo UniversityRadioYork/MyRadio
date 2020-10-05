@@ -328,7 +328,11 @@ var shipChanges = function (timeslotID, ops) {
           var text = "Items imported! <a onClick=\"reload()\" title=\"Reload the page\">Please reload your show plan.</a>";
           myradio.showAlert(text, "success");
           // Just in case the user clicks the "x" on the import modal, display the import sucess on the parent window (only used for show planner).
-          parent.myradio.showAlert(text, "success");
+          try {
+            parent.myradio.showAlert(text, "success");
+          } catch(error) {
+            // Do nothing, likely that ShowPlanner isn't the parent window.
+          }
         },
         data: {
           ops: ops
