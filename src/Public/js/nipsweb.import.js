@@ -286,7 +286,7 @@ function calculateOps(timeslotID, channelNo, nextChannelWeights) {
     // For each checked item, give it a consecutive weight,
     $("input[type=checkbox]:checked").each(function () {
       const weight = nextChannelWeights[channelNo];
-      nextChannelWeights[weight]++;
+      nextChannelWeights[channelNo]++;
 
       // Add this item's operation to the list.
       ops.push({
