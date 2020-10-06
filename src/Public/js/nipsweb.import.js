@@ -253,7 +253,7 @@ function startImport(channelNo) {
 // Get the selected destination show plan, and calculate the new starting weight for each channel based on the last existing item +1.
 function getExistingShowPlan(timeslotID, channelNo) {
 
-  let nextChannelWeights = [];
+  let nextChannelWeights = [0,0,0]; // Force 3 channels, that's all anything really supports.
   myradio.callAPI("GET", "timeslot", "showplan", timeslotID, "", "",
     function (data) {
       var item;
@@ -265,11 +265,9 @@ function getExistingShowPlan(timeslotID, channelNo) {
       sourceShowPlan = data.payload;
       for (channelKey in sourceShowPlan) {
         const channel = sourceShowPlan[channelKey];
-        console.log(channel);
+        // If the channel has any items with it, the next channel weight is the last item in the show plan + 1. Else keep the default 0.
         if (channel.length > 0) {
-          nextChannelWeights.push((channel[channel.length - 1].weight) + 1)
-        } else {
-          nextChannelWeights.push(0);
+          nextChannelWeights[channelKey] = ((channel[channel.length - 1].weight) + 1)
         }
       }
 
