@@ -22,9 +22,11 @@ addons:
     postgresql: '9.5'
 services:
     - postgresql
+before_install:
+  - nvm install --lts  # Updated Node required for eslint
 install:
     - composer install
-    - npm install eslint@6.5.x
+    - npm install eslint
     - sudo apt-get update
     - sudo apt-get install apache2 libapache2-mod-fastcgi
 before_script:
