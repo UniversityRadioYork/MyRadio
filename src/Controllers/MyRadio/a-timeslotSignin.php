@@ -12,7 +12,7 @@ if ($ts->getSeason()->getShow()->isCurrentUserAnOwner()
     || AuthUtils::hasPermission(AUTH_EDITSHOWS)
 ) {
     $data = $ts->getSigninInfo();
-    URLUtils::dataToJSON(array_map(function($x) {
+    URLUtils::dataToJSON(array_map(function ($x) {
         unset($x['guest_info']);
         return $x;
     }, $data));
