@@ -17,7 +17,7 @@ $(document).ready(
       }
       if (event.data == "reload_showplan") {
         window.location.reload();
-      };
+      }
     }, false);
   }
 );

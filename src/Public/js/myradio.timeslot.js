@@ -60,33 +60,31 @@ $("#timeslots").on(
                 .html("Sign in to your show:<br>" +
                   "<div id='member-signins'></div><div id='guest-signins'></div><br>");
               var used_memberids = [];
-              var has_guests = false;
               for (var row in data) {
                 if ("user" in data[row]) {
-                    // member
-                    if (used_memberids.indexOf(data[row].user.memberid) === -1) {
-                      var check = $("<input type=\"checkbox\"></input>");
-                      var label = $("<label></label>");
-                      check.attr("name", "signin[]")
-                          .attr("id", "signin_"+data[row].user.memberid)
-                          .attr("value", data[row].user.memberid);
-                      label.attr("for", "signin_"+data[row].user.memberid)
-                          .html(data[row].user.fname + " " + data[row].user.sname);
-                      if (data[row].signedby !== null) {
-                          check.attr("checked", "checked")
-                              .attr("disabled", "true");
-                          label.append(" (Signed in by "+data[row].signedby.fname + " "+data[row].signedby.sname + ")");
-                      } else if (data[row].user.memberid == window.myradio.memberid) {
-                          check.attr("checked", "checked");
-                      }
-                      $("#member-signins").append(check).append(label).append("<br>");
-                      used_memberids.push(data[row].user.memberid);
+                  // member
+                  if (used_memberids.indexOf(data[row].user.memberid) === -1) {
+                    var check = $("<input type=\"checkbox\"></input>");
+                    var label = $("<label></label>");
+                    check.attr("name", "signin[]")
+                      .attr("id", "signin_"+data[row].user.memberid)
+                      .attr("value", data[row].user.memberid);
+                    label.attr("for", "signin_"+data[row].user.memberid)
+                      .html(data[row].user.fname + " " + data[row].user.sname);
+                    if (data[row].signedby !== null) {
+                      check.attr("checked", "checked")
+                        .attr("disabled", "true");
+                      label.append(" (Signed in by "+data[row].signedby.fname + " "+data[row].signedby.sname + ")");
+                    } else if (data[row].user.memberid == window.myradio.memberid) {
+                      check.attr("checked", "checked");
                     }
+                    $("#member-signins").append(check).append(label).append("<br>");
+                    used_memberids.push(data[row].user.memberid);
+                  }
                 } else {
                   // guest
-                  has_guests = true;
-                  if ($("#guest-signins").is(':empty')) {
-                    $("#guest-signins").append("Guest data has been added by:<br>")
+                  if ($("#guest-signins").is(":empty")) {
+                    $("#guest-signins").append("Guest data has been added by:<br>");
                   }
                   $("#guest-signins").append(
                     $("<span>")
