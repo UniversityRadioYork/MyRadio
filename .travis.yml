@@ -50,8 +50,7 @@ before_script:
     # setup postgres
     - psql -U postgres < sample_configs/postgres.sql
     - PGPASSWORD=myradio psql -U myradio myradio < schema/base.sql
-    # Disabled until patch files are implemented (there's a 1.sql which renames schema myury to myradio)
-    #- PGPASSWORD=myradio psql -U myradio myradio < schema/patches/*.sql
+    - for f in schema/patches/*.sql; do PGPASSWORD=myradio psql -U myradio myradio < $f; done
     - PGPASSWORD=myradio psql -U myradio myradio < sample_configs/travis-auth.sql
     # configure MyRadio
     - cp sample_configs/travis-config.php src/MyRadio_Config.local.php
