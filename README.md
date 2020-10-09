@@ -8,7 +8,7 @@ their own community or student radio venture.
 
 MyRadio is part of a suite of upcoming public projects, including:
 - iTones, our liquidsoap sustainer system
-- loggerng, our python audio logging and retriving system
+- loggerng, our python audio logging and retrieving system
 - Bootstrapping scripts for setting up and configuring all the dependencies
 
 Super Quickstart
