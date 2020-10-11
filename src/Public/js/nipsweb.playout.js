@@ -4,7 +4,7 @@ $(document).ready(
             function(timeslot_data) {
                 myradio.callAPI("GET", "timeslot", "playout", timeslot_data.payload.timeslot_id, "", "",
                     function(playout_data) {
-                        $("#playout-check").prop("checked", playout_data.payload.playout);
+                        $("#playout-check").prop("checked", playout_data.payload);
                     });
             });
     }
@@ -13,9 +13,6 @@ $(document).ready(
 $("#playout-check").change(function() {
     myradio.callAPI("GET", "timeslot", "userselectedtimeslot", "", "", "",
         function(timeslot_data) {
-            myradio.callAPI("PUT", "timeslot", "playout", timeslot_data.payload.timeslot_id, "", { playout: $("#playout-check").checked },
-                function(playout_data) {
-                    $("#playout-check").prop("checked", playout_data.payload.playout);
-                });
+            myradio.callAPI("PUT", "timeslot", "playout", timeslot_data.payload.timeslot_id, "", { playout: $("#playout-check").is(":checked") });
         });
 })

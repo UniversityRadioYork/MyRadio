@@ -1079,7 +1079,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
     /**
      * Updates whether the user wants the timeslot to be played out automagically
      * 
-     * @param $playout bool
+     * @param bool $playout
      */
     public function setPlayout($playout){
         self::$db->query(
