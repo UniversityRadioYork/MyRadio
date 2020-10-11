@@ -34,6 +34,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
     private $season_id;
     private $timeslot_num;
     protected $owner;
+    protected $playout;
     protected $credits;
 
     protected function __construct($timeslot_id)
@@ -50,7 +51,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
         // Note that credits have different metadata timeranges to text
         // This is annoying, but needs to be this way.
         $result = self::$db->fetchOne(
-            'SELECT show_season_timeslot_id, show_season_id, start_time, duration, memberid, (
+            'SELECT show_season_timeslot_id, show_season_id, start_time, duration, memberid, playout (
                 SELECT array_to_json(array(
                     SELECT metadata_key_id FROM schedule.timeslot_metadata
                     WHERE show_season_timeslot_id=$1
@@ -118,6 +119,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
         $this->start_time = strtotime($result['start_time']);
         $this->duration = $result['duration'];
         $this->owner = MyRadio_User::getInstance($result['memberid']);
+        $this->playout = $result['playout'];
         $this->timeslot_num = (int)$result['timeslot_num'];
 
         $metadata_types = json_decode($result['metadata_types']);
@@ -214,6 +216,15 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
         $duration = strtotime('1970-01-01 ' . $this->getDuration() . '+00');
 
         return $this->getStartTime() + $duration;
+    }
+
+    /**
+     * Returns whether the user has selected the timeslot for automatic playout
+     * 
+     * @return bool
+     */
+    public function getPlayout(){
+        return $this->playout;
     }
 
     /**
@@ -1063,6 +1074,19 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
 
             return $tracks;
         }
+    }
+
+    /**
+     * Updates whether the user wants the timeslot to be played out automagically
+     * 
+     * @param $playout bool
+     */
+    public function setPlayout($playout){
+        self::$db->query(
+            "UPDATE schedule.show_season_timeslot SET playout = $1 WHERE show_season_timeslot_id = $2",
+            [$playout, $this->getID()]
+        );
+        $this->playout = $playout;
     }
 
     /**

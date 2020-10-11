@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <head>
+{% include 'parts/base_head.twig' %}
+    <link rel="stylesheet" type="text/css" href="{{baseurl}}css/planner.css" />
+  </head>
+  <body id="iframe">
+    <div id="showAlert" class="alert alert-success"><div class="glyphicon glyphicon-ok"></div> Welcome to the Automatic Playout Feature!</div>
+    
+    <span></span>
+    
+    <input type="checkbox">Automatically Play My Show</input>
+
+
+    <!-- TODO This JS clearly won't work for this :) -->
+  <script type="text/javascript" src="{{baseurl}}js/nipsweb.import.js"></script>
+{% include 'parts/base_foot.twig' %}
+  </body>
+</html>

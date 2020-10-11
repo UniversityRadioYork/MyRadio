@@ -236,6 +236,15 @@ $(document).ready(function () {
     }
   );
 
+/**
+ * Handler for the AutoPlayout link
+ */
+  $("#menu-playout").click(function () {
+    var url = $(this).attr("href");
+    myradio.createDialog("AutoPlayout", "<iframe src='" + url + "' width='570' height='500' frameborder='0'></iframe>");
+    return false;
+  });
+
   /**
    * Handler for activating the Manage Library link
    */
