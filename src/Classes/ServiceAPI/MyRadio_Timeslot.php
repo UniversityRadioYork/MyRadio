@@ -51,7 +51,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
         // Note that credits have different metadata timeranges to text
         // This is annoying, but needs to be this way.
         $result = self::$db->fetchOne(
-            'SELECT show_season_timeslot_id, show_season_id, start_time, duration, memberid, playout (
+            'SELECT show_season_timeslot_id, show_season_id, start_time, duration, memberid, playout, (
                 SELECT array_to_json(array(
                     SELECT metadata_key_id FROM schedule.timeslot_metadata
                     WHERE show_season_timeslot_id=$1
