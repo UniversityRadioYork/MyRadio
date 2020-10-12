@@ -1,7 +1,7 @@
 {% extends 'stripe.twig' %}
+<link rel="stylesheet" type="text/css" href="{{baseurl}}css/myradio.webcamfocus.css">
 
 {% block stripecontent %}
-<link rel="stylesheet" type="text/css" href="{{baseurl}}css/myradio.webcamfocus.css">
 {% if live %}
   <figure class="webcam-focus-stream-container" id="webcam-stream-{{live.streamid}}">
     <img id="webcam-focus-live" src="{{live.liveurl}}" class="webcam-stream" />
