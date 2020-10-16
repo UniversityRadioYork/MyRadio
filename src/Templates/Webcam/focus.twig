@@ -1,15 +1,22 @@
 {% extends 'stripe.twig' %}
 
+{% block head %}
+{{ parent() }}
+<link rel="stylesheet" type="text/css" href="{{baseurl}}css/myradio.webcamfocus.css">
+{% endblock %}
+
 {% block stripecontent %}
+
 {% if live %}
   <figure class="webcam-focus-stream-container" id="webcam-stream-{{live.streamid}}">
     <img id="webcam-focus-live" src="{{live.liveurl}}" class="webcam-stream" />
     <figcaption>{{live.streamname}}</figcaption>
     <script>
+      var liveURL = '{{live.liveurl}}'
       var img = document.getElementById('webcam-focus-live');
-      setInterval(function (image, source) {
-          image.setAttribute('src', source + '?_=' + Date.now());
-      }, 500, img, '{{live.liveurl}}');
+      setInterval(function (image) {
+          image.setAttribute('src', liveURL + '?_=' + Date.now());
+      }, 500, img);
     </script>
   </figure>
   <div class="webcam-focus-grid-container">
@@ -22,6 +29,10 @@
           setInterval(function (image, source) {
               image.setAttribute('src', source + '?_=' + Date.now());
           }, 500, img, '{{stream.liveurl}}');
+          img.addEventListener('click', (e) => {
+            liveURL = '{{stream.liveurl}}';
+            document.querySelector('#webcam-focus-live + figcaption').innerText = '{{stream.streamname}}';
+          });
         </script>
       </figure>
     {% endfor %}
