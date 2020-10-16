@@ -1590,7 +1590,7 @@ class MyRadio_Track extends ServiceAPI
      * @param bool $include_playout if true, will include tracks played by Jukebox while off air
      * @return null|array
      */
-    public static function getNowPlaying($include_playout=false)
+    public static function getNowPlaying($include_playout = false)
     {
         // Start a transaction. We're gonna have some fun.
         self::$db->query('BEGIN');
@@ -1638,7 +1638,9 @@ class MyRadio_Track extends ServiceAPI
                 [ $selAction ]
             );
             if (!empty($lastBapsLogged)) {
-                if (empty($lastTracklisted) || strtotime($lastBapsLogged['timestart']) > strtotime($lastTracklisted['timestart'])) {
+                if (empty($lastTracklisted)
+                    || strtotime($lastBapsLogged['timestart']) > strtotime($lastTracklisted['timestart'])
+                ) {
                     // Last BAPS entry is newer than last tracklist entry (if there is one).
                     $lastTracklisted = $lastBapsLogged;
                 }
@@ -1650,7 +1652,7 @@ class MyRadio_Track extends ServiceAPI
         if (empty($lastTracklisted)) {
             // Nothing playing right now
             return null;
-        } else if (!empty($lastTracklisted['trackid'])) {
+        } elseif (!empty($lastTracklisted['trackid'])) {
             // track_rec
             return [
                 'track' => self::getInstance($lastTracklisted['trackid']),

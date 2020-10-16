@@ -373,42 +373,44 @@ class MyRadio_Event extends ServiceAPI
                     'subtitle' => 'Create Event'
                 ]
             )
-        )->addField(new MyRadioFormField(
-            'title',
-            MyRadioFormField::TYPE_TEXT,
-            [
-                'label' => 'Event Title',
-                'explanation' => 'Give this event a name.'
-            ]
-        ))->addField(
-                new MyRadioFormField(
-                    'description_html',
-                    MyRadioFormField::TYPE_BLOCKTEXT,
-                    [
-                        'explanation' => 'Describe your event as best you can.',
-                        'label' => 'Description',
-                    ]
-                )
-            )->addField(
-                new MyRadioFormField(
-                    'start_time',
-                    MyRadioFormField::TYPE_DATETIME,
-                    [
-                        'required' => true,
-                        'label' => 'Start Time',
-                    ]
-                )
+        )->addField(
+            new MyRadioFormField(
+                'title',
+                MyRadioFormField::TYPE_TEXT,
+                [
+                    'label' => 'Event Title',
+                    'explanation' => 'Give this event a name.'
+                ]
             )
-            ->addField(
-                new MyRadioFormField(
-                    'end_time',
-                    MyRadioFormField::TYPE_DATETIME,
-                    [
-                        'required' => false,
-                        'label' => 'End Time',
-                    ]
-                )
-            );
+        )->addField(
+            new MyRadioFormField(
+                'description_html',
+                MyRadioFormField::TYPE_BLOCKTEXT,
+                [
+                    'explanation' => 'Describe your event as best you can.',
+                    'label' => 'Description',
+                ]
+            )
+        )->addField(
+            new MyRadioFormField(
+                'start_time',
+                MyRadioFormField::TYPE_DATETIME,
+                [
+                    'required' => true,
+                    'label' => 'Start Time',
+                ]
+            )
+        )
+        ->addField(
+            new MyRadioFormField(
+                'end_time',
+                MyRadioFormField::TYPE_DATETIME,
+                [
+                    'required' => false,
+                    'label' => 'End Time',
+                ]
+            )
+        );
     }
 
     public function getEditForm()

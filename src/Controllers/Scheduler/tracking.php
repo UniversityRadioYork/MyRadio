@@ -17,24 +17,23 @@ foreach (MyRadio_Season::getAllSeasonsInLatestTerm() as $season) {
             foreach ($timeslot->getSigninInfo() as $info) {
                 if (isset($info["location"]) && $info["location"] != $no_track) {
                     if (isset($info["user"])) {
-                        $data[] =
-                            [
-                                "type" => "URY Member",
-                                "info" => $info["user"]->getName() . ($info["user"]->getEduroam() ? " (" . $info["user"]->getEduroam() . ")" : ""),
-                                "location" => $info["location"],
-                                "time" => CoreUtils::happyTime($info["time"])
-                            ];
-                    } else if ($info["guest_info"]) {
-                        $data[] =
-                            [
-                                "type" => "Guest",
-                                "info" => [
-                                    "display" => "html",
-                                    "html" => nl2br($info["guest_info"])
-                                ],
-                                "location" => $info["location"],
-                                "time" => CoreUtils::happyTime($info["time"])
-                            ];
+                        $eduroam = $info["user"]->getEduroam();
+                        $data[] = [
+                            "type" => "URY Member",
+                            "info" => $info["user"]->getName() . ($eduroam ? " ($eduroam)" : ""),
+                            "location" => $info["location"],
+                            "time" => CoreUtils::happyTime($info["time"])
+                        ];
+                    } elseif ($info["guest_info"]) {
+                        $data[] = [
+                            "type" => "Guest",
+                            "info" => [
+                                "display" => "html",
+                                "html" => nl2br($info["guest_info"])
+                            ],
+                            "location" => $info["location"],
+                            "time" => CoreUtils::happyTime($info["time"])
+                        ];
                     }
                 }
             }

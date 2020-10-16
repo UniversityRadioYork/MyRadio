@@ -114,17 +114,11 @@ $problems = [];
 $warnings = [];
 $successes = [];
 
-if (!defined('PHP_VERSION_ID')) {
-    $version = explode('.', PHP_VERSION);
-
-    define('PHP_VERSION_ID', ($version[0] * 10000 + $version[1] * 100 + $version[2]));
-}
-
-if (PHP_VERSION_ID < 70000) {
+if (version_compare(phpversion(), '7.1', '<')) {
     $ready = false;
-    $problems[] = 'You must be running at least PHP 7.0.';
+    $problems[] = 'You must be running at least PHP 7.1.';
 } else {
-    $successes[] = 'You are running PHP '.PHP_VERSION.'.';
+    $successes[] = 'You are running PHP '.php_version().'.';
 }
 
 foreach ($required_modules as $module) {

@@ -19,8 +19,7 @@ $(document).ready(
   function () {
     myradio.callAPI("GET", "user", "currentuser", "", "", "",
       function (data) {
-
-        for (item in data) {
+        for (const item in data) {
           if (item === "myradio_errors") {
             continue;
           }
@@ -54,7 +53,7 @@ function getUserShows(currentUserID) {
       }
     }
   );
-};
+}
 
 //////////////////////////////////////
 // Stage 2) Selecting a source Show Plan to import
@@ -184,7 +183,7 @@ function loadChannelList() {
 
       // Central items (music tracks) can be explicit, place the **'s, they also have artists and albums to display.
       if (item.type == "central") {
-        cleanStars = item.clean ? "" : "**"
+        cleanStars = item.clean ? "" : "**";
         expired = !(item.digitised);
         extraString = " - " + item.artist + " - " + item.album.title + " (" + item.length + ")";
         itemid = item["album"].recordid + "-" + item.trackid;
@@ -263,11 +262,11 @@ function getExistingShowPlan(timeslotID, channelNo) {
         }
       }
       sourceShowPlan = data.payload;
-      for (channelKey in sourceShowPlan) {
+      for (const channelKey in sourceShowPlan) {
         const channel = sourceShowPlan[channelKey];
         // If the channel has any items with it, the next channel weight is the last item in the show plan + 1. Else keep the default 0.
         if (channel.length > 0) {
-          nextChannelWeights[channelKey] = ((channel[channel.length - 1].weight) + 1)
+          nextChannelWeights[channelKey] = ((channel[channel.length - 1].weight) + 1);
         }
       }
 
@@ -345,5 +344,5 @@ var shipChanges = function (timeslotID, ops) {
 
 // Reload the page to show your newly imported item. Clicked from a showAlert.
 var reload = function () {
-  window.parent.postMessage("reload_showplan", "*")
+  window.parent.postMessage("reload_showplan", "*");
 };
