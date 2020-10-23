@@ -118,7 +118,7 @@ if (version_compare(phpversion(), '7.1', '<')) {
     $ready = false;
     $problems[] = 'You must be running at least PHP 7.1.';
 } else {
-    $successes[] = 'You are running PHP '.php_version().'.';
+    $successes[] = 'You are running PHP '.phpversion().'.';
 }
 
 foreach ($required_modules as $module) {
