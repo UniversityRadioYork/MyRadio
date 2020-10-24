@@ -36,7 +36,7 @@ trait MyRadio_APICaller_Common
     public function hasAuth($authid)
     {
         // I am become superuser, doer of API calls
-        if ($this->hasAuth(AUTH_APISUDO)) {
+        if (in_array(AUTH_APISUDO, $this->getPermissions())) {
             return true;
         }
         return $authid === null || in_array((int) $authid, $this->getPermissions());
