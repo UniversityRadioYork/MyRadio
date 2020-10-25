@@ -38,10 +38,10 @@
       <div id="resource-add-container" class="box col-md-3 col-sm-3 col-xs-3 height-2">
         <div id="resource-add-header">
           {% include 'NIPSWeb/res_selector.twig' %}
+          <input type="text" placeholder="Filter by track..." id="res-filter-track" class="hidden" />
           <div id="res-filter-artist-container" class="hidden" >
             <input type="text" placeholder="Filter by artist..." id="res-filter-artist"/>
           </div>
-          <input type="text" placeholder="Filter by track..." id="res-filter-track" class="hidden" />
           <input type="text" placeholder="Filter by name..." id="res-filter-name" class="hidden" />
         </div>
         <ul class="box baps-channel channel-list" id="baps-channel-res" channel="res">

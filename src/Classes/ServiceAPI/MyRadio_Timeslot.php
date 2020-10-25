@@ -781,7 +781,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
         // next can be either an array, or an array of arrays, and because PHP, count($assoc_array) returns the number
         // of keys. So we check the number of non-string keys to decide.
         if (count(array_filter(array_keys($value['next']), 'is_string')) === 0) {
-            $value['next'] = array_map(function($show) {
+            $value['next'] = array_map(function ($show) {
                 return isset($show['id']) ? MyRadio_Timeslot::getInstance($show['id']) : $show;
             }, $value['next']);
         } else {
@@ -1091,22 +1091,23 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
 
     /**
      * Return location name
-     * 
+     *
      * @param $locationid int - The ID of the location
      * @return string Location Name
      * @throws MyRadioException
      */
-
-    public static function getLocationName($locationid){
+    public static function getLocationName($locationid)
+    {
         self::wakeup();
         $result = self::$db->fetchOne(
             "SELECT location_name FROM schedule.location
-            WHERE location_id = $1", [$locationid]
+             WHERE location_id = $1",
+            [$locationid]
         );
-        if (isset($result['location_name'])){
+        if (isset($result['location_name'])) {
             return $result['location_name'];
-        }else{
-            throw new MyRadioException("The location with location_id " . $locationid . " doesn't exist.", 400);
+        } else {
+            throw new MyRadioException("The location with location_id $locationid doesn't exist.", 400);
         }
     }
 
@@ -1290,7 +1291,12 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
         self::$db->query(
             'INSERT INTO sis2.guest_signin (show_season_timeslot_id, signerid, location, guest_info)
                 VALUES ($1, $2, $3, $4)',
-            [$this->getID(), MyRadio_User::getInstance()->getID(), $locationid, htmlspecialchars($guestInfo, ENT_QUOTES)]
+            [
+                $this->getID(),
+                MyRadio_User::getInstance()->getID(),
+                $locationid,
+                htmlspecialchars($guestInfo, ENT_QUOTES)
+            ]
         );
     }
 
@@ -1370,5 +1376,4 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
     {
         return 'Timeslot';
     }
-
 }

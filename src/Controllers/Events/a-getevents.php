@@ -4,7 +4,7 @@ use MyRadio\MyRadio\CoreUtils;
 use MyRadio\MyRadio\URLUtils;
 use MyRadio\ServiceAPI\MyRadio_Event;
 
-if(empty($_REQUEST['start']) || empty($_REQUEST['end'])) {
+if (empty($_REQUEST['start']) || empty($_REQUEST['end'])) {
     URLUtils::dataToJSON([
         'myradio_errors' => [
             'missing start or end'
