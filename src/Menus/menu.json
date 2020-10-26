@@ -37,6 +37,11 @@
                             "description": "Forgotten how to use the studios? Want to get ahead of studio training? Here's the place to start."
                         },
                         {
+                            "title": "WebStudio Training",
+                            "url": "https://ury.org.uk/wiki/Working_From_Home_Resources/WebStudio",
+                            "description": "Want to view our videos on how to use our online broadcasting tool WebStudio? Well here they are!"
+                        },
+                        {
                             "template": "MyRadio/getOnAir.twig"
                         }
                     ]
