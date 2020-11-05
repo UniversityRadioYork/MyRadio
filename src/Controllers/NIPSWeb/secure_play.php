@@ -12,8 +12,8 @@ header("Access-Control-Allow-Origin: " . $_SERVER["HTTP_ORIGIN"]);
 header("Access-Control-Allow-Credentials: true");
 
 if (
-    AuthUtils::hasPermission(USENIPSWEB) ||
-    AuthUtils::hasPermission(DOWNLOAD_LIBRARY)
+    AuthUtils::hasPermission(AUTH_USENIPSWEB) ||
+    AuthUtils::hasPermission(AUTH_DOWNLOAD_LIBRARY)
 ) {
     if (!isset($_REQUEST['trackid']) or !isset($_REQUEST['recordid'])) {
         throw new MyRadioException('Bad Request - trackid and recordid required.', 400);
