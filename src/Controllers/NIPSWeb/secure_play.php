@@ -2,6 +2,7 @@
 /**
  * Streams a central database track if a play token is available.
  */
+use \MyRadio\MyRadio\AuthUtils;
 use \MyRadio\Config;
 use \MyRadio\MyRadioException;
 use \MyRadio\NIPSWeb\NIPSWeb_Token;
