@@ -10,23 +10,30 @@ use \MyRadio\NIPSWeb\NIPSWeb_Views;
 header("Access-Control-Allow-Origin: " . $_SERVER["HTTP_ORIGIN"]);
 header("Access-Control-Allow-Credentials: true");
 
-if (!isset($_REQUEST['trackid']) or !isset($_REQUEST['recordid'])) {
-    throw new MyRadioException('Bad Request - trackid and recordid required.', 400);
-}
-$recordid = (int) $_REQUEST['recordid'];
-$trackid = (int) $_REQUEST['trackid'];
+if (
+    AuthUtils::hasPermission(USENIPSWEB) ||
+    AuthUtils::hasPermission(DOWNLOAD_LIBRARY)
+) {
+    if (!isset($_REQUEST['trackid']) or !isset($_REQUEST['recordid'])) {
+        throw new MyRadioException('Bad Request - trackid and recordid required.', 400);
+    }
+    $recordid = (int) $_REQUEST['recordid'];
+    $trackid = (int) $_REQUEST['trackid'];
 
-if (NIPSWeb_Token::hasToken($trackid)) {
-    //Yes, clear the current play session and read the track
-    $path = Config::$music_central_db_path."/records/$recordid/$trackid";
+    if (NIPSWeb_Token::hasToken($trackid)) {
+        //Yes, clear the current play session and read the track
+        $path = Config::$music_central_db_path."/records/$recordid/$trackid";
 
-    if (isset($_REQUEST['ogg'])) {
-        $path .= '.ogg';
-        NIPSWeb_Views::serveOGG($path);
+        if (isset($_REQUEST['ogg'])) {
+            $path .= '.ogg';
+            NIPSWeb_Views::serveOGG($path);
+        } else {
+            $path .= '.mp3';
+            NIPSWeb_Views::serveMP3($path);
+        }
     } else {
-        $path .= '.mp3';
-        NIPSWeb_Views::serveMP3($path);
+        throw new MyRadioException('Invalid Play Token!', 403);
     }
 } else {
-    throw new MyRadioException('Invalid Play Token!', 403);
+    throw new MyRadioException('You do not have access to this endpoint.');
 }
