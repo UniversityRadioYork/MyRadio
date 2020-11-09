@@ -637,7 +637,7 @@ class MyRadio_Track extends ServiceAPI
         $userName = htmlspecialchars($currentUser->getFName() . ' ' . $currentUser->getSName());
         $editUrl = URLUtils::makeURL('Library', 'editTrack', ['trackid' => $this->getID()]);
         MyRadioEmail::sendEmailToList(
-            MyRadio_List::getByName('music'),
+            MyRadio_List::getByName('playlisting'),
             'Track Reported Explicit',
             <<<EOF
 Hi,
