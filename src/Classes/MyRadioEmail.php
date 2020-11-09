@@ -310,9 +310,9 @@ class MyRadioEmail extends ServiceAPI
     /**
      * Sends an email to the specified MyRadio_List.
      *
-     * @param MyRadio_List $to
-     * @param string       $subject email subject
-     * @param sting        $message email message
+     * @param MyRadio_List  $to
+     * @param string        $subject email subject
+     * @param string        $message email message
      *
      * @todo Check if "Receive Emails" is enabled for the User
      */
