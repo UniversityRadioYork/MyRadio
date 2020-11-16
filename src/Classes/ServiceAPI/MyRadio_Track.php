@@ -1588,6 +1588,8 @@ class MyRadio_Track extends ServiceAPI
      * Gets the track that's on air *right now*.
      *
      * @param string[] $sources which sources to accept tracklist data from
+     * @param bool $allowOffAir Should whatever Jukebox is playing be included even when it's not on air.
+     * Silly unless 'j' is passed in $sources
      * @return null|array
      */
     public static function getNowPlaying($sources = ['b', 'm', 'o', 'w', 'a', 's'], $allowOffAir = false)
