@@ -1599,8 +1599,11 @@ class MyRadio_Track extends ServiceAPI
         self::$db->query('SET TRANSACTION ISOLATION LEVEL REPEATABLE READ');
 
         // Fetch permissible source letters and filter sources to prevent nasties
-        // TODO: should probably cache this
-        $allowedSources = self::$db->fetchColumn('SELECT sourceid FROM tracklist.source', []);
+        $allowedSources = self::$cache->get('MyRadio_Track:getNowPlaying:allowedSources');
+        if (empty($allowedSources)) {
+            $allowedSources = self::$db->fetchColumn('SELECT sourceid FROM tracklist.source', []);
+            self::$cache->set('MyRadio_Track:getNowPlaying:allowedSources', $allowedSources, 86400);
+        }
         $sources = array_intersect($sources, $allowedSources);
         // Turn into SQL-friendly string
         $sourceStr = '(\'' . implode('\',\'', $sources) . '\')';
