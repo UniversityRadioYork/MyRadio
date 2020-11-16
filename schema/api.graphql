@@ -440,7 +440,12 @@ type Query {
     currentAndNext(time: Int, n: Int, filter: [Int]): CurrentAndNext @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Timeslot", method: "getCurrentAndNextObjects") @auth(constants: [])
     previousTimeslots(time: Int, n: Int, filter: [Int]): [Timeslot] @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Timeslot", method: "getPreviousTimeslots")
 
-    nowPlaying(include_playout: Boolean): NowPlayingTrack @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Track", method: "getNowPlaying") @auth(constants: [])
+    nowPlaying(
+        "Which source letters (not IDs!) to accept tracklisting from. Defaults to [b, m, o, w, a, s]"
+        sources: [String!],
+        "Should whatever Jukebox is playing be included even when it's not on air. Silly unless 'j' is passed in sources."
+        allowOffAir: Boolean
+    ): NowPlayingTrack @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Track", method: "getNowPlaying") @auth(constants: [])
 
     isTerm: Boolean @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Scheduler", method: "isTerm") @auth(constants: [])
 
