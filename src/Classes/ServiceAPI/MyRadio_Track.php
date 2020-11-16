@@ -1630,9 +1630,9 @@ class MyRadio_Track extends ServiceAPI
         if (in_array('b', $sources)) {
             $result = self::$db->fetchColumn(
                 'SELECT action FROM public.selector WHERE time <= NOW()
-            AND action >= 4 AND action <= 11
-            ORDER BY time DESC
-            LIMIT 1',
+                AND action >= 4 AND action <= 11
+                ORDER BY time DESC
+                LIMIT 1',
                 []
             );
             $selAction = isset($result[0]) ? intval($result[0]) : 0;
@@ -1641,17 +1641,17 @@ class MyRadio_Track extends ServiceAPI
                 // The 30 *seconds* is to (hopefully) catch PFLs
                 $lastBapsLogged = self::$db->fetchOne(
                     'SELECT audiologid, timeplayed AT TIME ZONE \'Europe/London\' AS timestart, trackid
-                FROM public.baps_audiolog
-                INNER JOIN public.baps_audio USING (audioid)
-                INNER JOIN tracklist.selbaps ON baps_audiolog.serverid = selbaps.bapsloc
-                WHERE selaction = $1
-                AND timestopped IS NULL
-                AND trackid IS NOT NULL
-                AND timeplayed <= (NOW() AT TIME ZONE \'Europe/London\' - interval \'30 seconds\')
-                AND timeplayed > (NOW() AT TIME ZONE \'Europe/London\' - interval \'30 minutes\')
-                ORDER BY timeplayed DESC
-                LIMIT 1
-                ',
+                    FROM public.baps_audiolog
+                    INNER JOIN public.baps_audio USING (audioid)
+                    INNER JOIN tracklist.selbaps ON baps_audiolog.serverid = selbaps.bapsloc
+                    WHERE selaction = $1
+                    AND timestopped IS NULL
+                    AND trackid IS NOT NULL
+                    AND timeplayed <= (NOW() AT TIME ZONE \'Europe/London\' - interval \'30 seconds\')
+                    AND timeplayed > (NOW() AT TIME ZONE \'Europe/London\' - interval \'30 minutes\')
+                    ORDER BY timeplayed DESC
+                    LIMIT 1
+                    ',
                     [ $selAction ]
                 );
                 if (!empty($lastBapsLogged)) {
