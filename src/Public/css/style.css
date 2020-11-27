@@ -451,8 +451,23 @@ label.label-nofloat {
   margin-top: 0;
 }
 
+/** MyRadio Broadcasts **/
+.broadcasts *{
+  float:left;
+  margin: 0px 10px;
+}
+
 .broadcast-photo {
   border-radius: 50%;
+}
+
+.broadcast-unread {
+  border: 3px solid dodgerblue;
+}
+
+.vl {
+  border-left: 1px solid grey;
+  height: 80px;
 }
 
 /** MyRadio Form Styles **/

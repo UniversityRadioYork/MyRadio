@@ -3,11 +3,13 @@
 
 {% block stripecontent %}
 
-<div  class="row">
+<div class="row">
   <h2>MyRadio Broadcasts</h2>
+  <div class="broadcasts">
+    <img class="broadcast-photo" src="{{user.photo}}" width="80">
+    <div class="vl"></div>
 
-  <img class="broadcast-photo" src="{{user.photo}}" width="50">
-
+  </div>
 </div>
 
 {% if events %}
