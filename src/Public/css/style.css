@@ -451,6 +451,10 @@ label.label-nofloat {
   margin-top: 0;
 }
 
+.broadcast-photo {
+  border-radius: 50%;
+}
+
 /** MyRadio Form Styles **/
 select {
   color: #222!important;
