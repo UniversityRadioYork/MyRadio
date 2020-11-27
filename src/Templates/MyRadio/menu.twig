@@ -8,7 +8,7 @@
   <div class="broadcasts">
     <img class="broadcast-photo" src="{{user.photo}}" width="80">
     <div class="vl"></div>
-    { % for broadcast in broadcasts %}
+    {% for broadcast in broadcasts %}
       <img class="broadcast-photo broadcast-unread" src="{{broadcast.getOfficers()[0].toDataSource().photo}}" width="80">
     {% endfor %}
 

@@ -27,7 +27,7 @@ $twig = CoreUtils::getTemplateObject()->setTemplate('MyRadio/menu.twig')
         ->addVariable('menu', $menu)
         ->addVariable('news_clickthrough', $news_clickthrough)
         ->addVariable('user', $user->toDataSource())
-        ->addVariable('broadcasts', MyRadio_Team::getInstance('computing')->getOfficers())
+        ->addVariable('broadcasts', MyRadio_Team::getInstance(8)->getOfficers())
         /*
          * This is some bonus stuff for the Get On Air item
          */
