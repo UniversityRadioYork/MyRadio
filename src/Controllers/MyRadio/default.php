@@ -11,6 +11,7 @@ use MyRadio\ServiceAPI\MyRadio_Event;
 use \MyRadio\ServiceAPI\MyRadio_User;
 use \MyRadio\MyRadio\MyRadioMenu;
 use \MyRadio\MyRadio\MyRadioNews;
+use MyRadio\ServiceAPI\MyRadio_Team;
 
 /** @var MyRadio_User $user */
 $user = MyRadio_User::getInstance();
@@ -26,6 +27,7 @@ $twig = CoreUtils::getTemplateObject()->setTemplate('MyRadio/menu.twig')
         ->addVariable('menu', $menu)
         ->addVariable('news_clickthrough', $news_clickthrough)
         ->addVariable('user', $user->toDataSource())
+        ->addVariable('broadcasts', MyRadio_Team::getInstance('computing')->getOfficers())
         /*
          * This is some bonus stuff for the Get On Air item
          */
