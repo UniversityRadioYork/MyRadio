@@ -166,6 +166,9 @@ function graphQlResolver($source, $args, GraphQLContext $context, ResolveInfo $i
                     case 'FirstArgInput':
                         $val = $meth->invokeArgs(null, [$args['input']]);
                         break;
+                    case 'InputAsArgs':
+                        $val = GraphQLUtils::invokeNamed($meth, null, $args['input']);
+                        break;
                     default:
                         throw new MyRadioException("Unknown calling convention $cc");
                 }
