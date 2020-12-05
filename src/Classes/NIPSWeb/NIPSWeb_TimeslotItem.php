@@ -26,6 +26,8 @@ class NIPSWeb_TimeslotItem extends \MyRadio\ServiceAPI\ServiceAPI
 
     private $weight;
 
+    private $cue;
+
     /**
      * Initiates the TimeslotItem variables.
      *
@@ -63,6 +65,7 @@ class NIPSWeb_TimeslotItem extends \MyRadio\ServiceAPI\ServiceAPI
 
         $this->channel = (int) $result['channel_id'];
         $this->weight = (int) $result['weight'];
+        $this->cue = (int) $result['cue'];
     }
 
     /**
@@ -85,6 +88,14 @@ class NIPSWeb_TimeslotItem extends \MyRadio\ServiceAPI\ServiceAPI
         return $this->weight;
     }
 
+    /**
+     * Get the cue point of this timeslotitem, in seconds.
+     */
+    public function getCue()
+    {
+        return $this->cue;
+    }
+
     public function getItem()
     {
         if ($this->item_type == "CentralDB") {
@@ -101,6 +112,16 @@ class NIPSWeb_TimeslotItem extends \MyRadio\ServiceAPI\ServiceAPI
         self::$db->query(
             'UPDATE bapsplanner.timeslot_items SET channel_id=$1, weight=$2 WHERE timeslot_item_id=$3',
             [$this->channel, $this->weight, $this->getID()]
+        );
+        $this->updateCacheObject();
+    }
+
+    public function setCue($secs)
+    {
+        $this->cue = (int) $secs;
+        self::$db->query(
+            'UPDATE bapsplanner.timeslot_items SET cue=$1 WHERE timeslot_item_id=$2',
+            [$this->cue, $this->getID()]
         );
         $this->updateCacheObject();
     }
@@ -149,6 +170,7 @@ class NIPSWeb_TimeslotItem extends \MyRadio\ServiceAPI\ServiceAPI
                 'timeslotitemid' => $this->getID(),
                 'channel' => $this->getChannel(),
                 'weight' => $this->getWeight(),
+                'cue'   => $this->getCue()
             ],
             $this->getItem()->toDataSource()
         );

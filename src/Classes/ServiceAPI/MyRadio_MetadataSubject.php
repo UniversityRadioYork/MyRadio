@@ -256,16 +256,17 @@ trait MyRadio_MetadataSubject
      * This function must be extended by Classes using MetadataSubject to provide the correct
      * ID field and table that the metadata is stored in.
      *
-     * @todo effective_from/to not yet implemented
-     *
-     * @param string $query          The query value.
-     * @param array  $string_keys    The metadata keys to search
-     * @param int    $effective_from UTC Time to search from.
-     * @param int    $effective_to   UTC Time to search to.
-     * @param string $table          The metadata table, *including* the schema.
-     * @param string $id_field       The ID field in the metadata table.
+     * @param string      $query          The query value.
+     * @param array       $string_keys    The metadata keys to search
+     * @param int|null    $effective_from UTC Time to search from.
+     * @param int|null    $effective_to   UTC Time to search to.
+     * @param string      $table          The metadata table, *including* the schema.
+     * @param string      $id_field       The ID field in the metadata table.
+     * @param int         $limit          The number of results to return
      *
      * @return array The list of IDs of whatever is being searched.
+     * @noinspection PhpDocSignatureInspection
+     * @todo effective_from/to not yet implemented
      */
     protected static function searchMetaBase(
         $query,
@@ -273,7 +274,8 @@ trait MyRadio_MetadataSubject
         $effective_from = null,
         $effective_to = null,
         $table = null,
-        $id_field = null
+        $id_field = null,
+        $limit = 25
     ) {
         if (is_null($table) || is_null($id_field)) {
             throw new MyRadioException('Search table and ID must be set.');
@@ -290,11 +292,12 @@ trait MyRadio_MetadataSubject
         $query = urldecode($query);
 
         $results = self::$db->fetchColumn(
-            'SELECT '.$id_field
+            'SELECT DISTINCT '.$id_field
             .' FROM '.$table
             .' WHERE metadata_value ILIKE \'%\' || $1 || \'%\''
-            .' AND metadata_key_id IN '.$meta_keys,
-            [$query]
+            .' AND metadata_key_id IN '.$meta_keys /* safe - we control keys via getMetadataKey */
+            .' LIMIT $2',
+            [$query, $limit]
         );
 
         return $results;

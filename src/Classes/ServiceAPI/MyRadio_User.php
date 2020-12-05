@@ -175,7 +175,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
 
     /**
      * Users radio time, calculated from signed in shows
-     * 
+     *
      * @var mixed
      */
     private $radioTime;
@@ -674,9 +674,9 @@ class MyRadio_User extends ServiceAPI implements APICaller
      * @param bool $includeMemberships if true, non-officer team memberships will be included
      * @return MyRadio_UserOfficership[]
      */
-    public function getOfficerships($includeMemberships=false)
+    public function getOfficerships($includeMemberships = false)
     {
-        if(!empty($this->officerships) && !$includeMemberships) {
+        if (!empty($this->officerships) && !$includeMemberships) {
             return $this->officerships;
         }
         // We don't want it to be cached with includeMemberships
@@ -705,23 +705,24 @@ class MyRadio_User extends ServiceAPI implements APICaller
     public function getRadioTime()
     {
         if (!$this->radioTime) {
-            try{
+            try {
                 $this->radioTime = self::$db->fetchColumn(
-                    'SELECT sum(duration)         
-                    FROM schedule.show_season_timeslot
-            INNER JOIN schedule.show_season USING (show_season_id)
-            INNER JOIN schedule.show_credit USING (show_id)
-            INNER JOIN sis2.member_signin USING(show_season_timeslot_id)
-            WHERE show_credit.creditid = $1
-            AND member_signin.memberid = $1
-            AND show_credit.effective_from <= show_season_timeslot.start_time
-            AND (show_credit.effective_to > show_season_timeslot.start_time OR show_credit.effective_to IS NULL)
-            AND show_credit.approvedid IS NOT NULL;',
-            [$this->getID()]
+                    'SELECT sum(duration)
+                     FROM schedule.show_season_timeslot
+                     INNER JOIN schedule.show_season USING (show_season_id)
+                     INNER JOIN schedule.show_credit USING (show_id)
+                     INNER JOIN sis2.member_signin USING(show_season_timeslot_id)
+                     WHERE show_credit.creditid = $1
+                         AND member_signin.memberid = $1
+                         AND show_credit.effective_from <= show_season_timeslot.start_time
+                         AND (show_credit.effective_to > show_season_timeslot.start_time
+                              OR show_credit.effective_to IS NULL)
+                         AND show_credit.approvedid IS NOT NULL;',
+                    [$this->getID()]
                 )[0];
 
                 $this->updateCacheObject();
-            }catch (MyRadioException $e){
+            } catch (MyRadioException $e) {
                 $this->radioTime = null;
             }
         }
@@ -951,7 +952,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
                 //'photo' => MyRadio_Photo::getInstance(Config::$photo_officership_get)->getRelativeWebPath(),
                 'photo' => null
             ];
-            if ($officer['till_date'] != null) {
+            if ($officer->getTillDate() != null) {
                 $events[] = [
                     'message' => 'stepped down as '.$officer->getOfficer()->getName(),
                     'timestamp' => strtotime($officer->getTillDate()),

@@ -54,7 +54,9 @@ $typeConfigDecorator = function ($typeConfig, TypeDefinitionNode $typeDefinition
                 $typeName = $info->returnType->name;
                 $parent = $info->parentType->name;
                 $field = $info->fieldName;
-                throw new MyRadioException("Ambiguous union type $typeName for $parent.$field - candidates " . implode(', ', $candidates));
+                throw new MyRadioException(
+                    "Ambiguous union type $typeName for $parent.$field - candidates " . implode(', ', $candidates)
+                );
             }
         };
     }
@@ -203,21 +205,20 @@ function graphQlResolver($source, $args, GraphQLContext $context, ResolveInfo $i
                         $val = $className::{$methodName}(MyRadio_User::getInstance()->getID());
                         break;
                     case 'FirstArgCurrentObject':
-                        // Find the name of the first argument, set that as the source, and pass in the rest to invokeNamed
+                        // Find name of the first argument, set as the source, and pass in the rest to invokeNamed
                         $firstArg = $meth->getParameters()[0];
                         $args[$firstArg->getName()] = $source;
                         $val = GraphQLUtils::invokeNamed($meth, null, $args);
                         break;
                     default:
-                        throw new MyRadioException("Unsupported calling convention $callingConvention for static method");
+                        throw new MyRadioException(
+                            "Unsupported calling convention $callingConvention for static method"
+                        );
                 }
-
             } else {
                 $val = GraphQLUtils::invokeNamed($meth, null, $args);
             }
-
             return GraphQLUtils::processScalarIfNecessary($info, $val);
-
         } else {
             $context->addWarning("Unauthorised to access $typeName::$fieldName");
             return GraphQLUtils::returnNullOrThrowForbiddenException($info);
@@ -318,15 +319,17 @@ function graphQlResolver($source, $args, GraphQLContext $context, ResolveInfo $i
                     switch ($callingConvention) {
                         case 'FirstArgCurrentUser':
                             $val = $source->{$methodName}(MyRadio_User::getInstance()->getID());
-                        break;
+                            break;
                         case 'FirstArgCurrentObject':
-                            // Find the name of the first argument, set that as the source, and pass in the rest to invokeNamed
+                            // Find name of the first argument, set as the source, and pass in the rest to invokeNamed
                             $firstArg = $meth->getParameters()[0];
                             $args[$firstArg->getName()] = $source;
                             $val = GraphQLUtils::invokeNamed($meth, $source, $args);
-                        break;
+                            break;
                         default:
-                            throw new MyRadioException("Unsupported calling convention $callingConvention for dynamic field");
+                            throw new MyRadioException(
+                                "Unsupported calling convention $callingConvention for dynamic field"
+                            );
                     }
                 } else {
                     $val = GraphQLUtils::invokeNamed($meth, $source, $args);
