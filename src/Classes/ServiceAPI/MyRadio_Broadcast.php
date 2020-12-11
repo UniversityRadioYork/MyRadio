@@ -55,7 +55,7 @@ class MyRadio_Broadcast extends ServiceAPI
         $result = self::$db->fetchColumn(
             "SELECT broadcast_id FROM public.broadcast
             WHERE member_id = $1
-            AND time > (NOW() - interval \'1 day\')",
+            AND time > (NOW() - interval '1 day')",
             [
                 $memberid
             ]
@@ -70,7 +70,7 @@ class MyRadio_Broadcast extends ServiceAPI
     public static function getUsersWithBroadcasts() {
         $result = self::$db->fetchColumn(
             "SELECT DISTINCT member_id FROM public.broadcast
-            WHERE time > (NOW() - interval \'1 day\')"
+            WHERE time > (NOW() - interval '1 day')"
         );
         return MyRadio_User::resultSetToObjArray($result);
     }
