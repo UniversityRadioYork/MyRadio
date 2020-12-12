@@ -9,7 +9,7 @@
     <img class="broadcast-photo" src="{{user.photo}}" width="80">
     <div class="vl"></div>
     {% for broadcast in broadcasts %}
-      <img class="broadcast-photo broadcast-unread" src="{{broadcast.toDataSource().photo}}" width="80">
+      <img id="broadcast-{{broadcast.toDataSource().memberid}}" class="broadcast-photo broadcast-unread" src="{{broadcast.toDataSource().photo}}" width="80">
     {% endfor %}
 
   </div>

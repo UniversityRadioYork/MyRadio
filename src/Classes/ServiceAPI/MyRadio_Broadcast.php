@@ -38,7 +38,7 @@ class MyRadio_Broadcast extends ServiceAPI
             );
         }
 
-        $this->member = MyRadio_User::getInstance((int)$result['memberid']);
+        $this->member = MyRadio_User::getInstance((int)$result['member_id']);
         $this->path = $result['path'];
         $this->time = strtotime($result['time']);
     }
@@ -89,6 +89,16 @@ class MyRadio_Broadcast extends ServiceAPI
                 $path
             ]
             );
+    }
+
+    public function toDataSource()
+    {
+        return [
+            "broadcast_id" => $this->broadcast_id,
+            "member_id" => $this->member,
+            "path" => $this->path,
+            "time" => CoreUtils::happyTime($this->time)
+        ];
     }
 
 }
