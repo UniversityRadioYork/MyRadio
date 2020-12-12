@@ -91,11 +91,11 @@ class MyRadio_Broadcast extends ServiceAPI
             );
     }
 
-    public function toDataSource()
+    public function toDataSource($mixins = [])
     {
         return [
             "broadcast_id" => $this->broadcast_id,
-            "member_id" => $this->member,
+            "member_id" => $this->member->toDataSource(),
             "path" => $this->path,
             "time" => CoreUtils::happyTime($this->time)
         ];
