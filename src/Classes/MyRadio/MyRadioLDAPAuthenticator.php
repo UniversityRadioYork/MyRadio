@@ -18,14 +18,14 @@ class MyRadioLDAPAuthenticator implements \MyRadio\Iface\MyRadioAuthenticator
      */
     public function __construct()
     {
-        $this->ldap_handle = ldap_connect(Config::$auth_ldap_server);
+        $this->ldap_handle = \ldap_connect(Config::$auth_ldap_server);
     }
     /**
      * Tears down the LDAP connection.
      */
     public function __destruct()
     {
-        ldap_close($this->ldap_handle);
+        \ldap_close($this->ldap_handle);
     }
     /**
      * @param string $user     The username (a full email address, or the prefix if it matches Config::$eduroam_domain).
@@ -37,7 +37,7 @@ class MyRadioLDAPAuthenticator implements \MyRadio\Iface\MyRadioAuthenticator
      */
     public function validateCredentials($user, $password)
     {
-        if (@ldap_bind($this->ldap_handle, 'uid='.$user.','.Config::$auth_ldap_root, $password)) {
+        if (@\ldap_bind($this->ldap_handle, 'uid='.$user.','.Config::$auth_ldap_root, $password)) {
             return MyRadio_User::findByEmail($user);
         } else {
             return false;

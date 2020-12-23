@@ -46,7 +46,7 @@ class Database
      */
     private function __construct()
     {
-        $this->db = @pg_connect(
+        $this->db = @\pg_connect(
             'host='.Config::$db_hostname
             .' port=5432 dbname='.Config::$db_name
             .' user='.Config::$db_user
@@ -66,7 +66,7 @@ class Database
      */
     public function reconnect()
     {
-        return pg_connection_reset($this->db);
+        return \pg_connection_reset($this->db);
     }
 
     /**
@@ -76,7 +76,7 @@ class Database
      */
     public function status()
     {
-        return pg_connection_status($this->db) === PGSQL_CONNECTION_OK;
+        return \pg_connection_status($this->db) === PGSQL_CONNECTION_OK;
     }
 
     /**
