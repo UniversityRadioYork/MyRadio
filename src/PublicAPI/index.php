@@ -11,7 +11,7 @@ $__start = -microtime(true);
  */
 // Configure MyRadio & Set API Settings
 define('SILENT_EXCEPTIONS', false);
-define('DISABLE_SESSION', true);
+define('DISABLE_SESSION', !(empty($args['api_key'])));
 define('JSON_DEBUG', true);
 
 require_once __DIR__.'/../Controllers/root_cli.php';
@@ -87,7 +87,9 @@ if (empty($class)) {
 }
 
 //Go to the right version controller
-if (strpos($_SERVER['REQUEST_URI'], Config::$api_uri.'v2/') !== false) {
+if (strpos($_SERVER['REQUEST_URI'], Config::$api_uri . 'graphql') !== false) {
+    require_once '../Controllers/api/graphql.php';
+} elseif (strpos($_SERVER['REQUEST_URI'], Config::$api_uri.'v2/') !== false) {
     require_once '../Controllers/api/v2.php';
 } else {
     require_once '../Controllers/api/v1.php';

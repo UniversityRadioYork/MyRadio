@@ -96,7 +96,12 @@ class MyRadio_TrackCorrection extends MyRadio_Track
             return;
         }
 
-        parent::__construct($result['trackid']);
+        $track_res = self::$db->fetchOne('SELECT * FROM public.rec_track WHERE trackid=$1 LIMIT 1', [$trackid]);
+        if (empty($track_res)) {
+            throw new MyRadioException('The specified Track does not seem to exist', 404);
+        }
+
+        parent::__construct($track_res);
 
         $this->proposed_title = $result['proposed_title'];
         $this->proposed_artist = $result['proposed_artist'];

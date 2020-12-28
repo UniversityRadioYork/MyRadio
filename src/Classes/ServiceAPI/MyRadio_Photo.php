@@ -144,6 +144,11 @@ class MyRadio_Photo extends ServiceAPI
         return Config::$public_media_path.'/image_meta/MyRadioImageMetadata/'.$this->getID().'.'.$this->format;
     }
 
+    public function getRelativeWebPath()
+    {
+        return '/image_meta/MyRadioImageMetadata/'.$this->getID().'.'.$this->format;
+    }
+
     /**
      * Add a Photo.
      *

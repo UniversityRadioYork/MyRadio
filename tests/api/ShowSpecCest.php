@@ -11,7 +11,9 @@ class ShowSpecCest
     ];
     public static $show = [
         "title" => "Testy likes to test shows.",
-        "description" => "Testy is a busy guy, but in his spare time, he does his own radio show to test what this on the air malarky is all about."
+        "description" => "Testy is a busy guy, but in his spare time, he does his own radio show to test what this on the air malarky is all about.",
+        "subtype" => "regular",
+        "podcast_explicit" => false
     ];
 
     public function _before(\Step\Api\MyRadioTester $I)

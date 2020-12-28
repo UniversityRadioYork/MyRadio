@@ -94,8 +94,19 @@ var myradio = {
     $("#showAlert").removeClass(function (index, className) {
       return (className.match (/(^|\s)alert-\S+/g) || []).join(" ");
     }).addClass("alert-"+type).html(icon + text);
+  },
+  // Set to ingore a error status code for the next API call.
+  ignoreErrorStatus: function(statusCode) {
+    if (window.ignoreErrorStatuses && window.ignoreErrorStatuses.length > 0) {
+      window.ignoreErrorStatuses.push(statusCode);
+    } else {
+      window.ignoreErrorStatuses = [statusCode];
+    }
   }
+
 };
+
+
 
 var errorVisible = false;
 $(document).ajaxError(
@@ -103,15 +114,27 @@ $(document).ajaxError(
     if (xhr.status == 401) {
       //Session timed out - need to login
       window.location = myradio.makeURL("MyRadio", "login", {next: window.location.pathname, message: window.btoa("Your session has expired and you need to log in again to continue.")});
+    } else if (window.ignoreErrorStatuses && window.ignoreErrorStatuses.length > 0 && window.ignoreErrorStatuses.indexOf(xhr.status) >= 0) {
+      //This API call return value was expected. We should ignore it this time.
+
     } else if (!errorVisible) {
+
+      // We weren't expecting this error, make a popup.
       var close = myradio.closeButton();
       var report = myradio.reportButton(xhr, settings, error);
       var message = "";
 
-      if (xhr.responseJSON && xhr.responseJSON.error) {
-        message = xhr.responseJSON.error;
-      } else if (xhr.responseJSON && xhr.responseJSON.message) {
-        message = xhr.responseJSON.message;
+      const response = xhr.responseJSON;
+      if (response) {
+        if (response.error) {
+          message = response.error;
+        } else if (response.message) {
+          message = response.message;
+        } else if (response.myradio_errors) {
+          message = response.myradio_errors;
+        } else if (response.status == "FAIL") {
+          message = "FAIL: " + response.payload;
+        }
       }
 
       var errorVisibleReset = function () {
@@ -122,12 +145,19 @@ $(document).ajaxError(
       report.addEventListener("click", errorVisibleReset);
 
       myradio.createDialog(
-        "Error",
-        "<p>Sorry, just went a bit wrong and I'm not sure what to do about it.</p><details>" + error + "<br>" + message + "</details>",
+        "API Error",
+        `<p>Sorry, something just went a bit wrong. Please report this issue if this is your first time seeing this message! Why not try again if you haven't done so already, too.</p>
+        <details>
+          <strong>Endpoint:</strong> `+ settings.url +`<br>
+          <strong>Status Code:</strong> `+ xhr.status + `<br>
+          <strong>Response:</strong> ` + error + `<br>
+          ` + message + `
+        </details>`,
         [close, report]
       );
       errorVisible = true;
     }
+    window.ignoreErrorStatuses = null;
   }
 );
 
@@ -142,9 +172,12 @@ $(document).ajaxSuccess(
     } catch (error) {
       return; //Not JSON
     }
-    if (data.hasOwnProperty("myradio_errors") && data.myradio_errors.length > 0) {
+
+    if (Object.prototype.hasOwnProperty.call(data, "myradio_errors") && data.myradio_errors.length > 0) {
       myradio.errorReport(data.myradio_errors, e, xhr, settings);
     }
+
+    window.ignoreErrorStatuses = null;
   }
 );
 

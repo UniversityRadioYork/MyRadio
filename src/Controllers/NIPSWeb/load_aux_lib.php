@@ -6,6 +6,13 @@ use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\NIPSWeb\NIPSWeb_ManagedPlaylist;
 use \MyRadio\NIPSWeb\NIPSWeb_ManagedUserPlaylist;
 
+if (isset($_SERVER['HTTP_ORIGIN'])) {
+    header("Access-Control-Allow-Origin: " . $_SERVER["HTTP_ORIGIN"]);
+} else {
+    header("Access-Control-Allow-Origin: *");
+}
+header("Access-Control-Allow-Credentials: true");
+
 if (preg_match('/^aux-.*$/', $_REQUEST['libraryid']) === 1) {
     $libraryid = str_replace('aux-', '', $_REQUEST['libraryid']);
     $data = NIPSWeb_ManagedPlaylist::getInstance($libraryid)->getItems();

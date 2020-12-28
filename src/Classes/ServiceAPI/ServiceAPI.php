@@ -6,6 +6,7 @@ namespace MyRadio\ServiceAPI;
 
 use MyRadio\Config;
 use MyRadio\Database;
+use MyRadio\Iface\CacheProvider;
 use MyRadio\MyRadioException;
 
 /**
@@ -20,13 +21,13 @@ abstract class ServiceAPI
     /**
      * All ServiceAPI subclasses will contain a reference to the Database Singleton.
      *
-     * @var \Database
+     * @var Database
      */
     protected static $db = null;
     /**
      * All ServiceAPI subclasses will contain a reference to the CacheProvider Singleton.
      *
-     * @var \CacheProvider
+     * @var CacheProvider
      */
     protected static $cache = null;
 
@@ -136,6 +137,15 @@ abstract class ServiceAPI
         }
 
         return $response;
+    }
+
+    /**
+     * Get the name of this ServiceAPI in the GraphQL schema.
+     * @return string
+     */
+    public static function getGraphQLTypeName()
+    {
+        throw new MyRadioException('Tried to call getGraphQLTypeName on a type that it shouldn\'t be called on!');
     }
 
     protected function __construct()

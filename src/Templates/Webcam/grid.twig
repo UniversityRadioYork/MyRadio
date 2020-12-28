@@ -1,6 +1,7 @@
 {% extends 'stripe.twig' %}
 
 {% block stripecontent %}
+{% if streams %}
 <div class="webcam-grid-container">
   {% for stream in streams %}
     <figure class="webcam-stream-container" id="webcam-stream-{{stream.streamid}}">
@@ -10,14 +11,19 @@
         var img = document.getElementById('{{stream.streamname}}');
         setInterval(function (image, source) {
             image.setAttribute('src', source + '?_=' + Date.now());
-        }, 1000, img, '{{stream.liveurl}}');
+        }, 500, img, '{{stream.liveurl}}');
       </script>
     </figure>
   {% endfor %}
 </div>
 <div class="alert alert-info" id="webcam-time-counter">
-  <span class="glyphicon glyphicon-time"></span> You've been watching the webcams for <span id="webcam-time-counter-value">not very long</span>
+  <span class="glyphicon glyphicon-time"></span> You've been watching the webcams for <span id="webcam-time-counter-value">(loading).</span>
 </div>
+{% else %}
+<div class="alert alert-warning" id="webcam-time-counter">
+  <span class="glyphicon glyphicon-facetime-video"></span> No webcams have been setup yet. Please check the database.</span>
+</div>
+{% endif %}
 {% endblock %}
 
 {% block foot %}

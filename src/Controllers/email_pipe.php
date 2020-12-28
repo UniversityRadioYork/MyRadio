@@ -34,8 +34,8 @@ while (!feof($fd)) {
 
 preg_match_all('/(^|\s)From:(.*)/i', $email, $sender);
 preg_match_all('/(^|\s)(To|CC):(.*)/i', $email, $recipients);
-preg_match('/(^|\s)X\-Spam\-Status:(.*)/i', $email, $spam);
-if (!empty($spam) && strtolower(trim($spam[2])) == 'yes') {
+preg_match('/(^|\s)X\-Spam_action:(.*)/i', $email, $spam);
+if (!empty($spam) && strtolower(trim($spam[2])) == 'reject') {
     //Don't archive spam.
     exit(0);
 }

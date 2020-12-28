@@ -8,6 +8,7 @@ namespace MyRadio\ServiceAPI;
 use MyRadio\Config;
 use MyRadio\MyRadioException;
 use MyRadio\MyRadio\CoreUtils;
+use MyRadio\MyRadio\AuthUtils;
 use MyRadio\iTones\iTones_Playlist;
 use MyRadio\iTones\iTones_Utils;
 
@@ -70,6 +71,153 @@ class MyRadio_TracklistItem extends ServiceAPI
         return new self($result);
     }
 
+
+    /**
+     * Create a new TracklistItem, returning the new item.
+     *
+     * @param int $trackid  The ID of the track to tracklist.
+     * @param int $timeslotid   The ID of the timeslot to tracklist to. Optional, defaults to current show.
+     * @param int $starttime    Epoch time of the start of the tracklist. Optional, defaults to current time.
+     * @param char $sourceid    The id of the tracklist source (baps, webstudio, etc), see tracklist.source.
+     *                          Defaults to 'api'
+     * @param char $state       The state of the tracklist, see tracklist.state. Defaults to 'confirmed'
+     *
+     *
+     * @return MyRadio_TracklistItem
+     *
+     * @throws MyRadioException
+     */
+    public static function create($trackid, $timeslotid = null, $starttime = null, $sourceid = 'a', $state = 'c')
+    {
+
+        if (AuthUtils::hasPermission(AUTH_TRACKLIST_ALL)) {
+            $tracklist_all = true;
+        } elseif (AuthUtils::hasPermission(AUTH_TRACKLIST_OWN)) {
+            $tracklist_all = false;
+        } else {
+            throw new MyRadioException(
+                "The current user does not have permission to create a tracklistitem.",
+                403
+            );
+        }
+
+        if ($timeslotid != null && $tracklist_all == false) {
+            throw new MyRadioException(
+                "The current user doesn't have permission to set a tracklist on a show other than their own.",
+                403
+            );
+        }
+
+        if ($timeslotid == null) {
+            $timeslot = MyRadio_Timeslot::getCurrentTimeslot();
+            $timeslotid = $timeslot != null ? $timeslot->getID() : null; // will be null if jukebox etc.
+        } else {
+            $timeslot = MyRadio_Timeslot::getInstance($timeslotid);
+        }
+
+        if ($starttime == null) {
+            $starttime = time();
+        }
+
+        if ($timeslot == null) {
+            // we're on jukebox
+            if ($tracklist_all == false) {
+                throw new MyRadioException(
+                    "The current user doesn't have permission to set a tracklist on a show other than their own.",
+                    403
+                );
+            }
+        } else {
+            if ($tracklist_all == false && !$timeslot->isCurrentUserAnOwner()) {
+                throw new MyRadioException(
+                    "Current user doesn't have permission to tracklist to a show they aren't credited on.",
+                    403
+                );
+            }
+            if ($timeslot->getStartTime() > $starttime || $timeslot->getEndTime() < $starttime) {
+                throw new MyRadioException(
+                    "The starttime provided was outside the window of the requested timeslot.",
+                    400
+                );
+            }
+        }
+
+        // Table is timestamp with no timezone, so we need to account for BST
+        $dst_offset = timezone_offset_get(timezone_open(Config::$timezone), date_create('@'.$starttime));
+        if ($dst_offset !== false) {
+            $starttime = $starttime + $dst_offset;
+        }
+
+
+        $track = MyRadio_Track::getInstance($trackid);
+
+
+        self::$db->query('BEGIN');
+
+        $audiologid = self::$db->fetchOne(
+            'INSERT INTO tracklist.tracklist (source, timeslotid, timestart, state)
+            VALUES ($1, $2, $3, $4) RETURNING audiologid',
+            [$sourceid, $timeslotid, CoreUtils::getTimestamp($starttime), $state]
+        );
+
+        if ($audiologid['audiologid'] == null) {
+            self::$db->query('ABORT');
+            throw new MyRadioException(
+                "Was not able to register tracklist entry. Source is likely invalid.",
+                400
+            );
+        }
+
+        self::$db->query(
+            'INSERT INTO tracklist.track_rec (audiologid, recordid, trackid)
+            VALUES ($1, $2, $3)',
+            [$audiologid['audiologid'], $track->getAlbum()->getID(), $track->getID()]
+        );
+
+        self::$db->query('COMMIT');
+
+        return self::getInstance($audiologid['audiologid']);
+    }
+
+    public function getEndTime()
+    {
+        return $this->endtime;
+    }
+
+    public function setEndTime()
+    {
+        if ($this->starttime) {
+            // Table is timestamp with no timezone, so we need to account for BST
+            $endtime = time();
+            $dst_offset = timezone_offset_get(timezone_open(Config::$timezone), date_create('@'.$endtime));
+            if ($dst_offset !== false) {
+                $endtime = $endtime + $dst_offset;
+            }
+            $time = CoreUtils::getTimestamp($endtime);
+            if (AuthUtils::hasPermission(AUTH_TRACKLIST_ALL)
+                || (AuthUtils::hasPermission(AUTH_TRACKLIST_OWN)
+                    && $this->timeslot->getSeason()->getShow()->isCurrentUserAnOwner())
+            ) {
+                self::$db->query(
+                    'UPDATE tracklist.tracklist SET timestop=$1 WHERE audiologid=$2',
+                    [$time, $this->getID()]
+                );
+                $this->endtime = strtotime($time);
+            } else {
+                throw new MyRadioException(
+                    "Current user doesn't have permission to set the endtime of a tracklistitem not from their show.",
+                    403
+                );
+            }
+        } else {
+            throw new MyRadioException(
+                "This timeslotitem does not have a start time. An end time therefore cannot be set.",
+                400
+            );
+        }
+        return $this;
+    }
+
     public function getID()
     {
         return $this->audiologid;
@@ -89,13 +237,16 @@ class MyRadio_TracklistItem extends ServiceAPI
     /**
      * Returns an array of all TracklistItems played during the given Timeslot.
      *
-     * @param int $timeslotid The ID of the Timeslot
+     * @param int|MyRadio_Timeslot $timeslotid The ID of the Timeslot
      * @param int $offset     Skip items with an audiologid <= this
      *
      * @return array
      */
     public static function getTracklistForTimeslot($timeslotid, $offset = 0)
     {
+        if ($timeslotid instanceof MyRadio_Timeslot) {
+            $timeslotid = $timeslotid->getID();
+        }
         $result = self::$db->fetchAll(
             self::BASE_TRACKLISTITEM_SQL
             .' WHERE timeslotid=$1'
@@ -188,6 +339,8 @@ class MyRadio_TracklistItem extends ServiceAPI
             unset($data['deletelink']);
             unset($data['trackno']);
             unset($data['intro']);
+            unset($data['outro']);
+
 
             //for manual SIS entries
             if (!isset($data['trackid'])) {
@@ -439,7 +592,7 @@ class MyRadio_TracklistItem extends ServiceAPI
         }
         $return['time'] = $this->getStartTime();
         $return['starttime'] = date('d/m/Y H:i:s', $this->getStartTime());
-        //$return['endtime'] = $this->getEndTime();
+        $return['endtime'] = $this->getEndTime() == null ? null : date('d/m/Y H:i:s', $this->getEndTime());
         $return['state'] = $this->state;
         $return['audiologid'] = $this->audiologid;
 

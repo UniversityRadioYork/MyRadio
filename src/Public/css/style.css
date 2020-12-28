@@ -1,4 +1,4 @@
-body {
+body:not(.nonav) {
   margin-top: 50px; /* Bootstrap navbar offset */
 }
 
@@ -742,4 +742,25 @@ div.scheduleview-view-day div.nownext {
 div.scheduleview div.now-marker {
   text-align: center;
   padding: 1px;
+}
+
+header.page-header {
+  margin: 10px 0 20px
+}
+
+.events {
+  padding: 9px 19px;
+}
+
+.events > h2 {
+  margin-top: 0.4em;
+}
+
+.events .event h3 {
+  margin-top: 0.3em;
+  margin-bottom: 0.3em;
+}
+
+.events .event {
+  padding: 5px 15px;
 }

@@ -28,6 +28,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             show.show_type_id,
             show.submitted,
             show.memberid AS owner,
+            show.podcast_explicit::int,
             array_to_json(metadata.metadata_key_id) AS metadata_keys,
             array_to_json(metadata.metadata_value) AS metadata_values,
             array_to_json(image_metadata.image_metadata_key_id) AS image_metadata_keys,
@@ -35,7 +36,8 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             array_to_json(credits.credit_type_id) AS credit_types,
             array_to_json(credits.creditid) AS credits,
             array_to_json(genre.genre_id) AS genres,
-            array_to_json(season.show_season_id) AS seasons
+            array_to_json(season.show_season_id) AS seasons,
+            subtype.show_subtype_id as subtype_id
         FROM
             schedule.show
             NATURAL FULL JOIN
@@ -89,10 +91,16 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             (
                 SELECT
                     show_id,
-                    array_agg(show_season_id) AS show_season_id
+                    array_agg(show_season_id ORDER BY termid, submitted) AS show_season_id
                 FROM schedule.show_season
                 GROUP BY show_id
-            ) AS season';
+            ) AS season
+            NATURAL FULL JOIN (
+                SELECT show_subtype_id,
+                       show_id
+                FROM schedule.show_season_subtype
+                GROUP BY show_subtype_id, show_id
+            ) AS subtype';
 
     private $show_id;
     protected $owner;
@@ -102,6 +110,8 @@ class MyRadio_Show extends MyRadio_Metadata_Common
     private $submitted_time;
     private $season_ids;
     private $photo_url;
+    private $podcast_explicit;
+    private $subtype_id;
 
     /**
      * @param $result Array
@@ -126,6 +136,8 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         $this->owner = (int) $result['owner'];
         $this->show_type = (int) $result['show_type_id'];
         $this->submitted_time = strtotime($result['submitted']);
+        $this->podcast_explicit = (bool) $result['podcast_explicit'];
+        $this->subtype_id = (int) $result['subtype_id'];
 
         $this->genres = json_decode($result['genres']);
         if ($this->genres === null) {
@@ -219,7 +231,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
     public static function create($params = [])
     {
         //Validate input
-        $required = ['title', 'description', 'credits'];
+        $required = ['title', 'description', 'credits', 'subtype'];
         foreach ($required as $field) {
             if (!isset($params[$field])) {
                 throw new MyRadioException('You must provide ' . $field, 400);
@@ -258,11 +270,18 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         //Add the basic info, getting the show id
 
         $result = self::$db->fetchColumn(
-            'INSERT INTO schedule.show (show_type_id, submitted, memberid)
-            VALUES ($1, NOW(), $2) RETURNING show_id',
-            [$params['showtypeid'], $creator],
+            'INSERT INTO schedule.show (show_type_id, submitted, memberid, podcast_explicit)
+            VALUES ($1, NOW(), $2, $3::boolean) RETURNING show_id',
+            [
+                $params['showtypeid'],
+                $creator,
+                (isset($params['podcast_explicit']) && $params['podcast_explicit']) ? 1 : 0
+            ],
             true
         );
+        if (empty($result)) {
+            throw new MyRadioException('Inserting show record failed!', 500);
+        }
         $show_id = $result[0];
 
         //Right, set the title and description next
@@ -292,8 +311,8 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             );
         }
 
-        //Explode the tags
-        $tags = explode(' ', $params['tags']);
+        // Explode the tags
+        $tags = CoreUtils::explodeTags($params['tags']);
         foreach ($tags as $tag) {
             self::$db->query(
                 'INSERT INTO schedule.show_metadata
@@ -322,6 +341,14 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                 $creator,
             ],
             true
+        );
+
+        // Subtype too
+        self::$db->query(
+            'INSERT INTO schedule.show_season_subtype
+        (show_id, show_subtype_id, effective_from)
+        VALUES ($1, (SELECT show_subtype_id FROM schedule.show_subtypes WHERE show_subtypes.class = $2), NOW())',
+            [$show_id, $params['subtype']]
         );
 
         //And now all that's left is who's on the show
@@ -414,11 +441,22 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             )
         )->addField(
             new MyRadioFormField(
+                'subtype',
+                MyRadioFormField::TYPE_SELECT,
+                [
+                    'options' => MyRadio_ShowSubtype::getOptions(),
+                    'label' => 'Subtype',
+                    'explanation' => 'Select the subtype for this show (speech, music, news, etc.)'
+                    . ' If unsure, leave as Regular.'
+                ]
+            )
+        )->addField(
+            new MyRadioFormField(
                 'tags',
                 MyRadioFormField::TYPE_TEXT,
                 [
                     'label' => 'Tags',
-                    'explanation' => 'A set of keywords to describe your show generally, seperated with spaces.',
+                    'explanation' => 'A set of keywords to describe your show generally, seperated with commas.',
                 ]
             )
         )->addField(
@@ -430,13 +468,14 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                 'credits',
                 MyRadioFormField::TYPE_TABULARSET,
                 [
+                    'label' => 'Credits',
                     'options' => [
                         new MyRadioFormField(
                             'memberid',
                             MyRadioFormField::TYPE_MEMBER,
                             [
                                 'explanation' => '',
-                                'label' => 'Credit',
+                                'label' => 'Member Name',
                             ]
                         ),
                         new MyRadioFormField(
@@ -467,6 +506,19 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                     'required' => false,
                 ]
             )
+        )->addField(
+            new MyRadioFormField(
+                'podcast_explicit',
+                MyRadioFormField::TYPE_CHECK,
+                [
+                    'required' => false,
+                    'label' => 'Podcast contains explicit content',
+                    'explanation' => 'Check this box if, and only if, this show is a podcast '
+                        . 'and it contains explicit content. '
+                        . 'Remember: explicit content is NEVER acceptable to broadcast!',
+                    'options' => ['checked' => false],
+                ]
+            )
         );
     }
 
@@ -480,7 +532,8 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                     'title' => $this->getMeta('title'),
                     'description' => $this->getMeta('description'),
                     'genres' => $this->getGenre(),
-                    'tags' => is_null($this->getMeta('tag')) ? null : implode(' ', $this->getMeta('tag')),
+                    'subtype' => $this->getSubtype()->getClass(),
+                    'tags' => is_null($this->getMeta('tag')) ? null : implode(', ', $this->getMeta('tag')),
                     'credits.memberid' => array_map(
                         function ($ar) {
                             return $ar['User'];
@@ -494,6 +547,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                         $this->getCredits()
                     ),
                     'mixclouder' => ($this->getMeta('upload_state') === 'Requested'),
+                    'podcast_explicit' => $this->isPodcastExplicit()
                 ]
             );
     }
@@ -629,17 +683,76 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         return isset($this->genres[0]) ? $this->genres[0] : null;
     }
 
+    /**
+     * Gets the subtype for this show.
+     *
+     * Note that subtypes can be overridden per-season, so you should probably use MyRadio_Season->getSubtype().
+     * @return MyRadio_ShowSubtype
+     */
+    public function getSubtype()
+    {
+        return MyRadio_ShowSubtype::getInstance($this->subtype_id);
+    }
+
+    /**
+     * If this show is a podcast, does it contain explicit content?
+     * @return bool
+     */
+    public function isPodcastExplicit()
+    {
+        return $this->podcast_explicit;
+    }
+
+    /**
+     * Sets this show's subtype.
+     *
+     * @todo support effectiveFrom and effectiveTo
+     * @param $subtypeId
+     */
+    public function setSubtype($subtypeId)
+    {
+        self::$db->query('UPDATE schedule.show_season_subtype SET show_subtype_id = $1 WHERE show_id = $1', [
+            $subtypeId, $this->show_id
+        ]);
+    }
+
+    /**
+     * Sets this show's subtype by the subtype name.
+     * @param $subtypeName
+     */
+    public function setSubtypeByName($subtypeName)
+    {
+        self::$db->query(
+            'UPDATE schedule.show_season_subtype
+            SET show_subtype_id = subtype.show_subtype_id
+            FROM (SELECT show_subtype_id FROM schedule.show_subtypes WHERE show_subtypes.class = $2) AS subtype
+            WHERE show_id = $1',
+            [$this->show_id, $subtypeName]
+        );
+    }
+
+    /**
+    * Sets show photo
+    *
+    * @param string $tmp_path
+    */
     public function setShowPhoto($tmp_path)
     {
         $result = self::$db->fetchColumn(
             'INSERT INTO schedule.show_image_metadata (memberid, approvedid, metadata_key_id, metadata_value, show_id)
             VALUES ($1, $1, $2, $3, $4) RETURNING show_image_metadata_id',
-            [$_SESSION['memberid'], self::getMetadataKey('player_image'), 'tmp', $this->getID()]
+            [
+                MyRadio_User::getCurrentOrSystemUser()->getID(),
+                self::getMetadataKey('player_image'),
+                'tmp',
+                $this->getID()
+            ]
         )[0];
-
-        $suffix = 'image_meta/ShowImageMetadata/'.$result.'.png';
+        
+        $filetype = explode('/', getimagesize($tmp_path)['mime'])[1];
+        $suffix = 'image_meta/ShowImageMetadata/'.$result.'.'.$filetype;
         $path = Config::$public_media_path.'/'.$suffix;
-        move_uploaded_file($tmp_path, $path);
+        rename($tmp_path, $path);
 
         self::$db->query(
             'UPDATE schedule.show_image_metadata SET effective_to=NOW()
@@ -654,6 +767,9 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             WHERE show_image_metadata_id=$2',
             [$suffix, $result]
         );
+        
+        $this->photo_url = Config::$public_media_uri.'/'.$suffix;
+        $this->updateCacheObject();
     }
 
     /**
@@ -712,6 +828,19 @@ class MyRadio_Show extends MyRadio_Metadata_Common
     }
 
     /**
+     * Sets this show's "Podcast explicit" status
+     * @param $value bool
+     */
+    public function setPodcastExplicit($value)
+    {
+        self::$db->query(
+            'UPDATE schedule.show SET podcast_explicit = $2::boolean WHERE show_id = $1',
+            [$this->getID(), $value ? 1 : 0]
+        );
+        $this->updateCacheObject();
+    }
+
+    /**
      * Updates the list of Credits.
      *
      * Existing credits are kept active, ones that are not in the new list are set to effective_to now,
@@ -729,9 +858,31 @@ class MyRadio_Show extends MyRadio_Metadata_Common
     }
 
     /**
+     * Gets all podcasts linked to this show.
+     * @return MyRadio_Podcast[]
+     */
+    public function getAllPodcasts()
+    {
+        $ids = self::$db->fetchColumn(
+            'SELECT podcast_id FROM schedule.show_podcast_link
+                INNER JOIN uryplayer.podcast USING (podcast_id)
+                WHERE show_id = $1
+                ORDER BY submitted DESC',
+            [$this->getID()]
+        );
+
+        $podcasts = [];
+        foreach ($ids as $id) {
+            $podcasts[] = MyRadio_Podcast::getInstance($id);
+        }
+
+        return $podcasts;
+    }
+
+    /**
      * Returns all Shows of the given type. Caches for 1h.
      *
-     * @return Array[MyRadio_Show]
+     * @return MyRadio_Show[]
      */
     public static function getAllShows($show_type_id = 1, $current_term_only = false)
     {
@@ -740,7 +891,8 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         $keys = self::$cache->get($key);
 
         if ($keys) {
-            $shows = self::$cache->getAll($keys);
+            $results = self::$cache->getAll($keys);
+            $shows = array_values($results); // Cached results are in different format.
         } else {
             $sql = self::BASE_SHOW_SQL.' WHERE show_type_id=$1';
             $params = [$show_type_id];
@@ -890,6 +1042,139 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         return self::resultSetToObjArray($r);
     }
 
+    /**
+     * Generate a podcast RSS feed for this show.
+     * @return string
+     */
+    public function getPodcastRss()
+    {
+        $website = preg_replace(
+            '(/$)',
+            '',
+            'https:' .Config::$website_url
+        );
+        $media_url = preg_replace(
+            '(/$)',
+            '',
+            $website . '/' . Config::$public_media_uri
+        );
+
+        $writer = new \XMLWriter();
+        $writer->openMemory();
+        $writer->startDocument('1.0', 'UTF-8');
+        $writer->setIndent(true);
+
+        $writer->startElement('rss');
+        $writer->writeAttribute('xmlns:itunes', 'http://www.itunes.com/dtds/podcast-1.0.dtd');
+        $writer->writeAttribute('xmlns:spotify', 'https://www.spotify.com/ns/rss');
+        $writer->writeAttribute('version', '2.0');
+
+        $writer->startElement('channel');
+
+        $writer->writeElement("title", $this->getMeta("title"));
+        $writer->writeElement("link", $website . $this->getWebpage());
+
+        $writer->startElement("description");
+        $writer->writeCdata(
+            str_replace(
+                '&nbsp;',
+                '',
+                html_entity_decode(
+                    strip_tags($this->getMeta("description"), ['a']),
+                    ENT_QUOTES | ENT_XML1,
+                    "UTF-8"
+                )
+            )
+        );
+        $writer->endElement();
+
+        $writer->writeElement("language", "en"); // TODO
+
+        $writer->writeElementNs("itunes", "author", null, Config::$long_name);
+
+        $writer->startElementNs("itunes", "category", null);
+        $writer->writeAttribute("text", "Society & Culture"); // TODO
+        $writer->endElement();
+
+        $writer->startElementNs("itunes", "image", null);
+        $writer->writeAttribute(
+            "href",
+            $website . $this->getShowPhoto()
+        );
+        $writer->endElement();
+
+        $writer->startElementNs("itunes", "owner", null);
+
+        $writer->writeElementNs("itunes", "name", null, Config::$long_name);
+        $writer->writeElementNs("itunes", "email", null, "podcasting@" . Config::$email_domain);
+
+        $writer->endElement();
+
+        $writer->writeElementNs(
+            "itunes",
+            "explicit",
+            null,
+            $this->isPodcastExplicit() ? "true" : "false"
+        );
+
+        foreach ($this->getAllPodcasts() as $episode) {
+            if (!($episode->isPublished())) {
+                continue;
+            }
+
+            $fileSize = filesize($episode->getWebFile());
+
+            if (empty($fileSize)) {
+                // that file is in the twilight zone
+                continue;
+            }
+
+            $writer->startElement("item");
+
+            $writer->writeElement("guid", $episode->getGUID());
+            $writer->writeElement("title", $episode->getMeta("title"));
+
+            $writer->startElement("description");
+            $writer->writeCdata(
+                $episode->getMeta("description")
+            );
+            $writer->endElement();
+
+            $writer->writeElement("pubDate", CoreUtils::getRfc2822Timestamp($episode->getSubmitted()));
+
+            if (!empty($episode->getCover())) {
+                $writer->startElementNs("itunes", "image", null);
+                $writer->writeAttribute(
+                    "href",
+                    $media_url.$episode->getCover()
+                );
+                $writer->endElement();
+            }
+
+            $getID3 = new \getID3();
+            $fileInfo = $getID3->analyze($episode->getWebFile());
+
+            if (isset($fileInfo["playtime_string"])) {
+                $writer->writeElementNs("itunes", "duration", null, $fileInfo['playtime_string']);
+            }
+
+            $writer->startElement("enclosure");
+            $writer->writeAttribute("url", $website . $episode->getURI());
+            $writer->writeAttribute("type", "audio/mpeg"); // TODO
+            $writer->writeAttribute("length", $fileSize);
+            $writer->endElement();
+
+            $writer->endElement();
+        }
+
+        $writer->endElement();
+        $writer->endElement();
+        $writer->endDocument();
+
+        return $writer->flush();
+    }
+
+
     public function toDataSource($mixins = [])
     {
         $data = [
@@ -907,6 +1192,11 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             ),
             'description' => $this->getMeta('description'),
             'show_type_id' => $this->show_type,
+            'subtype' => array_merge($this->getSubtype()->toDataSource($mixins), [
+                // I don't like using html here, but if I use text it adds an unnecessary and ugly <a> tag
+                'display' => 'html',
+                'html' => $this->getSubtype()->getName()
+            ]),
             'seasons' => [
                 'display' => 'text',
                 'value' => $this->getNumberOfSeasons(),

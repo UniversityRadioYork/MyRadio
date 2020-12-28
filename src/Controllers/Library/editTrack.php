@@ -16,6 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $track->setAlbum($data['album']);
     $track->setPosition($data['position']);
     $track->setIntro($data['intro']);
+    $track->setOutro($data['outro']);
     $track->setClean($data['clean']);
     $track->setGenre($data['genre']);
     $track->setDigitised($data['digitised']);

@@ -43,6 +43,9 @@ class MyRadio_Selector
      */
     const SEL_OB = 4;
 
+    /** The current "studio" is WebStudio */
+    const SEL_WS = 5;
+
     /**
      * The studio selection was made by the Selector Telnet interface.
      */
@@ -183,6 +186,7 @@ class MyRadio_Selector
         if ((($studio == 1) && (!$status['s1power']))
             || (($studio == 2) && (!$status['s2power']))
             || (($studio == 4) && (!$status['s4power']))
+            || (($studio == 5) && (!$status['s5power']))
         ) {
             throw new MyRadioException('Source '.$studio.' is not powered.');
         }
@@ -395,6 +399,7 @@ class MyRadio_Selector
             's2power' => self::getStudio2PowerAtTime($time),
             's3power' => true, //Jukebox
             's4power' => (isset($status['s1'])) ? $status['s1'] : false, //OB
+            's5power' => (isset($status['ws'])) ? $status['ws'] : false,
             's8power' => true, //Off Air
             'lastmod' => self::getLastModAtTime($time),
         ];
