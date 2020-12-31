@@ -108,7 +108,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             //Invalid Season
             throw new MyRadioException(
                 'The MyRadio_Timeslot with instance ID #' . $timeslot_id . ' does not exist.',
-                400
+                404
             );
         }
 
