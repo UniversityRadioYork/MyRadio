@@ -2,7 +2,6 @@
 
 namespace MyRadio;
 
-
 use GeoIp2\Database\Reader;
 
 class MyRadioGeoIP
