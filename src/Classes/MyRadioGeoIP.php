@@ -11,7 +11,7 @@ class MyRadioGeoIP
     public static function wakeup()
     {
         if (self::$reader === null) {
-            if (Config::$geoip_database_path !== '') {
+            if (Config::$geoip_database_path === '') {
                 throw new MyRadioException(
                     'GeoIP database path not configured!'
                 );
