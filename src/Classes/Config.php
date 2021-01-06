@@ -124,6 +124,12 @@ final class Config
     public static $cache_default_timeout = 86400;
 
     /**
+     * A path to a GeoLite2 or GeoIP2 "City" database file.
+     * @var string
+     */
+    public static $geoip_database_path = '';
+
+    /**
      * Whether MyRadio errors should be displayed in the browser. If this is set to false, users with the
      * AUTH_SHOWERRORS permission will still see errors.
      * Development value: true
