@@ -11,12 +11,14 @@ class MyRadioGeoIP
 
     public static function wakeup()
     {
-        if (Config::$geoip_database_path !== '') {
-            throw new MyRadioException(
-              'GeoIP database path not configured!'
-            );
+        if (self::$reader === null) {
+            if (Config::$geoip_database_path !== '') {
+                throw new MyRadioException(
+                    'GeoIP database path not configured!'
+                );
+            }
+            self::$reader = new Reader(config::$geoip_database_path);
         }
-        self::$reader = new Reader(config::$geoip_database_path);
     }
 
     /**
