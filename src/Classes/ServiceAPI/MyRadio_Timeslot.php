@@ -220,10 +220,11 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
 
     /**
      * Returns whether the user has selected the timeslot for automatic playout
-     * 
+     *
      * @return bool
      */
-    public function getPlayout(){
+    public function getPlayout()
+    {
         return $this->playout;
     }
 
@@ -1078,10 +1079,11 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
 
     /**
      * Updates whether the user wants the timeslot to be played out automagically
-     * 
+     *
      * @param bool $playout
      */
-    public function setPlayout($playout){
+    public function setPlayout($playout)
+    {
         self::$db->query(
             "UPDATE schedule.show_season_timeslot SET playout = $1 WHERE show_season_timeslot_id = $2",
             [$playout, $this->getID()]
