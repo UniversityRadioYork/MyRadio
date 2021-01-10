@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+{% include 'parts/base_head.twig' %}
+    <link rel="stylesheet" type="text/css" href="{{baseurl}}css/planner.css" />
+  </head>
+  <body id="iframe">
+    <div id="showAlert" class="alert alert-success"><div class="glyphicon glyphicon-ok"></div> Welcome to the Automatic Playout Feature!</div>
+    
+    <span>
+    By selecting this option, the automated URY systems will play out your show automatically at the allocated time. This will
+    allow you to pre-record your show, for example, for a time you're not available for.<br>
+    
+    The player will play anything in the first channel of your show plan, which, for a single-hour show, should be as close to 57:45 as possible.
+    It is recommended that you finish with a song, which takes you over 57:45, to ensure that your show is both long enough, and 
+    won't be cut during you talking. Anything less than 57:45, will be covered by random music.<br>
+    <strong>Automatic Playout currently doesn't support shows longer than one hour</strong> <!-- bug Michael to actually sort this-->
+    </span>
+    
+    <br>
+    <input type="checkbox" id="playout-check">
+    <label for="playout-check">Automatically Play My Show</label>
+
+  <script type="text/javascript" src="{{baseurl}}js/nipsweb.playout.js"></script>
+{% include 'parts/base_foot.twig' %}
+  </body>
+</html>
