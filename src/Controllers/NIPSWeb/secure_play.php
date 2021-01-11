@@ -1,11 +1,10 @@
 <?php
 /**
- * Streams a central database track if a play token is available.
+ * Streams a central database track if the user has the correct permissions.
  */
 use \MyRadio\MyRadio\AuthUtils;
 use \MyRadio\Config;
 use \MyRadio\MyRadioException;
-use \MyRadio\NIPSWeb\NIPSWeb_Token;
 use \MyRadio\NIPSWeb\NIPSWeb_Views;
 use \MyRadio\ServiceAPI\MyRadio_Track;
 
