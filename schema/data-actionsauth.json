@@ -86,6 +86,7 @@
     ["NIPSWeb", "upload_aux", "AUTH_USENIPSWEB"],
     ["NIPSWeb", "upload_central", "AUTH_USENIPSWEB"],
     ["NIPSWeb", "import", "AUTH_USENIPSWEB"],
+    ["NIPSWeb", "playout", "AUTH_USENIPSWEB"],
     ["Podcast", "editPodcast", "AUTH_STANDALONEPODCAST"],
     ["Podcast", "editPodcast", "AUTH_APPLYFORSHOW"],
     ["Podcast", "editPodcast", "AUTH_UPLOADPODCASTS"],
