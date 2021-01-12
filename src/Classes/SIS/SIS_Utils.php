@@ -7,8 +7,10 @@
 
 namespace MyRadio\SIS;
 
+use GeoIp2\Exception\AddressNotFoundException;
 use MyRadio\Config;
 use MyRadio\MyRadio\AuthUtils;
+use MyRadio\MyRadioGeoIP;
 use MyRadio\ServiceAPI\ServiceAPI;
 
 /**
@@ -61,13 +63,16 @@ class SIS_Utils extends ServiceAPI
         $location = [];
 
         if (($query === null) or (pg_num_rows($query) == 0)) {
-            $geoip = geoip_record_by_name($ip);
-            if ($geoip === false) {
+            MyRadioGeoIP::wakeup();
+            try {
+                $geoip = MyRadioGeoIP::getInstance()->city($ip);
+                if (empty($geoip->city)) {
+                    $location[0] = $geoip->country->name;
+                } else {
+                    $location[0] = utf8_encode($geoip->city->name) . ", " . $geoip->country->name;
+                }
+            } catch (AddressNotFoundException $e) {
                 $location[0] = 'Unknown';
-            } elseif (empty($geoip['city'])) {
-                $location[0] = "{$geoip['country_name']}";
-            } else {
-                $location[0] = utf8_encode($geoip['city']) . ", " . "{$geoip['country_name']}";
             }
 
             return $location;
