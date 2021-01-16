@@ -76,8 +76,7 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
         self::$locks[$playlistid][0]->setTracks(
             $data,
             self::$locks[$playlistid][1],
-            null,
-            MyRadio_User::getInstance(Config::$system_user)
+            null
         );
         self::$locks[$playlistid][0]->releaseLock(self::$locks[$playlistid][1]);
         self::$locks[$playlistid][1] = false;
