@@ -102,7 +102,7 @@ class MyRadio_TrainingStatus extends ServiceAPI
         $this->detail = $result['detail'];
 
         $this->depends = empty($result['depends']) ? null : $result['depends'];
-        $this->can_award = empty($result['can_award']) ? null : $result['can_award'];   
+        $this->can_award = empty($result['can_award']) ? null : $result['can_award'];
     }
 
     /**
