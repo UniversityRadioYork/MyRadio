@@ -10,10 +10,7 @@ use \MyRadio\NIPSWeb\NIPSWeb_ManagedItem;
 header("Access-Control-Allow-Origin: " . $_SERVER["HTTP_ORIGIN"]);
 header("Access-Control-Allow-Credentials: true");
 
-if (
-    AuthUtils::hasPermission(AUTH_USENIPSWEB) ||
-    AuthUtils::hasPermission(AUTH_DOWNLOAD_LIBRARY)
-) {
+if (AuthUtils::hasPermission(AUTH_USENIPSWEB) || AuthUtils::hasPermission(AUTH_DOWNLOAD_LIBRARY)) {
     if (!isset($_REQUEST['managedid'])) {
         throw new MyRadioException('Bad Request - managedid required.', 400);
     }

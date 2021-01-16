@@ -11,10 +11,7 @@ use \MyRadio\ServiceAPI\MyRadio_Track;
 header("Access-Control-Allow-Origin: " . $_SERVER["HTTP_ORIGIN"]);
 header("Access-Control-Allow-Credentials: true");
 
-if (
-    AuthUtils::hasPermission(AUTH_USENIPSWEB) ||
-    AuthUtils::hasPermission(AUTH_DOWNLOAD_LIBRARY)
-) {
+if (AuthUtils::hasPermission(AUTH_USENIPSWEB) || AuthUtils::hasPermission(AUTH_DOWNLOAD_LIBRARY)) {
     if (!isset($_REQUEST['trackid'])) {
         throw new MyRadioException('Bad Request - trackid required.', 400);
     }
@@ -25,7 +22,6 @@ if (
     $track = MyRadio_Track::getInstance($trackid);
 
     if ($track) {
-
         $path = Config::$music_central_db_path."/records/".$track->getAlbum()->getID()."/".$trackid;
 
         if (isset($_REQUEST['ogg'])) {
