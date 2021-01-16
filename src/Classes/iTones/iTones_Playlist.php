@@ -370,16 +370,13 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
      * @param string                $lockstr String that provides Write access to this Playlist.
  *                                              Acquired from acquireLock();
      * @param string|null           $notes   Optional. A textual commit message about the change.
-     * @param MyRadio_User|null     $user   User to attribute the update to
      *
      * @todo Push these changes to the playlist files on playoutsvc.ury.york.ac.uk. This should probably be a
      *       MyRadioDaemon configured to run only on that server.
      */
-    public function setTracks($tracks, $lockstr, $notes = null, MyRadio_User $user = null)
+    public function setTracks($tracks, $lockstr, $notes = null)
     {
-        if ($user === null) {
-            $user = MyRadio_User::getInstance();
-        }
+        $user = MyRadio_User::getCurrentOrSystemUser();
         foreach ($tracks as $idx => $track) {
             if (!($track instanceof MyRadio_Track)) {
                 $tracks[$idx] = MyRadio_Track::getInstance($track);
