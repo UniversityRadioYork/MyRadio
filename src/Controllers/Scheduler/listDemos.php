@@ -31,14 +31,14 @@ foreach ($demos as $demo) {
             "url" => URLUtils::makeURL("Scheduler", "finishDemo", ["demo_id" => $demo["demo_id"]])
         ];
     } else {
-        if ($demo_object->isUserAttendingDemo($currentUser->getID())){
+        if ($demo_object->isUserAttendingDemo($currentUser->getID())) {
             $demo['attending'] = 'You are attending this demo';
             $demo['join'] = [
                 'display' => 'text',
                 'value' => 'Leave',
                 'url' => URLUtils::makeURL('Scheduler', 'leaveDemo', ['demoid' => $demo['demo_id']]),
             ];
-        } elseif ($demo_object->isSpaceOnDemo()){
+        } elseif ($demo_object->isSpaceOnDemo()) {
             $demo['attending'] = 'Space available!';
             $demo['join'] = [
                 'display' => 'text',
@@ -52,13 +52,13 @@ foreach ($demos as $demo) {
         $demo["finish"] = "";
     }
 
-    if ($demo['demo_link']){
+    if ($demo['demo_link']) {
         $demo['demo_link'] = [
             "display" => "icon",
             "value" => "headphones",
             "title" => "Online Training"
         ];
-    }else{
+    } else {
         $demo['demo_link'] = [
             "display" => "icon",
             "value" => "user",

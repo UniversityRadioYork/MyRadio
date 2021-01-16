@@ -55,7 +55,7 @@ class MyRadio_Demo extends ServiceAPI
         return $this->demo_id;
     }
 
-    public static function registerDemo($time, $link = null, $training_type)
+    public static function registerDemo($time, $training_type, $link = null)
     {
         if ($time == null || $training_type == null || !is_numeric($time)) {
             throw new MyRadioException("A training demo must have a time and training date.", 400);
@@ -80,7 +80,8 @@ class MyRadio_Demo extends ServiceAPI
                         $user,
                         "Available Training Session",
                         "Hi " . $user->getFName() . ","
-                            . "\r\n\r\n A session to get you " . $training->getTitle() . " has opened up. Check it out on MyRadio.\r\n\r\n"
+                            . "\r\n\r\n A session to get you " . $training->getTitle() 
+                            . " has opened up. Check it out on MyRadio.\r\n\r\n"
                             . URLUtils::makeURL('Scheduler', 'listDemos') . "\r\n\r\n"
                             . Config::$long_name . " Training"
                     );
@@ -92,7 +93,7 @@ class MyRadio_Demo extends ServiceAPI
         return true;
     }
 
-    public function editDemo($time, $link = null, $training_type)
+    public function editDemo($time, $training_type, $link = null)
     {
 
         // TODO, Only edit your training demos, or any if you have perms
@@ -130,7 +131,8 @@ class MyRadio_Demo extends ServiceAPI
                         "Hi " . $attendee->getFName()
                             . "\r\n\r\n There's been a change to your training session on " . $this->demo_time
                             . ".\r\n\r\n"
-                            . ($time != $this->demo_time ? "It is now at " . CoreUtils::happyTime($time) . ".\r\n\r\n" : "")
+                            . ($time != $this->demo_time ? "It is now at " 
+                                . CoreUtils::happyTime($time) . ".\r\n\r\n" : "")
                             . $demo_location . "\r\n\r\n"
                             . Config::$long_name . " Training Team"
                     );
@@ -323,7 +325,8 @@ class MyRadio_Demo extends ServiceAPI
                 . $attendee->getFName() . ",\r\n\r\n"
                 . "Thanks for joining a training session at " . $this->getDemoTime() . ". You will be trained by "
                 . $user->getName()
-                . ($this->getLink() ? '. The training session will be available at ' . $this->getLink() : '. Just head over to the station in Vanbrugh College just before your slot '
+                . ($this->getLink() ? '. The training session will be available at ' 
+                    . $this->getLink() : '. Just head over to the station in Vanbrugh College just before your slot '
                     . ' and the trainer will be waiting for you.')
                 . "\r\n\r\nSee you on air soon!\r\n"
                 . Config::$long_name
@@ -360,8 +363,9 @@ class MyRadio_Demo extends ServiceAPI
             $attendee,
             'Training Cancellation',
             'Hi ' . $attendee->getFName() . ",\r\n\r\n"
-                . "Just to confirm that you have left the training session at " . $this->getDemoTime() . ". If this was accidental, simply rejoin. "
-                . "Meanwhile, you've can join the waiting list, and we'll let you know if a session becomes available. "
+                . "Just to confirm that you have left the training session at " . $this->getDemoTime() 
+                . ". If this was accidental, simply rejoin. "
+                . "Meanwhile, you can join the waiting list, and we'll let you know if a session becomes available. "
                 . URLUtils::makeURL("Scheduler", "listWaitingLists")
                 . "\r\n\r\nThanks!\r\n"
                 . Config::$long_name

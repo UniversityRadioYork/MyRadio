@@ -58,7 +58,8 @@ $twig->setTemplate('table.twig')
 if (isset($_REQUEST['msg'])) {
     switch ($_REQUEST['msg']) {
         case 0: //joined
-            $twig->addInfo("You have successfully been added to this waiting list. We'll let you know if a training session becomes available.");
+            $twig->addInfo("You have successfully been added to this waiting list."
+            . "We'll let you know if a training session becomes available.");
             break;
         case 1: //left
             $twig->addInfo('You have left the waiting list.');

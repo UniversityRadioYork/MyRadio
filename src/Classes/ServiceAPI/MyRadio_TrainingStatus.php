@@ -102,9 +102,7 @@ class MyRadio_TrainingStatus extends ServiceAPI
         $this->detail = $result['detail'];
 
         $this->depends = empty($result['depends']) ? null : $result['depends'];
-        $this->can_award = empty($result['can_award']) ? null : $result['can_award'];
-
-        
+        $this->can_award = empty($result['can_award']) ? null : $result['can_award'];   
     }
 
     /**
@@ -146,7 +144,7 @@ class MyRadio_TrainingStatus extends ServiceAPI
      */
     public function getPermissions()
     {
-        if (!isset($this->permissions)){
+        if (!isset($this->permissions)) {
             $this->permissions = array_map(
                 'intval',
                 self::$db->fetchColumn(
@@ -295,16 +293,17 @@ class MyRadio_TrainingStatus extends ServiceAPI
     }
 
     /** Get all Training Statuses the user can train as options for MyRadioFormField
-     * 
+     *
      * @param MyRadio_User $user The user trying to award status
-     * 
+     *
      * @return array
     */
 
-    public static function getOptionsToTrain($user){
+    public static function getOptionsToTrain($user)
+    {
         $options = [];
-        foreach (self::getAll() as $status){
-            if ($status->canAward($user)){
+        foreach (self::getAll() as $status) {
+            if ($status->canAward($user)) {
                 $options[] = ["value" => $status->getID(), "text" => $status->getTitle()];
             }
         }
@@ -345,13 +344,14 @@ class MyRadio_TrainingStatus extends ServiceAPI
 
     /**
      * All the Training Status a User can be awarded, regardless of who's awarding
-     * 
+     *
      * @param MyRadio_User $to The User being awarded the training
-     * 
+     *
      * @return MyRadio_TrainingStatus[]
      */
 
-     public static function getAllToBeEarned(MyRadio_User $to){
+    public static function getAllToBeEarned(MyRadio_User $to)
+    {
         $statuses = [];
         foreach (self::getAll() as $status) {
             if ((!$status->isAwardedTo($to))
@@ -362,5 +362,5 @@ class MyRadio_TrainingStatus extends ServiceAPI
         }
 
         return $statuses;
-     }
+    }
 }
