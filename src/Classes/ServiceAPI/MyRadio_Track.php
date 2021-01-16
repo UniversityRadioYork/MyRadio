@@ -1627,15 +1627,29 @@ EOF
     /**
      * Gets the track that's on air *right now*.
      *
-     * @param bool $include_playout if true, will include tracks played by Jukebox while off air
+     * @param string[] $sources which sources to accept tracklist data from
+     * @param bool $allowOffAir Should whatever Jukebox is playing be included even when it's not on air.
+     * Silly unless 'j' is passed in $sources
      * @return null|array
      */
-    public static function getNowPlaying($include_playout = false)
+    public static function getNowPlaying($sources = ['b', 'm', 'o', 'w', 'a', 's'], $allowOffAir = false)
     {
         // Start a transaction. We're gonna have some fun.
         self::$db->query('BEGIN');
+
         // Use repeatable read - to ensure that all queries in this TX read at the same "point in time"
         self::$db->query('SET TRANSACTION ISOLATION LEVEL REPEATABLE READ');
+
+        // Fetch permissible source letters and filter sources to prevent nasties
+        $allowedSources = self::$cache->get('MyRadio_Track:getNowPlaying:allowedSources');
+        if (empty($allowedSources)) {
+            $allowedSources = self::$db->fetchColumn('SELECT sourceid FROM tracklist.source', []);
+            self::$cache->set('MyRadio_Track:getNowPlaying:allowedSources', $allowedSources, 86400);
+        }
+        $sources = array_intersect($sources, $allowedSources);
+        // Turn into SQL-friendly string
+        $sourceStr = '(\'' . implode('\',\'', $sources) . '\')';
+
         // Get the last thing that was tracklisted - this is either jukebox or WebStudio
         // The 30 minutes check is to avoid having something linger for too long if WS forgets to end the tracklist
         $lastTracklisted = self::$db->fetchOne(
@@ -1644,45 +1658,49 @@ EOF
             LEFT OUTER JOIN tracklist.track_rec USING (audiologid)
             LEFT OUTER JOIN tracklist.track_notrec USING (audiologid)
             WHERE timestart <= NOW() AND timestart > (NOW() - interval \'30 minutes\') AND timestop IS NULL
-            AND (state IS NULL OR state = \'c\'' .($include_playout ? ' OR state = \'o\'' : '') . ')
+            AND (state IS NULL OR state = \'c\'' .($allowOffAir ? ' OR state = \'o\'' : '') . ')
+            AND source IN ' . $sourceStr . '
             ORDER BY timestart DESC
             LIMIT 1',
             []
         );
+
         // Check what's currently on air - if it's a physical studio or OB we'll need to check BAPS
         // We do this in SQL, rather than via MyRadio_Selector, to maintain transaction consistency
-        $result = self::$db->fetchColumn(
-            'SELECT action FROM public.selector WHERE time <= NOW()
-            AND action >= 4 AND action <= 11
-            ORDER BY time DESC
-            LIMIT 1',
-            []
-        );
-        $selAction = isset($result[0]) ? intval($result[0]) : 0;
-        if ($selAction === 4 /* Studio 1 */ || $selAction === 5 /* Studio 2 */ || $selAction == 7 /* OB */) {
-            // Ditto on the 30 minutes
-            // The 30 *seconds* is to (hopefully) catch PFLs
-            $lastBapsLogged = self::$db->fetchOne(
-                'SELECT audiologid, timeplayed AT TIME ZONE \'Europe/London\' AS timestart, trackid
-                FROM public.baps_audiolog
-                INNER JOIN public.baps_audio USING (audioid)
-                INNER JOIN tracklist.selbaps ON baps_audiolog.serverid = selbaps.bapsloc
-                WHERE selaction = $1
-                AND timestopped IS NULL
-                AND trackid IS NOT NULL
-                AND timeplayed <= (NOW() AT TIME ZONE \'Europe/London\' - interval \'30 seconds\')
-                AND timeplayed > (NOW() AT TIME ZONE \'Europe/London\' - interval \'30 minutes\')
-                ORDER BY timeplayed DESC
-                LIMIT 1
-                ',
-                [ $selAction ]
+        if (in_array('b', $sources)) {
+            $result = self::$db->fetchColumn(
+                'SELECT action FROM public.selector WHERE time <= NOW()
+                AND action >= 4 AND action <= 11
+                ORDER BY time DESC
+                LIMIT 1',
+                []
             );
-            if (!empty($lastBapsLogged)) {
-                if (empty($lastTracklisted)
-                    || strtotime($lastBapsLogged['timestart']) > strtotime($lastTracklisted['timestart'])
-                ) {
-                    // Last BAPS entry is newer than last tracklist entry (if there is one).
-                    $lastTracklisted = $lastBapsLogged;
+            $selAction = isset($result[0]) ? intval($result[0]) : 0;
+            if ($selAction === 4 /* Studio 1 */ || $selAction === 5 /* Studio 2 */ || $selAction == 7 /* OB */) {
+                // Ditto on the 30 minutes
+                // The 30 *seconds* is to (hopefully) catch PFLs
+                $lastBapsLogged = self::$db->fetchOne(
+                    'SELECT audiologid, timeplayed AT TIME ZONE \'Europe/London\' AS timestart, trackid
+                    FROM public.baps_audiolog
+                    INNER JOIN public.baps_audio USING (audioid)
+                    INNER JOIN tracklist.selbaps ON baps_audiolog.serverid = selbaps.bapsloc
+                    WHERE selaction = $1
+                    AND timestopped IS NULL
+                    AND trackid IS NOT NULL
+                    AND timeplayed <= (NOW() AT TIME ZONE \'Europe/London\' - interval \'30 seconds\')
+                    AND timeplayed > (NOW() AT TIME ZONE \'Europe/London\' - interval \'30 minutes\')
+                    ORDER BY timeplayed DESC
+                    LIMIT 1
+                    ',
+                    [ $selAction ]
+                );
+                if (!empty($lastBapsLogged)) {
+                    if (empty($lastTracklisted)
+                        || strtotime($lastBapsLogged['timestart']) > strtotime($lastTracklisted['timestart'])
+                    ) {
+                        // Last BAPS entry is newer than last tracklist entry (if there is one).
+                        $lastTracklisted = $lastBapsLogged;
+                    }
                 }
             }
         }
