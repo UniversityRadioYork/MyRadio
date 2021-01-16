@@ -9,6 +9,7 @@ namespace MyRadio\ServiceAPI;
 use MyRadio\Config;
 use MyRadio\MyRadioException;
 use MyRadio\MyRadio\CoreUtils;
+use MyRadio\MyRadio\URLUtils;
 use MyRadio\MyRadio\MyRadioForm;
 use MyRadio\MyRadio\MyRadioFormField;
 use MyRadio\MyRadioEmail;
@@ -56,31 +57,36 @@ class MyRadio_Demo extends ServiceAPI
 
     public static function registerDemo($time, $link = null, $training_type)
     {
-        if ($time == null || $training_type == null) {
+        if ($time == null || $training_type == null || !is_numeric($time)) {
             throw new MyRadioException("A training demo must have a time and training date.", 400);
         } else {
-            self::initDB();
-            date_default_timezone_set('UTC');
+            try {
+                $training = MyRadio_TrainingStatus::getInstance($training_type);
 
-            self::$db->query(
-                "INSERT INTO schedule.demo (presenterstatusid, demo_time, demo_link, memberid)
+                self::initDB();
+
+                self::$db->query(
+                    "INSERT INTO schedule.demo (presenterstatusid, demo_time, demo_link, memberid)
             VALUES ($1, $2, $3, $4)",
-                [$training_type, CoreUtils::getTimestamp($time), $link, $_SESSION["memberid"]]
-            );
-            date_default_timezone_set(Config::$timezone);
-
-            // Let people waiting for this know
-            $training = MyRadio_TrainingStatus::getInstance($training_type);
-            $waiters = self::trainingWaitingList($training_type);
-            foreach ($waiters as $waiter) {
-                $user = MyRadio_User::getInstance($waiter['memberid']);
-                MyRadioEmail::sendEmailToUser(
-                    $user,
-                    "Available Training Session",
-                    "Hi " . $user->getFName() . ","
-                        . "\r\n\r\n A session to get you " . $training->getTitle() . " has opened up. Check it out on MyRadio.\r\n\r\n"
-                        . Config::$long_name . " Training"
+                    [$training_type, CoreUtils::getTimestamp($time), $link, $_SESSION["memberid"]]
                 );
+                date_default_timezone_set(Config::$timezone);
+
+                // Let people waiting for this know
+                $waiters = self::trainingWaitingList($training_type);
+                foreach ($waiters as $waiter) {
+                    $user = MyRadio_User::getInstance($waiter['memberid']);
+                    MyRadioEmail::sendEmailToUser(
+                        $user,
+                        "Available Training Session",
+                        "Hi " . $user->getFName() . ","
+                            . "\r\n\r\n A session to get you " . $training->getTitle() . " has opened up. Check it out on MyRadio.\r\n\r\n"
+                            . URLUtils::makeURL('Scheduler', 'listDemos') . "\r\n\r\n"
+                            . Config::$long_name . " Training"
+                    );
+                }
+            } catch (MyRadioException $e) {
+                throw $e;
             }
         }
         return true;
@@ -105,6 +111,18 @@ class MyRadio_Demo extends ServiceAPI
                 // Email People
                 $attendees = $this->myRadioUsersAttendingDemo();
                 $attendees[] = $this->getDemoer();
+                
+                // Work out what to tell people re. where their training is
+                if ($link == null && $this->demo_link != null){
+                    $demo_location = "It is now in person at our studios in Vanbrugh College.";
+                }else if ($link != null && $this->demo_link == null){
+                    $demo_location = "It is now online and will be hosted at " . $link;
+                }else if ($link != null){
+                    $demo_location = "It will now be at " . $link;
+                }else{
+                    $demo_location = "";
+                }
+
                 foreach ($attendees as $attendee) {
                     MyRadioEmail::sendEmailToUser(
                         $attendee,
@@ -113,7 +131,7 @@ class MyRadio_Demo extends ServiceAPI
                             . "\r\n\r\n There's been a change to your training session on " . $this->demo_time
                             . ".\r\n\r\n"
                             . ($time != $this->demo_time ? "It is now at " . CoreUtils::happyTime($time) . ".\r\n\r\n" : "")
-                            . (($link == null && $this->demo_link != null) ? "It is now in person at our studios in Vanbrugh College.\r\n\r\n" : (($link != null && $this->demo_link == null) ? "It is now online and will be hosted at " . $link . "\r\n\r\n" : (($link != null) ? "The session is now at " . $link . "\r\n\r\n" : "\r\n\r\n")))
+                            . $demo_location . "\r\n\r\n"
                             . Config::$long_name . " Training Team"
                     );
                 }
@@ -136,7 +154,7 @@ class MyRadio_Demo extends ServiceAPI
             ]
         ))->addField(
             new MyRadioFormField(
-                'demo-training-type',
+                'demo_training_type',
                 MyRadioFormField::TYPE_SELECT,
                 [
                     "label" => "Training Type",
@@ -145,13 +163,13 @@ class MyRadio_Demo extends ServiceAPI
             )
         )->addField(
             new MyRadioFormField(
-                'demo-datetime',
+                'demo_datetime',
                 MyRadioFormField::TYPE_DATETIME,
                 ['label' => 'Date and Time of the session']
             )
         )->addField(
             new MyRadioFormField(
-                'demo-link',
+                'demo_link',
                 MyRadioFormField::TYPE_TEXT,
                 [
                     'label' => "Zoom/Google Meets Link (Optional)",
@@ -168,9 +186,9 @@ class MyRadio_Demo extends ServiceAPI
             ->editMode(
                 $this->getID(),
                 [
-                    "demo-training-type" => $this->getTrainingType()->getID(),
-                    "demo-datetime" => CoreUtils::happyTime($this->getDemoTime()),
-                    "demo-link" => $this->getLink()
+                    "demo_training_type" => $this->getTrainingType()->getID(),
+                    "demo_datetime" => CoreUtils::happyTime($this->getDemoTime()),
+                    "demo_link" => $this->getLink()
                 ]
             );
     }
@@ -343,14 +361,13 @@ class MyRadio_Demo extends ServiceAPI
             'Training Cancellation',
             'Hi ' . $attendee->getFName() . ",\r\n\r\n"
                 . "Just to confirm that you have left the training session at " . $this->getDemoTime() . ". If this was accidental, simply rejoin. "
-                . "Meanwhile, you've been added to the waiting list, and we'll let you know if a session becomes available."
+                . "Meanwhile, you've can join the waiting list, and we'll let you know if a session becomes available. "
+                . URLUtils::makeURL("Scheduler", "listWaitingLists")
                 . "\r\n\r\nThanks!\r\n"
                 . Config::$long_name
                 . ' Training'
         );
 
-        // Add to waiting list
-        self::joinWaitingList($this->presenterstatusid);
 
         return 0;
     }

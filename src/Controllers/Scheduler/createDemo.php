@@ -10,10 +10,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $demoinfo = MyRadio_Demo::getForm()->readValues();
     if ($demoinfo['id']){
         // Update a Demo
-        MyRadio_Demo::getInstance($demoinfo['id'])->editDemo($demoinfo['demo-datetime'], $demoinfo['demo-link'], $demoinfo['demo-training-type']);
+        MyRadio_Demo::getInstance($demoinfo['id'])->editDemo($demoinfo['demo_datetime'], $demoinfo['demo_link'], $demoinfo['demo_training_type']);
     }else{
         // Create a New Demo
-    MyRadio_Demo::registerDemo($demoinfo['demo-datetime'], $demoinfo['demo-link'], $demoinfo['demo-training-type']);
+    MyRadio_Demo::registerDemo($demoinfo['demo_datetime'], $demoinfo['demo_link'], $demoinfo['demo_training_type']);
     }
     URLUtils::backWithMessage('Session Updated!');
 } else {
