@@ -37,6 +37,11 @@
                             "description": "Forgotten how to use the studios? Want to get ahead of studio training? Here's the place to start."
                         },
                         {
+                            "title": "WebStudio Training",
+                            "url": "https://ury.org.uk/wiki/Working_From_Home_Resources/WebStudio",
+                            "description": "Want to view our videos on how to use our online broadcasting tool WebStudio? Well here they are!"
+                        },
+                        {
                             "template": "MyRadio/getOnAir.twig"
                         }
                     ]
@@ -223,6 +228,11 @@
                             "title": "Wiki",
                             "url": "/wiki/",
                             "description": "A huge repository of information about URY."
+                        },
+                        {
+                            "title": "Events Calendar",
+                            "url": "module=Events",
+                            "description": "View upcoming station events."
                         }
                     ]
                 },
@@ -238,6 +248,11 @@
                             "title": "SIS Login Information",
                             "url": "module=Scheduler,action=attendance",
                             "description": "Check who's been logging into their shows and if people have actually turned up to do radio."
+                        },
+                        {
+                            "title": "Track and Trace Information",
+                            "url": "module=Scheduler,action=tracking",
+                            "description": "Check where people have been signing into shows"
                         },
                         {
                             "title": "Track Statistics",

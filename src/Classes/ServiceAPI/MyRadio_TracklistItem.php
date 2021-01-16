@@ -339,6 +339,8 @@ class MyRadio_TracklistItem extends ServiceAPI
             unset($data['deletelink']);
             unset($data['trackno']);
             unset($data['intro']);
+            unset($data['outro']);
+
 
             //for manual SIS entries
             if (!isset($data['trackid'])) {

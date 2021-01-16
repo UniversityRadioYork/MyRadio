@@ -6,7 +6,7 @@ use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\ServiceAPI\MyRadio_Webcam;
 
 $streams = MyRadio_Webcam::getStreams();
-$live = array_shift($streams);
+$live = $streams[0];
 
 CoreUtils::getTemplateObject()->setTemplate('Webcam/focus.twig')
     ->addVariable('streams', $streams)

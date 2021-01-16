@@ -1,0 +1,11 @@
+.webcam-stream-container{
+    cursor: pointer;
+    margin: 10px;
+}
+
+.webcam-stream-container:hover{
+    -webkit-box-shadow: 0px 0px 0px 3px red;
+    -moz-box-shadow: 0px 0px 0px 3px red;
+    box-shadow: 0px 0px 0px 3px red;
+    border-radius: 3px;
+}

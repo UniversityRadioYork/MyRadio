@@ -343,7 +343,7 @@ class MyRadio_List extends ServiceAPI
      * @param bool $hideExcluded if true, will exclude lists with a negative ordering
      * @return MyRadio_List[]
      */
-    public static function getAllLists($hideExcluded=false)
+    public static function getAllLists($hideExcluded = false)
     {
         $r = self::$db->fetchColumn('SELECT listid FROM mail_list '
             . ($hideExcluded ? 'WHERE ordering >= 0' : '')

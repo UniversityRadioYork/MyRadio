@@ -25,7 +25,7 @@
         <a href="#" onclick="selectNone()">Select None</a> |
         <a href="#" onclick="selectAll()">Select All</a>
         <br>
-        <span><strong>Please note:</strong> Items in red have been expired and may not be imported. If required, please find replacements after import.</span>
+        <span><strong>Please note:</strong> Items in <span style="color:red">red</span> have been expired and may not be imported. If required, please find replacements after import.</span>
       </div>
 
       <form id="import-channel-list" class="baps-channel">
@@ -33,9 +33,9 @@
       <div id="import-to-channel-selector">
         <label>Import to </label>
         <div class="btn-group">
-            <a href="#" id="import-to-channel-0" channel="0" class="btn btn-default" onclick="importSelectedTracks(0)">Channel 1</a>
-            <a href="#" id="import-to-channel-1" channel="1" class="btn btn-default" onclick="importSelectedTracks(1)">Channel 2</a>
-            <a href="#" id="import-to-channel-2" channel="2" class="btn btn-default" onclick="importSelectedTracks(2)">Channel 3</a>
+            <a href="#" id="import-to-channel-0" channel="0" class="btn btn-default" onclick="startImport(0)">Channel 1</a>
+            <a href="#" id="import-to-channel-1" channel="1" class="btn btn-default" onclick="startImport(1)">Channel 2</a>
+            <a href="#" id="import-to-channel-2" channel="2" class="btn btn-default" onclick="startImport(2)">Channel 3</a>
         </div>
       </div>
     </div>

@@ -1,0 +1,15 @@
+{
+  "menu":
+  [
+    {
+      "title": "Calendar",
+      "url": "module=Events",
+      "description": "View upcoming events."
+    },
+    {
+      "title": "Create Event",
+      "url": "module=Events,action=editEvent",
+      "description": "Add an event to the calendar."
+    }
+  ]
+}

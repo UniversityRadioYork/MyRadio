@@ -1,8 +1,6 @@
 <?php
 
-
 namespace MyRadio\ServiceAPI;
-
 
 use MyRadio\MyRadio\CoreUtils;
 use MyRadio\MyRadioException;
@@ -28,7 +26,8 @@ class MyRadio_UserOfficership extends ServiceAPI
     /**
      * @return int
      */
-    public function getID() {
+    public function getID()
+    {
         return $this->id;
     }
 
@@ -92,6 +91,4 @@ class MyRadio_UserOfficership extends ServiceAPI
             'officer_name' => $this->getOfficer()->getName(),
         ];
     }
-
-
 }

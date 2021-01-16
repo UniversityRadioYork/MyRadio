@@ -6,6 +6,7 @@
 namespace MyRadio\ServiceAPI;
 
 use MyRadio\Config;
+use MyRadio\MyRadioEmail;
 use MyRadio\MyRadioException;
 use MyRadio\MyRadio\CoreUtils;
 use MyRadio\MyRadio\URLUtils;
@@ -73,6 +74,13 @@ class MyRadio_Track extends ServiceAPI
     private $intro;
 
     /**
+     * The start time of an ending segment to the track, in seconds.
+     *
+     * @var int
+     */
+    private $outro;
+
+    /**
      * Whether the track is clean:<br>
      * y: The track is verified as clean<br>
      * n: The track is verified as unclean<br>
@@ -110,14 +118,14 @@ class MyRadio_Track extends ServiceAPI
      */
     private $digitisedby;
 
-     /**
+    /**
      * The time when this track was last edited.
      *
      * @var int
      */
     private $last_edited_time;
 
-     /**
+    /**
      * The member who last edited this track.
      *
      * @var int
@@ -146,9 +154,10 @@ class MyRadio_Track extends ServiceAPI
      *                      digitisedby int
      *                      genre int
      *                      intro string HH:ii:ss
+     *                      outro string HH:ii:ss
      *                      length string HH:ii:ss
      *                      duration int
-     *                      intro int
+     *                      number int
      *                      recordid int
      *                      title string
      *
@@ -169,6 +178,7 @@ class MyRadio_Track extends ServiceAPI
             null : (int) $result['last_edited_memberid'];
         $this->genre = $result['genre'];
         $this->intro = strtotime('1970-01-01 '.$result['intro'].'+00');
+        $this->outro = strtotime('1970-01-01 '.$result['outro'].'+00');
         $this->length = $result['length'];
         $this->duration = (int) $result['duration'];
         $this->number = (int) $result['number'];
@@ -232,7 +242,16 @@ class MyRadio_Track extends ServiceAPI
                 MyRadioFormField::TYPE_NUMBER,
                 [
                     'label' => 'Intro',
-                    'explanation' => 'The track intro time in seconds.'
+                    'explanation' => 'The track intro end time in seconds.'
+                ]
+            )
+        )->addField(
+            new MyRadioFormField(
+                'outro',
+                MyRadioFormField::TYPE_NUMBER,
+                [
+                    'label' => 'Outro',
+                    'explanation' => 'The track outro start time in seconds.'
                 ]
             )
         )->addField(
@@ -332,6 +351,7 @@ class MyRadio_Track extends ServiceAPI
                     'album' => $this->getAlbum(),
                     'position' => $this->getPosition(),
                     'intro' => $this->getIntro(),
+                    'outro' => $this->getOutro(),
                     'clean' => $this->getClean(),
                     'genre' => $this->getGenre(),
                     'digitised' => $this->getDigitised(),
@@ -393,6 +413,16 @@ class MyRadio_Track extends ServiceAPI
     public function getIntro()
     {
         return $this->intro;
+    }
+
+    /**
+     * Get the outro start-time of the Track, in seconds.
+     *
+     * @return int
+     */
+    public function getOutro()
+    {
+        return $this->outro;
     }
 
     /**
@@ -567,6 +597,7 @@ class MyRadio_Track extends ServiceAPI
             'trackid' => $this->getID(),
             'length' => $this->getLength(),
             'intro' => $this->getIntro(),
+            'outro' => $this->getOutro(),
             'clean' => $this->clean !== 'n',
             'digitised' => $this->getDigitised(),
             'editlink' => [
@@ -582,6 +613,45 @@ class MyRadio_Track extends ServiceAPI
                 'url' => URLUtils::makeURL('Library', 'deleteTrack', ['trackid' => $this->getID()]),
             ],
         ];
+    }
+
+    /**
+     * Report this track as explicit.
+     *
+     * Do not confuse with {@link setClean} - this method will set it as explicit, and send
+     * an email to various people informing them of it. If you don't want that to happen,
+     * don't use this.
+     */
+    public function reportExplicit()
+    {
+        if ($this->getClean() === 'n') {
+            throw new MyRadioException('This is already marked explicit.', 400);
+        }
+
+        $this->setClean('n');
+
+        $currentUser = MyRadio_User::getCurrentOrSystemUser();
+
+        $title = htmlspecialchars($this->getTitle());
+        $artist = htmlspecialchars($this->getArtist());
+        $userName = htmlspecialchars($currentUser->getFName() . ' ' . $currentUser->getSName());
+        $editUrl = URLUtils::makeURL('Library', 'editTrack', ['trackid' => $this->getID()]);
+        MyRadioEmail::sendEmailToList(
+            MyRadio_List::getByName('playlisting'),
+            'Track Reported Explicit',
+            <<<EOF
+Hi,
+
+The song "$title" by $artist has been reported as explicit by $userName.
+
+Please double-check this, and mark it as clean if this is in error. You can edit the track <a href="$editUrl">here</a>.
+
+Thanks,
+MyRadio Music Library Robot
+EOF
+            ,
+            null
+        );
     }
 
     /**
@@ -1095,6 +1165,7 @@ class MyRadio_Track extends ServiceAPI
      *                       number: Position of track on album
      *                       genre: Character code genre of track
      *                       intro: Length of track intro, in seconds
+     *                       outro: Start time of track outro, in seconds
      *                       clean: 'y' yes, 'n' no, 'u' unknown lyric cleanliness status
      *                       digitised: boolean digitised status
      *
@@ -1125,6 +1196,10 @@ class MyRadio_Track extends ServiceAPI
         if (empty($options['intro'])) {
             $options['intro'] = 0;
         }
+        //No outro
+        if (empty($options['outro'])) {
+            $options['outro'] = 0;
+        }
         //Clean unknown
         if (empty($options['clean'])) {
             $options['clean'] = 'u';
@@ -1137,9 +1212,9 @@ class MyRadio_Track extends ServiceAPI
         }
 
         $result = self::$db->query(
-            'INSERT INTO rec_track (number, title, artist, length, genre, intro,
+            'INSERT INTO rec_track (number, title, artist, length, genre, intro, outro,
             clean, recordid, digitised, digitisedby, duration, last_edited_time, last_edited_memberid)
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $10) RETURNING *',
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $11) RETURNING *',
             [
                 $options['number'],
                 trim($options['title']),
@@ -1147,12 +1222,13 @@ class MyRadio_Track extends ServiceAPI
                 CoreUtils::intToTime($options['duration']),
                 $options['genre'],
                 CoreUtils::intToTime($options['intro']),
+                CoreUtils::intToTime($options['outro']),
                 $options['clean'],
                 $options['recordid'],
                 $options['digitised'],
                 $_SESSION['memberid'],
                 $options['duration'],
-                CoreUtils::getTimestamp(),
+                CoreUtils::getTimestamp()
             ]
         );
 
@@ -1273,6 +1349,26 @@ class MyRadio_Track extends ServiceAPI
             'UPDATE rec_track SET intro=$1 WHERE trackid=$2',
             [
             CoreUtils::intToTime($this->intro),
+            $this->getID(),
+            ]
+        );
+        $this->updateCacheObject();
+    }
+
+    /**
+     * Set the start-time of the track outro, in seconds.
+     *
+     * @param int $start_time Start-time of the outro
+     *
+     * @api POST
+     */
+    public function setOutro($start_time)
+    {
+        $this->outro = (int) $start_time;
+        self::$db->query(
+            'UPDATE rec_track SET outro=$1 WHERE trackid=$2',
+            [
+            CoreUtils::intToTime($this->outro),
             $this->getID(),
             ]
         );
@@ -1531,15 +1627,29 @@ class MyRadio_Track extends ServiceAPI
     /**
      * Gets the track that's on air *right now*.
      *
-     * @param bool $include_playout if true, will include tracks played by Jukebox while off air
+     * @param string[] $sources which sources to accept tracklist data from
+     * @param bool $allowOffAir Should whatever Jukebox is playing be included even when it's not on air.
+     * Silly unless 'j' is passed in $sources
      * @return null|array
      */
-    public static function getNowPlaying($include_playout=false)
+    public static function getNowPlaying($sources = ['b', 'm', 'o', 'w', 'a', 's'], $allowOffAir = false)
     {
         // Start a transaction. We're gonna have some fun.
         self::$db->query('BEGIN');
+
         // Use repeatable read - to ensure that all queries in this TX read at the same "point in time"
         self::$db->query('SET TRANSACTION ISOLATION LEVEL REPEATABLE READ');
+
+        // Fetch permissible source letters and filter sources to prevent nasties
+        $allowedSources = self::$cache->get('MyRadio_Track:getNowPlaying:allowedSources');
+        if (empty($allowedSources)) {
+            $allowedSources = self::$db->fetchColumn('SELECT sourceid FROM tracklist.source', []);
+            self::$cache->set('MyRadio_Track:getNowPlaying:allowedSources', $allowedSources, 86400);
+        }
+        $sources = array_intersect($sources, $allowedSources);
+        // Turn into SQL-friendly string
+        $sourceStr = '(\'' . implode('\',\'', $sources) . '\')';
+
         // Get the last thing that was tracklisted - this is either jukebox or WebStudio
         // The 30 minutes check is to avoid having something linger for too long if WS forgets to end the tracklist
         $lastTracklisted = self::$db->fetchOne(
@@ -1548,43 +1658,49 @@ class MyRadio_Track extends ServiceAPI
             LEFT OUTER JOIN tracklist.track_rec USING (audiologid)
             LEFT OUTER JOIN tracklist.track_notrec USING (audiologid)
             WHERE timestart <= NOW() AND timestart > (NOW() - interval \'30 minutes\') AND timestop IS NULL
-            AND (state IS NULL OR state = \'c\'' .($include_playout ? ' OR state = \'o\'' : '') . ')
+            AND (state IS NULL OR state = \'c\'' .($allowOffAir ? ' OR state = \'o\'' : '') . ')
+            AND source IN ' . $sourceStr . '
             ORDER BY timestart DESC
             LIMIT 1',
             []
         );
+
         // Check what's currently on air - if it's a physical studio or OB we'll need to check BAPS
         // We do this in SQL, rather than via MyRadio_Selector, to maintain transaction consistency
-        $result = self::$db->fetchColumn(
-            'SELECT action FROM public.selector WHERE time <= NOW()
-            AND action >= 4 AND action <= 11
-            ORDER BY time DESC
-            LIMIT 1',
-            []
-        );
-        $selAction = isset($result[0]) ? intval($result[0]) : 0;
-        if ($selAction === 4 /* Studio 1 */ || $selAction === 5 /* Studio 2 */ || $selAction == 7 /* OB */) {
-            // Ditto on the 30 minutes
-            // The 30 *seconds* is to (hopefully) catch PFLs
-            $lastBapsLogged = self::$db->fetchOne(
-                'SELECT audiologid, timeplayed AT TIME ZONE \'Europe/London\' AS timestart, trackid
-                FROM public.baps_audiolog
-                INNER JOIN public.baps_audio USING (audioid)
-                INNER JOIN tracklist.selbaps ON baps_audiolog.serverid = selbaps.bapsloc
-                WHERE selaction = $1
-                AND timestopped IS NULL
-                AND trackid IS NOT NULL
-                AND timeplayed <= (NOW() AT TIME ZONE \'Europe/London\' - interval \'30 seconds\')
-                AND timeplayed > (NOW() AT TIME ZONE \'Europe/London\' - interval \'30 minutes\')
-                ORDER BY timeplayed DESC
-                LIMIT 1
-                ',
-                [ $selAction ]
+        if (in_array('b', $sources)) {
+            $result = self::$db->fetchColumn(
+                'SELECT action FROM public.selector WHERE time <= NOW()
+                AND action >= 4 AND action <= 11
+                ORDER BY time DESC
+                LIMIT 1',
+                []
             );
-            if (!empty($lastBapsLogged)) {
-                if (empty($lastTracklisted) || strtotime($lastBapsLogged['timestart']) > strtotime($lastTracklisted['timestart'])) {
-                    // Last BAPS entry is newer than last tracklist entry (if there is one).
-                    $lastTracklisted = $lastBapsLogged;
+            $selAction = isset($result[0]) ? intval($result[0]) : 0;
+            if ($selAction === 4 /* Studio 1 */ || $selAction === 5 /* Studio 2 */ || $selAction == 7 /* OB */) {
+                // Ditto on the 30 minutes
+                // The 30 *seconds* is to (hopefully) catch PFLs
+                $lastBapsLogged = self::$db->fetchOne(
+                    'SELECT audiologid, timeplayed AT TIME ZONE \'Europe/London\' AS timestart, trackid
+                    FROM public.baps_audiolog
+                    INNER JOIN public.baps_audio USING (audioid)
+                    INNER JOIN tracklist.selbaps ON baps_audiolog.serverid = selbaps.bapsloc
+                    WHERE selaction = $1
+                    AND timestopped IS NULL
+                    AND trackid IS NOT NULL
+                    AND timeplayed <= (NOW() AT TIME ZONE \'Europe/London\' - interval \'30 seconds\')
+                    AND timeplayed > (NOW() AT TIME ZONE \'Europe/London\' - interval \'30 minutes\')
+                    ORDER BY timeplayed DESC
+                    LIMIT 1
+                    ',
+                    [ $selAction ]
+                );
+                if (!empty($lastBapsLogged)) {
+                    if (empty($lastTracklisted)
+                        || strtotime($lastBapsLogged['timestart']) > strtotime($lastTracklisted['timestart'])
+                    ) {
+                        // Last BAPS entry is newer than last tracklist entry (if there is one).
+                        $lastTracklisted = $lastBapsLogged;
+                    }
                 }
             }
         }
@@ -1594,7 +1710,7 @@ class MyRadio_Track extends ServiceAPI
         if (empty($lastTracklisted)) {
             // Nothing playing right now
             return null;
-        } else if (!empty($lastTracklisted['trackid'])) {
+        } elseif (!empty($lastTracklisted['trackid'])) {
             // track_rec
             return [
                 'track' => self::getInstance($lastTracklisted['trackid']),

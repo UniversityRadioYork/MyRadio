@@ -34,6 +34,10 @@ $(".twig-datatable").dataTable({
     {
       "bVisible": false
     },
+    //outro
+    {
+      "bVisible": false
+    },
     //clean
     {
       "sTitle": "Clean",

@@ -2,10 +2,10 @@ sudo: required
 dist: trusty # Use notancient unbuntu
 language: php
 php:
-    - '7.0'
     - '7.1'
     - '7.2'
     - '7.3'
+    - '7.4'
     - 'nightly' # why not
 
 matrix:
@@ -22,9 +22,11 @@ addons:
     postgresql: '9.5'
 services:
     - postgresql
+before_install:
+  - nvm install --lts  # Updated Node required for eslint
 install:
     - composer install
-    - npm install eslint@6.5.x
+    - npm install eslint
     - sudo apt-get update
     - sudo apt-get install apache2 libapache2-mod-fastcgi
 before_script:
@@ -48,8 +50,7 @@ before_script:
     # setup postgres
     - psql -U postgres < sample_configs/postgres.sql
     - PGPASSWORD=myradio psql -U myradio myradio < schema/base.sql
-    # Disabled until patch files are implemented (there's a 1.sql which renames schema myury to myradio)
-    #- PGPASSWORD=myradio psql -U myradio myradio < schema/patches/*.sql
+    - for f in schema/patches/*.sql; do PGPASSWORD=myradio psql -U myradio myradio < $f; done
     - PGPASSWORD=myradio psql -U myradio myradio < sample_configs/travis-auth.sql
     # configure MyRadio
     - cp sample_configs/travis-config.php src/MyRadio_Config.local.php
@@ -57,6 +58,9 @@ script:
     - src/vendor/bin/phpcs --standard=PSR2 --ignore="*.min.*,*/vendor/*,*/PublicAPI/rtfm/*,*/Public/js/*" --exclude=Squiz.Classes.ValidClassName,PSR1.Files.SideEffects src/ -p -s
     - node_modules/.bin/eslint .
     - curl -v http://localhost/api/v2/config/publicconfig?api_key=travis-test-key
-    - src/vendor/bin/codecept run --env travis
+    - src/vendor/bin/codecept run --debug --env travis
 after_script:
-    - sudo cat $(pwd)/apache-*.log
+    - sudo cat $(pwd)/apache-access.log
+    - sudo cat $(pwd)/apache-error.log
+    - sudo cat ~/.phpenv/versions/$(phpenv version-name)/var/log/php-fpm.log
+    - sudo ls -l ~/.phpenv/versions/$(phpenv version-name)/var/log/
