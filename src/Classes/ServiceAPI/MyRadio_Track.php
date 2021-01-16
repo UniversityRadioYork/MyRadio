@@ -6,6 +6,7 @@
 namespace MyRadio\ServiceAPI;
 
 use MyRadio\Config;
+use MyRadio\MyRadioEmail;
 use MyRadio\MyRadioException;
 use MyRadio\MyRadio\CoreUtils;
 use MyRadio\MyRadio\URLUtils;
@@ -612,6 +613,45 @@ class MyRadio_Track extends ServiceAPI
                 'url' => URLUtils::makeURL('Library', 'deleteTrack', ['trackid' => $this->getID()]),
             ],
         ];
+    }
+
+    /**
+     * Report this track as explicit.
+     *
+     * Do not confuse with {@link setClean} - this method will set it as explicit, and send
+     * an email to various people informing them of it. If you don't want that to happen,
+     * don't use this.
+     */
+    public function reportExplicit()
+    {
+        if ($this->getClean() === 'n') {
+            throw new MyRadioException('This is already marked explicit.', 400);
+        }
+
+        $this->setClean('n');
+
+        $currentUser = MyRadio_User::getCurrentOrSystemUser();
+
+        $title = htmlspecialchars($this->getTitle());
+        $artist = htmlspecialchars($this->getArtist());
+        $userName = htmlspecialchars($currentUser->getFName() . ' ' . $currentUser->getSName());
+        $editUrl = URLUtils::makeURL('Library', 'editTrack', ['trackid' => $this->getID()]);
+        MyRadioEmail::sendEmailToList(
+            MyRadio_List::getByName('playlisting'),
+            'Track Reported Explicit',
+            <<<EOF
+Hi,
+
+The song "$title" by $artist has been reported as explicit by $userName.
+
+Please double-check this, and mark it as clean if this is in error. You can edit the track <a href="$editUrl">here</a>.
+
+Thanks,
+MyRadio Music Library Robot
+EOF
+            ,
+            null
+        );
     }
 
     /**
