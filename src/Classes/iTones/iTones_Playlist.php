@@ -367,7 +367,8 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
      * Once that's done, go over every Track still in the temporary list and remove them from the Playlist
      *
      * @param MyRadio_Track[]|int[] $tracks  Tracks to put in the playlist.
-     * @param string                $lockstr String that provides Write access to this Playlist. Acquired from acquireLock();
+     * @param string                $lockstr String that provides Write access to this Playlist.
+ *                                              Acquired from acquireLock();
      * @param string|null           $notes   Optional. A textual commit message about the change.
      * @param MyRadio_User|null     $user   User to attribute the update to
      *
@@ -379,7 +380,7 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
         if ($user === null) {
             $user = MyRadio_User::getInstance();
         }
-        foreach ($tracks as $idx=>$track) {
+        foreach ($tracks as $idx => $track) {
             if (!($track instanceof MyRadio_Track)) {
                 $tracks[$idx] = MyRadio_Track::getInstance($track);
             }
