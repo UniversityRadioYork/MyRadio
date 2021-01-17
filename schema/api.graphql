@@ -441,7 +441,7 @@ type Query {
     previousTimeslots(time: Int, n: Int, filter: [Int]): [Timeslot] @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Timeslot", method: "getPreviousTimeslots")
 
     nowPlaying(
-        "Which source letters (not IDs!) to accept tracklisting from. Defaults to [b, m, o, w, a, s]"
+        "Which source letters (not IDs!) to accept tracklisting from. Defaults to [b, m, o, w, a, s, j]"
         sources: [String!],
         "Should whatever Jukebox is playing be included even when it's not on air. Silly unless 'j' is passed in sources."
         allowOffAir: Boolean
