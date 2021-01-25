@@ -2,7 +2,6 @@ name: PHP Composer
 
 on:
   push:
-    branches: [ master ]
   pull_request:
     branches: [ master ]
 
@@ -10,6 +9,14 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
+
+    services:
+      postgres:  
+        image: postgres
+        env:
+          POSTGRES_PASSWORD: myradio
+      npm:  
+        image: npm
 
     steps:
     - uses: actions/checkout@v2
@@ -29,9 +36,21 @@ jobs:
     - name: Install dependencies
       if: steps.composer-cache.outputs.cache-hit != 'true'
       run: composer install --prefer-dist --no-progress --no-suggest
+    
+    - name: eslint
+      run: npm install eslint
+      
 
     # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"
     # Docs: https://getcomposer.org/doc/articles/scripts.md
 
     # - name: Run test suite
     #   run: composer run-script test
+    
+    - name: Add postgres
+      run: psql -U postgres < sample_configs/postgres.sql && psql -U myradio myradio < schema/base.sql
+    
+    ## TODO Patches
+    # Sample Config
+    # Checks 
+      
