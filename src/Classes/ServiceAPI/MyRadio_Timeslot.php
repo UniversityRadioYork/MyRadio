@@ -1089,6 +1089,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             [$playout, $this->getID()]
         );
         $this->playout = $playout;
+        $this->updateCacheObject();
     }
 
     /**
