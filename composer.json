@@ -1,4 +1,6 @@
 {
+    "name": "MyRadio",
+    "description": "URY's backend radio management system",
     "require": {
         "james-heinrich/getid3": "~1.9",
         "ezyang/htmlpurifier": "~4.10",
