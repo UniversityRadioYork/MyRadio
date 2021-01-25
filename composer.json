@@ -1,5 +1,5 @@
 {
-    "name": "my-radio",
+    "name": "universityradioyork/myradio",
     "description": "URY's backend radio management system",
     "require": {
         "james-heinrich/getid3": "~1.9",
