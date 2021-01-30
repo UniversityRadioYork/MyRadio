@@ -590,7 +590,8 @@ class MyRadio_Season extends MyRadio_Metadata_Common
 
     public function setCredits($users, $credittypes, $table = null, $pkey = null)
     {
-        $r = parent::setCredits($users, $credittypes, 'schedule.season_credit', 'season_id');
+        // We don't have season credits, just show credits at the appropriate times.
+        $r = parent::setCredits($users, $credittypes, 'schedule.show_credit', 'show_id');
         $this->updateCacheObject();
 
         return $r;

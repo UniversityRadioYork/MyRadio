@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $season->clearSubtype();
         }
 
-        URLUtils::redirectWithMessage('Scheduler', 'listSeasons', 'Season updated!', ['seasonid' => $season->getID()]);
+        URLUtils::redirectWithMessage('Scheduler', 'listSeasons', 'Season updated!', ['showid' => $season->getShow()->getID()]);
     }
 } else {
     //Not Submitted
