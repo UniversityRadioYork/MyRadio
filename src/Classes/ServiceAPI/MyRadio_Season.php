@@ -685,8 +685,8 @@ EOT
     public function getMeta($meta_string)
     {
         $key = self::getMetadataKey($meta_string);
-        if (isset($this->meta[$key])) {
-            return $this->meta[$key];
+        if (isset($this->metadata[$key])) {
+            return $this->metadata[$key];
         } else {
             return $this->getShow()->getMeta($meta_string);
         }
@@ -728,6 +728,7 @@ EOT
             'schedule.season_metadata',
             'show_season_id'
         );
+        $this->metadata[$string_key] = $value;
         $this->updateCacheObject();
 
         return $r;
