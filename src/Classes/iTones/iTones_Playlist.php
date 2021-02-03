@@ -379,9 +379,22 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
         $user = MyRadio_User::getCurrentOrSystemUser();
         foreach ($tracks as $idx => $track) {
             if (!($track instanceof MyRadio_Track)) {
-                $tracks[$idx] = MyRadio_Track::getInstance($track);
+                try {
+                    $tracks[$idx] = MyRadio_Track::getInstance($track);
+                } catch (\Exception $e) {
+                    // (blame Matt Strat if any of this breaks)
+                    $tracks[$idx] = null;
+                    continue;
+                }
             }
+
+            // Remove any undigitised tracks
+            if (!$track->getDigitised()){
+                $tracks[$idx] = null;
+            }
+            
         }
+
         //Remove duplicates
         $tracks = array_unique($tracks);
         $old_list = $this->getTracks();
