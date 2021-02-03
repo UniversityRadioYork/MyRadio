@@ -389,10 +389,9 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
             }
 
             // Remove any undigitised tracks
-            if (!$track->getDigitised()){
+            if (!$track->getDigitised()) {
                 $tracks[$idx] = null;
             }
-            
         }
 
         //Remove duplicates
