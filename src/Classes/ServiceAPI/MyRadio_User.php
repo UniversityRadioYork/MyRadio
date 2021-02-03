@@ -1016,14 +1016,16 @@ class MyRadio_User extends ServiceAPI implements APICaller
     /**
      * Get upcoming shows for the user.
      * This is for scheduling niceities, because Scheduler module isn't the most user friendly
-     * 
+     *
      * @return MyRadio_Timeslot[]
      */
 
-    public function getUpcomingTimeslots() {
+    public function getUpcomingTimeslots()
+    {
         // fetchColumn to return ids, start_time needed in SQL because ordering and distinct :(
         $result = self::$db->fetchColumn(
-            "SELECT DISTINCT(show_season_timeslot_id), show_season_timeslot.start_time FROM schedule.show_season_timeslot
+            "SELECT DISTINCT(show_season_timeslot_id), show_season_timeslot.start_time
+            FROM schedule.show_season_timeslot
             INNER JOIN schedule.show_season USING (show_season_id)
             INNER JOIN schedule.show USING (show_id)
             INNER JOIN schedule.show_credit USING (show_id)
@@ -1039,7 +1041,6 @@ class MyRadio_User extends ServiceAPI implements APICaller
         } else {
             return MyRadio_Timeslot::resultSetToObjArray($result);
         }
-
     }
 
     /**
