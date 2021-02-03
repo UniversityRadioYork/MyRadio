@@ -40,6 +40,11 @@ $(".twig-datatable").dataTable({
       "sTitle": "Site",
       "bSortable": false,
       "bVisible": true
+    },
+    //suspendlink
+    {
+      "sTitle": "",
+      "bVisible": true
     }
   ],
   "bPaginate": true,
