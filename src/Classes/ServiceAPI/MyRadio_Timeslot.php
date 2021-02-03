@@ -811,8 +811,6 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
      *
      * @param string $reason , Why the episode was cancelled.
      *
-     * @todo Make the smarter - check if it's a programming team person, in which case just do this, if it's not then if
-     *       >48hrs away just do it but email programming, but <48hrs should hide it but tell prog to confirm reason
      * @todo Response codes? i.e. error/db or error/403 etc
      */
     public function cancelTimeslot($reason)
@@ -822,6 +820,11 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             //Yep, do an administrative drop
             $r = $this->cancelTimeslotAdmin($reason);
         } elseif ($this->getSeason()->getShow()->isCurrentUserAnOwner()) {
+            // Check if its in the past. Only admin drops can be in the past
+            if ($this->getStartTime() < time()) {
+                return false;
+            }
+
             //Get if the User is a Creditor
             //Yaay, depending on time they can do an self-service drop or cancellation request
             if ($this->getStartTime() > time() + (48 * 3600)) {
@@ -863,6 +866,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
 
     private function cancelTimeslotSelfService($reason)
     {
+        
         $r = $this->deleteTimeslot();
         if (!$r) {
             return false;
@@ -906,7 +910,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             ['show_season_timeslot_id' => $this->getID(), 'reason' => base64_encode($reason)]
         );
 
-        MyRadioEmail::sendEmailToList(MyRadio_List::getByName('presenting'), 'Show Cancellation Request', $email);
+        MyRadioEmail::sendEmailToList(MyRadio_List::getByName('programming'), 'Show Cancellation Request', $email);
         return true;
     }
 
