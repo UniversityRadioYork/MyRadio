@@ -680,11 +680,12 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
 
     /**
      * Request a podcast to be suspended
-     * 
+     *
      * @param string $reason - The reason the user wants unsuspension
      */
 
-    public function requestUnsuspend($reason) {
+    public function requestUnsuspend($reason)
+    {
         if (AuthUtils::hasPermission(AUTH_PODCASTANYSHOW)) {
             $this->setSuspended(false);
         } else {

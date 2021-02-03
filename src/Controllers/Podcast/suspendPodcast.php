@@ -51,7 +51,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 } else {
     //Not Submitted
     if (isset($_REQUEST['podcast_id'])) {
-
         $podcast = MyRadio_Podcast::getInstance($_REQUEST['podcast_id']);
 
         // Check if user can suspend this podcast
