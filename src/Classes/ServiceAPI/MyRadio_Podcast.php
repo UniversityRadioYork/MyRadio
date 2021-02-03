@@ -662,6 +662,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
 
     /**
      * Get data in array format.
+     * @param bool $include_suspended Whether to return a suspended podcast
      * @param array $mixins Mixins.
      * @mixin show Provides data about the show this podcast is from
      * @mixin credits Returns the names of the credited people, as a comma-separated list
@@ -669,48 +670,52 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
      *
      * @return array
      */
-    public function toDataSource($mixins = [])
+    public function toDataSource($include_suspended = false, $mixins = [])
     {
-        $mixin_funcs = [
-            'show' => function (&$data) use ($mixins) {
-                $data['show'] = $this->getShow() ?
-                    $this->getShow()->toDataSource($mixins) : null;
-            },
-            'credits' => function (&$data) {
-                $data['credits'] = implode(', ', $this->getCreditsNames(false));
-            },
-        ];
+        if (!$include_suspended && $this->isSuspended()) {
+            throw new MyRadioException("The specified podcast is suspended.", 403);
+        } else {
+            $mixin_funcs = [
+                'show' => function (&$data) use ($mixins) {
+                    $data['show'] = $this->getShow() ?
+                        $this->getShow()->toDataSource($mixins) : null;
+                },
+                'credits' => function (&$data) {
+                    $data['credits'] = implode(', ', $this->getCreditsNames(false));
+                },
+            ];
 
-        $data = [
-            'podcast_id' => $this->getID(),
-            'title' => $this->getMeta('title'),
-            'description' => $this->getMeta('description'),
-            'status' => $this->getStatus(),
-            'time' => $this->getSubmitted(),
-            'uri' => $this->getURI(),
-            'editlink' => [
-                'display' => 'icon',
-                'value' => 'pencil',
-                'title' => 'Edit Podcast',
-                'url' => URLUtils::makeURL('Podcast', 'editPodcast', ['podcast_id' => $this->getID()]),
-            ],
-            'micrositelink' => [
-                'display' => 'icon',
-                'value' => 'link',
-                'title' => 'View Podcast Microsite',
-                'url' => $this->getWebpage(),
-            ],
-        ];
+            $data = [
+                'podcast_id' => $this->getID(),
+                'title' => $this->getMeta('title'),
+                'description' => $this->getMeta('description'),
+                'status' => $this->getStatus(),
+                'time' => $this->getSubmitted(),
+                'uri' => $this->getURI(),
+                'editlink' => [
+                    'display' => 'icon',
+                    'value' => 'pencil',
+                    'title' => 'Edit Podcast',
+                    'url' => URLUtils::makeURL('Podcast', 'editPodcast', ['podcast_id' => $this->getID()]),
+                ],
+                'micrositelink' => [
+                    'display' => 'icon',
+                    'value' => 'link',
+                    'title' => 'View Podcast Microsite',
+                    'url' => $this->getWebpage(),
+                ],
+            ];
 
-        $cover = $this->getCover();
-        if (!empty($cover)) {
-            $cover_path = Config::$public_media_uri . '/' . $cover;
-            $cover_path = preg_replace('(//)', '/', $cover_path);
-            $data['photo'] = $cover_path;
+            $cover = $this->getCover();
+            if (!empty($cover)) {
+                $cover_path = Config::$public_media_uri . '/' . $cover;
+                $cover_path = preg_replace('(//)', '/', $cover_path);
+                $data['photo'] = $cover_path;
+            }
+
+            $this->addMixins($data, $mixins, $mixin_funcs);
+            return $data;
         }
-
-        $this->addMixins($data, $mixins, $mixin_funcs);
-        return $data;
     }
 
     /**
