@@ -866,15 +866,16 @@ class MyRadio_Show extends MyRadio_Metadata_Common
      */
     public function getAllPodcasts($include_suspended = false)
     {
-        $where = "";
+        $andSuspend = "";
         if (!$include_suspended) {
-            $where = " WHERE suspended = false";
+            $andSuspend = "AND suspended = false";
         }
 
         $query = "SELECT podcast_id FROM schedule.show_podcast_link
         INNER JOIN uryplayer.podcast USING (podcast_id)
-        WHERE show_id = $1
-        ORDER BY submitted DESC" . $where;
+        WHERE show_id = $1"
+        . $andSuspend
+        . "ORDER BY submitted DESC";
 
         $ids = self::$db->fetchColumn(
             $query,
