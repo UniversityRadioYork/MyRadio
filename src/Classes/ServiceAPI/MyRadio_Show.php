@@ -867,15 +867,18 @@ class MyRadio_Show extends MyRadio_Metadata_Common
     public function getAllPodcasts($include_suspended = false)
     {
         $andSuspend = "";
-        if (!$include_suspended) {
-            $andSuspend = "AND suspended = false";
+
+        // This makes me sad, but it passes "false" from API,
+        // which is true because it isn't "". ¯\_(ツ)_/¯
+        if (!$include_suspended || $include_suspended == "false") {
+            $andSuspend = " AND suspended = false";
         }
 
         $query = "SELECT podcast_id FROM schedule.show_podcast_link
         INNER JOIN uryplayer.podcast USING (podcast_id)
         WHERE show_id = $1"
         . $andSuspend
-        . "ORDER BY submitted DESC";
+        . " ORDER BY submitted DESC";
 
         $ids = self::$db->fetchColumn(
             $query,
