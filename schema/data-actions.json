@@ -88,6 +88,7 @@
     ["Podcast", "editPodcast"],
     ["Podcast", "allPodcast"],
     ["Podcast", "default"],
+    ["Podcast", "suspendPodcast"],
     ["Profile", "officers"],
     ["Profile", "listOfficers"],
     ["Profile", "markPaid"],

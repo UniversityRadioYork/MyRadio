@@ -91,6 +91,7 @@
     ["NIPSWeb", "playout", "AUTH_USENIPSWEB"],
     ["Podcast", "editPodcast", "AUTH_STANDALONEPODCAST"],
     ["Podcast", "editPodcast", "AUTH_APPLYFORSHOW"],
+    ["Podcast", "suspendPodcast", "AUTH_APPLYFORSHOW"],
     ["Podcast", "editPodcast", "AUTH_UPLOADPODCASTS"],
     ["Podcast", "editPodcast", "AUTH_PODCASTANYSHOW"],
     ["Podcast", "default", "AUTH_UPLOADPODCASTS"],
