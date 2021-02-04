@@ -797,6 +797,8 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
             $cover_path = Config::$public_media_uri . '/' . $cover;
             $cover_path = preg_replace('(//)', '/', $cover_path);
             $data['photo'] = $cover_path;
+        } else {
+            $data["photo"] = "";
         }
 
         $this->addMixins($data, $mixins, $mixin_funcs);

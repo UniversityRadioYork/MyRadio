@@ -17,15 +17,11 @@ $(".twig-datatable").dataTable({
     {
       "sTitle": "Status"
     },
-    //submitted
+    //time
     {
       "sTitle": "Time Submitted"
     },
-    // file
-    {
-      "bVisible": false
-    },
-    // photo
+    // uri
     {
       "bVisible": false
     },
@@ -44,6 +40,12 @@ $(".twig-datatable").dataTable({
     //suspendlink
     {
       "sTitle": "",
+      "bVisible": true,
+      "bSortable": false
+    },
+    //photo
+    {
+      "sTitle": "Photo",
       "bVisible": true
     }
   ],

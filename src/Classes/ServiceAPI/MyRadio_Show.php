@@ -868,7 +868,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
     {
         $where = "";
         if (!$include_suspended) {
-            $where = "WHERE suspended = false";
+            $where = " WHERE suspended = false";
         }
 
         $query = "SELECT podcast_id FROM schedule.show_podcast_link
