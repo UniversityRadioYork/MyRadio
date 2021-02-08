@@ -590,7 +590,8 @@ class MyRadio_Season extends MyRadio_Metadata_Common
 
     public function setCredits($users, $credittypes, $table = null, $pkey = null)
     {
-        $r = parent::setCredits($users, $credittypes, 'schedule.season_credit', 'season_id');
+        // We don't have season credits, just show credits at the appropriate times.
+        $r = parent::setCredits($users, $credittypes, 'schedule.show_credit', 'show_id');
         $this->updateCacheObject();
 
         return $r;
@@ -684,8 +685,8 @@ EOT
     public function getMeta($meta_string)
     {
         $key = self::getMetadataKey($meta_string);
-        if (isset($this->meta[$key])) {
-            return $this->meta[$key];
+        if (isset($this->metadata[$key])) {
+            return $this->metadata[$key];
         } else {
             return $this->getShow()->getMeta($meta_string);
         }
@@ -727,6 +728,7 @@ EOT
             'schedule.season_metadata',
             'show_season_id'
         );
+        $this->metadata[$string_key] = $value;
         $this->updateCacheObject();
 
         return $r;
