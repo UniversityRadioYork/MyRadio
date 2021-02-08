@@ -120,11 +120,6 @@
                             "description": "Upload, edit and manage podcasts."
                         },
                         {
-                            "title": "Show Planner",
-                            "url": "module=NIPSWeb",
-                            "description": "Plan, create and practice shows in advance."
-                        },
-                        {
                             "title": "Studio Information Service",
                             "url": "module=SIS",
                             "description": "Access the Studio Information Service."
@@ -132,7 +127,7 @@
                         {
                             "title": "WebStudio",
                             "url": "module=MyRadio,action=webstudio",
-                            "description": "Access WebStudio"
+                            "description": "Access WebStudio. Plan, create, practise and broadcast your shows!"
                         }
                     ]
                 },
