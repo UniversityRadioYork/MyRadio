@@ -82,7 +82,7 @@ class MyRadio_Demo extends ServiceAPI
                         "Hi " . $user->getFName() . ","
                             . "\r\n\r\n A session to get you " . $training->getTitle()
                             . " has opened up. Check it out on MyRadio.\r\n\r\n"
-                            . URLUtils::makeURL('Scheduler', 'listDemos') . "\r\n\r\n"
+                            . URLUtils::makeURL('Training', 'listDemos') . "\r\n\r\n"
                             . Config::$long_name . " Training"
                     );
                 }
@@ -148,10 +148,10 @@ class MyRadio_Demo extends ServiceAPI
     {
         return (new MyRadioForm(
             'sched_demo',
-            'Scheduler',
+            'Training',
             'createDemo',
             [
-                'title' => 'Scheduler',
+                'title' => 'Training',
                 'subtitle' => 'Create Training Session',
             ]
         ))->addField(
@@ -366,7 +366,7 @@ class MyRadio_Demo extends ServiceAPI
                 . "Just to confirm that you have left the training session at " . $this->getDemoTime()
                 . ". If this was accidental, simply rejoin. "
                 . "Meanwhile, you can join the waiting list, and we'll let you know if a session becomes available. "
-                . URLUtils::makeURL("Scheduler", "listWaitingLists")
+                . URLUtils::makeURL("Training", "listWaitingLists")
                 . "\r\n\r\nThanks!\r\n"
                 . Config::$long_name
                 . ' Training'

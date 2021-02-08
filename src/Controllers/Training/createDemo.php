@@ -28,12 +28,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Update Demo
         MyRadio_Demo::getInstance($_REQUEST["demo_id"])
             ->getEditForm()
-            ->setTemplate("Scheduler/createDemo.twig")
+            ->setTemplate("Training/createDemo.twig")
             ->render();
     } else {
         // Create New Demo
         MyRadio_Demo::getForm()
-            ->setTemplate('Scheduler/createDemo.twig')
+            ->setTemplate('Training/createDemo.twig')
             ->render();
     }
 }

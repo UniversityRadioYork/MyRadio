@@ -22,13 +22,13 @@ foreach ($demos as $demo) {
         $demo['join'] = [
             'display' => 'text',
             'value' => 'Edit Demo',
-            'url' => URLUtils::makeURL('Scheduler', 'createDemo', ['demo_id' => $demo['demo_id']]),
+            'url' => URLUtils::makeURL('Training', 'createDemo', ['demo_id' => $demo['demo_id']]),
         ];
         $demo["finish"] = [
             "display" => "icon",
             "value" => "ok",
             "title" => "Mark Attendees as Trained",
-            "url" => URLUtils::makeURL("Scheduler", "finishDemo", ["demo_id" => $demo["demo_id"]])
+            "url" => URLUtils::makeURL("Training", "finishDemo", ["demo_id" => $demo["demo_id"]])
         ];
     } else {
         if ($demo_object->isUserAttendingDemo($currentUser->getID())) {
@@ -36,14 +36,14 @@ foreach ($demos as $demo) {
             $demo['join'] = [
                 'display' => 'text',
                 'value' => 'Leave',
-                'url' => URLUtils::makeURL('Scheduler', 'leaveDemo', ['demoid' => $demo['demo_id']]),
+                'url' => URLUtils::makeURL('Training', 'leaveDemo', ['demoid' => $demo['demo_id']]),
             ];
         } elseif ($demo_object->isSpaceOnDemo()) {
             $demo['attending'] = 'Space available!';
             $demo['join'] = [
                 'display' => 'text',
                 'value' => 'Join',
-                'url' => URLUtils::makeURL('Scheduler', 'attendDemo', ['demoid' => $demo['demo_id']]),
+                'url' => URLUtils::makeURL('Training', 'attendDemo', ['demoid' => $demo['demo_id']]),
             ];
         } else {
             $demo['attending'] = 'Demo full';
@@ -76,7 +76,7 @@ if (empty($tabledata)) {
 $twig->setTemplate('table.twig')
     ->addVariable('title', 'Upcoming Training Slots')
     ->addVariable('tabledata', $tabledata)
-    ->addVariable('tablescript', 'myradio.scheduler.demolist');
+    ->addVariable('tablescript', 'myradio.training.demolist');
 
 if (isset($_REQUEST['msg'])) {
     switch ($_REQUEST['msg']) {

@@ -26,7 +26,7 @@ foreach ($lists as $list) {
     $list['link'] = [
         "display" => "text",
         "value" => "Leave Waiting List",
-        "url" => URLUtils::makeURL("Scheduler", "leaveList", ["presenterstatusid" => $presenterstatusid])
+        "url" => URLUtils::makeURL("Training", "leaveList", ["presenterstatusid" => $presenterstatusid])
     ];
     $list['date_added'] = date('d M Y', strtotime($list['date_added']));
     $tabledata[] = $list;
@@ -42,7 +42,7 @@ foreach ($can_be_awarded as $status) {
             "link" => [
                 "display" => "text",
                 "value" => "Join Waiting List",
-                "url" => URLUtils::makeURL("Scheduler", "joinList", ["presenterstatusid" => $status->getID()])
+                "url" => URLUtils::makeURL("Training", "joinList", ["presenterstatusid" => $status->getID()])
             ]
         ];
 
@@ -53,7 +53,7 @@ foreach ($can_be_awarded as $status) {
 $twig->setTemplate('table.twig')
     ->addVariable('title', 'My Training Waiting Lists')
     ->addVariable('tabledata', $tabledata)
-    ->addVariable('tablescript', 'myradio.scheduler.waitinglist');
+    ->addVariable('tablescript', 'myradio.training.waitinglist');
 
 if (isset($_REQUEST['msg'])) {
     switch ($_REQUEST['msg']) {
