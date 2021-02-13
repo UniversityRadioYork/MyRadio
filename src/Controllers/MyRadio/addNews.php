@@ -18,5 +18,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     //Not Submitted
     MyRadioNews::getForm()
         ->setFieldValue('feedid', $_REQUEST['feed'])
+        ->setFieldValue('body', MyRadioNews::getLatestNewsItem($_REQUEST['feed'])['content'])
         ->render();
 }
