@@ -390,6 +390,12 @@ class MyRadio_Selector
 
         $status = self::remoteStreams();
 
+        // S4 is OB Feed
+        $ob_status = false;
+        if (isset($status["s1"]) || isset($status["s2"])) {
+            $ob_status = $status["s1"] || $status["s2"];
+        }
+
         return [
             'ready' => $status['ready'],
             'studio' => self::getStudioAtTime($time),
@@ -398,7 +404,7 @@ class MyRadio_Selector
             's1power' => self::getStudio1PowerAtTime($time),
             's2power' => self::getStudio2PowerAtTime($time),
             's3power' => true, //Jukebox
-            's4power' => (isset($status['s1'])) ? $status['s1'] : false, //OB
+            's4power' => $ob_status, //OB
             's5power' => (isset($status['ws'])) ? $status['ws'] : false,
             's8power' => true, //Off Air
             'lastmod' => self::getLastModAtTime($time),
