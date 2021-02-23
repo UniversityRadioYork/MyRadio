@@ -37,6 +37,11 @@
                             "description": "Forgotten how to use the studios? Want to get ahead of studio training? Here's the place to start."
                         },
                         {
+                            "title": "WebStudio Training",
+                            "url": "https://ury.org.uk/wiki/Working_From_Home_Resources/WebStudio",
+                            "description": "Want to view our videos on how to use our online broadcasting tool WebStudio? Well here they are!"
+                        },
+                        {
                             "template": "MyRadio/getOnAir.twig"
                         }
                     ]
@@ -115,11 +120,6 @@
                             "description": "Upload, edit and manage podcasts."
                         },
                         {
-                            "title": "Show Planner",
-                            "url": "module=NIPSWeb",
-                            "description": "Plan, create and practice shows in advance."
-                        },
-                        {
                             "title": "Studio Information Service",
                             "url": "module=SIS",
                             "description": "Access the Studio Information Service."
@@ -127,7 +127,10 @@
                         {
                             "title": "WebStudio",
                             "url": "module=MyRadio,action=webstudio",
-                            "description": "Access WebStudio"
+                            "description": "Access WebStudio. Plan, create, practise and broadcast your shows!"
+                        },
+                        {
+                            "template": "MyRadio/showPlanner.twig"
                         }
                     ]
                 },
@@ -207,7 +210,7 @@
                         {
                             "title": "Minutes",
                             "url": "https://drive.google.com/drive/folders/1txLjiR0LUvaZo9DvuDjN7uGHrPkGGmkX",
-                            "decription": "Want to know what happened in previous station meetings? Check the documents out here."
+                            "description": "Want to know what happened in previous station meetings? Check the documents out here."
                         },
                         {
                             "title": "Officers",

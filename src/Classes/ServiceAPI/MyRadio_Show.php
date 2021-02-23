@@ -207,7 +207,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         $result = self::$db->fetchOne($sql, [$showid]);
 
         if (empty($result)) {
-            throw new MyRadioException('The specified Show does not seem to exist', 404);
+            throw new MyRadioException("The specified Show (show id: " . $showid . ") does not seem to exist", 404);
         }
 
         return new self($result);
@@ -859,15 +859,29 @@ class MyRadio_Show extends MyRadio_Metadata_Common
 
     /**
      * Gets all podcasts linked to this show.
+     *
+     * @param bool $include_suspended Whether to include suspended podcasts in the result
+     *
      * @return MyRadio_Podcast[]
      */
-    public function getAllPodcasts()
+    public function getAllPodcasts($include_suspended = false)
     {
+        $andSuspend = "";
+
+        // This makes me sad, but it passes "false" from API,
+        // which is true because it isn't "". ¯\_(ツ)_/¯
+        if (!$include_suspended || $include_suspended == "false") {
+            $andSuspend = " AND suspended = false";
+        }
+
+        $query = "SELECT podcast_id FROM schedule.show_podcast_link
+        INNER JOIN uryplayer.podcast USING (podcast_id)
+        WHERE show_id = $1"
+        . $andSuspend
+        . " ORDER BY submitted DESC";
+
         $ids = self::$db->fetchColumn(
-            'SELECT podcast_id FROM schedule.show_podcast_link
-                INNER JOIN uryplayer.podcast USING (podcast_id)
-                WHERE show_id = $1
-                ORDER BY submitted DESC',
+            $query,
             [$this->getID()]
         );
 

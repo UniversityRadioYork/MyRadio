@@ -6,11 +6,13 @@
 namespace MyRadio\ServiceAPI;
 
 use MyRadio\Config;
+use MyRadio\MyRadio\AuthUtils;
 use MyRadio\MyRadioException;
 use MyRadio\MyRadio\CoreUtils;
 use MyRadio\MyRadio\URLUtils;
 use MyRadio\MyRadio\MyRadioForm;
 use MyRadio\MyRadio\MyRadioFormField;
+use MyRadio\MyRadioEmail;
 
 /**
  * Podcasts. For the website.
@@ -130,7 +132,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
         );
 
         if (empty($result)) {
-            throw new MyRadioException('Podcast '.$podcast_id, ' does not exist.', 404);
+            throw new MyRadioException('Podcast '. $podcast_id . ' does not exist.', 404);
         }
 
         $this->file = $result['file'];
@@ -393,6 +395,62 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
             );
     }
 
+    public static function getSuspendForm()
+    {
+        return (
+            new MyRadioForm(
+                "suspendpodcastfrm",
+                "Podcast",
+                "suspendPodcast",
+                [
+                    "title" => "Podcasts",
+                    "subtitle" => "Suspend Podcast"
+                ]
+            )
+        )->addField(
+            new MyRadioFormField(
+                "confirm",
+                MyRadioFormField::TYPE_CHECK,
+                [
+                    "label" => "I'm sure I want to suspend this podcast"
+                ]
+            )
+        )->addField(
+            new MyRadioFormField(
+                "podcast_id",
+                MyRadioFormField::TYPE_HIDDEN,
+                ["value" => $_REQUEST["podcast_id"]]
+            )
+        );
+    }
+
+    public static function getUnsuspendForm()
+    {
+        return (
+            new MyRadioForm(
+                "unsuspendpodcastfrm",
+                "Podcast",
+                "suspendPodcast",
+                [
+                    "title" => "Podcasts",
+                    "subtitle" => "Request to Unsuspend Podcast"
+                ]
+            )
+        )->addField(
+            new MyRadioFormField(
+                "reason",
+                MyRadioFormField::TYPE_BLOCKTEXT,
+                ["label" => "Please explain why this podcast should be unsuspended"]
+            )
+        )->addField(
+            new MyRadioFormField(
+                "podcast_id",
+                MyRadioFormField::TYPE_HIDDEN,
+                ["value" => $_REQUEST["podcast_id"]]
+            )
+        );
+    }
+
     /**
      * Create a new Podcast.
      *
@@ -621,6 +679,31 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
     }
 
     /**
+     * Request a podcast to be suspended
+     *
+     * @param string $reason - The reason the user wants unsuspension
+     */
+
+    public function requestUnsuspend($reason)
+    {
+        if (AuthUtils::hasPermission(AUTH_PODCASTANYSHOW)) {
+            $this->setSuspended(false);
+        } else {
+            MyRadioEmail::sendEmailToList(
+                MyRadio_List::getByName("podcasting"),
+                "Request for podcast unsuspension",
+                "Hi! \r\n\r\n"
+                . "A request for podcast: " . $this->getID()
+                . " to be unsuspended has been sent. \r\n\r\n"
+                . "Reason: " . $reason
+                . "You can unsuspend this at "
+                . URLUtils::makeURL("Podcast", "suspendPodcast", ["podcast_id" => $this->getID()])
+                . "\r\n\r\n MyRadio Podcasting"
+            );
+        }
+    }
+
+    /**
      * Set the Show this Podcast is linked to. If null, removes any link.
      *
      * @param MyRadio_Show $show
@@ -662,6 +745,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
 
     /**
      * Get data in array format.
+     * @param bool $include_suspended Whether to return a suspended podcast
      * @param array $mixins Mixins.
      * @mixin show Provides data about the show this podcast is from
      * @mixin credits Returns the names of the credited people, as a comma-separated list
@@ -700,6 +784,12 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
                 'title' => 'View Podcast Microsite',
                 'url' => $this->getWebpage(),
             ],
+            'suspendlink' => [
+                'display' => 'text',
+                'title' => 'Click to suspend/ususpend podcast',
+                'value' => ($this->isSuspended() ? "Unsuspend Podcast" : "Suspend Podcast"),
+                'url' => URLUtils::makeURL("Podcast", "suspendPodcast", ["podcast_id" => $this->getID()])
+            ]
         ];
 
         $cover = $this->getCover();
@@ -707,6 +797,8 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
             $cover_path = Config::$public_media_uri . '/' . $cover;
             $cover_path = preg_replace('(//)', '/', $cover_path);
             $data['photo'] = $cover_path;
+        } else {
+            $data["photo"] = "";
         }
 
         $this->addMixins($data, $mixins, $mixin_funcs);
