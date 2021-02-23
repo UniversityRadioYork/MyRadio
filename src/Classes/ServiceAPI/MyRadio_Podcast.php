@@ -854,7 +854,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
             LIMIT 1;',
             [$this->getID()]
         );
-        return $result ? $result['url'] : Config::$public_media_uri + "/image_meta/PodcastImageMetadata/default.png";
+        return $result ? $result['url'] : Config::$public_media_uri . "/image_meta/PodcastImageMetadata/default.png";
     }
 
     /**
