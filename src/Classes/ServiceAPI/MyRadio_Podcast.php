@@ -980,10 +980,10 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
      * @return Array[MyRadio_Podcast]
      */
     public static function getAllPodcasts(
-        $num_results = 0,
-        $page = 1,
         $include_suspended = false,
-        $include_pending = false
+        $include_pending = false,
+        $num_results = 0,
+        $page = 1
     ) {
         $where = '';
         if (!$include_suspended || !$include_pending) {
