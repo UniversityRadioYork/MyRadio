@@ -501,7 +501,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
                 500
             );
         }
-
+        self::$cache->purge();
         return $podcast;
     }
 
@@ -844,7 +844,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
     {
         // TODO: Plumb this into the metadata system.
         //       At time of writing, MyRadio's metadata system doesn't do images.
-        return self::$db->fetchOne(
+        $result = self::$db->fetchOne(
             'SELECT metadata_value AS url
             FROM uryplayer.podcast_image_metadata
             WHERE podcast_id = $1
@@ -853,7 +853,8 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
             ORDER BY effective_from DESC
             LIMIT 1;',
             [$this->getID()]
-        )['url'];
+        );
+        return $result ? $result['url'] : Config::$public_media_uri . "/image_meta/PodcastImageMetadata/default.png";
     }
 
     /**
@@ -902,7 +903,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
      */
     public function setMeta($string_key, $value, $effective_from = null, $effective_to = null)
     {
-        parent::setMetaBase(
+        $result = parent::setMetaBase(
             $string_key,
             $value,
             $effective_from,
@@ -910,7 +911,8 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
             'uryplayer.podcast_metadata',
             'podcast_id'
         );
-        return $this;
+        $this->updateCacheObject();
+        return $result;
     }
 
     /**
@@ -980,10 +982,10 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
      * @return Array[MyRadio_Podcast]
      */
     public static function getAllPodcasts(
-        $num_results = 0,
-        $page = 1,
         $include_suspended = false,
-        $include_pending = false
+        $include_pending = false,
+        $num_results = 0,
+        $page = 1
     ) {
         $where = '';
         if (!$include_suspended || !$include_pending) {
