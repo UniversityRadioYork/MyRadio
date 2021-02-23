@@ -501,7 +501,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
                 500
             );
         }
-
+        self::$cache->purge();
         return $podcast;
     }
 
@@ -903,7 +903,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
      */
     public function setMeta($string_key, $value, $effective_from = null, $effective_to = null)
     {
-        parent::setMetaBase(
+        $result = parent::setMetaBase(
             $string_key,
             $value,
             $effective_from,
@@ -911,7 +911,8 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
             'uryplayer.podcast_metadata',
             'podcast_id'
         );
-        return $this;
+        $this->updateCacheObject();
+        return $result;
     }
 
     /**
