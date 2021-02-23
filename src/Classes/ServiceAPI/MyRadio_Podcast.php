@@ -844,7 +844,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
     {
         // TODO: Plumb this into the metadata system.
         //       At time of writing, MyRadio's metadata system doesn't do images.
-        return self::$db->fetchOne(
+        $result = self::$db->fetchOne(
             'SELECT metadata_value AS url
             FROM uryplayer.podcast_image_metadata
             WHERE podcast_id = $1
@@ -853,7 +853,8 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
             ORDER BY effective_from DESC
             LIMIT 1;',
             [$this->getID()]
-        )['url'];
+        );
+        return $result ? $result['url'] : Config::$public_media_uri + "/image_meta/PodcastImageMetadata/default.png";
     }
 
     /**
