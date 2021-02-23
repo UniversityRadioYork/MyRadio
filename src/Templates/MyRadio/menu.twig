@@ -45,7 +45,15 @@
       {% if item.template is not same as(null) %}
       {% include item.template %}
       {% else %}
-      <li><a href="{{ item.url }}{{ '?' in item.url ? '&' : '?' }}ref={{ item.title | e('url') }}" target="_blank" title="{{ item.description | replace({'"': '&quot;'}) | raw }}">{{ item.title }}</a></li>
+      <li><a 
+        href="{{ item.url }}{{ '?' in item.url ? '&' : '?' }}ref={{ item.title | e('url') }}"  
+        {% if config.base_url not in item.url %}
+          target="_blank" 
+        {% endif %} 
+        title="{{ item.description | replace({'"': '&quot;'}) | raw }}"
+        >
+        {{ item.title }}
+        </a></li>
       {% endif %}
     {% endfor %}
     </ul>
