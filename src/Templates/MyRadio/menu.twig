@@ -52,7 +52,10 @@
         {% endif %} 
         title="{{ item.description | replace({'"': '&quot;'}) | raw }}"
         >
-        {{ item.title }}
+        {{ item.title }}&nbsp;
+        {% if config.base_url not in item.url %}
+          <span class="glyphicon glyphicon-new-window" aria-hidden="true"></span> 
+        {% endif %} 
         </a></li>
       {% endif %}
     {% endfor %}
