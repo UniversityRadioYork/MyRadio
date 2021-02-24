@@ -770,7 +770,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
             'title' => $this->getMeta('title'),
             'description' => $this->getMeta('description'),
             'status' => $this->getStatus(),
-            'time' => $this->getSubmitted(),
+            'time' => $this->getSubmitted() != null ? $this->getSubmitted() : "Processing...",
             'uri' => $this->getURI(),
             'editlink' => [
                 'display' => 'icon',
