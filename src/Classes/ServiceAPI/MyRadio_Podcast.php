@@ -268,6 +268,15 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
             $shows = array_merge([['text' => 'Standalone']], $shows);
         }
 
+        $photos = array_merge([[]],
+        array_map(
+            function($pod) {
+                return ['text' => $pod->getMeta('title'), 'value' => $pod->getCover()];
+            },
+            self::getPodcastsAttachedToUser()
+        ));
+
+
         $form->addField(
             new MyRadioFormField(
                 'show',
@@ -329,12 +338,13 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
         )->addField(
             new MyRadioFormField(
                 'existing_cover',
-                MyRadioFormField::TYPE_TEXT,
+                MyRadioFormField::TYPE_SELECT,
                 [
+                    'options' => $photos,
                     'label' => 'Existing Cover Photo',
                     'explanation' => 'To use an existing cover photo of another podcast, '
-                        . 'copy the Existing Cover Photo file of another '
-                        . 'podcast with that photo into here. For new images, keep blank.',
+                        . 'select the podcast you\'d like to use the same image as.'
+                        . 'For new images, keep blank.',
                     'required' => false,
                 ]
             )
@@ -912,7 +922,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
             'podcast_id'
         );
         $this->updateCacheObject();
-        return $result;
+        return $this;
     }
 
     /**
