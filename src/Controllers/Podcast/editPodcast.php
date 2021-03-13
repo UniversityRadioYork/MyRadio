@@ -13,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     //Submitted
     $data = MyRadio_Podcast::getForm()->readValues();
 
-    if (empty($data['existing_cover']) && !is_uploaded_file($data['new_cover']['tmp_name'])){
+    if (empty($data['existing_cover']) && !is_uploaded_file($data['new_cover']['tmp_name'])) {
         throw new MyRadioException('You must provide either an existing or new cover photo.', 400);
     }
 

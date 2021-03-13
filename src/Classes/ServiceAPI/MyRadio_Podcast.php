@@ -268,13 +268,15 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
             $shows = array_merge([['text' => 'Standalone']], $shows);
         }
 
-        $photos = array_merge([[]],
-        array_map(
-            function($pod) {
-                return ['text' => $pod->getMeta('title'), 'value' => $pod->getCover()];
-            },
-            self::getPodcastsAttachedToUser()
-        ));
+        $photos = array_merge(
+            [[]],
+            array_map(
+                function ($pod) {
+                    return ['text' => $pod->getMeta('title'), 'value' => $pod->getCover()];
+                },
+                self::getPodcastsAttachedToUser()
+            )
+        );
 
 
         $form->addField(
