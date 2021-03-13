@@ -269,7 +269,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
         }
 
         $photos = array_merge(
-            [[]],
+            [[]], // Blank Option if they want to upload a new cover photo
             array_map(
                 function ($pod) {
                     return ['text' => $pod->getMeta('title'), 'value' => $pod->getCover()];
