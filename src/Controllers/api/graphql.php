@@ -108,47 +108,7 @@ $typeConfigDecorator = function ($typeConfig, TypeDefinitionNode $typeDefinition
                     ]
                 );
             };
-
-            $typeConfig['resolveField'] = function ($source, $args, GraphQLContext $context, ResolveInfo $info) {
-                $fieldName = $info->fieldName;
-                // If we're on the Query type, we're entering the graph, so we'll want a static method.
-                // Unlike elsewhere in the graph, we can assume everything on Query will have an @bind.
-                $bindDirective = GraphQLUtils::getDirectiveByName($info, 'bind');
-                if (!$bindDirective) {
-                    throw new MyRadioException("Tried to resolve $fieldName on Query but it didn't have an @bind");
-                }
-                $bindArgs = GraphQLUtils::getDirectiveArguments($bindDirective);
-                if (isset($bindArgs['class'])) {
-                    // we know class is a string
-                    /** @noinspection PhpPossiblePolymorphicInvocationInspection */
-                    $className = $bindArgs['class']->value;
-                } else {
-                    throw new MyRadioException(
-                        "Tried to resolve $fieldName on Query but its @bind didn't have a class"
-                    );
-                }
-                if (isset($bindArgs['method'])) {
-                    $methodName = $bindArgs['method']->value;
-                } else {
-                    throw new MyRadioException(
-                        "Tried to resolve $fieldName on Query but its @bind didn't have a method"
-                    );
-                }
-                // Wonderful!
-                $clazz = new ReflectionClass($className);
-                $meth = $clazz->getMethod($methodName);
-                if (GraphQLUtils::isAuthorisedToAccess($info, $className, $methodName)) {
-                    return GraphQLUtils::processScalarIfNecessary(
-                        $info,
-                        GraphQLUtils::invokeNamed($meth, null, $args)
-                    );
-                } else {
-                    return GraphQLUtils::returnNullOrThrowForbiddenException($info);
-                }
-            };
             break;
-        case "Mutation":
-            throw new MyRadioException('Mutations not supported');
     }
     return $typeConfig;
 };
@@ -166,6 +126,60 @@ function graphQlResolver($source, $args, GraphQLContext $context, ResolveInfo $i
 {
     $typeName = $info->parentType->name;
     $fieldName = $info->fieldName;
+    // Query and Mutation deserve special handling
+    if ($typeName === 'Query' || $typeName === 'Mutation') {
+        // If we're on the Query or Mutation type, we're entering the graph, so we'll want a static method.
+        // Unlike elsewhere in the graph, we can assume everything on Query/Mutation will have an @bind.
+        $bindDirective = GraphQLUtils::getDirectiveByName($info, 'bind');
+        if (!$bindDirective) {
+            throw new MyRadioException("Tried to resolve $fieldName on $typeName but it didn't have an @bind");
+        }
+        $bindArgs = GraphQLUtils::getDirectiveArguments($bindDirective);
+        if (isset($bindArgs['class'])) {
+            // we know class is a string
+            /** @noinspection PhpPossiblePolymorphicInvocationInspection */
+            $className = $bindArgs['class']->value;
+        } else {
+            throw new MyRadioException(
+                "Tried to resolve $fieldName on $typeName but its @bind didn't have a class"
+            );
+        }
+        if (isset($bindArgs['method'])) {
+            $methodName = $bindArgs['method']->value;
+        } else {
+            throw new MyRadioException(
+                "Tried to resolve $fieldName on $typeName but its @bind didn't have a method"
+            );
+        }
+        // Wonderful!
+        $clazz = new ReflectionClass($className);
+        // (We'll get a ReflectionException here if it's inaccessible. But That's Okay.
+        $meth = $clazz->getMethod($methodName);
+        if (GraphQLUtils::isAuthorisedToAccess($info, $className, $methodName)) {
+            // First, though, check if we should be using a calling convention
+            if (isset($bindArgs['callingConvention'])) {
+                $cc = $bindArgs['callingConvention']->value;
+                switch ($cc) {
+                    case 'FirstArgCurrentUser':
+                        $val = $meth->invokeArgs(null, [MyRadio_User::getInstance()->getID()]);
+                        break;
+                    case 'FirstArgInput':
+                        $val = $meth->invokeArgs(null, [$args['input']]);
+                        break;
+                    case 'InputAsArgs':
+                        $val = GraphQLUtils::invokeNamed($meth, null, $args['input']);
+                        break;
+                    default:
+                        throw new MyRadioException("Unknown calling convention $cc");
+                }
+            } else {
+                $val = GraphQLUtils::invokeNamed($meth, $source, $args);
+            }
+            return GraphQLUtils::processScalarIfNecessary($info, $val);
+        } else {
+            return GraphQLUtils::returnNullOrThrowForbiddenException($info);
+        }
+    }
     // First up, check if we have a bind directive
     $bindDirective = GraphQLUtils::getDirectiveByName($info, 'bind');
     if ($bindDirective) {
@@ -376,7 +390,12 @@ try {
 
 $warnings = $ctx->getWarnings();
 if (count($warnings) > 0) {
-    $result['warnings'] = $warnings;
+    $result['extensions'] = array_merge(
+        $result['extensions'] ?? [],
+        [
+            'warnings' => $warnings
+        ]
+    );
 }
 
 $corsWhitelistOrigins = [
