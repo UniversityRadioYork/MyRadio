@@ -345,7 +345,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
                     'options' => $photos,
                     'label' => 'Existing Cover Photo',
                     'explanation' => 'To use an existing cover photo of another podcast, '
-                        . 'select the podcast you\'d like to use the same image as.'
+                        . 'select the podcast you\'d like to use the same image as. '
                         . 'For new images, keep blank.',
                     'required' => false,
                 ]
