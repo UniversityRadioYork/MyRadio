@@ -64,7 +64,8 @@
                   {
                     initialValue: {{ field.value | json_encode }}
                   }
-                ));
+                ),
+                document.getElementById("{{ frm_name }}-{{ field.name }}"));
             {% endfor %}
           });
         </script>
