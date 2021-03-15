@@ -62,7 +62,9 @@
                 render(h(
                   {{ type }},
                   {
-                    initialValue: {{ field.value | json_encode }}
+                    initialValue: {{ field.value | json_encode }},
+                    formName: "{{ frm_name }}",
+                    fieldName: "{{ field.name }}"
                   }
                 ),
                 document.getElementById("{{ frm_name }}-{{ field.name }}"));
