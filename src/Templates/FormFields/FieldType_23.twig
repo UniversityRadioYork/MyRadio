@@ -2,7 +2,7 @@
     <b>Loading, please wait...</b>
 </div>
 <script type="json">
-    {"debug":{{ field | json_encode }}}
+    {"debug":{{ field | json_encode | raw }}}
 </script>
 <script type="module">
   import { render, h } from "preact";

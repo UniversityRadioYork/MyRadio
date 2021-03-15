@@ -415,7 +415,9 @@ class MyRadio_Event extends ServiceAPI
                 'react_test',
                 MyRadioFormField::TYPE_REACT,
                 [
-                    'component' => 'Sample'
+                    'options' => [
+                        'component' => 'Sample'
+                    ]
                 ]
             )
         );
