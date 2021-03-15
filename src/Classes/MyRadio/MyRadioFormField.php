@@ -253,6 +253,15 @@ class MyRadioFormField
     const TYPE_SECTION_CLOSE = 0x16;
 
     /**
+     * The constant used to specify this MyRadioFormField is a custom React component.
+     *
+     * It takes the following options:
+     * * component - the name of the component to render
+     *  (must be default export of a file called "Public/js/myradio.form.react.{component}.js)
+     */
+    const TYPE_REACT = 0x17;
+
+    /**
      * The name/id of the Form Field.
      *
      * @var string

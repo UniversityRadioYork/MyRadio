@@ -42,4 +42,15 @@
 <script type="text/javascript" src="{{baseurl}}js/vendor/bootstrap-datetimepicker.min.js"></script>
 <script type="text/javascript" src="{{baseurl}}js/vendor/typeahead.bundle.min.js"></script>
 <script type="text/javascript" src="{{baseurl}}js/myradio.form.js"></script>
+{% if react %}
+    <script type="importmap-shim">
+    {
+        "imports": {
+            "htm": "{{baseurl}}js/vendor/htm.min.js",
+            "preact": "{{baseurl}}js/vendor/preact.module.js"
+        }
+    }
+    </script>
+    <script async src="{{baseurl}}js/vendor/es-module-shims.js"></script>
+{% endif %}
 {% endblock %}

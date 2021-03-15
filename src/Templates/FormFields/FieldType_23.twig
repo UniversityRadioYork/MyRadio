@@ -1,0 +1,18 @@
+<div id="{{frm_name}}-{{sfieldname}}">
+    <b>Loading, please wait...</b>
+</div>
+<script type="module">
+  import { render, h } from "preact";
+  import {{ field.options.component }} from "{{baseurl}}js/myradio.form.react.{{ field.options.component | lower }}.js";
+    $(function() {
+      render(h(
+        {{ field.options.component }},
+        {
+            initialValue: {{ field.value | json_encode }}
+        }
+      ))
+    });
+</script>
+<script nomodule>
+    $("#{{frm_name}}-{{sfieldname}}").text("Sorry, your browser is too old to use this. Please update your browser.");
+</script>
