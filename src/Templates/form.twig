@@ -62,7 +62,6 @@
                 render(h(
                   {{ type }},
                   {
-                    initialValue: {{ field.value | json_encode | raw }},
                     formName: "{{ frm_name }}",
                     field: "{{ field | json_encode | raw }}"
                   }

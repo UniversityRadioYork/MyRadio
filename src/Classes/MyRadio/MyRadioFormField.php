@@ -260,7 +260,6 @@ class MyRadioFormField
      *  (must be default export of a file called "Public/js/myradio.form.react.{component|lowercase}.js)
      *
      * The component is imported from the above file, and rendered with the following props:
-     * * initialValue: the field's initial value, or `null` if it doesn't have one
      * * formName: the name of the form
      * * field: the output of $this->render(), JSON-encoded
      *
