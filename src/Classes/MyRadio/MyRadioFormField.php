@@ -264,7 +264,7 @@ class MyRadioFormField
      * * formName: the name of the form
      * * fieldName: the name of the field
      *
-     * It should render an <input type="hidden" name={formName + "_" + fieldName} value={JSON.stringify(value)} />
+     * It should render an <input type="hidden" name={formName + "-" + fieldName} value={JSON.stringify(value)} />
      * (in other words, a input named the same as all other field inputs, with the field's value JSON-encoded).
      */
     const TYPE_REACT = 0x17;
