@@ -255,9 +255,12 @@ class MyRadioFormField
     /**
      * The constant used to specify this MyRadioFormField is a custom React component.
      *
-     * It takes the following options:
+     * It takes the following custom options:
      * * component - the name of the component to render
-     *  (must be default export of a file called "Public/js/myradio.form.react.{component}.js)
+     *  (must be default export of a file called "Public/js/myradio.form.react.{component|lowercase}.js)
+     *
+     * The component is imported from the above file, and rendered with the following props:
+     * * initialValue: the field's initial value, or `null` if it doesn't have one
      */
     const TYPE_REACT = 0x17;
 

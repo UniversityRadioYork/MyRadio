@@ -410,16 +410,6 @@ class MyRadio_Event extends ServiceAPI
                     'label' => 'End Time',
                 ]
             )
-        )->addField(
-            new MyRadioFormField(
-                'react_test',
-                MyRadioFormField::TYPE_REACT,
-                [
-                    'options' => [
-                        'component' => 'Sample'
-                    ]
-                ]
-            )
         );
     }
 
