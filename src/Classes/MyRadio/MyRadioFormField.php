@@ -262,9 +262,9 @@ class MyRadioFormField
      * The component is imported from the above file, and rendered with the following props:
      * * initialValue: the field's initial value, or `null` if it doesn't have one
      * * formName: the name of the form
-     * * fieldName: the name of the field
+     * * field: the output of $this->render(), JSON-encoded
      *
-     * It should render an <input type="hidden" name={formName + "-" + fieldName} value={JSON.stringify(value)} />
+     * It should render an <input type="hidden" name={formName + "-" + field.name} value={JSON.stringify(value)} />
      * (in other words, a input named the same as all other field inputs, with the field's value JSON-encoded).
      */
     const TYPE_REACT = 0x17;
