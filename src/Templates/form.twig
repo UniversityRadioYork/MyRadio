@@ -42,7 +42,7 @@
 <script type="text/javascript" src="{{baseurl}}js/vendor/bootstrap-datetimepicker.min.js"></script>
 <script type="text/javascript" src="{{baseurl}}js/vendor/typeahead.bundle.min.js"></script>
 <script type="text/javascript" src="{{baseurl}}js/myradio.form.js"></script>
-{% if react %}
+{% if react is defined %}
     <script type="importmap-shim">
     {
         "imports": {
@@ -52,5 +52,22 @@
     }
     </script>
     <script async src="{{baseurl}}js/vendor/es-module-shims.min.js"></script>
+    {# We can't instantiate the component until after the importmap, hence we have to do it now #}
+    {% for type, fields in react %}
+        <script type="module">
+          import { render, h } from "preact";
+          import {{ type }} from "{{baseurl}}js/myradio.form.react.{{ type | lower }}.js";
+          $(function() {
+            {% for field in fields %}
+                render(h(
+                  {{ type }},
+                  {
+                    initialValue: {{ field.value | json_encode }}
+                  }
+                ));
+            {% endfor %}
+          });
+        </script>
+    {% endfor %}
 {% endif %}
 {% endblock %}

@@ -355,8 +355,22 @@ class MyRadioForm
                 ->addVariable('frm_fields', $fields)
                 ->addVariable('redact', $redact)
                 ->addVariable('captcha', $captcha)
-                ->addVariable('frm_custom', $frmcustom)
-                ->addVariable('react', $hasReact);
+                ->addVariable('frm_custom', $frmcustom);
+
+        if ($hasReact) {
+            $reactComponentFields = [];
+            foreach ($fields as $field) {
+                if ($field['type'] !== MyRadioFormField::TYPE_REACT) {
+                    continue;
+                }
+                $componentType = $field['options']['component'];
+                if (!isset($reactComponentFields[$componentType])) {
+                    $reactComponentFields[$componentType] = [];
+                }
+                $reactComponentFields[$componentType][] = $field;
+            }
+            $twig = $twig->addVariable('react', $reactComponentFields);
+        }
 
         $twig->render();
     }
