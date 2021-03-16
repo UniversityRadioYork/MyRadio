@@ -42,6 +42,15 @@ class MyRadio_Alias extends ServiceAPI
 
     protected function __construct($id)
     {
+        $this->alias_id = (int) $id;
+        $this->updateInternal();
+    }
+
+    private function updateInternal()
+    {
+        $this->source = '';
+        $this->destinations = [];
+
         $result = self::$db->fetchOne(
             'SELECT source, (
                 SELECT array_to_json(array(
@@ -61,12 +70,11 @@ class MyRadio_Alias extends ServiceAPI
                 ))
             ) AS dlist
             FROM mail.alias WHERE alias_id=$1',
-            [$id]
+            [$this->alias_id]
         );
         if (empty($result)) {
-            throw new MyRadioException('Alias '.$id.' does not exist!', 404);
+            throw new MyRadioException('Alias '.$this->alias_id.' does not exist!', 404);
         } else {
-            $this->alias_id = (int) $id;
             $this->source = $result['source'];
 
             foreach (json_decode($result['dtext']) as $text) {
@@ -144,6 +152,99 @@ class MyRadio_Alias extends ServiceAPI
     public function getDestinations()
     {
         return $this->destinations;
+    }
+
+    private const ALIAS_TYPE_TABLES = [
+        'text' => 'alias_text',
+        'member' => 'alias_member',
+        'officer' => 'alias_officer',
+        'list' => 'alias_list'
+    ];
+
+    /**
+     * Adds a destination to this alias.
+     * @param $type string
+     * @param $value string|int
+     * @return $this
+     */
+    public function addDestination(string $type, $value)
+    {
+        if (!isset(self::ALIAS_TYPE_TABLES[$type])) {
+            throw new MyRadioException("Unknown alias destination type $type");
+        }
+        $table = 'mail.' . self::ALIAS_TYPE_TABLES[$type];
+        self::$db->query(
+            "INSERT INTO $table (alias_id, destination)
+            VALUES ($1, $2)",
+            [$this->getID(), $value]
+        );
+        $this->updateInternal();
+        $this->updateCacheObject();
+        return $this;
+    }
+
+    /**
+     * Remove a destination from this alias.
+     * @param string $type
+     * @param $value
+     * @return $this
+     */
+    public function removeDestination(string $type, $value)
+    {
+        if (!isset(self::ALIAS_TYPE_TABLES[$type])) {
+            throw new MyRadioException("Unknown alias destination type $type");
+        }
+        $table = 'mail.' . self::ALIAS_TYPE_TABLES[$type];
+        self::$db->query(
+            "DELETE FROM $table
+            WHERE alias_id = $1 AND destination = $2",
+            [$this->getID(), $value]
+        );
+        $this->updateInternal();
+        $this->updateCacheObject();
+        return $this;
+    }
+
+    /**
+     * Delete this alias.
+     */
+    public function delete()
+    {
+        self::$db->query('BEGIN', []);
+        foreach (self::ALIAS_TYPE_TABLES as $_ => $table) {
+            self::$db->query(
+                "DELETE FROM mail.${table} WHERE alias_id = $1",
+                [$this->alias_id]
+            );
+        }
+        self::$db->query(
+            'DELETE FROM mail.alias WHERE alias_id = $1',
+            [$this->alias_id]
+        );
+        self::$db->query('COMMIT', []);
+        self::$cache->purge();
+    }
+
+    /**
+     * Creates a new alias, returning the newly created alias.
+     *
+     * `$destinations` should be an array of arrays, where the inner arrays are in the format:
+     * [
+     *  'type' => 'text|officer|member|list',
+     *  'value' => string | int (string for text and list, int for member and officer)
+     * ]
+     *
+     * @param $source string the source name (<source>@<Config::$email_domain>)
+     * @param array $destinations where the alias should point
+     * @return self
+     */
+    public static function create(string $source, $destinations = [])
+    {
+        $result = self::$db->fetchOne(
+            'INSERT INTO mail.alias (source) VALUES ($1) RETURNING alias_id',
+            [$source]
+        );
+        return self::getInstance($result['alias_id']);
     }
 
     /**
