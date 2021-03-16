@@ -46,6 +46,9 @@ class MyRadio_Alias extends ServiceAPI
         $this->updateInternal();
     }
 
+    /**
+     * Reloads this alias's definitions from the database.
+     */
     private function updateInternal()
     {
         $this->source = '';
@@ -235,16 +238,16 @@ class MyRadio_Alias extends ServiceAPI
      * ]
      *
      * @param $source string the source name (<source>@<Config::$email_domain>)
-     * @param array $destinations where the alias should point
      * @return self
      */
-    public static function create(string $source, $destinations = [])
+    public static function create(string $source)
     {
         $result = self::$db->fetchOne(
             'INSERT INTO mail.alias (source) VALUES ($1) RETURNING alias_id',
             [$source]
         );
-        return self::getInstance($result['alias_id']);
+        $alias = self::getInstance($result['alias_id']);
+        return $alias;
     }
 
     /**
