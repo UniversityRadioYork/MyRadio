@@ -1,13 +1,13 @@
 <?php
 
 /**
- * Allows the addition of new quotes.
+ * Allows the viewing of a single random quote
  */
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\ServiceAPI\MyRadio_Quote;
 
 CoreUtils::getTemplateObject()->setTemplate('table.twig')
-    ->addVariable('title', 'Content')
-    ->addVariable('tabledata', CoreUtils::setToDataSource(MyRadio_Quote::getAll()))
+    ->addVariable('title', 'Random Content')
+    ->addVariable('tabledata', CoreUtils::setToDataSource(MyRadio_Quote::getRandom()))
     ->addVariable('tablescript', 'myradio.quotes')
     ->render();

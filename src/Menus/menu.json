@@ -218,6 +218,11 @@
                             "description": "List and manage officerships and their permissions."
                         },
                         {
+                            "title": "Content Board",
+                            "url": "module=Quotes",
+                            "description": "Get content inspiration from URY members old and new."
+                        },
+                        {
                             "title": "Webcam",
                             "url": "module=Webcam",
                             "description": "Spy on people in the office."

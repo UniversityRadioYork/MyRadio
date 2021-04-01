@@ -1,0 +1,20 @@
+{
+    "menu":
+        [
+            {
+                "title": "Content Board",
+                "url": "module=Quotes",
+                "description": "Go to the Content Database."
+            },
+            {
+                "title": "Add Content",
+                "url": "module=Quotes,action=editQuote",
+                "description": "Add some content to the Content Database."
+            },
+            {
+                "title": "Random Content",
+                "url": "module=Quotes,action=randomQuote",
+                "description": "You feeling lucky?!?!"
+            }
+        ]
+}
