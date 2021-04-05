@@ -302,7 +302,19 @@ class MyRadio_Season extends MyRadio_Metadata_Common
 
         MyRadio_Show::getInstance($params['show_id'])->addSeason($season_id);
 
-        return self::getInstance($season_id);
+        $newSeason = self::getInstance($season_id);
+
+        // COVID Studio Usage - Summer 2021
+        if (isset($params['studio-request']) && $params['studio-request']) {
+            MyRadioEmail::sendEmailToList(
+                MyRadio_List::getByName("programming"),
+                "Studio Usage Request",
+                "Season " . $season_id . " of " . $newSeason->getMeta("title")
+                . " has requested studio usage."
+            );
+        }
+
+        return $newSeason;
     }
 
     public static function getForm()
@@ -369,6 +381,24 @@ class MyRadio_Season extends MyRadio_Metadata_Common
                             ['label' => 'until']
                         ),
                     ],
+                ]
+            )
+        )->addField(
+            new MyRadioFormField(
+                'studio-request',
+                MyRadioFormField::TYPE_CHECK,
+                [
+                    'explanation' => 'If ticked, you\'ll be requesting to present your show from our studios.
+                    It is very important that you have read the 
+                    <a href="https://drive.google.com/file/d/1Th_ih_XibBNTDg9izxgYFIOenFBKqwDq/view?usp=sharing"
+                    target="_blank">Studio Usage Rules</a>, 
+                    including that you can only do a solo show, or have people from the same household as you.
+                    Also, you can only do a studio show if you\'ve been previously studio trained,
+                    as we can\'t do training.There is <b>no</b>
+                    flexibility with this, and your right to use the studios can be stripped very quickly.',
+                    'label' => 'Request Studio Usage',
+                    'options' => ['checked' => false],
+                    'required' => false,
                 ]
             )
         )->addField(
