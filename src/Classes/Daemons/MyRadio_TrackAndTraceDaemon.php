@@ -32,7 +32,7 @@ class MyRadio_TrackAndTraceDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
     private static function generateTrackAndTraceReport()
     {
         $table = "<table>";
-        $table .= "<tr><th></th><th>Information</th><th>Location</th><th>Time</th></tr>";
+        $table .= "<tr><th>Type</th><th>Information</th><th>Location</th><th>Time</th></tr>";
 
         $data = [];
         $no_track = MyRadio_Timeslot::getLocationName(5); //WebStudio
@@ -70,6 +70,13 @@ class MyRadio_TrackAndTraceDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
                 }
             }
         }
+
+        usort($data, function ($a, $b) {
+            if ($a["unix"] == $b["unix"]) {
+                return 0;
+            }
+            return ($a["unix"] < $b["unix"]) ? -1 : 1;
+        });
 
         foreach ($data as $row) {
             $table .= "<tr><td>" . $row["type"]
