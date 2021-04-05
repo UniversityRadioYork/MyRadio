@@ -15,8 +15,12 @@ $(".twig-datatable").dataTable({
     //time
     {
       "sTitle": "Time"
+    },
+    //unix
+    {
+      "bVisible": false
     }
   ],
   "bPaginate": true,
-  "aaSorting": [[3, "desc"]]
+  "aaSorting": [[4, "desc"]]
 });
