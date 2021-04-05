@@ -394,7 +394,7 @@ class MyRadio_Season extends MyRadio_Metadata_Common
                     target="_blank">Studio Usage Rules</a>, 
                     including that you can only do a solo show, or have people from the same household as you.
                     Also, you can only do a studio show if you\'ve been previously studio trained,
-                    as we can\'t do training.There is <b>no</b>
+                    as we can\'t do training. There is <b>no</b>
                     flexibility with this, and your right to use the studios can be stripped very quickly.',
                     'label' => 'Request Studio Usage',
                     'options' => ['checked' => false],
