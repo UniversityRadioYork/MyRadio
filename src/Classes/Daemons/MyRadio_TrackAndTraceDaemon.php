@@ -39,8 +39,7 @@ class MyRadio_TrackAndTraceDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
 
         foreach (MyRadio_Season::getAllSeasonsInLatestTerm() as $season) {
             foreach ($season->getAllTimeslots() as $timeslot) {
-                if (
-                    $timeslot->getStartTime() < time()
+                if ($timeslot->getStartTime() < time()
                     && $timeslot->getStartTime() > time() - 604800
                 ) {
                     foreach ($timeslot->getSigninInfo() as $info) {
