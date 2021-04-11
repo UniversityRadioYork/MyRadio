@@ -56,10 +56,7 @@ class MyRadio_TrackAndTraceDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
                             } elseif ($info["guest_info"]) {
                                 $data[] = [
                                     "type" => "Guest",
-                                    "info" => [
-                                        "display" => "html",
-                                        "html" => nl2br($info["guest_info"])
-                                    ],
+                                    "info" => nl2br($info["guest_info"]),
                                     "location" => $info["location"],
                                     "time" => CoreUtils::happyTime($info["time"]),
                                     "unix" => $info["time"]
