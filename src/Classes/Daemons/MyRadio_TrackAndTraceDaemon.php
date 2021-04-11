@@ -72,10 +72,7 @@ class MyRadio_TrackAndTraceDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
         }
 
         usort($data, function ($a, $b) {
-            if ($a["unix"] == $b["unix"]) {
-                return 0;
-            }
-            return ($a["unix"] < $b["unix"]) ? -1 : 1;
+            return $a["unix"] - $b["unix"];
         });
 
         foreach ($data as $row) {
