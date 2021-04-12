@@ -5,6 +5,7 @@
  *
  * @data    20140102
  */
+
 use \MyRadio\Config;
 use \MyRadio\MyRadio\AuthUtils;
 use \MyRadio\MyRadio\CoreUtils;
@@ -30,12 +31,16 @@ function setupTimeslot(MyRadio_Timeslot $timeslot)
         $_SESSION['timeslotname'] = CoreUtils::happyTime($timeslot->getStartTime());
         //Handle sign-ins
         foreach (($_REQUEST['signin'] ?? []) as $memberid) {
+            if (!isset($_REQUEST["location"]) || $_REQUEST["location"] == "unselected") {
+                URLUtils::backWithMessage("You must select where you are doing your show, for COVID Track and Trace");
+                return;
+            }
             $timeslot->signIn(MyRadio_User::getInstance($memberid), $_REQUEST['location']);
         }
         if (!empty($_REQUEST['guest_info'])) {
             $timeslot->signInGuests($_REQUEST['guest_info'], $_REQUEST['location']);
         }
-        header('Location: '.($_REQUEST['next'] !== '' ? $_REQUEST['next'] : Config::$base_url));
+        header('Location: ' . ($_REQUEST['next'] !== '' ? $_REQUEST['next'] : Config::$base_url));
     }
 }
 
@@ -55,9 +60,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 } else {
     //Not Submitted
     $twig = CoreUtils::getTemplateObject()->setTemplate('MyRadio/timeslot.twig')
-            ->addVariable('title', 'Timeslot Select')
-            ->addVariable('allTimeslots', 'unavailable')
-            ->addVariable('next', $_GET['next']);
+        ->addVariable('title', 'Timeslot Select')
+        ->addVariable('allTimeslots', 'unavailable')
+        ->addVariable('next', $_GET['next']);
 
     $data = [];
     /*
