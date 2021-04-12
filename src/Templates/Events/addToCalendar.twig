@@ -1,0 +1,14 @@
+{% extends 'stripe.twig' %}
+{% import 'macros.twig' as MyRadio %}
+{% block stripecontent %}
+    <p>
+        Using this link, you can add events on MyRadio to your personal calendar.
+        This link is personal - don't share it with anyone!
+    </p>
+    <p>
+        <input type="text" disabled value="{{ link }}" />
+    </p>
+    <p>
+
+    </p>
+{% endblock %}
