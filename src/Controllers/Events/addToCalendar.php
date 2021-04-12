@@ -9,7 +9,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     switch ($_POST['action']) {
         case 'regenerate':
             MyRadio_Event::revokeCalendarTokenFor();
-            break;
+            URLUtils::backWithMessage('Calendar link reset.');
+            exit;
         default:
             throw new MyRadioException('Unknown action', 400);
     }

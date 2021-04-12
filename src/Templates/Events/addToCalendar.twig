@@ -9,6 +9,12 @@
         <input type="text" disabled value="{{ link }}" />
     </p>
     <p>
-
+        If the link becomes compromised, click the button below to reset it.
+    </p>
+    <p>
+        <form method="post" action="{{ MyRadio.makeURL(config, 'Events', 'addToCalendar') }}">
+            <input type="hidden" name="action" value="regenerate" />
+            <input type="submit" value="Reset Link" class="btn btn-danger" />
+        </form>
     </p>
 {% endblock %}
