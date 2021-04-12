@@ -23,10 +23,12 @@ class MyRadio_TrackAndTraceDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
             return;
         }
 
-        self::generateTrackAndTraceReport();
-
-        // Done
-        self::setVal($weekkey, time());
+        try {
+            self::generateTrackAndTraceReport();
+        } finally {
+            // Done
+            self::setVal($weekkey, time());
+        }
     }
 
     private static function generateTrackAndTraceReport()
