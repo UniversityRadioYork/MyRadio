@@ -449,7 +449,7 @@ class MyRadio_Event extends ServiceAPI
         return Event::create($this->getTitle())
             ->startsAt((new DateTime())->setTimestamp($this->getStartTime()))
             ->endsAt((new DateTime())->setTimestamp($this->getEndTime()))
-            ->description(strip_tags($this->getDescriptionHtml()))
+            ->description(html_entity_decode(strip_tags($this->getDescriptionHtml())))
             ->organizer($this->getHost()->getPublicEmail(), $this->getHost()->getName());
     }
 
