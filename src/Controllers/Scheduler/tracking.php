@@ -22,7 +22,8 @@ foreach (MyRadio_Season::getAllSeasonsInLatestTerm() as $season) {
                             "type" => "URY Member",
                             "info" => $info["user"]->getName() . ($eduroam ? " ($eduroam)" : ""),
                             "location" => $info["location"],
-                            "time" => CoreUtils::happyTime($info["time"])
+                            "time" => CoreUtils::happyTime($info["time"]),
+                            "unix" => $info["time"]
                         ];
                     } elseif ($info["guest_info"]) {
                         $data[] = [
@@ -32,7 +33,8 @@ foreach (MyRadio_Season::getAllSeasonsInLatestTerm() as $season) {
                                 "html" => nl2br($info["guest_info"])
                             ],
                             "location" => $info["location"],
-                            "time" => CoreUtils::happyTime($info["time"])
+                            "time" => CoreUtils::happyTime($info["time"]),
+                            "unix" => $info["time"]
                         ];
                     }
                 }
