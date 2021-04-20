@@ -6616,7 +6616,7 @@ ALTER TABLE ONLY selbaps
 --
 
 ALTER TABLE ONLY selsources
-    ADD CONSTRAINT selsources_sourceid_fkey FOREIGN KEY (sourceid) REFERENCES tracklist.selsources(sourceid);
+    ADD CONSTRAINT selsources_sourceid_fkey FOREIGN KEY (sourceid) REFERENCES tracklist.source(sourceid);
 
 
 --
