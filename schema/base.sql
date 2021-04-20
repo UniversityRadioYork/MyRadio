@@ -2108,6 +2108,11 @@ CREATE TABLE selbaps (
     bapsloc integer NOT NULL
 );
 COMMENT ON TABLE selbaps IS 'Marries selector actions with BAPS servers';
+CREATE TABLE selsources (
+    selaction integer NOT NULL,
+    sourceid character(1) NOT NULL
+);
+COMMENT ON TABLE selbaps IS 'Marries selector actions with tracklist sources';
 CREATE TABLE source (
     sourceid character(1) NOT NULL,
     source text NOT NULL
@@ -6604,6 +6609,22 @@ ALTER TABLE ONLY selbaps
 
 ALTER TABLE ONLY selbaps
     ADD CONSTRAINT selbaps_selaction_fkey FOREIGN KEY (selaction) REFERENCES public.selector_actions(action);
+
+
+--
+-- Name: selsources_sourceid_fkey; Type: FK CONSTRAINT; Schema: tracklist
+--
+
+ALTER TABLE ONLY selsources
+    ADD CONSTRAINT selsources_sourceid_fkey FOREIGN KEY (sourceid) REFERENCES tracklist.selsources(sourceid);
+
+
+--
+-- Name: selsources_selaction_fkey; Type: FK CONSTRAINT; Schema: tracklist
+--
+
+ALTER TABLE ONLY selsources
+    ADD CONSTRAINT selsources_selaction_fkey FOREIGN KEY (selaction) REFERENCES public.selector_actions(action);
 
 
 --

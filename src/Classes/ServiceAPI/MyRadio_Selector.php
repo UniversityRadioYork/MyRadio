@@ -209,13 +209,13 @@ class MyRadio_Selector
     }
 
     /**
-     * Returns what studio was on air at the time given.
+     * Returns which selector action was last performed at the time given.
      *
      * @param int $time
      *
      * @return int
      */
-    public static function getStudioAtTime($time = null)
+    public static function getSelActionAtTime($time = null)
     {
         if ($time === null) {
             $time = time();
@@ -232,8 +232,21 @@ class MyRadio_Selector
         if (!$result) {
             return 0;
         }
+        return $result[0];
+    }
 
-        return $result[0] - 3;
+    /**
+     * Returns what studio was on air at the time given.
+     *
+     * @param int $time
+     *
+     * @return int
+     */
+    public static function getStudioAtTime($time = null)
+    {
+        $result = getSelActionAtTime($time);
+
+        return $result - 3;
     }
 
     /**
