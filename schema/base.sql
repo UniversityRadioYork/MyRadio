@@ -2112,7 +2112,7 @@ CREATE TABLE selsources (
     selaction integer NOT NULL,
     sourceid character(1) NOT NULL
 );
-COMMENT ON TABLE selbaps IS 'Marries selector actions with tracklist sources';
+COMMENT ON TABLE selsources IS 'Marries selector actions with tracklist sources';
 CREATE TABLE source (
     sourceid character(1) NOT NULL,
     source text NOT NULL
