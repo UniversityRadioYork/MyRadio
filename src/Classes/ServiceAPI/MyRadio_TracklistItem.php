@@ -152,7 +152,7 @@ class MyRadio_TracklistItem extends ServiceAPI
 
         # If we've been left to work out which state we're in (confirmed or off air), let's look this up.
         if ($state == null) {
-            $state = in_array($sourceid, getTracklistSourcesOnAirAtTime($starttime)) ? 'c': 'o';
+            $state = in_array($sourceid, self::getTracklistSourcesOnAirAtTime($starttime)) ? 'c': 'o';
         }
 
         self::$db->query('BEGIN');
