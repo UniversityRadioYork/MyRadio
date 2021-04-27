@@ -71,7 +71,6 @@ class MyRadio_TracklistItem extends ServiceAPI
         return new self($result);
     }
 
-
     /**
      * Create a new TracklistItem, returning the new item.
      *
@@ -87,7 +86,7 @@ class MyRadio_TracklistItem extends ServiceAPI
      *
      * @throws MyRadioException
      */
-    public static function create($trackid, $timeslotid = null, $starttime = null, $sourceid = 'a', $state = 'c')
+    public static function create($trackid, $timeslotid = null, $starttime = null, $sourceid = 'a', $state = null)
     {
 
         if (AuthUtils::hasPermission(AUTH_TRACKLIST_ALL)) {
@@ -151,6 +150,10 @@ class MyRadio_TracklistItem extends ServiceAPI
 
         $track = MyRadio_Track::getInstance($trackid);
 
+        # If we've been left to work out which state we're in (confirmed or off air), let's look this up.
+        if ($state == null) {
+            $state = in_array($sourceid, self::getTracklistSourcesOnAirAtTime($starttime)) ? 'c': 'o';
+        }
 
         self::$db->query('BEGIN');
 
@@ -232,6 +235,25 @@ class MyRadio_TracklistItem extends ServiceAPI
     public function getStartTime()
     {
         return $this->starttime;
+    }
+
+    /**
+     * Get which tracklist sources (tracklist.source) are on air based on the selector status at a given time.
+     *
+     * @param int $time    Epoch time. Optional, defaults to current time.
+     *
+     * @return char[] Tracklist sources
+     */
+    public static function getTracklistSourcesOnAirAtTime($time = null)
+    {
+        $sel_action = MyRadio_Selector::getSelActionAtTime($time);
+
+        $sources = self::$db->fetchColumn(
+            'SELECT sourceid FROM tracklist.selsources WHERE selaction=$1',
+            [$sel_action]
+        );
+
+        return $sources;
     }
 
     /**
