@@ -244,7 +244,7 @@ class MyRadio_Selector
      */
     public static function getStudioAtTime($time = null)
     {
-        $result = getSelActionAtTime($time);
+        $result = self::getSelActionAtTime($time);
 
         return $result - 3;
     }
