@@ -256,7 +256,7 @@ var Tracklist = function () {
         deleteButton.innerHTML = "<span class='glyphicon glyphicon-trash'></span>";
         deleteButton.addEventListener("click", get_delete_func(data[i].id, data[i].title, data[i].artist));
         
-        if (data[i].endtime == null) {
+        if (data[i].endtime == false) {
           endButton.className = "end-btn btn btn-warning";
           endButton.innerHTML = "<span class='glyphicon glyphicon-stop'></span>";
           endButton.addEventListener("click", get_end_func(data[i].id, data[i].title, data[i].artist));
