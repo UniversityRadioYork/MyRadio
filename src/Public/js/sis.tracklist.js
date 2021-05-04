@@ -41,8 +41,9 @@ var Tracklist = function () {
           function () {
             myradio.callAPI("PUT", "tracklistItem", "endtime", id, "", "", 
               function () {
-                var row = document.getElementById("t" + id);
-                let endbtn = row.querySelectorAll('.end-btn')[0];
+                let row = document.getElementById("t" + id);
+                let tds = row.childNodes;
+                let endbtn = tds[tds.length - 1].querySelectorAll('.end-btn')[0];
                 row.removeChild(endbtn);
               }
             );
