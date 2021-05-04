@@ -106,8 +106,10 @@ class MyRadio_TracklistItem extends ServiceAPI
                 403
             );
         }
-
+        
+        $timeslot_was_null = false;
         if ($timeslotid == null) {
+            $timeslot_was_null = true;
             $timeslot = MyRadio_Timeslot::getCurrentTimeslot();
             $timeslotid = $timeslot != null ? $timeslot->getID() : null; // will be null if jukebox etc.
         } else {
@@ -153,6 +155,14 @@ class MyRadio_TracklistItem extends ServiceAPI
         # If we've been left to work out which state we're in (confirmed or off air), let's look this up.
         if ($state == null) {
             $state = in_array($sourceid, self::getTracklistSourcesOnAirAtTime($starttime)) ? 'c': 'o';
+            
+            // If we didn't originally supply a timeslotid, and we're tracklisting off air
+            // Don't attach to the current timeslot.
+            // This is useful for BAPS, where it doesn't know if it's tracklisting to a show, or if it's the on air studio.
+            // We don't want to report a track as played off air to a timeslot if it's in a different room etc.
+            if ($state == 'o' && $timeslot_was_null == true) {
+                $timeslotid == null;
+            }
         }
 
         self::$db->query('BEGIN');
