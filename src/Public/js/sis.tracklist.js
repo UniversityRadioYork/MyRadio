@@ -25,7 +25,32 @@ var Tracklist = function () {
         );
         myradio.createDialog(
           "Confirm removal",
-          "Are you sure you want to remove " + title + " by " + artist + " from the tracklist?",
+          "Are you sure you want to remove '" + title + " by " + artist + "' from the tracklist?",
+          [confirmButton, myradio.closeButton()]
+        );
+      };
+    },
+    get_end_func = function (id, title, artist) {
+      return function () {
+        var confirmButton = document.createElement("button");
+        confirmButton.className = "btn btn-warning";
+        confirmButton.innerHTML = "End Tracklist";
+        confirmButton.setAttribute("data-dismiss", "modal");
+        confirmButton.addEventListener(
+          "click",
+          function () {
+            myraido.callAPI("PUT", "tracklistItem", "endtime", id, "", "", 
+              function () {
+                var row = document.getElementById("t" + id);
+                let endbtn = row.querySelectorAll('.end-btn')[0];
+                row.removeChild(endbtn);
+              }
+            );
+          }
+        );
+        myradio.createDialog(
+          "Confirm end of track?",
+          "Are you sure you want to mark '" + title + " by " + artist + "' as ended in the tracklist?",
           [confirmButton, myradio.closeButton()]
         );
       };
@@ -217,8 +242,10 @@ var Tracklist = function () {
           artistTd = document.createElement("td"),
           albumTd = document.createElement("td"),
           timeTd = document.createElement("td"),
-          deleteTd = document.createElement("td"),
-          deleteButton = document.createElement("button");
+          actionTd = document.createElement("td"),
+          deleteButton = document.createElement("button"),
+          endButton = document.createElement("button");
+        
 
         time = moment.unix(data[i].playtime);
         newRow.className = "td-tracklistitem";
@@ -228,12 +255,19 @@ var Tracklist = function () {
         deleteButton.className = "btn btn-danger";
         deleteButton.innerHTML = "<span class='glyphicon glyphicon-trash'></span>";
         deleteButton.addEventListener("click", get_delete_func(data[i].id, data[i].title, data[i].artist));
+        
+        if (data[i].endtime == null) {
+          endButton.className = "end-btn btn btn-warning";
+          endButton.innerHTML = "<span class='glyphicon glyphicon-stop'></span>";
+          endButton.addEventListener("click", get_end_func(data[i].id, data[i].title, data[i].artist));
+          actionTd.appendChild(endButton);
+        };
 
         titleTd.innerHTML = data[i].title;
         artistTd.innerHTML = data[i].artist;
         albumTd.innerHTML = data[i].album;
         timeTd.innerHTML = time.format("HH:mm");
-        deleteTd.appendChild(deleteButton);
+        actionTd.appendChild(deleteButton);
 
         newRow.appendChild(titleTd);
         newRow.appendChild(artistTd);
