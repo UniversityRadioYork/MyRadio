@@ -39,7 +39,7 @@ var Tracklist = function () {
         confirmButton.addEventListener(
           "click",
           function () {
-            myraido.callAPI("PUT", "tracklistItem", "endtime", id, "", "", 
+            myradio.callAPI("PUT", "tracklistItem", "endtime", id, "", "", 
               function () {
                 var row = document.getElementById("t" + id);
                 let endbtn = row.querySelectorAll('.end-btn')[0];
@@ -228,7 +228,7 @@ var Tracklist = function () {
       table = document.createElement("table");
       table.setAttribute("class", "tracklist");
       header = document.createElement("tr");
-      header.innerHTML = "<th>Title</th><th>Artist</th><th>Album</th><th>Time</th><th>Remove</th>";
+      header.innerHTML = "<th>Title</th><th>Artist</th><th>Album</th><th>Time</th><th>Actions</th>";
       table.appendChild(header);
 
       this.appendChild(addButton);
@@ -255,7 +255,7 @@ var Tracklist = function () {
         deleteButton.className = "btn btn-danger";
         deleteButton.innerHTML = "<span class='glyphicon glyphicon-trash'></span>";
         deleteButton.addEventListener("click", get_delete_func(data[i].id, data[i].title, data[i].artist));
-        
+        actionTd.appendChild(deleteButton);
         if (data[i].endtime == false) {
           endButton.className = "end-btn btn btn-warning";
           endButton.innerHTML = "<span class='glyphicon glyphicon-stop'></span>";
@@ -267,7 +267,6 @@ var Tracklist = function () {
         artistTd.innerHTML = data[i].artist;
         albumTd.innerHTML = data[i].album;
         timeTd.innerHTML = time.format("HH:mm");
-        actionTd.appendChild(deleteButton);
 
         newRow.appendChild(titleTd);
         newRow.appendChild(artistTd);
