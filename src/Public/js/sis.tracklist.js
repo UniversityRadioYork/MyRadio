@@ -273,7 +273,7 @@ var Tracklist = function () {
         newRow.appendChild(artistTd);
         newRow.appendChild(albumTd);
         newRow.appendChild(timeTd);
-        newRow.appendChild(deleteTd);
+        newRow.appendChild(actionTd);
 
         table.appendChild(newRow);
 
