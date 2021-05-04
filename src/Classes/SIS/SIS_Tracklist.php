@@ -30,25 +30,17 @@ class SIS_Tracklist extends ServiceAPI
         $tracks = [];
         foreach ($tracklist as $tracklistitem) {
             $track = $tracklistitem->getTrack();
-            if (is_array($track)) {
-                $tracks[] = [
-                    'playtime' => $tracklistitem->getStartTime(),
-                    'title' => $track['title'],
-                    'artist' => $track['artist'],
-                    'album' => $track['album'],
-                    'trackid' => 'custom',
-                    'id' => $tracklistitem->getID(),
-                 ];
-            } else {
-                $tracks[] = [
-                    'playtime' => $tracklistitem->getStartTime(),
-                    'title' => $track->getTitle(),
-                    'artist' => $track->getArtist(),
-                    'album' => $track->getAlbum()->getTitle(),
-                    'trackid' => $track->getID(),
-                    'id' => $tracklistitem->getID(),
-                 ];
-            }
+            // Essentially, if the item is a manual tracklist outside the library, it will be an array instead of an MyRadio_Track.
+            $is_array = is_array($track);
+            $tracks[] = [
+                'playtime' => $tracklistitem->getStartTime(),
+                'endtime' => $tracklistitem->getEndTime(),
+                'title' => $is_array ? $track['title'] : $track->getTitle(),
+                'artist' => $is_array ? $track['artist'] : $track->getArtist(),
+                'album' => $is_array ? $track['album'] : $track->getAlbum()->getTitle(),
+                'trackid' => $is_array ? 'custom' : $track->getID(),
+                'id' => $tracklistitem->getID(),
+            ];
         }
 
         return $tracks;
