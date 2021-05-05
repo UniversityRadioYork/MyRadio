@@ -161,7 +161,7 @@ class MyRadio_TracklistItem extends ServiceAPI
             // This is useful for BAPS, where it doesn't know if it's tracklisting to a show, or if it's the on air studio.
             // We don't want to report a track as played off air to a timeslot if it's in a different room etc.
             if ($state == 'o' && $timeslot_was_null == true) {
-                $timeslotid == null;
+                $timeslotid = null;
             }
         }
 
