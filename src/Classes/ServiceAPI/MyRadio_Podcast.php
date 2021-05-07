@@ -484,6 +484,8 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
         //Validate the tags
         $tags = CoreUtils::explodeTags($tags);
 
+        $userId = MyRadio_User::getInstance()->getID();
+
         self::$db->query('BEGIN');
 
         //Get an ID for the new Podcast
@@ -491,15 +493,26 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
             'INSERT INTO uryplayer.podcast '
             .'(memberid, approvedid, submitted) VALUES ($1, $1, NULL) '
             .'RETURNING podcast_id',
-            [MyRadio_User::getInstance()->getID()]
+            [$userId]
         )[0];
+
+        // Write the metadata here, while we still have the txn
+
+        self::$db->query(
+            'INSERT INTO uryplayer.podcast_meta (podcast_id, memberid, approvedid, effective_from, effective_to, metadata_key_id, metadata_value)
+            VALUES ($1, $2, $2, NOW(), NULL, $3, $4)',
+            [$id, $userId, self::getMetadataKey('title'), $title]
+        );
+        self::$db->query(
+            'INSERT INTO uryplayer.podcast_meta (podcast_id, memberid, approvedid, effective_from, effective_to, metadata_key_id, metadata_value)
+            VALUES ($1, $2, $2, NOW(), NULL, $3, $4)',
+            [$id, $userId, self::getMetadataKey('description'), $description]
+        );
 
         self::$db->query('COMMIT');
 
         $podcast = self::getInstance($id);
 
-        $podcast->setMeta('title', $title);
-        $podcast->setMeta('description', $description);
         $podcast->setMeta('tag', $tags);
         $podcast->setCredits($credits['member'], $credits['credittype']);
         if (!empty($show)) {
@@ -513,7 +526,6 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
                 500
             );
         }
-        self::$cache->purge();
         return $podcast;
     }
 
