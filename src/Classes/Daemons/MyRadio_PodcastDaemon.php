@@ -31,6 +31,7 @@ class MyRadio_PodcastDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
             //Encode the first podcast.
             dlog('Converting Podcast '.$podcasts[0]->getID().'...', 3);
             $podcasts[0]->convert();
+            $podcasts[0]->__destruct();
             dlog('Conversion complete.', 3);
         }
     }
