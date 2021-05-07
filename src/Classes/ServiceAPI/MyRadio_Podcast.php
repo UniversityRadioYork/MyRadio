@@ -494,7 +494,6 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
             [MyRadio_User::getInstance()->getID()]
         )[0];
 
-        self::$db->query('COMMIT');
 
         $podcast = self::getInstance($id);
 
@@ -505,6 +504,8 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
         if (!empty($show)) {
             $podcast->setShow($show);
         }
+
+        self::$db->query('COMMIT');
 
         //Ship the file off to the archive location to be converted
         if (!move_uploaded_file($file, $podcast->getArchiveFile())) {
