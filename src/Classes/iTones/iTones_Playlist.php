@@ -173,6 +173,17 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
                     'required' => false,
                 ]
             )
+        )->addField(
+            new MyRadioFormField(
+                'archived',
+                MyRadioFormField::TYPE_CHECK,
+                [
+                    'label' => 'Archived',
+                    'explanation' => "An archived playlist won't be in the jukebox rotation, or be
+                    availble to presenters. It can be unarchived by reaching it through the 'All Podcasts' page",
+                    'required' => false
+                ]
+            )
         );
     }
 
@@ -185,7 +196,8 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
                 [
                     'title' => $this->getTitle(),
                     'description' => $this->getDescription(),
-                    'category' => $this->getCategory()->getID()
+                    'category' => $this->getCategory()->getID(),
+                    'archived' => $this->isArchived()
                 ]
             );
     }
@@ -786,17 +798,26 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
         });
     }
 
-    public static function create($title, $description, $category)
+    public static function create($title, $description, $category, $archived)
     {
         if (!is_int($category)) {
             throw new MyRadioException('Expected $category to be an integer');
         }
         $id = str_replace(' ', '-', $title);
         $id = strtolower(preg_replace('/[^a-z0-9-]/i', '', $id));
+
+        // You may think, "hmm, why would you create a playlist archived immediately?"
+        // Well, I'm justifying it by saying that music team may want to not release
+        // a playlist immediately, but still be working on it. The real reason is
+        // cause it was easier to have the form have an archive option on creation
+        // because its there for editing, and so we should have the button
+        // do what it says it'll do, even if it seems a bit odd.
+        // Michael, nearly 3am, 2021 :)
+
         self::$db->query(
-            'INSERT INTO jukebox.playlists (playlistid, title, description, category)
-            VALUES ($1, $2, $3, $4)',
-            [$id, $title, $description, $category]
+            'INSERT INTO jukebox.playlists (playlistid, title, description, category, archived)
+            VALUES ($1, $2, $3, $4, $5)',
+            [$id, $title, $description, $category, $archived]
         );
 
         return self::getInstance($id);
