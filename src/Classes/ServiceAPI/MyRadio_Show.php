@@ -1130,6 +1130,8 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             null,
             $this->isPodcastExplicit() ? "true" : "false"
         );
+        
+        $writer->writeElement("copyright", "Copyright " . date("Y") . " " . Config::$long_name . ". All rights reserved.");
 
         foreach ($this->getAllPodcasts() as $episode) {
             if (!($episode->isPublished())) {
