@@ -276,7 +276,7 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
 
     /**
      * Is the playlist archived?
-     * 
+     *
      * @return bool
      *
      */
@@ -514,7 +514,7 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
 
     /**
      * Update the archival state of a playlist
-     * 
+     *
      * @param bool $archived
      */
 
@@ -577,7 +577,7 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
      * Get an array of all Playlists.
      *
      * @param bool $includeArchived whether to include archived playlists (default false)
-     * 
+     *
      * @return array of iTones_Playlist objects
      */
     public static function getAlliTonesPlaylists($includeArchived = false)
@@ -597,7 +597,7 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
      * Get all the playlists that are available right now
      *
      * @param bool $includeArchived whether to include archived playlists (default false)
-     * 
+     *
      * @return array of iTones_Playlist objects
      */
     public static function getAllAvailablePlaylists($includeArchived = false)
@@ -694,8 +694,11 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
      * @param bool $includeArchived whether to include archived playlists (default false)
      * @return iTones_Playlist
      */
-    public static function getPlaylistOfCategoryFromWeights($categoryId, $playlists_to_ignore = [], $includeArchived = false)
-    {
+    public static function getPlaylistOfCategoryFromWeights(
+        $categoryId,
+        $playlists_to_ignore = [],
+        $includeArchived = false
+    ) {
         if (!is_int($categoryId)) {
             throw new MyRadioException('Expected $categoryId to be an integer');
         }
