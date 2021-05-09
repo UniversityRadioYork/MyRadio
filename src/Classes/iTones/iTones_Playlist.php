@@ -3,6 +3,7 @@
 /**
  * This file provides the iTones_Playlist class for MyRadio - Contains a predefined list of Central tracks.
  */
+
 namespace MyRadio\iTones;
 
 use MyRadio\Config;
@@ -30,6 +31,7 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
     protected $tracks = [];
     protected $revisionid;
     private $categoryid;
+    private $archived;
 
     /**
      * Initiates the ManagedPlaylist variables.
@@ -54,28 +56,28 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
         $this->locktime = (int) $result['locktime'];
         $this->categoryid = (int) $result['category'];
         if (is_null($this->categoryid)) {
-                throw new MyRadioException('Playlist ' . $playlistid . ' has a null category!', 500);
+            throw new MyRadioException('Playlist ' . $playlistid . ' has a null category!', 500);
         }
-        
+
         $this->revisionid = (int) self::$db->fetchOne(
             'SELECT revisionid FROM jukebox.playlist_revisions
             WHERE playlistid=$1 ORDER BY revisionid DESC LIMIT 1',
             [$this->getID()]
         )['revisionid'];
+
+        $this->archived = ($result['archived'] == 't');
     }
 
     public static function getTracksForm()
     {
-        return (
-            new MyRadioForm(
-                'itones_playlistedit',
-                'iTones',
-                'editPlaylist',
-                [
-                    'title' => 'Edit Campus Jukebox Playlist',
-                ]
-            )
-        )->addField(
+        return (new MyRadioForm(
+            'itones_playlistedit',
+            'iTones',
+            'editPlaylist',
+            [
+                'title' => 'Edit Campus Jukebox Playlist',
+            ]
+        ))->addField(
             new MyRadioFormField(
                 'tracks',
                 MyRadioFormField::TYPE_TABULARSET,
@@ -134,16 +136,14 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
 
     public static function getForm()
     {
-        return (
-            new MyRadioForm(
-                'itones_playlistedit',
-                'iTones',
-                'configurePlaylist',
-                [
-                    'title' => 'Configure Jukebox Playlist',
-                ]
-            )
-        )->addField(
+        return (new MyRadioForm(
+            'itones_playlistedit',
+            'iTones',
+            'configurePlaylist',
+            [
+                'title' => 'Configure Jukebox Playlist',
+            ]
+        ))->addField(
             new MyRadioFormField(
                 'title',
                 MyRadioFormField::TYPE_TEXT,
@@ -263,6 +263,18 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
     }
 
     /**
+     * Is the playlist archived?
+     * 
+     * @return bool
+     *
+     */
+
+    public function isArchived()
+    {
+        return $this->archived;
+    }
+
+    /**
      * Takes a lock on this playlist - stores a notification to all other systems that it should not be edited.
      *
      * @param string       $lockstr If you already have a lock, put it here. It will be renewed if it is still valid.
@@ -340,7 +352,7 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
      */
     private function generateLockKey(MyRadio_User $lock, $locktime)
     {
-        return sha1('myradioitoneslockkey'.$lock->__toString().$locktime.$this->getID());
+        return sha1('myradioitoneslockkey' . $lock->__toString() . $locktime . $this->getID());
     }
 
     /**
@@ -368,7 +380,7 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
      *
      * @param MyRadio_Track[]|int[] $tracks  Tracks to put in the playlist.
      * @param string                $lockstr String that provides Write access to this Playlist.
- *                                              Acquired from acquireLock();
+     *                                              Acquired from acquireLock();
      * @param string|null           $notes   Optional. A textual commit message about the change.
      *
      * @todo Push these changes to the playlist files on playoutsvc.ury.york.ac.uk. This should probably be a
@@ -436,7 +448,7 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
         //Add new tracks
         foreach ($new_additions as $track) {
             if (!$track instanceof MyRadio_Track) {
-                trigger_error('Discarding non-track item: '.print_r($track, true));
+                trigger_error('Discarding non-track item: ' . print_r($track, true));
                 continue;
             }
             self::$db->query(
@@ -489,11 +501,31 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
     }
 
     /**
+     * Update the archival state of a playlist
+     * 
+     * @param bool $archived
+     */
+
+    public function setArchived($archived)
+    {
+        self::$db->query(
+            "UPDATE jukebox.playlists SET archived=$1 WHERE playlistid=$2",
+            [$archived, $this->getID()]
+        );
+        $this->archived = $archived;
+        $this->updateCacheObject();
+    }
+
+    /**
      * Is this playlist available right now?
      * @return boolean
      */
     public function isAvailable()
     {
+        if ($this->archived) {
+            return false;
+        }
+
         $result = self::$db->fetchOne('select count(*) AS valid
             from jukebox.playlists
             inner join jukebox.playlist_availability on playlists.playlistid = playlist_availability.playlistid
@@ -532,12 +564,19 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
     /**
      * Get an array of all Playlists.
      *
+     * @param bool $includeArchived whether to include archived playlists (default false)
+     * 
      * @return array of iTones_Playlist objects
      */
-    public static function getAlliTonesPlaylists()
+    public static function getAlliTonesPlaylists($includeArchived = false)
     {
+        $where = "";
+        if (!$includeArchived) {
+            $where = "WHERE archived = false";
+        }
+
         self::wakeup();
-        $result = self::$db->fetchColumn('SELECT playlistid FROM jukebox.playlists ORDER BY title');
+        $result = self::$db->fetchColumn("SELECT playlistid FROM jukebox.playlists $where ORDER BY title");
 
         return self::resultSetToObjArray($result);
     }
@@ -545,12 +584,19 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
     /**
      * Get all the playlists that are available right now
      *
+     * @param bool $includeArchived whether to include archived playlists (default false)
+     * 
      * @return array of iTones_Playlist objects
      */
-    public static function getAllAvailablePlaylists()
+    public static function getAllAvailablePlaylists($includeArchived = false)
     {
+        $where = "";
+        if (!$includeArchived) {
+            $where = "AND archived = false";
+        }
+
         self::wakeup();
-        $result = self::$db->fetchColumn('select playlists.playlistid
+        $result = self::$db->fetchColumn("select playlists.playlistid
             from jukebox.playlists
             inner join jukebox.playlist_availability on playlists.playlistid = playlist_availability.playlistid
             inner join jukebox.playlist_timeslot
@@ -561,8 +607,8 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
                 day=EXTRACT(DOW FROM NOW())
                 or (EXTRACT(DOW FROM NOW())=0 and day=7)
             )
-            and start_time <= "time"(NOW())
-            and end_time >= "time"(NOW())');
+            and start_time <= \"time\"(NOW())
+            and end_time >= \"time\"(NOW()) $where");
         return self::resultSetToObjArray($result);
     }
 
@@ -572,23 +618,29 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
      * Only includes Playlists with a currently running slot, and a Track.
      *
      * @param iTones_Playlist[] A list of one or more playlists to not return.
+     * @param bool $includeArchived whether to include archived playlists (default false)
      * @throws MyRadioException If no playlists are available.
      *
      * @return iTones_Playlist
      */
-    public static function getPlaylistFromWeights($playlists_to_ignore = [])
+    public static function getPlaylistFromWeights($playlists_to_ignore = [], $includeArchived = false)
     {
+        $where = "";
+        if (!$includeArchived) {
+            $where = "AND archived = false";
+        }
+
         self::wakeup();
 
         $result = self::$db->fetchAll(
-            'SELECT playlists.playlistid AS item, MAX(playlist_availability.weight) AS weight
+            "SELECT playlists.playlistid AS item, MAX(playlist_availability.weight) AS weight
                 FROM jukebox.playlists, jukebox.playlist_availability, jukebox.playlist_timeslot
                 WHERE playlists.playlistid=playlist_availability.playlistid
                     AND playlist_availability.playlist_availability_id=playlist_timeslot.playlist_availability_id
                     AND effective_from <= NOW()
                     AND (effective_to IS NULL OR effective_to >= NOW())
-                    AND start_time <= "time"(NOW())
-                    AND end_time >= "time"(NOW())
+                    AND start_time <= \"time\"(NOW())
+                    AND end_time >= \"time\"(NOW())
                     AND (
                         day=EXTRACT(DOW FROM NOW())
                         OR (EXTRACT(DOW FROM NOW())=0 AND day=7)
@@ -600,7 +652,8 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
                         AND revision_removed IS NULL
                         LIMIT 1
                     )
-                GROUP BY playlists.playlistid'
+                    $where
+                GROUP BY playlists.playlistid"
         );
 
         if (!sizeof($result)) {
@@ -626,27 +679,32 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
      *
      * @param int $categoryId
      * @param array $playlists_to_ignore one or more playlists to not return
+     * @param bool $includeArchived whether to include archived playlists (default false)
      * @return iTones_Playlist
      */
-    public static function getPlaylistOfCategoryFromWeights($categoryId, $playlists_to_ignore = [])
+    public static function getPlaylistOfCategoryFromWeights($categoryId, $playlists_to_ignore = [], $includeArchived = false)
     {
         if (!is_int($categoryId)) {
             throw new MyRadioException('Expected $categoryId to be an integer');
         }
         // TODO: this is a straight copy-paste of the above. If we need to do this again,
         // consider refactoring.
+        $where = "";
+        if (!$includeArchived) {
+            $where = "AND archived = false";
+        }
         self::wakeup();
 
         $result = self::$db->fetchAll(
-            'SELECT playlists.playlistid AS item, MAX(playlist_availability.weight) AS weight
+            "SELECT playlists.playlistid AS item, MAX(playlist_availability.weight) AS weight
                 FROM jukebox.playlists, jukebox.playlist_availability, jukebox.playlist_timeslot
                 WHERE playlists.category = $1
                     AND playlists.playlistid=playlist_availability.playlistid
                     AND playlist_availability.playlist_availability_id=playlist_timeslot.playlist_availability_id
                     AND effective_from <= NOW()
                     AND (effective_to IS NULL OR effective_to >= NOW())
-                    AND start_time <= "time"(NOW())
-                    AND end_time >= "time"(NOW())
+                    AND start_time <= \"time\"(NOW())
+                    AND end_time >= \"time\"(NOW())
                     AND (
                         day=EXTRACT(DOW FROM NOW())
                         OR (EXTRACT(DOW FROM NOW())=0 AND day=7)
@@ -658,7 +716,8 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
                         AND revision_removed IS NULL
                         LIMIT 1
                     )
-                GROUP BY playlists.playlistid',
+                    $where
+                GROUP BY playlists.playlistid",
             [$categoryId]
         );
 
@@ -681,16 +740,21 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
     /**
      * Find all playlists with a given playlist category.
      * @param $categoryId
+     * @param bool $includeArchived whether to include archived playlists (default false)
      * @return iTones_Playlist[]
      */
-    public static function getAllPlaylistsOfCategory($categoryId)
+    public static function getAllPlaylistsOfCategory($categoryId, $includeArchived = false)
     {
         if (!is_int($categoryId)) {
             throw new MyRadioException('Expected $categoryId to be an integer');
         }
+        $where = "";
+        if (!$includeArchived) {
+            $where = "AND archived = false";
+        }
         self::wakeup();
         $result = self::$db->fetchColumn(
-            'SELECT * FROM jukebox.playlists WHERE category = $1 ORDER BY title',
+            "SELECT * FROM jukebox.playlists WHERE category = $1 $where ORDER BY title",
             [$categoryId]
         );
 
@@ -701,10 +765,11 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
      * Find out what Playlists have this Track in them, if any.
      *
      * @param MyRadio_Track $track The track to search for
+     * @param bool $includeArchived whether to include archived playlists (default false)
      *
      * @return array One or more iTones_Playlists, each of which contain $track
      */
-    public static function getPlaylistsWithTrack(MyRadio_Track $track)
+    public static function getPlaylistsWithTrack(MyRadio_Track $track, $includeArchived = false)
     {
         $result = self::$db->fetchColumn(
             'SELECT playlistid FROM jukebox.playlist_entries WHERE trackid=$1
@@ -712,7 +777,13 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
             [$track->getID()]
         );
 
-        return self::resultSetToObjArray($result);
+        if ($includeArchived) {
+            return self::resultSetToObjArray($result);
+        }
+
+        return array_filter(self::resultSetToObjArray($result), function ($playlist) {
+            return !$playlist->isArchived();
+        });
     }
 
     public static function create($title, $description, $category)
@@ -748,6 +819,7 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
                 'display' => 'html',
                 'html' => $this->getCategory()->getName()
             ]),
+            'archived' => ($this->isArchived()) ? 'Archved' : 'Active',
             'edittrackslink' => [
                 'display' => 'icon',
                 'value' => 'folder-open',
