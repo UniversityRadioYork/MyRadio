@@ -1094,7 +1094,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                 '&nbsp;',
                 ' ',
                 html_entity_decode(
-                    strip_tags($this->getMeta("description"), ['a']),
+                    strip_tags($this->getMeta("description"), ['a', 'p']),
                     ENT_QUOTES | ENT_XML1,
                     "UTF-8"
                 )
