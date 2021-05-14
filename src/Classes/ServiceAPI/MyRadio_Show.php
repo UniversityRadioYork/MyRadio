@@ -1092,7 +1092,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         $writer->writeCdata(
             str_replace(
                 '&nbsp;',
-                '',
+                ' ',
                 html_entity_decode(
                     strip_tags($this->getMeta("description"), ['a']),
                     ENT_QUOTES | ENT_XML1,
