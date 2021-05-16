@@ -174,11 +174,11 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
     /**
      * Get all the Podcasts that the User is Owner of Creditor of.
      *
-     * @param MyRadio_User $user Default current user.
+     * @param int|MyRadio_User $user Default current user.
      *
      * @return MyRadio_Podcast[]
      */
-    public static function getPodcastsAttachedToUser(MyRadio_User $user = null)
+    public static function getPodcastsAttachedToUser($user = null)
     {
         return self::resultSetToObjArray(self::getPodcastIDsAttachedToUser($user));
     }
@@ -186,14 +186,16 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
     /**
      * Get the IDs of all the Podcasts that the User is Owner of Creditor of.
      *
-     * @param MyRadio_User $user Default current user.
+     * @param int|MyRadio_User $user Default current user.
      *
      * @return int[]
      */
-    public static function getPodcastIDsAttachedToUser(MyRadio_User $user = null)
+    public static function getPodcastIDsAttachedToUser($user = null)
     {
         if ($user === null) {
             $user = MyRadio_User::getInstance();
+        } elseif (is_int($user)) {
+            $user = MyRadio_User::getInstance($user);
         }
 
         return self::$db->fetchColumn(
