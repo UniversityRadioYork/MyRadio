@@ -174,7 +174,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
     /**
      * Get all the Podcasts that the User is Owner of Creditor of.
      *
-     * @param int|MyRadio_User $user Default current user.
+     * @param int|string|MyRadio_User $user Default current user.
      *
      * @return MyRadio_Podcast[]
      */
@@ -186,7 +186,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
     /**
      * Get the IDs of all the Podcasts that the User is Owner of Creditor of.
      *
-     * @param int|MyRadio_User $user Default current user.
+     * @param int|string|MyRadio_User $user Default current user.
      *
      * @return int[]
      */
@@ -196,6 +196,10 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
             $user = MyRadio_User::getInstance();
         } elseif (is_int($user)) {
             $user = MyRadio_User::getInstance($user);
+        } elseif (is_string($user) && is_numeric($user)) {
+            $user = MyRadio_User::getInstance(intval($user));
+        } elseif (!($user instanceof MyRadio_User)) {
+            throw new MyRadioException('Invalid user input');
         }
 
         return self::$db->fetchColumn(
