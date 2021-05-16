@@ -984,6 +984,8 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
         if (empty($this->submitted)) {
             $this->setSubmitted(time());
         }
+
+        $this->updateCacheObject();
     }
 
     /**
