@@ -231,6 +231,11 @@
                             "title": "Events Calendar",
                             "url": "module=Events",
                             "description": "View upcoming station events."
+                        },
+                        {
+                            "title": "Support Links",
+                            "url": "module=MyRadio,action=support",
+                            "description": "Get some links for if you need some support, or just someone to talk to."
                         }
                     ]
                 },
