@@ -1,7 +1,9 @@
 <?php
+
 /**
  * This file provides the Config class for MyRadio.
  */
+
 namespace MyRadio;
 
 /**
@@ -122,6 +124,12 @@ final class Config
      * @var int
      */
     public static $cache_default_timeout = 86400;
+
+    /**
+     * A path to a GeoLite2 or GeoIP2 "City" database file.
+     * @var string
+     */
+    public static $geoip_database_path = '';
 
     /**
      * Whether MyRadio errors should be displayed in the browser. If this is set to false, users with the
@@ -358,10 +366,10 @@ final class Config
      */
     public static $lastfm_api_secret;
 
-     /**
-      * The last.fm nation of choice, at least for us. If using
-      * this aspect of the code you probably want to change this bit.
-      */
+    /**
+     * The last.fm nation of choice, at least for us. If using
+     * this aspect of the code you probably want to change this bit.
+     */
     public static $lastfm_geo = 'United+Kingdom';
 
     /**
@@ -663,6 +671,11 @@ final class Config
      */
     public static $obit_list_id = 36;
 
+    /**
+     * @var bool Enable analytics?
+     */
+    public static $enable_analytics = false;
+
     /**** DAEMON CONFIGURATION ****/
     public static $d_BAPSSync_enabled = false;
     public static $d_EmailQueue_enabled = true;
@@ -672,6 +685,7 @@ final class Config
     public static $d_Playlists_enabled = true;
     public static $d_Podcast_enabled = true;
     public static $d_StatsGen_enabled = true;
+    public static $d_TrackAndTrace_enabled = true;
     public static $d_Explicit_enabled = false;
 
     /**** STRINGS ****/
@@ -700,6 +714,13 @@ EOT;
    
    This email will send from a no-reply email so that user's don't spread their login details.
 
+EOT;
+
+    public static $new_officer_email = <<<EOT
+
+    This email will be sent to someone when they get elected to a new officership.
+
+    Here you should probably tell them how to do their job.
 EOT;
 
     /**

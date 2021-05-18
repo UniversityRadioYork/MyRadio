@@ -206,6 +206,11 @@ class MyRadio_TrainingStatus extends ServiceAPI
             $user = MyRadio_User::getInstance();
         }
 
+        if ($user->hasAuth(AUTH_AWARDANYTRAINING)) {
+            // I am become trainer, doer of trainings
+            return true;
+        }
+
         return $this->getAwarder()->isAwardedTo($user);
     }
 

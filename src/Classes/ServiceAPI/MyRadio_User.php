@@ -29,6 +29,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
 
     /**
      * Stores the currently logged in User's object after first use.
+     * @var MyRadio_User|boolean
      */
     private static $current_user;
     /**
@@ -173,6 +174,13 @@ class MyRadio_User extends ServiceAPI implements APICaller
     private $shows;
 
     /**
+     * Users radio time, calculated from signed in shows
+     *
+     * @var mixed
+     */
+    private $radioTime;
+
+    /**
      * The Authentication Provider that should be used when logging this user in
      * default Null (any).
      *
@@ -258,7 +266,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
     public function isOfficer()
     {
         foreach ($this->getOfficerships() as $officership) {
-            if (empty($officership['till_date']) or $officership['till_date'] >= time()) {
+            if (empty($officership->getTillDate()) or $officership->getTillDate() >= time()) {
                 return true;
             }
         }
@@ -274,7 +282,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
     public function isStudioTrained()
     {
         foreach ($this->getAllTraining(true) as $train) {
-            if ($train->getID() == 1) {
+            if ($train->getTitle() == "Studio Trained") {
                 return true;
             }
         }
@@ -290,7 +298,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
     public function isStudioDemoed()
     {
         foreach ($this->getAllTraining(true) as $train) {
-            if ($train->getID() == 2) {
+            if ($train->getTitle() === "Studio Proficient" || $train->getTitle() === "WebStudio Trained") {
                 return true;
             }
         }
@@ -306,7 +314,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
     public function isTrainer()
     {
         foreach ($this->getAllTraining(true) as $train) {
-            if ($train->getID() == 3) {
+            if ($train->getTitle() === "Trainer") {
                 return true;
             }
         }
@@ -436,8 +444,10 @@ class MyRadio_User extends ServiceAPI implements APICaller
 
     /**
      * Returns all the user's active permission flags.
+     * @todo this doesn't include permissions assigned by IP (cf. login.php#L86-L99)
+     * It seems like those are only used by scripts though
      *
-     * @return array
+     * @return int[]
      */
     public function getPermissions()
     {
@@ -472,6 +482,27 @@ class MyRadio_User extends ServiceAPI implements APICaller
         }
 
         return $this->permissions;
+    }
+
+    /**
+     * Returns information about this user's permission flags.
+     *
+     * The result has the format:
+     * - typeid: permission ID
+     * - descr: the permission's description
+     * - phpconstant: the PHP constant for that permission
+     *
+     * @return array
+     */
+    public function getPermissionsInfo()
+    {
+        $perms = $this->getPermissions();
+        $params = '{' . implode(',', $perms) . '}';
+        return self::$db->fetchAll(
+            "SELECT typeid, descr, phpconstant
+            FROM l_action
+            WHERE typeid = ANY('$params'::int[])" // I hate this - but it's safe
+        );
     }
 
     /**
@@ -640,26 +671,63 @@ class MyRadio_User extends ServiceAPI implements APICaller
 
     /**
      * Get all the User's past, present and future officerships.
+     * @param bool $includeMemberships if true, non-officer team memberships will be included
+     * @return MyRadio_UserOfficership[]
      */
-    public function getOfficerships()
+    public function getOfficerships($includeMemberships = false)
     {
-        if (!$this->officerships) {
-            // Get the User's officerships
-            $this->officerships = self::$db->fetchAll(
-                'SELECT officerid,officer_name,teamid,from_date,till_date
-                FROM member_officer
-                INNER JOIN officer
-                USING (officerid)
-                WHERE memberid = $1
-                AND type!=\'m\'
-                ORDER BY from_date,till_date;',
-                [$this->getID()]
-            );
+        if (!empty($this->officerships) && !$includeMemberships) {
+            return $this->officerships;
+        }
+        // We don't want it to be cached with includeMemberships
+        $ids = self::$db->fetchColumn(
+            'SELECT member_officerid
+            FROM member_officer
+            INNER JOIN officer
+            USING (officerid)
+            WHERE memberid = $1'
+            . (!$includeMemberships ? ' AND type!=\'m\'' : '')
+            .' ORDER BY from_date,till_date;',
+            [$this->getID()]
+        );
+        $result = MyRadio_UserOfficership::resultSetToObjArray($ids);
 
-            $this->updateCacheObject();
+        if (!$includeMemberships) {
+            $this->officerships = $result;
         }
 
-        return $this->officerships;
+        return $result;
+    }
+
+    /**
+     * Get the User's radio time, calculated from timeslot signins
+     */
+    public function getRadioTime()
+    {
+        if (!$this->radioTime) {
+            try {
+                $this->radioTime = self::$db->fetchColumn(
+                    'SELECT sum(duration)
+                     FROM schedule.show_season_timeslot
+                     INNER JOIN schedule.show_season USING (show_season_id)
+                     INNER JOIN schedule.show_credit USING (show_id)
+                     INNER JOIN sis2.member_signin USING(show_season_timeslot_id)
+                     WHERE show_credit.creditid = $1
+                         AND member_signin.memberid = $1
+                         AND show_credit.effective_from <= show_season_timeslot.start_time
+                         AND (show_credit.effective_to > show_season_timeslot.start_time
+                              OR show_credit.effective_to IS NULL)
+                         AND show_credit.approvedid IS NOT NULL;',
+                    [$this->getID()]
+                )[0];
+
+                $this->updateCacheObject();
+            } catch (MyRadioException $e) {
+                $this->radioTime = null;
+            }
+        }
+
+        return $this->radioTime;
     }
 
     /**
@@ -721,27 +789,44 @@ class MyRadio_User extends ServiceAPI implements APICaller
      * credit in. Guaranteed order by first broadcast date of the show.
      *
      * @param int $show_type_id
+     * @param bool $current_term_only if true, will only include shows with seasons this term
      *
      * @return array an array of Show objects attached to the given user
      */
-    public function getShows($show_type_id = 1)
+    public function getShows($show_type_id = 1, $current_term_only = false)
     {
-        $this->shows = self::$db->fetchColumn(
-            'SELECT show_id FROM schedule.show
+        $sql = 'SELECT show_id FROM schedule.show
             WHERE memberid=$1 OR show_id IN
             (SELECT show_id FROM schedule.show_credit
             WHERE creditid=$1 AND
             (effective_to >= NOW() OR effective_to IS NULL))
-            ORDER BY (SELECT start_time FROM schedule.show_season_timeslot
+            ';
+        $params = [$this->getID()];
+
+        if ($current_term_only) {
+            $sql .= ' AND EXISTS (
+                            SELECT * FROM schedule.show_season
+                            WHERE schedule.show_season.show_id=schedule.show.show_id
+                            AND schedule.show_season.termid=$2
+                        )';
+            $params[] = MyRadio_Scheduler::getActiveApplicationTerm();
+        }
+
+        $sql .= ' ORDER BY (SELECT start_time FROM schedule.show_season_timeslot
             WHERE show_season_id IN
             (SELECT show_season_id FROM schedule.show_season WHERE show_id=schedule.show.show_id)
             ORDER BY start_time LIMIT 1)
-            ASC',
-            [$this->getID()]
-        ); //Wasn't that ORDER BY fun.
+            ASC';//Wasn't that ORDER BY fun.
+
+        $result = self::$db->fetchColumn($sql, $params);
+
+        // Don't screw up the show cache with term-limited shows
+        if (!$current_term_only) {
+            $this->shows = $result;
+        }
 
         $return = [];
-        foreach ($this->shows as $show_id) {
+        foreach ($result as $show_id) {
             $show = MyRadio_Show::getInstance($show_id);
             if ($show->getShowType() == $show_type_id) {
                 $return[] = $show;
@@ -749,6 +834,16 @@ class MyRadio_User extends ServiceAPI implements APICaller
         }
 
         return $return;
+    }
+
+    /**
+     * Finds all the email addresses and lists that go to this user.
+     *
+     * @return MyRadio_EmailDestination[]
+     */
+    public function getAllEmails()
+    {
+        return MyRadio_EmailDestination::getAllSourcesForUser(self::$db, $this->getID());
     }
 
     /**
@@ -841,9 +936,9 @@ class MyRadio_User extends ServiceAPI implements APICaller
      * Runs a super-long pSQL query that returns the information used to generate the Profile Timeline.
      *
      * @return array A 2D Array where every value of the first dimension is an Array as follows:<br>
-     *               timestamp: When the event occurred, formatted as d/m/Y<br>
+     *               timestamp: When the event occurred, as a Unix timestamp<br>
      *               message: A text description of the event<br>
-     *               photo: The photoid of a thumbnail to render with the event
+     *               photo: The relative web path of a thumbnail to render with the event, or null
      */
     public function getTimeline()
     {
@@ -852,15 +947,17 @@ class MyRadio_User extends ServiceAPI implements APICaller
         //Get Officership history
         foreach ($this->getOfficerships() as $officer) {
             $events[] = [
-                'message' => 'became '.$officer['officer_name'],
-                'timestamp' => strtotime($officer['from_date']),
-                'photo' => Config::$photo_officership_get,
+                'message' => 'became '.$officer->getOfficer()->getName(),
+                'timestamp' => strtotime($officer->getFromDate()),
+                //'photo' => MyRadio_Photo::getInstance(Config::$photo_officership_get)->getRelativeWebPath(),
+                'photo' => null
             ];
-            if ($officer['till_date'] != null) {
+            if ($officer->getTillDate() != null) {
                 $events[] = [
-                    'message' => 'stepped down as '.$officer['officer_name'],
-                    'timestamp' => strtotime($officer['till_date']),
-                    'photo' => Config::$photo_officership_down,
+                    'message' => 'stepped down as '.$officer->getOfficer()->getName(),
+                    'timestamp' => strtotime($officer->getTillDate()),
+                    //'photo' => MyRadio_Photo::getInstance(Config::$photo_officership_down)->getRelativeWebPath(),
+                    'photo' => null
                 ];
             }
         }
@@ -880,7 +977,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
                 if ($season->getSeasonNumber() == 1) {
                     $events[] = [
                         'message' => 'started a new Show as '.$credit.' of '.$season->getMeta('title'),
-                        'timestamp' => strtotime($season->getAllTimeslots()[0]->getStartTime()),
+                        'timestamp' => $season->getAllTimeslots()[0]->getStartTime(),
                         'photo' => $show->getShowPhoto(),
                     ];
                 } else {
@@ -888,7 +985,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
                         'message' => 'was ' . $credit
                                      . ' on Season ' . $season->getSeasonNumber()
                                      . ' of '.$season->getMeta('title'),
-                        'timestamp' => strtotime($season->getAllTimeslots()[0]->getStartTime()),
+                        'timestamp' => $season->getAllTimeslots()[0]->getStartTime(),
                         'photo' => $show->getShowPhoto(),
                     ];
                 }
@@ -907,9 +1004,10 @@ class MyRadio_User extends ServiceAPI implements APICaller
 
         //Get when they joined URY
         $events[] = [
-            'timestamp' => strtotime($this->joined),
+            'timestamp' => $this->joined,
             'message' => 'joined '.Config::$short_name,
-            'photo' => Config::$photo_joined,
+            //'photo' => MyRadio_Photo::getInstance(Config::$photo_joined)->getRelativeWebPath(),
+            'photo' => null
         ];
 
         return $events;
@@ -1801,7 +1899,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
         } else {
             $welcome_from = null;
         }
-        
+
         //Send the emails
         MyRadioEmail::sendEmailToUser(
             self::getInstance($memberid),
@@ -2119,8 +2217,11 @@ class MyRadio_User extends ServiceAPI implements APICaller
     public function toDataSource($mixins = [])
     {
         $mixin_funcs = [
-            'officerships' => function (&$data) {
-                $data['officerships'] = $this->getOfficerships();
+            'officerships' => function (&$data) use ($mixins) {
+                $data['officerships'] = CoreUtils::setToDataSource($this->getOfficerships(), $mixins);
+            },
+            'all_officerships' => function (&$data) use ($mixins) {
+                $data['officerships'] = CoreUtils::setToDataSource($this->getOfficerships(true), $mixins);
             },
             'training' => function (&$data) {
                 $data['training'] = CoreUtils::dataSourceParser($this->getAllTraining());
@@ -2157,9 +2258,15 @@ class MyRadio_User extends ServiceAPI implements APICaller
         $data['photo'] = $this->getProfilePhoto() === null ?
             Config::$default_person_uri : $this->getProfilePhoto()->getURL();
         $data['bio'] = $this->getBio();
+        $data['radioTime'] = $this->getRadioTime();
 
         $this->addMixins($data, $mixins, $mixin_funcs);
 
         return $data;
+    }
+
+    public static function getGraphQLTypeName()
+    {
+        return 'User';
     }
 }

@@ -24,14 +24,16 @@
         "\\MyRadio\\ServiceAPI\\MyRadio_Artist": "artist",
         "\\MyRadio\\ServiceAPI\\MyRadio_Webcam": "webcam",
         "\\MyRadio\\ServiceAPI\\MyRadio_ShowSubtype": "showSubtype",
+        "\\MyRadio\\ServiceAPI\\MyRadio_Event": "event",
         "\\MyRadio\\iTones\\iTones_Utils": "iTones",
         "\\MyRadio\\iTones\\iTones_Playlist": "playlist",
         "\\MyRadio\\MyRadio\\AuthUtils": "auth",
         "\\MyRadio\\MyRadio\\CoreUtils": "utils",
         "\\MyRadio\\MyRadio\\MyRadioNews": "news",
-        "\\MyRadio\\ServiceAPI\\MyRadio_Quote": "quote",
         "\\MyRadio\\NIPSWeb\\NIPSWeb_ManagedUserPlaylist": "nipswebUserPlaylist",
         "\\MyRadio\\NIPSWeb\\NIPSWeb_ManagedPlaylist": "nipswebPlaylist",
+        "\\MyRadio\\NIPSWeb\\NIPSWeb_TimeslotItem": "timeslotItem",
+        "\\MyRadio\\NIPSWeb\\NIPSWeb_ManagedItem": "nipswebItem",
         "\\MyRadio\\Config": "config"
     },
     "specs": {

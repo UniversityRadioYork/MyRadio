@@ -7,6 +7,7 @@
 namespace MyRadio\ServiceAPI;
 
 use MyRadio\Config;
+use MyRadio\MyRadio\AuthUtils;
 use MyRadio\MyRadioException;
 use MyRadio\MyRadio\CoreUtils;
 use MyRadio\MyRadio\URLUtils;
@@ -33,6 +34,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
     private $season_id;
     private $timeslot_num;
     protected $owner;
+    protected $playout;
     protected $credits;
 
     protected function __construct($timeslot_id)
@@ -49,7 +51,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
         // Note that credits have different metadata timeranges to text
         // This is annoying, but needs to be this way.
         $result = self::$db->fetchOne(
-            'SELECT show_season_timeslot_id, show_season_id, start_time, duration, memberid, (
+            'SELECT show_season_timeslot_id, show_season_id, start_time, duration, memberid, playout::boolean::text, (
                 SELECT array_to_json(array(
                     SELECT metadata_key_id FROM schedule.timeslot_metadata
                     WHERE show_season_timeslot_id=$1
@@ -107,7 +109,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             //Invalid Season
             throw new MyRadioException(
                 'The MyRadio_Timeslot with instance ID #' . $timeslot_id . ' does not exist.',
-                400
+                404
             );
         }
 
@@ -117,6 +119,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
         $this->start_time = strtotime($result['start_time']);
         $this->duration = $result['duration'];
         $this->owner = MyRadio_User::getInstance($result['memberid']);
+        $this->playout = $result['playout'] == "true";
         $this->timeslot_num = (int)$result['timeslot_num'];
 
         $metadata_types = json_decode($result['metadata_types']);
@@ -213,6 +216,16 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
         $duration = strtotime('1970-01-01 ' . $this->getDuration() . '+00');
 
         return $this->getStartTime() + $duration;
+    }
+
+    /**
+     * Returns whether the user has selected the timeslot for automatic playout
+     *
+     * @return bool
+     */
+    public function getPlayout()
+    {
+        return $this->playout;
     }
 
     /**
@@ -749,6 +762,41 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
     }
 
     /**
+     * Returns the current timeslot, and the n after it - returning the Timeslot objects for real shows,
+     * or simplified dataSource-ish arrays for non-shows.
+     *
+     * Note that, unlike getCurrentAndNext, $result['next'] will always be an array - either of Timeslots or
+     * of arrays.
+     *
+     * @param int|null $time time to check, defaults to current time
+     * @param int $n number of next shows to return
+     * @param int[] $filter defines a filter of show_type ids
+     */
+    public static function getCurrentAndNextObjects($time = null, $n = 1, $filter = [1])
+    {
+        $value = self::getCurrentAndNext($time, $n, $filter);
+        if (isset($value['current']['id'])) {
+            $value['current'] = MyRadio_Timeslot::getInstance($value['current']['id']);
+        }
+
+        // next can be either an array, or an array of arrays, and because PHP, count($assoc_array) returns the number
+        // of keys. So we check the number of non-string keys to decide.
+        if (count(array_filter(array_keys($value['next']), 'is_string')) === 0) {
+            $value['next'] = array_map(function ($show) {
+                return isset($show['id']) ? MyRadio_Timeslot::getInstance($show['id']) : $show;
+            }, $value['next']);
+        } else {
+            if (isset($value['next']['id'])) {
+                $value['next'] = [MyRadio_Timeslot::getInstance($value['next']['id'])];
+            } else {
+                $value['next'] = [$value['next']];
+            }
+        }
+
+        return $value;
+    }
+
+    /**
      * Deletes this Timeslot from the Schedule, and everything associated with it.
      *
      * This is a proxy for several other methods, depending on the User and the current time:<br>
@@ -999,6 +1047,11 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
      */
     public function getShowPlan()
     {
+        // Check we can access it, if not, require permission
+        if (!($this->isCurrentUserAnOwner())) {
+            AuthUtils::requirePermission(AUTH_VIEWMEMBERSHOWS);
+        }
+
         /*
          * Find out if there's a NIPSWeb Schema listing for this timeslot.
          * If not, throw back an empty array
@@ -1025,7 +1078,51 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
     }
 
     /**
+     * Updates whether the user wants the timeslot to be played out automagically
+     *
+     * @param bool $playout
+     */
+    public function setPlayout($playout)
+    {
+        self::$db->query(
+            "UPDATE schedule.show_season_timeslot SET playout = $1 WHERE show_season_timeslot_id = $2",
+            [$playout, $this->getID()]
+        );
+        $this->playout = $playout;
+        $this->updateCacheObject();
+    }
+
+    /**
+     * Return location name
+     *
+     * @param $locationid int - The ID of the location
+     * @return string Location Name
+     * @throws MyRadioException
+     */
+    public static function getLocationName($locationid)
+    {
+        self::wakeup();
+        $result = self::$db->fetchOne(
+            "SELECT location_name FROM schedule.location
+             WHERE location_id = $1",
+            [$locationid]
+        );
+        if (isset($result['location_name'])) {
+            return $result['location_name'];
+        } else {
+            throw new MyRadioException("The location with location_id $locationid doesn't exist.", 400);
+        }
+    }
+
+    /**
      * Get information about the Users signed into this Timeslot.
+     *
+     * @return array with the following keys:
+     * * signedby - who signed in the user - MyRadio_User|null
+     * * location - the name of the sign-in location
+     * * time - the sign-in time, as a UNIX timestamp
+     * * EITHER user - the member signed in (for members)
+     * * OR guest_info - the guest details given at sign-in (for guests)
      *
      * @todo Cache this data?
      */
@@ -1033,7 +1130,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
     {
         $result = self::$db->fetchAll(
             'SELECT * FROM (
-                SELECT creditid AS memberid
+                SELECT DISTINCT creditid AS memberid
                 FROM schedule.show_credit WHERE show_id IN (
                     SELECT show_id FROM schedule.show_season
                     WHERE show_season_id IN (
@@ -1045,25 +1142,56 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
                 AND (effective_to IS NULL OR effective_to > NOW())
             ) AS t1
             LEFT JOIN (
-                SELECT memberid, signerid FROM sis2.member_signin
+                SELECT memberid, signerid, location, sign_time FROM sis2.member_signin
                 WHERE show_season_timeslot_id=$1
-            ) AS t2 USING (memberid)',
+            ) AS t2 USING (memberid)
+            LEFT JOIN schedule.location ON t2.location = location.location_id',
             [$this->getID()]
         );
 
-        return array_map(
+        $data = array_map(
             function ($x) {
                 return [
                     'user' => MyRadio_User::getInstance($x['memberid']),
                     'signedby' => $x['signerid'] ? MyRadio_User::getInstance($x['signerid']) : null,
+                    'location' => $x['location_name'],
+                    'time' => strtotime($x['sign_time'])
                 ];
             },
             $result
         );
+
+        // Now handle guests
+        $result = self::$db->fetchAll(
+            'SELECT signerid, guest_info, sign_time, location_id, location_name FROM sis2.guest_signin
+                INNER JOIN schedule.location ON guest_signin.location = location.location_id
+                WHERE show_season_timeslot_id=$1',
+            [$this->getID()]
+        );
+
+        $data = array_merge(
+            $data,
+            array_map(
+                function ($x) {
+                    return [
+                        'signedby' => $x['signerid'] ? MyRadio_User::getInstance($x['signerid']) : null,
+                        'location' => $x['location_name'],
+                        'guest_info' => $x['guest_info'],
+                        'time' => strtotime($x['sign_time'])
+                    ];
+                },
+                $result
+            )
+        );
+
+        return $data;
     }
 
     public function getMessages($offset = 0)
     {
+        if (!($this->getSeason()->getShow()->isCurrentUserAnOwner())) {
+            AuthUtils::requirePermission(AUTH_ANY_SHOW_MESSAGES);
+        }
         $result = self::$db->fetchAll(
             'SELECT c.commid AS id,
             commtypeid AS type,
@@ -1142,8 +1270,9 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
      * on air at this time, if they haven't been signed in already.
      *
      * @param MyRadio_User $member
+     * @param int|string $locationid
      */
-    public function signIn(MyRadio_User $member)
+    public function signIn(MyRadio_User $member, $locationid)
     {
         // If member already signed in for whatever reason, don't bother trying again.
         $signedIn = !empty(self::$db->fetchOne(
@@ -1153,11 +1282,25 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
         ));
         if (!$signedIn) {
             self::$db->query(
-                'INSERT INTO sis2.member_signin (show_season_timeslot_id, memberid, signerid)
-                VALUES ($1, $2, $3)',
-                [$this->getID(), $member->getID(), MyRadio_User::getInstance()->getID()]
+                'INSERT INTO sis2.member_signin (show_season_timeslot_id, memberid, signerid, location)
+                VALUES ($1, $2, $3, $4)',
+                [$this->getID(), $member->getID(), MyRadio_User::getInstance()->getID(), $locationid]
             );
         }
+    }
+
+    public function signInGuests(string $guestInfo, $locationid)
+    {
+        self::$db->query(
+            'INSERT INTO sis2.guest_signin (show_season_timeslot_id, signerid, location, guest_info)
+                VALUES ($1, $2, $3, $4)',
+            [
+                $this->getID(),
+                MyRadio_User::getInstance()->getID(),
+                $locationid,
+                htmlspecialchars($guestInfo, ENT_QUOTES)
+            ]
+        );
     }
 
     public static function getCancelForm()
@@ -1230,5 +1373,10 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             MyRadioFormField::TYPE_HIDDEN,
             ['value' => $this->getID()]
         ));
+    }
+
+    public static function getGraphQLTypeName()
+    {
+        return 'Timeslot';
     }
 }

@@ -13,6 +13,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     //Submitted
     $data = MyRadio_Podcast::getForm()->readValues();
 
+    if (empty($data['existing_cover']) && !is_uploaded_file($data['new_cover']['tmp_name'])) {
+        throw new MyRadioException('You must provide either an existing or new cover photo.', 400);
+    }
+
     if (empty($data['id'])) {
         //create new
         $podcast = MyRadio_Podcast::create(
@@ -50,8 +54,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $podcast->setCover($data['existing_cover']);
     } elseif (is_uploaded_file($data['new_cover']['tmp_name'])) {
         $podcast->createCover($data['new_cover']['tmp_name']);
-    } else {
-        throw new MyRadioException('You must provide either an existing or new cover photo.', 400);
     }
 
     URLUtils::redirectWithMessage("Podcast", "default", $return_message);

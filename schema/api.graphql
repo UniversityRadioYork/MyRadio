@@ -1,0 +1,469 @@
+"""
+Bind an object field to a class or method. This shouldn't be used externally and is only used within the schema defition.
+Use cases:
+1. Inside Query (and eventually Mutation) (needs both class and method)
+2. On a field that can't be resolved by the name munging rules (needs method)
+"""
+directive @bind(
+    """
+    The class that we're binding to. It should be a fully qualified class name, prefixed with a backslash (\\).
+    """
+    class: String,
+    """
+    The method that we're binding to
+    """
+    method: String,
+
+    callingConvention: CallingConvention
+) on FIELD_DEFINITION | OBJECT
+
+enum CallingConvention {
+    FirstArgCurrentUser,
+    FirstArgCurrentObject
+}
+
+enum AuthHook {
+    """
+    Only valid on MyRadio_Shows/Seasons/Timeslots.
+    Grants access if the current user has "View Any Show" or is credited on the show.
+    """
+    ViewShow,
+    """
+    Only valid on MyRadio_User fields.
+    Grants access if we are looking at the current user, or they have "View Any Profile".
+    """
+    ViewMember,
+    """
+    Only valid on MyRadio_User fields.
+    Grants access if we are looking at the current user, or they have "View Any Profile", *or* they are an officer.
+    """
+    ViewOfficer
+}
+
+"""
+Override authorisation requirements for a field. This shouldn't be used externally and is only used within the schema defition.
+
+If set on an object, overrides all authentication on that object, unless a field also has @auth.
+"""
+directive @auth(
+    """
+    The AUTH_XXX constants that will grant access to this method. Note that this uses OR logic, not AND, so any of them
+    will grant access.
+    """
+    constants: [String!],
+    """
+    Use a custom authentication hook to authenticate this field.
+    """
+    hook: AuthHook
+) on FIELD_DEFINITION | OBJECT
+directive @meta(key: String!) on FIELD_DEFINITION
+
+enum Coercion {
+    "If the value is false, replace it with null."
+    FalseToNull
+}
+directive @coerce(hooks: [Coercion]!) on FIELD_DEFINITION
+
+"""
+An RFC3339 date string, such as 2007-12-03
+"""
+scalar Date
+"""
+An RFC3339 time string, such as 10:15:30Z.
+"""
+scalar Time
+"""
+An RFC3339 date-time string, such as 2007-12-03T10:15:30Z.
+"""
+scalar DateTime
+
+"""
+A time duration, such as 01:00:00
+"""
+scalar Duration
+
+"""
+Equivalent to a string for all intents and purposes, but used to signal that it may contain arbitrary HTML.
+"""
+scalar HTMLString
+
+interface Node {
+    id: ID!
+}
+
+interface MyRadioObject {
+    itemId: Int!
+}
+
+type User implements Node & MyRadioObject {
+    id: ID! @bind(method: "getID")
+    itemId: Int! @bind(method: "getID")
+    fname: String! @bind(method: "getFName")
+    sname: String! @bind(method: "getSName")
+
+    # Public information
+    profilePhoto: Photo @auth(constants: [])
+    bio: HTMLString
+    publicEmail: String
+    url: String
+
+    # Public information
+    shows(current_term_only: Boolean): [Show!] @auth(constants: [])
+    officerships(includeMemberships: Boolean): [UserOfficership!] @auth(constants: [])
+
+    timeline: [UserTimelineEntry!] @auth(constants: [])
+
+    # Semi-public information
+    phone: String @auth(hook: ViewOfficer)
+
+    # Not public information
+    allTraining: [UserTrainingStatus] @auth(hook: ViewMember)
+    accountLocked: Boolean @auth(hook: ViewMember)
+    college: String @auth(hook: ViewMember) # TODO: consider enum
+    email: String @auth(hook: ViewMember)
+    eduroam: String @auth(hook: ViewMember)
+    localAlias: String @auth(hook: ViewMember)
+    localName: String @auth(hook: ViewMember)
+    lastLogin: DateTime @auth(hook: ViewMember)
+    isCurrentlyPaid: Boolean @auth(hook: ViewMember)
+    allEmails: [EmailDestination] @auth(hook: ViewMember)
+}
+
+type UserTimelineEntry {
+    photo: String
+    message: String
+    timestamp: DateTime @coerce(hooks: [FalseToNull])
+}
+
+type Photo implements Node & MyRadioObject{
+    id: ID!
+    itemId: Int! @bind(method: "getID")
+    dateAdded: DateTime!
+    format: String!
+    owner: User!
+    url: String!
+}
+
+type Officership {
+    User: User!
+    from_date: Date!
+    till_date: Date
+}
+
+type TeamOfficership {
+    User: User!
+    from_date: Date!
+    till_date: Date
+    position: Officer!
+}
+
+type Team implements Node & MyRadioObject {
+    id: ID!
+    itemId: Int! @bind(method: "getID")
+    name: String!
+    alias: String
+    description: String
+    status: String # TODO enum
+    currentHolders: [TeamOfficership]
+    history: [TeamOfficership]
+}
+
+enum OfficerStatus {
+    Current,
+    Historic
+}
+
+enum OfficerType {
+    AssistantHeadOfTeam,
+    HeadOfTeam,
+    TeamMember,
+    Other
+}
+
+type Officer implements Node & MyRadioObject {
+    id: ID!
+    itemId: Int! @bind(method: "getID")
+    team: Team
+    name: String!
+    alias: String
+    description: String
+    status: OfficerStatus
+    type: OfficerType
+    history: [Officership]
+}
+
+type UserOfficership implements Node & MyRadioObject {
+    id: ID!
+    itemId: Int! @bind(method: "getID")
+    user: User! @auth(constants: [])
+    officer: Officer! @auth(constants: [])
+    fromDate: Date!
+    tillDate: Date
+}
+
+type TrainingStatus implements Node & MyRadioObject {
+    id: ID!
+    itemId: Int! @bind(method: "getID")
+    title: String!
+    detail: String!
+    depends: TrainingStatus
+    awarder: TrainingStatus
+}
+
+type UserTrainingStatus implements Node & MyRadioObject @auth(hook: ViewMember) {
+    id: ID! @bind(method: "getUserTrainingStatusID")
+    itemId: Int! @bind(method: "getUserTrainingStatusID")
+    trainingStatusId: ID! @bind(method: "getID")
+    trainingStatusItemId: Int! @bind(method: "getID")
+
+    title: String!
+    detail: String!
+    depends: TrainingStatus
+    awarder: TrainingStatus
+
+    awardedTo: User!
+    awardedBy: User!
+    awardedTime: DateTime!
+
+    revokedBy: User
+    revokedTime: DateTime @coerce(hooks: [FalseToNull])
+}
+
+type Album implements Node & MyRadioObject {
+    id: ID!
+    itemId: Int! @bind(method: "getID")
+
+    title: String!
+    artist: String!
+    tracks: [Track]
+}
+
+type Track implements Node & MyRadioObject {
+    id: ID!
+    itemId: Int! @bind(method: "getID")
+
+    artist: String!
+    album: Album!
+    title: String!
+    intro: Int
+    outro: Int
+    clean: Boolean
+    digitised: Boolean!
+    length: Duration
+    genre: String # TODO enum
+    digitisedBy: User
+    lastEditedTime: DateTime
+    lastEditedUser: User @bind(method: "getLastEditedMemberID")
+}
+
+type ShowSubtype implements Node & MyRadioObject {
+    id: ID!
+    itemId: Int! @bind(method: "getID")
+    name: String!
+    class: String!
+    description: String
+}
+
+type ShowCredit {
+    type: String
+    User: User
+}
+
+type CreditType {
+    value: Int!
+    text: String!
+}
+
+type Genre {
+    value: Int!
+    text: String!
+}
+
+type TrackNotRec {
+    title: String!
+    artist: String!
+    album: String!
+}
+
+union TracklistTrack = Track | TrackNotRec
+
+type TracklistItem implements Node & MyRadioObject {
+    id: ID!
+    itemId: Int! @bind(method: "getID")
+    track: TracklistTrack @auth(constants: [])
+    startTime: DateTime!
+}
+
+type NowPlayingTrack @auth(constants: []) {
+    track: TracklistTrack!
+    start_time: DateTime
+}
+
+type Show implements Node & MyRadioObject @auth(hook: ViewShow) {
+    id: ID!
+    itemId: Int! @bind(method: "getID")
+    title: String! @meta(key: "title")
+    description: HTMLString! @meta(key: "description")
+    subtype: ShowSubtype!
+    photo: String @bind(method: "getShowPhoto")
+    credits: [ShowCredit]
+    allSeasons: [Season]
+}
+
+type Season implements Node & MyRadioObject @auth(hook: ViewShow) {
+    id: ID!
+    itemId: Int! @bind(method: "getID")
+    title: String! @meta(key: "title")
+    description: HTMLString! @meta(key: "description")
+    credits: [ShowCredit]
+    show: Show!
+    subtype: ShowSubtype!
+    seasonNumber: Int!
+    allTimeslots: [Timeslot]
+    firstTime: DateTime @coerce(hooks: [FalseToNull])
+}
+
+type Message {
+    read: Boolean!
+    time: DateTime!
+    id: ID!
+    type: Int # TODO: make this an enum
+    title: String
+    body: String
+    source: String
+    location: [String]
+}
+
+type Timeslot implements Node & MyRadioObject @auth(hook: ViewShow) {
+    id: ID!
+    itemId: Int! @bind(method: "getID")
+    title: String! @meta(key: "title")
+    description: HTMLString! @meta(key: "description")
+    season: Season!
+    timeslotNumber: Int!
+    startTime: DateTime!
+    endTime: DateTime!
+    duration: Duration!
+    photo: String
+    messages: [Message]
+    webpage: String!
+
+    tracklist: [TracklistItem!] @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_TracklistItem", method: "getTracklistForTimeslot", callingConvention: FirstArgCurrentObject)
+    uploadState: String @meta(key: "upload_state")
+}
+
+type Quote implements Node {
+    id: ID!
+    itemId: Int! @bind(method: "getID")
+    source: User! @auth(constants: [])
+    date: Date!
+    text: HTMLString!
+}
+
+type MailingList implements Node & MyRadioObject @auth(constants: []) {
+    id: ID!
+    itemId: Int! @bind(method: "getID")
+
+    name: String!
+    isPublic: Boolean
+    address: String
+
+    areWeAMember: Boolean! @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_List", method: "isMember", callingConvention: FirstArgCurrentUser)
+    haveWeOptedOutOfAuto: Boolean! @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_List", method: "hasOptedOutOfAuto", callingConvention: FirstArgCurrentUser)
+}
+
+
+type Alias implements Node & MyRadioObject {
+    id: ID!
+    itemId: Int! @bind(method: "getID")
+
+    source: String
+    # TODO: destination - there's no good way to type "string" destinations
+}
+
+union EmailDestinationType = User | Officer | Team | MailingList
+
+type EmailDestination {
+    source: String!
+    reason: String! # TODO enum
+    destination: EmailDestinationType! @auth(constants: [])
+    alias: Alias
+}
+
+type MemberSearchResult {
+    memberid: Int!
+    fname: String!
+    sname: String!
+    eduroam: String
+    local_alias: String
+}
+
+type FindShowByTitleResult { # TODO: icky
+    show_id: Int!
+    title: String!
+}
+
+type CurrentAndNext_PseudoTimeslot {
+    title: String!
+    desc: String!
+    photo: String!
+    start_time: DateTime
+    "This will be a string containing either a Unix timestamp, or \"The End of Time\"."
+    end_time: String!
+}
+
+union CurrentAndNextObject = Timeslot | CurrentAndNext_PseudoTimeslot
+
+type CurrentAndNext {
+    current: CurrentAndNextObject!
+    next: [CurrentAndNextObject!]
+}
+
+type Query {
+    node(id: ID): Node
+
+    me: User @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_User", method: "getCurrentUser")
+
+    allQuotes: [Quote!] @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Quote", method: "getAll")
+
+    show(itemid: Int!): Show @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Show", method: "getInstance")
+    season(itemid: Int!): Season @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Season", method: "getInstance")
+    timeslot(itemid: Int!): Timeslot @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Timeslot", method: "getInstance")
+
+    allShows(current_term_only: Boolean): [Show] @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Show", method: "getAllShows")
+
+    allSubtypes: [ShowSubtype!] @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_ShowSubtype", method: "getAll") @auth(constants: [])
+
+    currentTimeslot: Timeslot @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Timeslot", method: "getCurrentTimeslot")
+    nextTimeslot: Timeslot @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Timeslot", method: "getNextTimeslot")
+    nineDaySchedule(weekno: Int!, year: Int): Timeslot @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Timeslot", method: "get9DaySchedule")
+    currentAndNext(time: Int, n: Int, filter: [Int]): CurrentAndNext @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Timeslot", method: "getCurrentAndNextObjects") @auth(constants: [])
+    previousTimeslots(time: Int, n: Int, filter: [Int]): [Timeslot] @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Timeslot", method: "getPreviousTimeslots")
+
+    nowPlaying(
+        "Which source letters (not IDs!) to accept tracklisting from. Defaults to [b, m, o, w, a, s, j]"
+        sources: [String!],
+        "Should whatever Jukebox is playing be included even when it's not on air. Silly unless 'j' is passed in sources."
+        allowOffAir: Boolean
+    ): NowPlayingTrack @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Track", method: "getNowPlaying") @auth(constants: [])
+
+    isTerm: Boolean @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Scheduler", method: "isTerm") @auth(constants: [])
+
+    user(itemid: Int!): User @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_User", method: "getInstance")
+
+    officer(itemid: Int!): Officer @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Officer", method: "getInstance")
+
+    team(itemid: Int!): Team @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Team", method: "getInstance")
+
+    allTrainingStatuses: [TrainingStatus!] @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_TrainingStatus", method: "getAll")
+
+    allMailingLists: [MailingList!] @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_List", method: "getAllLists")
+    mailingListByName(name: String!): MailingList @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_List", method: "getByName")
+
+    allGenres: [Genre!] @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Scheduler", method: "getGenres") @auth(constants: [])
+    allCreditTypes: [CreditType!] @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Scheduler", method: "getCreditTypes") @auth(constants: [])
+}
+
+schema {
+    query: Query
+}

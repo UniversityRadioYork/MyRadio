@@ -124,10 +124,17 @@ $(document).ajaxError(
       var report = myradio.reportButton(xhr, settings, error);
       var message = "";
 
-      if (xhr.responseJSON && xhr.responseJSON.error) {
-        message = xhr.responseJSON.error;
-      } else if (xhr.responseJSON && xhr.responseJSON.message) {
-        message = xhr.responseJSON.message;
+      const response = xhr.responseJSON;
+      if (response) {
+        if (response.error) {
+          message = response.error;
+        } else if (response.message) {
+          message = response.message;
+        } else if (response.myradio_errors) {
+          message = response.myradio_errors;
+        } else if (response.status == "FAIL") {
+          message = "FAIL: " + response.payload;
+        }
       }
 
       var errorVisibleReset = function () {
@@ -138,8 +145,14 @@ $(document).ajaxError(
       report.addEventListener("click", errorVisibleReset);
 
       myradio.createDialog(
-        "Error",
-        "<p>Sorry, just went a bit wrong and I'm not sure what to do about it.</p><details>" + error + "<br>" + message + "</details>",
+        "API Error",
+        `<p>Sorry, something just went a bit wrong. Please report this issue if this is your first time seeing this message! Why not try again if you haven't done so already, too.</p>
+        <details>
+          <strong>Endpoint:</strong> `+ settings.url +`<br>
+          <strong>Status Code:</strong> `+ xhr.status + `<br>
+          <strong>Response:</strong> ` + error + `<br>
+          ` + message + `
+        </details>`,
         [close, report]
       );
       errorVisible = true;

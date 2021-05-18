@@ -178,6 +178,23 @@ class CoreUtils
     }
 
     /**
+     * Returns an ISO 8601-formatted timestamp (for JavaScript).
+     *
+     * @param int $time The time to get the timestamp for. Default right now.
+     *
+     * @return string a timestamp
+     * @assert (30) == '1970-01-01T00:30:00Z'
+     */
+    public static function getIso8601Timestamp($time = null)
+    {
+        if ($time === null) {
+            $time = time();
+        }
+
+        return gmdate('c', $time);
+    }
+
+    /**
      * Returns the ISO8601 Year and Week Number for the given time.
      *
      * @param int $time The time to get the info for, default now.
@@ -243,6 +260,15 @@ class CoreUtils
     public static function makeInterval($start, $end)
     {
         return $end - $start.' seconds';
+    }
+
+    public static function intervalToSeconds($time)
+    {
+        $sec = 0;
+        foreach (array_reverse(explode(':', $time)) as $k => $v) {
+            $sec += pow(60, $k) * $v;
+        }
+        return $sec;
     }
 
     /**

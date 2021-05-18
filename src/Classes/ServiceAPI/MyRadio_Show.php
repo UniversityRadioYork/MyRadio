@@ -28,6 +28,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             show.show_type_id,
             show.submitted,
             show.memberid AS owner,
+            show.podcast_explicit::int,
             array_to_json(metadata.metadata_key_id) AS metadata_keys,
             array_to_json(metadata.metadata_value) AS metadata_values,
             array_to_json(image_metadata.image_metadata_key_id) AS image_metadata_keys,
@@ -90,7 +91,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             (
                 SELECT
                     show_id,
-                    array_agg(show_season_id) AS show_season_id
+                    array_agg(show_season_id ORDER BY termid, submitted) AS show_season_id
                 FROM schedule.show_season
                 GROUP BY show_id
             ) AS season
@@ -109,6 +110,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
     private $submitted_time;
     private $season_ids;
     private $photo_url;
+    private $podcast_explicit;
     private $subtype_id;
 
     /**
@@ -134,6 +136,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         $this->owner = (int) $result['owner'];
         $this->show_type = (int) $result['show_type_id'];
         $this->submitted_time = strtotime($result['submitted']);
+        $this->podcast_explicit = (bool) $result['podcast_explicit'];
         $this->subtype_id = (int) $result['subtype_id'];
 
         $this->genres = json_decode($result['genres']);
@@ -204,7 +207,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         $result = self::$db->fetchOne($sql, [$showid]);
 
         if (empty($result)) {
-            throw new MyRadioException('The specified Show does not seem to exist', 404);
+            throw new MyRadioException("The specified Show (show id: " . $showid . ") does not seem to exist", 404);
         }
 
         return new self($result);
@@ -267,11 +270,18 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         //Add the basic info, getting the show id
 
         $result = self::$db->fetchColumn(
-            'INSERT INTO schedule.show (show_type_id, submitted, memberid)
-            VALUES ($1, NOW(), $2) RETURNING show_id',
-            [$params['showtypeid'], $creator],
+            'INSERT INTO schedule.show (show_type_id, submitted, memberid, podcast_explicit)
+            VALUES ($1, NOW(), $2, $3::boolean) RETURNING show_id',
+            [
+                $params['showtypeid'],
+                $creator,
+                (isset($params['podcast_explicit']) && $params['podcast_explicit']) ? 1 : 0
+            ],
             true
         );
+        if (empty($result)) {
+            throw new MyRadioException('Inserting show record failed!', 500);
+        }
         $show_id = $result[0];
 
         //Right, set the title and description next
@@ -496,6 +506,19 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                     'required' => false,
                 ]
             )
+        )->addField(
+            new MyRadioFormField(
+                'podcast_explicit',
+                MyRadioFormField::TYPE_CHECK,
+                [
+                    'required' => false,
+                    'label' => 'Podcast contains explicit content',
+                    'explanation' => 'Check this box if, and only if, this show is a podcast '
+                        . 'and it contains explicit content. '
+                        . 'Remember: explicit content is NEVER acceptable to broadcast!',
+                    'options' => ['checked' => false],
+                ]
+            )
         );
     }
 
@@ -524,6 +547,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                         $this->getCredits()
                     ),
                     'mixclouder' => ($this->getMeta('upload_state') === 'Requested'),
+                    'podcast_explicit' => $this->isPodcastExplicit()
                 ]
             );
     }
@@ -671,6 +695,15 @@ class MyRadio_Show extends MyRadio_Metadata_Common
     }
 
     /**
+     * If this show is a podcast, does it contain explicit content?
+     * @return bool
+     */
+    public function isPodcastExplicit()
+    {
+        return $this->podcast_explicit;
+    }
+
+    /**
      * Sets this show's subtype.
      *
      * @todo support effectiveFrom and effectiveTo
@@ -795,6 +828,19 @@ class MyRadio_Show extends MyRadio_Metadata_Common
     }
 
     /**
+     * Sets this show's "Podcast explicit" status
+     * @param $value bool
+     */
+    public function setPodcastExplicit($value)
+    {
+        self::$db->query(
+            'UPDATE schedule.show SET podcast_explicit = $2::boolean WHERE show_id = $1',
+            [$this->getID(), $value ? 1 : 0]
+        );
+        $this->updateCacheObject();
+    }
+
+    /**
      * Updates the list of Credits.
      *
      * Existing credits are kept active, ones that are not in the new list are set to effective_to now,
@@ -813,15 +859,29 @@ class MyRadio_Show extends MyRadio_Metadata_Common
 
     /**
      * Gets all podcasts linked to this show.
+     *
+     * @param bool $include_suspended Whether to include suspended podcasts in the result
+     *
      * @return MyRadio_Podcast[]
      */
-    public function getAllPodcasts()
+    public function getAllPodcasts($include_suspended = false)
     {
+        $andSuspend = "";
+
+        // This makes me sad, but it passes "false" from API,
+        // which is true because it isn't "". ¯\_(ツ)_/¯
+        if (!$include_suspended || $include_suspended == "false") {
+            $andSuspend = " AND suspended = false";
+        }
+
+        $query = "SELECT podcast_id FROM schedule.show_podcast_link
+        INNER JOIN uryplayer.podcast USING (podcast_id)
+        WHERE show_id = $1"
+        . $andSuspend
+        . " ORDER BY submitted DESC";
+
         $ids = self::$db->fetchColumn(
-            'SELECT podcast_id FROM schedule.show_podcast_link
-                INNER JOIN uryplayer.podcast USING (podcast_id)
-                WHERE show_id = $1
-                ORDER BY submitted DESC',
+            $query,
             [$this->getID()]
         );
 
@@ -836,7 +896,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
     /**
      * Returns all Shows of the given type. Caches for 1h.
      *
-     * @return Array[MyRadio_Show]
+     * @return MyRadio_Show[]
      */
     public static function getAllShows($show_type_id = 1, $current_term_only = false)
     {
@@ -845,7 +905,8 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         $keys = self::$cache->get($key);
 
         if ($keys) {
-            $shows = self::$cache->getAll($keys);
+            $results = self::$cache->getAll($keys);
+            $shows = array_values($results); // Cached results are in different format.
         } else {
             $sql = self::BASE_SHOW_SQL.' WHERE show_type_id=$1';
             $params = [$show_type_id];
@@ -1001,7 +1062,16 @@ class MyRadio_Show extends MyRadio_Metadata_Common
      */
     public function getPodcastRss()
     {
-        $website = preg_replace('(/$)', '', Config::$website_url);
+        $website = preg_replace(
+            '(/$)',
+            '',
+            'https:' .Config::$website_url
+        );
+        $media_url = preg_replace(
+            '(/$)',
+            '',
+            $website . '/' . Config::$public_media_uri
+        );
 
         $writer = new \XMLWriter();
         $writer->openMemory();
@@ -1016,14 +1086,18 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         $writer->startElement('channel');
 
         $writer->writeElement("title", $this->getMeta("title"));
-        $writer->writeElement("link", 'https:' . $website . $this->getWebpage());
+        $writer->writeElement("link", $website . $this->getWebpage());
 
         $writer->startElement("description");
         $writer->writeCdata(
-            html_entity_decode(
-                strip_tags($this->getMeta("description"), ['a']),
-                ENT_QUOTES | ENT_XML1,
-                "UTF-8"
+            str_replace(
+                '&nbsp;',
+                ' ',
+                html_entity_decode(
+                    strip_tags($this->getMeta("description"), ['a', 'p']),
+                    ENT_QUOTES | ENT_XML1,
+                    "UTF-8"
+                )
             )
         );
         $writer->endElement();
@@ -1039,7 +1113,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         $writer->startElementNs("itunes", "image", null);
         $writer->writeAttribute(
             "href",
-            'https:' . $website . $this->getShowPhoto()
+            $website . $this->getShowPhoto()
         );
         $writer->endElement();
 
@@ -1050,7 +1124,14 @@ class MyRadio_Show extends MyRadio_Metadata_Common
 
         $writer->endElement();
 
-        $writer->writeElementNs("itunes", "explicit", null, "false"); // TODO
+        $writer->writeElementNs(
+            "itunes",
+            "explicit",
+            null,
+            $this->isPodcastExplicit() ? "true" : "false"
+        );
+        
+        $writer->writeElement("copyright", "Copyright " . date("Y") . " " . Config::$long_name . ". All rights reserved.");
 
         foreach ($this->getAllPodcasts() as $episode) {
             if (!($episode->isPublished())) {
@@ -1071,11 +1152,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
 
             $writer->startElement("description");
             $writer->writeCdata(
-                html_entity_decode(
-                    strip_tags($episode->getMeta("description"), ['a']),
-                    ENT_QUOTES | ENT_XML1,
-                    "UTF-8"
-                )
+                $episode->getMeta("description")
             );
             $writer->endElement();
 
@@ -1085,7 +1162,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                 $writer->startElementNs("itunes", "image", null);
                 $writer->writeAttribute(
                     "href",
-                    'https:' . $website . Config::$public_media_uri.'/'.$episode->getCover()
+                    $media_url.$episode->getCover()
                 );
                 $writer->endElement();
             }
@@ -1098,7 +1175,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             }
 
             $writer->startElement("enclosure");
-            $writer->writeAttribute("url", 'https:' . $website . $episode->getURI());
+            $writer->writeAttribute("url", $website . $episode->getURI());
             $writer->writeAttribute("type", "audio/mpeg"); // TODO
             $writer->writeAttribute("length", $fileSize);
             $writer->endElement();

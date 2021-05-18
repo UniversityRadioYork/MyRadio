@@ -4,11 +4,13 @@
  */
 namespace MyRadio\ServiceAPI;
 
+use MyRadio\Config;
 use MyRadio\MyRadioException;
 use MyRadio\MyRadio\AuthUtils;
 use MyRadio\MyRadio\CoreUtils;
 use MyRadio\MyRadio\MyRadioForm;
 use MyRadio\MyRadio\MyRadioFormField;
+use MyRadio\MyRadioEmail;
 
 /**
  * The Officer class provides information about Committee Officerships.
@@ -158,8 +160,11 @@ class MyRadio_Officer extends ServiceAPI
             VALUES ($1, $2, NOW())',
             [$this->getID(), $memberid]
         );
-        MyRadio_User::getInstance($memberid)->updateCacheObject();
+        $member = MyRadio_User::getInstance($memberid);
+        $member->updateCacheObject();
         Profile::clearCache();
+
+        $this->considerEmailingNewOfficer($member);
     }
 
     /**
@@ -514,6 +519,31 @@ class MyRadio_Officer extends ServiceAPI
     }
 
     /**
+     * Email an officer the "new officer" email if they've never had that officership before,
+     * and it's actually a current officer post.
+     * If they have, does nothing.
+     */
+    private function considerEmailingNewOfficer(MyRadio_User $member)
+    {
+        if ($this->getType() === 'm' || $this->getStatus() === 'h') {
+            return;
+        }
+        $officerships = $member->getOfficerships();
+        foreach ($officerships as $officership) {
+            if ($officership->getOfficer()->getID() === $this->getID() && !empty($officership->getTillDate())) {
+                return;
+            }
+        }
+        // They're good.
+
+        MyRadioEmail::sendEmailToUser(
+            $member,
+            'Congratulations on your new officership!',
+            Config::$new_officer_email
+        );
+    }
+
+    /**
      * Returns all the officer's active permission flags.
      *
      * @return array
@@ -803,5 +833,10 @@ class MyRadio_Officer extends ServiceAPI
         $this->addMixins($data, $mixins, $mixin_funcs);
 
         return $data;
+    }
+
+    public static function getGraphQLTypeName()
+    {
+        return 'Officer';
     }
 }

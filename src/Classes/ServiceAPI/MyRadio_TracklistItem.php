@@ -71,7 +71,6 @@ class MyRadio_TracklistItem extends ServiceAPI
         return new self($result);
     }
 
-
     /**
      * Create a new TracklistItem, returning the new item.
      *
@@ -87,7 +86,7 @@ class MyRadio_TracklistItem extends ServiceAPI
      *
      * @throws MyRadioException
      */
-    public static function create($trackid, $timeslotid = null, $starttime = null, $sourceid = 'a', $state = 'c')
+    public static function create($trackid, $timeslotid = null, $starttime = null, $sourceid = 'a', $state = null)
     {
 
         if (AuthUtils::hasPermission(AUTH_TRACKLIST_ALL)) {
@@ -107,8 +106,10 @@ class MyRadio_TracklistItem extends ServiceAPI
                 403
             );
         }
-
+        
+        $timeslot_was_null = false;
         if ($timeslotid == null) {
+            $timeslot_was_null = true;
             $timeslot = MyRadio_Timeslot::getCurrentTimeslot();
             $timeslotid = $timeslot != null ? $timeslot->getID() : null; // will be null if jukebox etc.
         } else {
@@ -128,7 +129,7 @@ class MyRadio_TracklistItem extends ServiceAPI
                 );
             }
         } else {
-            if ($tracklist_all == false && !$timeslot->getSeason()->getShow()->isCurrentUserAnOwner()) {
+            if ($tracklist_all == false && !$timeslot->isCurrentUserAnOwner()) {
                 throw new MyRadioException(
                     "Current user doesn't have permission to tracklist to a show they aren't credited on.",
                     403
@@ -141,7 +142,7 @@ class MyRadio_TracklistItem extends ServiceAPI
                 );
             }
         }
-        
+
         // Table is timestamp with no timezone, so we need to account for BST
         $dst_offset = timezone_offset_get(timezone_open(Config::$timezone), date_create('@'.$starttime));
         if ($dst_offset !== false) {
@@ -151,6 +152,18 @@ class MyRadio_TracklistItem extends ServiceAPI
 
         $track = MyRadio_Track::getInstance($trackid);
 
+        # If we've been left to work out which state we're in (confirmed or off air), let's look this up.
+        if ($state == null) {
+            $state = in_array($sourceid, self::getTracklistSourcesOnAirAtTime($starttime)) ? 'c': 'o';
+            
+            // If we didn't originally supply a timeslotid, and we're tracklisting off air
+            // Don't attach to the current timeslot.
+            // This is useful for BAPS, where it doesn't know if it's tracklisting to a show, or if it's the on air studio.
+            // We don't want to report a track as played off air to a timeslot if it's in a different room etc.
+            if ($state == 'o' && $timeslot_was_null == true) {
+                $timeslotid = null;
+            }
+        }
 
         self::$db->query('BEGIN');
 
@@ -235,15 +248,37 @@ class MyRadio_TracklistItem extends ServiceAPI
     }
 
     /**
+     * Get which tracklist sources (tracklist.source) are on air based on the selector status at a given time.
+     *
+     * @param int $time    Epoch time. Optional, defaults to current time.
+     *
+     * @return char[] Tracklist sources
+     */
+    public static function getTracklistSourcesOnAirAtTime($time = null)
+    {
+        $sel_action = MyRadio_Selector::getSelActionAtTime($time);
+
+        $sources = self::$db->fetchColumn(
+            'SELECT sourceid FROM tracklist.selsources WHERE selaction=$1',
+            [$sel_action]
+        );
+
+        return $sources;
+    }
+
+    /**
      * Returns an array of all TracklistItems played during the given Timeslot.
      *
-     * @param int $timeslotid The ID of the Timeslot
+     * @param int|MyRadio_Timeslot $timeslotid The ID of the Timeslot
      * @param int $offset     Skip items with an audiologid <= this
      *
      * @return array
      */
     public static function getTracklistForTimeslot($timeslotid, $offset = 0)
     {
+        if ($timeslotid instanceof MyRadio_Timeslot) {
+            $timeslotid = $timeslotid->getID();
+        }
         $result = self::$db->fetchAll(
             self::BASE_TRACKLISTITEM_SQL
             .' WHERE timeslotid=$1'
@@ -336,6 +371,8 @@ class MyRadio_TracklistItem extends ServiceAPI
             unset($data['deletelink']);
             unset($data['trackno']);
             unset($data['intro']);
+            unset($data['outro']);
+
 
             //for manual SIS entries
             if (!isset($data['trackid'])) {

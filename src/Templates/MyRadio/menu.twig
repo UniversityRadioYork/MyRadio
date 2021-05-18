@@ -1,6 +1,40 @@
 {% extends 'stripe.twig' %}
+{% import 'macros.twig' as MyRadio %}
 
 {% block stripecontent %}
+
+{% if events %}
+  <div class="row">
+    <div class="well col-md-12 events">
+      <h2>Upcoming Events</h2>
+      <ul class="list-group events-list">
+        {% for event in events %}
+          <li class="list-group-item event">
+            <h3>
+              <a
+                href="{{MyRadio.makeURL(config, 'Events', 'viewEvent', {eventid: event.ID()})}}"
+              >
+              {{ event.Title() }}
+              </a>
+            </h3>
+            <p>
+              {{ event.StartTime() | date('d F Y H:i') }}
+              &mdash;
+              {% if is_next_day(event.StartTime(), event.EndTime) %}
+                {{ event.EndTime() | date('d F Y H:i') }}
+              {% else %}
+                {{ event.EndTime() | date('H:i') }}
+              {% endif %}
+            </p>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+{% endif %}
+
+<p class="alert alert-info">Show Planner has now been deprecated. Please use WebStudio to plan and rehearse your shows.</p> 
+
 {% for column in menu %}
 <div class="col-md-4">
   <h2>{{ column.title }}</h2>
@@ -11,7 +45,18 @@
       {% if item.template is not same as(null) %}
       {% include item.template %}
       {% else %}
-      <li><a href="{{ item.url }}" title="{{ item.description | replace({'"': '&quot;'}) | raw }}">{{ item.title }}</a></li>
+      <li><a 
+        href="{{ item.url }}{{ '?' in item.url ? '&' : '?' }}ref={{ item.title | e('url') }}"  
+        {% if config.base_url not in item.url %}
+          target="_blank" 
+        {% endif %} 
+        title="{{ item.description | replace({'"': '&quot;'}) | raw }}"
+        >
+        {{ item.title }}&nbsp;
+        {% if config.base_url not in item.url %}
+          <span class="glyphicon glyphicon-new-window" aria-hidden="true"></span> 
+        {% endif %} 
+        </a></li>
       {% endif %}
     {% endfor %}
     </ul>

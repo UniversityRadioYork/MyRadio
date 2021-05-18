@@ -1,0 +1,52 @@
+{% extends 'stripe.twig' %}
+{% import 'macros.twig' as MyRadio %}
+
+{% block stripecontent %}
+    <h1>{{ event.Title() }}</h1>
+    <h2>
+        {{ event.StartTime() | date('d F Y H:i') }}
+        &mdash;
+        {% if is_next_day(event.StartTime(), event.EndTime) %}
+            {{ event.EndTime() | date('d F Y H:i') }}
+        {% else %}
+            {{ event.EndTime() | date('H:i') }}
+        {% endif %}
+    </h2>
+
+    {% if event.canWeEdit() %}
+        <a
+                class="btn btn-primary"
+                href="{{ MyRadio.makeURL(config, 'Events', 'editEvent', {eventid: event.ID()}) }}"
+        >
+            Edit Event
+        </a>
+        <form
+                id="eventDeleteForm"
+                action="{{ MyRadio.makeURL(config, 'Events', 'deleteEvent', {}) }}"
+                method="post"
+        >
+            <input type="hidden" name="eventid" value="{{ event.ID() }}" />
+            <input type="submit" class="btn btn-danger" value="Delete Event" />
+        </form>
+    {% endif %}
+
+    <p>Hosted by {{ event.Host().Name() }}</p>
+
+    <p>
+        {{ event.DescriptionHtml() | raw }}
+    </p>
+{% endblock %}
+
+{% block foot %}
+    {{ parent() }}
+    <script>
+        $(function() {
+            $("#eventDeleteForm").submit(function(e) {
+                if (!confirm("Are you sure you want to delete this event?")) {
+                    e.preventDefault();
+                    return false;
+                }
+            })
+        })
+    </script>
+{% endblock %}

@@ -209,13 +209,13 @@ class MyRadio_Selector
     }
 
     /**
-     * Returns what studio was on air at the time given.
+     * Returns which selector action was last performed at the time given.
      *
      * @param int $time
      *
      * @return int
      */
-    public static function getStudioAtTime($time = null)
+    public static function getSelActionAtTime($time = null)
     {
         if ($time === null) {
             $time = time();
@@ -232,8 +232,21 @@ class MyRadio_Selector
         if (!$result) {
             return 0;
         }
+        return $result[0];
+    }
 
-        return $result[0] - 3;
+    /**
+     * Returns what studio was on air at the time given.
+     *
+     * @param int $time
+     *
+     * @return int
+     */
+    public static function getStudioAtTime($time = null)
+    {
+        $result = self::getSelActionAtTime($time);
+
+        return $result - 3;
     }
 
     /**
@@ -390,6 +403,12 @@ class MyRadio_Selector
 
         $status = self::remoteStreams();
 
+        // S4 is OB Feed
+        $ob_status = false;
+        if (isset($status["s1"]) || isset($status["s2"])) {
+            $ob_status = $status["s1"] || $status["s2"];
+        }
+
         return [
             'ready' => $status['ready'],
             'studio' => self::getStudioAtTime($time),
@@ -398,7 +417,7 @@ class MyRadio_Selector
             's1power' => self::getStudio1PowerAtTime($time),
             's2power' => self::getStudio2PowerAtTime($time),
             's3power' => true, //Jukebox
-            's4power' => (isset($status['s1'])) ? $status['s1'] : false, //OB
+            's4power' => $ob_status, //OB
             's5power' => (isset($status['ws'])) ? $status['ws'] : false,
             's8power' => true, //Off Air
             'lastmod' => self::getLastModAtTime($time),

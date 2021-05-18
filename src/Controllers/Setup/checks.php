@@ -47,13 +47,6 @@ $required_modules = [
         'required' => false,
     ],
     [
-        'module' => 'geoip',
-        'success' => 'The GeoIP extension can be used to provide location functionality for Stats and SIS modules.',
-        'fail' => 'If you had the <a href="http://www.php.net/manual/en/book.geoip.php">GeoIP extension</a> '
-        .'MyRadio could provide location information for the Studio Information Service and Statistics.',
-        'required' => false,
-    ],
-    [
         'module' => 'gd',
         'success' => 'The Image (GD) extension can be used to provide upload functionality '
         .'for the Podcast, Profile and Website modules.',
@@ -114,17 +107,11 @@ $problems = [];
 $warnings = [];
 $successes = [];
 
-if (!defined('PHP_VERSION_ID')) {
-    $version = explode('.', PHP_VERSION);
-
-    define('PHP_VERSION_ID', ($version[0] * 10000 + $version[1] * 100 + $version[2]));
-}
-
-if (PHP_VERSION_ID < 70000) {
+if (version_compare(phpversion(), '7.1', '<')) {
     $ready = false;
-    $problems[] = 'You must be running at least PHP 7.0.';
+    $problems[] = 'You must be running at least PHP 7.1.';
 } else {
-    $successes[] = 'You are running PHP '.PHP_VERSION.'.';
+    $successes[] = 'You are running PHP '.phpversion().'.';
 }
 
 foreach ($required_modules as $module) {
@@ -241,7 +228,7 @@ foreach ($function_checks as $check) {
             <h3>Cheating</h3>
             <p>If you're using Ubuntu (&gt;=16.04), the following commands (as root) will get you most of the way:</p>
             <code>
-              apt install php-curl php-geoip php-gd php-ldap php-pgsql php-mbstring php-dev composer graphviz<br>
+              apt install php-curl php-gd php-ldap php-pgsql php-mbstring php-dev composer graphviz<br>
               composer update<br>
               service apache2 restart
             </code>

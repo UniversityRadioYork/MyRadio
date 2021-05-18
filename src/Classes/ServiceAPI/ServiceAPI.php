@@ -6,6 +6,7 @@ namespace MyRadio\ServiceAPI;
 
 use MyRadio\Config;
 use MyRadio\Database;
+use MyRadio\Iface\CacheProvider;
 use MyRadio\MyRadioException;
 
 /**
@@ -26,7 +27,7 @@ abstract class ServiceAPI
     /**
      * All ServiceAPI subclasses will contain a reference to the CacheProvider Singleton.
      *
-     * @var \CacheProvider
+     * @var CacheProvider
      */
     protected static $cache = null;
 
@@ -138,6 +139,15 @@ abstract class ServiceAPI
         return $response;
     }
 
+    /**
+     * Get the name of this ServiceAPI in the GraphQL schema.
+     * @return string
+     */
+    public static function getGraphQLTypeName()
+    {
+        throw new MyRadioException('Tried to call getGraphQLTypeName on a type that it shouldn\'t be called on!');
+    }
+
     protected function __construct()
     {
     }
@@ -145,8 +155,7 @@ abstract class ServiceAPI
     public function __destruct()
     {
         if ($this->change) {
-            $this->change = false;
-            self::$cache->set(self::getCacheKey($this->getID()), $this);
+            $this->write();
         }
     }
 
@@ -166,10 +175,24 @@ abstract class ServiceAPI
      * Sets the cache for this object to be the current object state.
      *
      * This should always be called after a setSomething.
+     * @param bool $forceWrite whether to immediately write to the cache, or wait until the object is destroyed
      */
-    protected function updateCacheObject()
+    protected function updateCacheObject(bool $forceWrite = false)
     {
-        $this->change = true;
+        if ($forceWrite) {
+            $this->write();
+        } else {
+            $this->change = true;
+        }
+    }
+
+    /**
+     * Writes this object to the cache.
+     */
+    private function write(): void
+    {
+        $this->change = false;
+        self::$cache->set(self::getCacheKey($this->getID()), $this);
     }
 
     /**
@@ -183,4 +206,5 @@ abstract class ServiceAPI
         return true;
         unset(self::$singletons[self::getCacheKey($this->getID())]);
     }
+
 }

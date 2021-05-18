@@ -11,7 +11,7 @@ COMMENT ON SCHEMA music IS 'Charts and possibly other stuff too.';
 CREATE SCHEMA myury;
 COMMENT ON SCHEMA myury IS 'Schema for new/migrated data for the Members Internal replacement';
 CREATE SCHEMA people;
-COMMENT ON SCHEMA people IS 'Tables for the LeRouge Extensible Roles (Or User Groups) Engine, as well as the quotes board.';
+COMMENT ON SCHEMA people IS 'Tables for the LeRouge Extensible Roles (Or User Groups).';
 CREATE SCHEMA schedule;
 COMMENT ON SCHEMA schedule IS 'Schema for the MyRadio schedule.';
 CREATE SCHEMA sis2;
@@ -221,6 +221,7 @@ CREATE TABLE bapsplanner.timeslot_items (
     timeslot_id integer NOT NULL,
     channel_id smallint NOT NULL,
     weight integer NOT NULL,
+    cue integer NOT NULL DEFAULT 0,
     rec_track_id integer,
     managed_item_id integer,
     user_item_id integer,
@@ -740,19 +741,6 @@ As of writing the metadata schema is:
 COMMENT ON COLUMN metadata.roleid IS 'The unique ID of the role this metadatum concerns.';
 COMMENT ON COLUMN metadata.key IS 'The key of the metadatum; should fit the site schema.';
 COMMENT ON COLUMN metadata.value IS 'The value of the metadatum.';
-CREATE TABLE quote (
-    quote_id integer NOT NULL,
-    text text NOT NULL,
-    source integer NOT NULL,
-    date timestamp with time zone DEFAULT now() NOT NULL
-);
-CREATE SEQUENCE quote_quote_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-ALTER SEQUENCE quote_quote_id_seq OWNED BY quote.quote_id;
 CREATE TABLE role (
     role_id integer NOT NULL,
     alias character varying(100) NOT NULL,
@@ -1022,6 +1010,7 @@ CREATE TABLE rec_track (
     length time without time zone DEFAULT '00:00:00'::time without time zone NOT NULL,
     genre character(1) DEFAULT 'o'::bpchar NOT NULL,
     intro time without time zone DEFAULT '00:00:00'::time without time zone NOT NULL,
+    outro time without time zone DEFAULT '00:00:00'::time without time zone NOT NULL,
     clean character(1) DEFAULT 'u'::bpchar NOT NULL,
     trackid integer DEFAULT nextval(('"rec_track_trackid_seq"'::text)::regclass) NOT NULL,
     recordid integer NOT NULL,
@@ -2379,7 +2368,6 @@ SET search_path = people, pg_catalog;
 ALTER TABLE ONLY credit_type ALTER COLUMN credit_type_id SET DEFAULT nextval('"schedule.showcredittype_id_seq"'::regclass);
 ALTER TABLE ONLY group_root_role ALTER COLUMN group_root_role_id SET DEFAULT nextval('group_root_role_group_root_role_id_seq'::regclass);
 ALTER TABLE ONLY group_type ALTER COLUMN group_type_id SET DEFAULT nextval('group_type_group_type_id_seq'::regclass);
-ALTER TABLE ONLY quote ALTER COLUMN quote_id SET DEFAULT nextval('quote_quote_id_seq'::regclass);
 ALTER TABLE ONLY role ALTER COLUMN role_id SET DEFAULT nextval('roles_id_seq'::regclass);
 ALTER TABLE ONLY role_inheritance ALTER COLUMN role_inheritance_id SET DEFAULT nextval('role_inheritance_role_inheritance_id_seq'::regclass);
 ALTER TABLE ONLY role_text_metadata ALTER COLUMN role_text_metadata_id SET DEFAULT nextval('role_metadata_role_metadata_id_seq'::regclass);
@@ -2958,13 +2946,6 @@ ALTER TABLE ONLY group_type
 ALTER TABLE ONLY metadata
     ADD CONSTRAINT metadata_pkey PRIMARY KEY (roleid, key);
 
-
---
--- Name: quote_pkey; Type: CONSTRAINT; Schema: people
---
-
-ALTER TABLE ONLY quote
-    ADD CONSTRAINT quote_pkey PRIMARY KEY (quote_id);
 
 
 --
@@ -5608,13 +5589,6 @@ ALTER TABLE ONLY role_inheritance
 ALTER TABLE ONLY role_inheritance
     ADD CONSTRAINT parents_parentid_fkey FOREIGN KEY (parent_id) REFERENCES role(role_id) ON UPDATE CASCADE ON DELETE RESTRICT;
 
-
---
--- Name: quote_source_fkey; Type: FK CONSTRAINT; Schema: people
---
-
-ALTER TABLE ONLY quote
-    ADD CONSTRAINT quote_source_fkey FOREIGN KEY (source) REFERENCES public.member(memberid);
 
 
 --
