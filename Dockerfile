@@ -1,7 +1,7 @@
-FROM php:7.2-apache
+FROM php:7.4-apache
 
-RUN apt-get update && apt-get install -y libpq-dev libpng-dev libjpeg-dev libldap-dev \
-                                         libcurl4-openssl-dev libxslt-dev git libz-dev libmemcached-dev
+RUN apt-get update && apt-get install -y libpq-dev libpng-dev libjpeg-dev libldap-dev unzip \
+                                         libcurl4-openssl-dev libxslt-dev git libz-dev libzip-dev libmemcached-dev
 
 RUN docker-php-ext-install pgsql pdo_pgsql gd ldap curl xsl zip
 
@@ -9,7 +9,7 @@ RUN pecl install memcached
 RUN echo extension=memcached.so >> /usr/local/etc/php/conf.d/memcached.ini
 
 RUN pecl install xdebug-2.9.5 && docker-php-ext-enable xdebug \
- && echo 'zend_extension="/usr/local/lib/php/extensions/no-debug-non-zts-20170718/xdebug.so"' >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+ && echo 'zend_extension="/usr/local/lib/php/extensions/no-debug-non-zts-20190902/xdebug.so"' >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
  && echo 'xdebug.remote_port=9000' >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
  && echo 'xdebug.remote_enable=1' >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
  && echo 'xdebug.remote_connect_back=1' >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
