@@ -16,22 +16,38 @@ $tabledata = [];
 $currentUser = MyRadio_User::getInstance();
 
 foreach ($demos as $demo) {
-    if ($currentUser->hasAuth(AUTH_ADDDEMOS)) {
-        $demo['attending'] = MyRadio_Demo::usersAttendingDemo($demo['show_season_timeslot_id']);
+    $demoid = $demo['show_season_timeslot_id'];
+
+    if ($currentUser->hasAuth(AUTH_CANCELDEMOS)) {
+        $demo['attending'] = MyRadio_Demo::usersAttendingDemo($demoid);
+
+        if (MyRadio_Demo::isDemoEmpty($demoid)) {
+            $demo = addCancelButton($demo);
+        } else {
+            $demo['cancel'] = '';
+        }
+    } elseif ($currentUser->hasAuth(AUTH_ADDDEMOS)) {
+        $demo['attending'] = MyRadio_Demo::usersAttendingDemo($demoid);
+        
+        if (MyRadio_Demo::isDemoEmpty($demoid) && MyRadio_Demo::getDemoer($demoid) == $currentUser) {
+            $demo = addCancelButton($demo);
+        } else {
+            $demo['cancel'] = '';
+        }
     } else {
-        if (MyRadio_Demo::isUserAttendingDemo($demo['show_season_timeslot_id'], $currentUser->getID())) {
+        if (MyRadio_Demo::isUserAttendingDemo($demoid, $currentUser->getID())) {
             $demo['attending'] = 'You are attending this demo';
             $demo['join'] = [
                 'display' => 'text',
                 'value' => 'Leave',
-                'url' => URLUtils::makeURL('Scheduler', 'leaveDemo', ['demoid' => $demo['show_season_timeslot_id']]),
+                'url' => URLUtils::makeURL('Scheduler', 'leaveDemo', ['demoid' => $demoid]),
             ];
-        } elseif (MyRadio_Demo::isSpaceOnDemo($demo['show_season_timeslot_id'])) {
+        } elseif (MyRadio_Demo::isSpaceOnDemo($demoid)) {
             $demo['attending'] = 'Space available!';
             $demo['join'] = [
                 'display' => 'text',
                 'value' => 'Join',
-                'url' => URLUtils::makeURL('Scheduler', 'attendDemo', ['demoid' => $demo['show_season_timeslot_id']]),
+                'url' => URLUtils::makeURL('Scheduler', 'attendDemo', ['demoid' => $demoid]),
             ];
         } else {
             $demo['attending'] = 'Demo full';
@@ -43,6 +59,21 @@ foreach ($demos as $demo) {
 
 if (empty($tabledata)) {
     $tabledata = [['', '', '', '', 'Error' => 'There are currently no training slots available.']];
+}
+
+function addCancelButton($demo)
+{
+    $demo['cancel'] = [
+    'display' => 'icon',
+    'value' => 'trash',
+    'title' => 'Cancel Demo',
+    'url' => URLUtils::makeURL(
+        'Scheduler',
+        'cancelEpisode',
+        ['show_season_timeslot_id' => $demo['show_season_timeslot_id']]
+    ),
+    ];
+    return $demo;
 }
 
 //print_r($tabledata);

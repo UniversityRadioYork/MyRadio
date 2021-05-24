@@ -2,7 +2,7 @@ $(".twig-datatable").dataTable({
   "aoColumns": [
     //timeslot
     {
-      "bVisible" : false
+      "bVisible": false
     },
     //start time
     {
@@ -16,12 +16,12 @@ $(".twig-datatable").dataTable({
     {
       "sTitle": "Attending"
     },
-    //attend
+    //attend or cancel
     {
       "sTitle": "",
       "bSortable": false
     }
   ],
   "bPaginate": false,
-  "aaSorting": [[ 1, "asc" ]]
+  "aaSorting": [[1, "asc"]]
 });
