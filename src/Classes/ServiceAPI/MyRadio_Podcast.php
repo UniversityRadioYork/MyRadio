@@ -1010,6 +1010,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
             $this->setSubmitted(time());
         }
 
+        $this->file = $this->getFile();
         $this->updateCacheObject(true);
     }
 
