@@ -207,15 +207,14 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
                 $status = '201 Created';
             }
 
+            // Don't send the API key to the function
+            unset($args['api_key']);
+
             $data = [
                 'status' => $status,
                 'content' => invokeArgsNamed($paths[$path][$op], $object, $args),
                 'mixins' => $args['mixins'] ?? []
             ];
-
-            // Don't send the API key or mixins to the function (mixins are handled later)
-            unset($args['api_key']);
-            unset($args['mixins']);
 
             // If this returns a datasourceable array of objects, validate any mixins
             $sample_obj = null;
