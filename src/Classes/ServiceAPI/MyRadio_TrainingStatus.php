@@ -103,14 +103,6 @@ class MyRadio_TrainingStatus extends ServiceAPI
 
         $this->depends = empty($result['depends']) ? null : $result['depends'];
         $this->can_award = empty($result['can_award']) ? null : $result['can_award'];
-
-        $this->permissions = array_map(
-            'intval',
-            self::$db->fetchColumn(
-                'SELECT typeid FROM public.auth_trainingstatus WHERE presenterstatusid=$1',
-                [$statusid]
-            )
-        );
     }
 
     /**
@@ -152,6 +144,15 @@ class MyRadio_TrainingStatus extends ServiceAPI
      */
     public function getPermissions()
     {
+        if (!isset($this->permissions)) {
+            $this->permissions = array_map(
+                'intval',
+                self::$db->fetchColumn(
+                    'SELECT typeid FROM public.auth_trainingstatus WHERE presenterstatusid=$1',
+                    [$this->presenterstatusid]
+                )
+            );
+        }
         return $this->permissions;
     }
 
@@ -291,6 +292,24 @@ class MyRadio_TrainingStatus extends ServiceAPI
         );
     }
 
+    /** Get all Training Statuses the user can train as options for MyRadioFormField
+     *
+     * @param MyRadio_User $user The user trying to award status
+     *
+     * @return array
+    */
+
+    public static function getOptionsToTrain($user)
+    {
+        $options = [];
+        foreach (self::getAll() as $status) {
+            if ($status->canAward($user)) {
+                $options[] = ["value" => $status->getID(), "text" => $status->getTitle()];
+            }
+        }
+        return $options;
+    }
+
     /**
      * The all the Training Statuses the User can currently be awarded.
      *
@@ -315,6 +334,28 @@ class MyRadio_TrainingStatus extends ServiceAPI
             if ((!$status->isAwardedTo($to))
                 && $status->hasDependency($to)
                 && $status->canAward($by)
+            ) {
+                $statuses[] = $status;
+            }
+        }
+
+        return $statuses;
+    }
+
+    /**
+     * All the Training Status a User can be awarded, regardless of who's awarding
+     *
+     * @param MyRadio_User $to The User being awarded the training
+     *
+     * @return MyRadio_TrainingStatus[]
+     */
+
+    public static function getAllToBeEarned(MyRadio_User $to)
+    {
+        $statuses = [];
+        foreach (self::getAll() as $status) {
+            if ((!$status->isAwardedTo($to))
+                && $status->hasDependency($to)
             ) {
                 $statuses[] = $status;
             }
