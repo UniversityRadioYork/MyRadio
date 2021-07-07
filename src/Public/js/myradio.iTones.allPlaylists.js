@@ -3,6 +3,7 @@ $("#categoryPicker").change(function() {
 });
 
 $(".twig-datatable").dataTable({
+  "aaSorting": [4, "asc"],
   "aoColumns": [
     //title
     {
@@ -22,11 +23,11 @@ $(".twig-datatable").dataTable({
     },
     //archived
     {
-      bVisible: false
+      sTitle: "State"
     },
     //edittrackslink
     {
-      "sTitle": "Edit"
+      bVisible: false
     },
     //configurelink
     {
@@ -34,7 +35,7 @@ $(".twig-datatable").dataTable({
     },
     //revisionslink
     {
-      "sTitle": "Revisions"
+      bVisible: false
     },
   ],
   "bPaginate": false

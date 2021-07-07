@@ -10,6 +10,7 @@
     ["iTones", "default", "AUTH_JUKEBOX_REQUESTTRACK"],
     ["iTones", "editPlaylist", "AUTH_JUKEBOX_MODIFYPLAYLISTS"],
     ["iTones", "editAvailability", "AUTH_JUKEBOX_MODIFYPLAYLISTS"],
+    ["iTones", "allPlaylists", "AUTH_JUKEBOX_MODIFYPLAYLISTS"],
     ["iTones", "listPlaylists", "AUTH_JUKEBOX_MODIFYPLAYLISTS"],
     ["iTones", "refreshLock", "AUTH_JUKEBOX_MODIFYPLAYLISTS"],
     ["iTones", "configurePlaylist", "AUTH_JUKEBOX_MODIFYPLAYLISTS"],

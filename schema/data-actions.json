@@ -12,6 +12,7 @@
     ["iTones", "restorePlaylistRevision"],
     ["iTones", "refreshLock"],
     ["iTones", "listPlaylists"],
+    ["iTones", "allPlaylists"],
     ["iTones", "viewPlaylistRevision"],
     ["iTones", "viewPlaylistHistory"],
     ["Library", "addTrack"],
