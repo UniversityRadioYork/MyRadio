@@ -130,6 +130,7 @@
     ["Scheduler", "allocate"],
     ["Scheduler", "attendance"],
     ["Scheduler", "default"],
+    ["Scheduler", "programming"],
     ["SIS", "remote"],
     ["SIS", "messages.markread"],
     ["SIS", "news.parse"],
