@@ -207,8 +207,9 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
                 $status = '201 Created';
             }
 
-            // Don't send the API key to the function
+            // Don't send the API key or mixins to the function (mixins are handled later)
             unset($args['api_key']);
+            unset($args['mixins']);
 
             $data = [
                 'status' => $status,
