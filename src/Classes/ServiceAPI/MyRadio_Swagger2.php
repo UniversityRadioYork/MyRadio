@@ -209,12 +209,14 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
 
             // Don't send the API key or mixins to the function (mixins are handled later)
             unset($args['api_key']);
+            $mixins = $args['mixins'];
             unset($args['mixins']);
 
             $data = [
                 'status' => $status,
                 'content' => invokeArgsNamed($paths[$path][$op], $object, $args),
-                'mixins' => $args['mixins'] ?? []
+                // We need this key so it gets pinged back to dataSourceParser in v2.php
+                'mixins' => $mixins ?? []
             ];
 
             // If this returns a datasourceable array of objects, validate any mixins
@@ -228,7 +230,7 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
                 $sample_obj = $data['content'];
             }
 
-            if ($sample_obj && !$caller->canMixin(get_class($sample_obj), $args['mixins'] ?? [])) {
+            if ($sample_obj && !$caller->canMixin(get_class($sample_obj), $mixins ?? [])) {
                 throw new MyRadioException('Caller cannot access this method.', 403);
             }
 
