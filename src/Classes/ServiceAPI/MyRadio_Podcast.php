@@ -174,11 +174,11 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
     /**
      * Get all the Podcasts that the User is Owner of Creditor of.
      *
-     * @param MyRadio_User $user Default current user.
+     * @param int|string|MyRadio_User $user Default current user.
      *
      * @return MyRadio_Podcast[]
      */
-    public static function getPodcastsAttachedToUser(MyRadio_User $user = null)
+    public static function getPodcastsAttachedToUser($user = null)
     {
         return self::resultSetToObjArray(self::getPodcastIDsAttachedToUser($user));
     }
@@ -186,14 +186,20 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
     /**
      * Get the IDs of all the Podcasts that the User is Owner of Creditor of.
      *
-     * @param MyRadio_User $user Default current user.
+     * @param int|string|MyRadio_User $user Default current user.
      *
      * @return int[]
      */
-    public static function getPodcastIDsAttachedToUser(MyRadio_User $user = null)
+    public static function getPodcastIDsAttachedToUser($user = null)
     {
         if ($user === null) {
             $user = MyRadio_User::getInstance();
+        } elseif (is_int($user)) {
+            $user = MyRadio_User::getInstance($user);
+        } elseif (is_string($user) && is_numeric($user)) {
+            $user = MyRadio_User::getInstance(intval($user));
+        } elseif (!($user instanceof MyRadio_User)) {
+            throw new MyRadioException('Invalid user input');
         }
 
         return self::$db->fetchColumn(
@@ -494,8 +500,8 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
             [MyRadio_User::getInstance()->getID()]
         )[0];
 
-        self::$db->query('COMMIT');
-
+        // DANGER WILL ROBINSON DANGER
+        /** @var self $podcast */
         $podcast = self::getInstance($id);
 
         $podcast->setMeta('title', $title);
@@ -505,6 +511,34 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
         if (!empty($show)) {
             $podcast->setShow($show);
         }
+
+        // Pre-emptively write the current state of this object to the cache.
+        // We need to do this, because the self::getInstance() call above
+        // poisoned the cache with a NULL $podcast->metadata. So anything
+        // that tries to read it from now on will hit the cache and get
+        // an outdated copy. The only remedy is to, effectively, re-poison it
+        // with the correct value. Yes, this is absolutely cursed.
+        //
+        // This is, however, safe: nothing should be able to know the podcast's
+        // ID until the COMMIT statement afterwards. So by the time it
+        // has an ID, it will have a freshly baked, correct value waiting
+        // for it in the cache.
+        //
+        // This is not a unique problem; in theory, every ServiceAPI subclass
+        // is vulnerable.
+        //
+        // This is more likely to happen to podcasts than any other type,
+        // because podcasts are immediately touched by the podcast daemon upon
+        // creation, which will hold on to the cached instance while it
+        // converts the file, which may take _a while_ - and then write
+        // back the copy, poisoning the cache until it expires or gets flushed.
+        // Putting $this->updateCacheObject() (or even a self::$cache->purge())
+        // at the end of this method will not help, because by the time this
+        // function finishes the daemon will have already obtained a reference
+        // to a poisoned copy.
+
+        $podcast->updateCacheObject(true);
+        self::$db->query('COMMIT');
 
         //Ship the file off to the archive location to be converted
         if (!move_uploaded_file($file, $podcast->getArchiveFile())) {
@@ -981,6 +1015,9 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
         if (empty($this->submitted)) {
             $this->setSubmitted(time());
         }
+
+        $this->file = $this->getFile();
+        $this->updateCacheObject(true);
     }
 
     /**

@@ -71,7 +71,6 @@ class MyRadio_TracklistItem extends ServiceAPI
         return new self($result);
     }
 
-
     /**
      * Create a new TracklistItem, returning the new item.
      *
@@ -87,7 +86,7 @@ class MyRadio_TracklistItem extends ServiceAPI
      *
      * @throws MyRadioException
      */
-    public static function create($trackid, $timeslotid = null, $starttime = null, $sourceid = 'a', $state = 'c')
+    public static function create($trackid, $timeslotid = null, $starttime = null, $sourceid = 'a', $state = null)
     {
 
         if (AuthUtils::hasPermission(AUTH_TRACKLIST_ALL)) {
@@ -107,8 +106,10 @@ class MyRadio_TracklistItem extends ServiceAPI
                 403
             );
         }
-
+        
+        $timeslot_was_null = false;
         if ($timeslotid == null) {
+            $timeslot_was_null = true;
             $timeslot = MyRadio_Timeslot::getCurrentTimeslot();
             $timeslotid = $timeslot != null ? $timeslot->getID() : null; // will be null if jukebox etc.
         } else {
@@ -151,6 +152,18 @@ class MyRadio_TracklistItem extends ServiceAPI
 
         $track = MyRadio_Track::getInstance($trackid);
 
+        # If we've been left to work out which state we're in (confirmed or off air), let's look this up.
+        if ($state == null) {
+            $state = in_array($sourceid, self::getTracklistSourcesOnAirAtTime($starttime)) ? 'c': 'o';
+            
+            // If we didn't originally supply a timeslotid, and we're tracklisting off air
+            // Don't attach to the current timeslot.
+            // This is useful for BAPS, where it doesn't know if it's tracklisting to a show, or if it's the on air studio.
+            // We don't want to report a track as played off air to a timeslot if it's in a different room etc.
+            if ($state == 'o' && $timeslot_was_null == true) {
+                $timeslotid = null;
+            }
+        }
 
         self::$db->query('BEGIN');
 
@@ -232,6 +245,25 @@ class MyRadio_TracklistItem extends ServiceAPI
     public function getStartTime()
     {
         return $this->starttime;
+    }
+
+    /**
+     * Get which tracklist sources (tracklist.source) are on air based on the selector status at a given time.
+     *
+     * @param int $time    Epoch time. Optional, defaults to current time.
+     *
+     * @return char[] Tracklist sources
+     */
+    public static function getTracklistSourcesOnAirAtTime($time = null)
+    {
+        $sel_action = MyRadio_Selector::getSelActionAtTime($time);
+
+        $sources = self::$db->fetchColumn(
+            'SELECT sourceid FROM tracklist.selsources WHERE selaction=$1',
+            [$sel_action]
+        );
+
+        return $sources;
     }
 
     /**
