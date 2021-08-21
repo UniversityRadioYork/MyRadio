@@ -118,9 +118,6 @@
                             "title": "WebStudio",
                             "url": "module=MyRadio,action=webstudio",
                             "description": "Access WebStudio. Plan, create, practise and broadcast your shows!"
-                        },
-                        {
-                            "template": "MyRadio/showPlanner.twig"
                         }
                     ]
                 },
