@@ -82,7 +82,7 @@ class MyRadio_ShortURL extends ServiceAPI
             WHERE short_url_id = $1',
             [$this->short_url_id, $redirectTo]
         );
-        $this->slug = $redirectTo;
+        $this->redirect_to = $redirectTo;
         $this->updateCacheObject();
         return $this;
     }
