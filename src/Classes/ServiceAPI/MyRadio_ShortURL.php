@@ -189,7 +189,7 @@ class MyRadio_ShortURL extends ServiceAPI
                 'display' => 'icon',
                 'value' => 'pencil',
                 'title' => 'Click here to edit this short URL',
-                'url' => URLUtils::makeURL('Website', 'editShortUrl', ['short_url_id' => $this->getID()]),
+                'url' => URLUtils::makeURL('Website', 'editShortUrl', ['shorturlid' => $this->getID()]),
             ],
         ];
     }

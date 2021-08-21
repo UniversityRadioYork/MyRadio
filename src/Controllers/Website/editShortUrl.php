@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         //submit edit
         $shortUrl = MyRadio_ShortURL::getInstance($data['id'])
             ->setSlug($data['slug'])
-            ->setRedirectTo($data['redirec_to']);
+            ->setRedirectTo($data['redirect_to']);
     }
 
     URLUtils::backWithMessage('Short URL updated! ' .
