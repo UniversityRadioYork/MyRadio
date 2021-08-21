@@ -14,6 +14,4 @@ CREATE TABLE public.short_url_clicks (
     ip_address INET DEFAULT NULL
 );
 
-INSERT INTO public.l_action (descr, phpconstant) VALUES ('Edit Short URLs', 'AUTH_EDITSHORTURLS');
-
 COMMIT;
