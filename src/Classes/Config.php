@@ -676,6 +676,11 @@ final class Config
      */
     public static $enable_analytics = false;
 
+    /**
+     * @var string[] a list of slug prefixes that should not be accepted for short URLs
+     */
+    public static $short_url_forbidden_slugs = [];
+
     /**** DAEMON CONFIGURATION ****/
     public static $d_BAPSSync_enabled = false;
     public static $d_EmailQueue_enabled = true;
