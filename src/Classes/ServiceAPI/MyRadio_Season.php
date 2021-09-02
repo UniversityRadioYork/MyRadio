@@ -308,9 +308,9 @@ class MyRadio_Season extends MyRadio_Metadata_Common
         if (isset($params['studio-request']) && $params['studio-request']) {
             MyRadioEmail::sendEmailToList(
                 MyRadio_List::getByName("programming"),
-                "webStudio Usage Request",
+                "WebStudio Usage Request",
                 "Season " . $season_id . " of " . $newSeason->getMeta("title")
-                . " has requested webstudio usage."
+                . " has requested WebStudio usage."
             );
         }
 
