@@ -451,9 +451,9 @@ type Query {
 
     user(itemid: Int!): User @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_User", method: "getInstance")
 
-    officer(itemid: Int!): User @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Officer", method: "getInstance")
+    officer(itemid: Int!): Officer @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Officer", method: "getInstance")
 
-    team(itemid: Int!): User @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Team", method: "getInstance")
+    team(itemid: Int!): Team @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_Team", method: "getInstance")
 
     allTrainingStatuses: [TrainingStatus!] @bind(class: "\\MyRadio\\ServiceAPI\\MyRadio_TrainingStatus", method: "getAll")
 

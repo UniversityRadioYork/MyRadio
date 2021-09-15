@@ -45,8 +45,7 @@ $(".twig-datatable").dataTable({
     },
     //photo
     {
-      "sTitle": "Photo",
-      "bVisible": true
+      "bVisible": false
     }
   ],
   "bPaginate": true,

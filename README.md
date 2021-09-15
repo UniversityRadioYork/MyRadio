@@ -18,6 +18,8 @@ If you have [Vagrant](https://www.vagrantup.com) installed and want to get
 developing or playing right away, just run `vagrant up` and a few minutes
 later [you'll have a working server](https://localhost:4443/myradio/).
 
+When you're done run `vagrant halt` to end the process.
+
 Steps
 -----
 Items in [Square Brackets] give notes and advice if things don't work

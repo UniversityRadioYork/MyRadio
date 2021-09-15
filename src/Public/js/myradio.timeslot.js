@@ -119,6 +119,8 @@ $("#timeslots").on(
                     .text("Show Location")
                 );
               var locSel = $("<select name='location'>");
+              var selectOption = $("<option selected='true' value='unselected' disabled>Please Select</option>");
+              locSel.append(selectOption);
               for (var loc of window.myradio.locations) {
                 locSel.append(
                   $("<option>")

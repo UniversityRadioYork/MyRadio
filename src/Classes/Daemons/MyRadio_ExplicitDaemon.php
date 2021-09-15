@@ -27,8 +27,14 @@ class MyRadio_ExplicitDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
         return Config::$d_Explicit_enabled;
     }
 
-    public static function run()
+    public static function run($force = false)
     {
+
+        $hourkey = __CLASS__.'_last_run_hourly';
+        if (!$force && self::getVal($hourkey) > time() - 3500) {
+            return;
+        }
+
         $db = Database::getInstance();
 
         $tracks = MyRadio_Track::findByOptions(
@@ -81,5 +87,8 @@ class MyRadio_ExplicitDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
 
             $db->query('INSERT INTO music.explicit_checked VALUES ($1)', [$track->getID()]);
         }
+
+        //Done
+        self::setVal($hourkey, time());
     }
 }

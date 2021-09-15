@@ -1,7 +1,9 @@
 <?php
+
 /**
  * This file provides the Config class for MyRadio.
  */
+
 namespace MyRadio;
 
 /**
@@ -364,10 +366,10 @@ final class Config
      */
     public static $lastfm_api_secret;
 
-     /**
-      * The last.fm nation of choice, at least for us. If using
-      * this aspect of the code you probably want to change this bit.
-      */
+    /**
+     * The last.fm nation of choice, at least for us. If using
+     * this aspect of the code you probably want to change this bit.
+     */
     public static $lastfm_geo = 'United+Kingdom';
 
     /**
@@ -683,6 +685,7 @@ final class Config
     public static $d_Playlists_enabled = true;
     public static $d_Podcast_enabled = true;
     public static $d_StatsGen_enabled = true;
+    public static $d_TrackAndTrace_enabled = true;
     public static $d_Explicit_enabled = false;
 
     /**** STRINGS ****/

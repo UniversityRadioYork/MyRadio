@@ -1627,12 +1627,12 @@ EOF
     /**
      * Gets the track that's on air *right now*.
      *
-     * @param string[] $sources which sources to accept tracklist data from
+     * @param string[] $sources which sources to accept tracklist data from (tracklist.source in db)
      * @param bool $allowOffAir Should whatever Jukebox is playing be included even when it's not on air.
      * Silly unless 'j' is passed in $sources
      * @return null|array
      */
-    public static function getNowPlaying($sources = ['b', 'm', 'o', 'w', 'a', 's', 'j'], $allowOffAir = false)
+    public static function getNowPlaying($sources = ['b', 'm', 'o', 'w', 'a', 's', 'j', '1', '2', '4'], $allowOffAir = false)
     {
         // Start a transaction. We're gonna have some fun.
         self::$db->query('BEGIN');
@@ -1648,7 +1648,11 @@ EOF
         }
         $sources = array_intersect($sources, $allowedSources);
         // Turn into SQL-friendly string
-        $sourceStr = '(\'' . implode('\',\'', $sources) . '\')';
+        // Like implode, but it doesn't mess with precious numerical char types.
+        $sourceStr = "";
+        for ($i = 0; $i < count($sources); $i++) {
+            $sourceStr = $sourceStr . "','" . $sources[$i];
+        }
 
         // Get the last thing that was tracklisted - this is either jukebox or WebStudio
         // The 30 minutes check is to avoid having something linger for too long if WS forgets to end the tracklist
@@ -1659,7 +1663,7 @@ EOF
             LEFT OUTER JOIN tracklist.track_notrec USING (audiologid)
             WHERE timestart <= NOW() AND timestart > (NOW() - interval \'30 minutes\') AND timestop IS NULL
             AND (state IS NULL OR state = \'c\'' .($allowOffAir ? ' OR state = \'o\'' : '') . ')
-            AND source IN ' . $sourceStr . '
+            AND source IN (\'' . $sourceStr . '\')
             ORDER BY timestart DESC
             LIMIT 1',
             []

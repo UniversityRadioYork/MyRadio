@@ -10,6 +10,11 @@
             "title": "Manage Banners",
             "url": "module=Website,action=banners",
             "description": "Create and Modify that Banners that appear on URY's Front website."
+        },
+        {
+            "title": "Manage Short URLs",
+            "url": "module=Website,action=shortUrls",
+            "description": "Create shortened versions of long, unwieldy URLs."
         }
     ]
 }
