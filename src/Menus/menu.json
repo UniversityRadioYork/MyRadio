@@ -27,6 +27,11 @@
                     "title": "Get On Air",
                     "items": [
                         {
+                           "title": "Join our Slack!",
+                            "url": "https://ury.slack.com/",
+                            "description": "Join our Slack server and chat with our team and members. We highly recommend joining if you're wanting to present a show."
+                        },
+                        {
                             "title": "Add Studio Training Session",
                             "url": "module=Scheduler,action=createDemo",
                             "description": "Add a training slot for presenters-to-be to sign up to."
@@ -53,6 +58,11 @@
                             "title": "Change/Cancel Show",
                             "url": "module=Scheduler,action=myShows",
                             "description": "You signed a contract saying you'd give 48 hours of cancelling a show. Click here to do just that. Or if you want to fix a spelling mistake in the title of your show."
+                        },
+                        {
+                            "title": "Book an off-air studio",
+                            "url": "https://docs.google.com/forms/d/e/1FAIpQLSdjl46ZkyLa9s8VJmSHaF18zFIwgaF3RELj84RQLI4cZ1JU7A/viewform",
+                            "description": "Need an off-air studio? Book here now!"
                         },
                         {
                             "title": "Contact Management",
@@ -243,11 +253,6 @@
                             "title": "Track Statistics",
                             "url": "module=Stats,action=bapsPlayCounter",
                             "description": "View play count statistics for library tracks."
-                        },
-                        {
-                            "title": "URY Slack",
-                            "url": "https://ury.slack.com/",
-                            "description": "Join our Slack server and chat with our team and members. We highly recommend joining if you're wanting to present a show."
                         }
                     ]
                 },
