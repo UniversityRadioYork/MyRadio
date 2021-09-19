@@ -1632,8 +1632,10 @@ EOF
      * Silly unless 'j' is passed in $sources
      * @return null|array
      */
-    public static function getNowPlaying($sources = ['b', 'm', 'o', 'w', 'a', 's', 'j', '1', '2', '4'], $allowOffAir = false)
-    {
+    public static function getNowPlaying(
+        $sources = ['b', 'm', 'o', 'w', 'a', 's', 'j', '1', '2', '4'],
+        $allowOffAir = false
+    ) {
         // Start a transaction. We're gonna have some fun.
         self::$db->query('BEGIN');
 
