@@ -12,6 +12,11 @@
             "description": "The Campus Jukebox maintains a list of lots of different playlists. Use this page to make them do cool things."
         },
         {
+            "title": "All Playlists",
+            "url": "module=iTones,action=allPlaylists",
+            "description": "Access all playlists, whether archived or not!"
+        },
+        {
             "title": "Request Track",
             "url": "module=iTones,action=requestTrack",
             "description": "Want to hear a song played right now? Why not request it?"
