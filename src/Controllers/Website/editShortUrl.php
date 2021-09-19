@@ -2,6 +2,8 @@
 /**
  * Edit a Banner.
  */
+
+use MyRadio\Config;
 use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_Photo;
 use MyRadio\ServiceAPI\MyRadio_ShortURL;
@@ -10,13 +12,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     //Submitted
     $data = MyRadio_ShortURL::getForm()->readValues();
 
+    $slug = trim($data['slug']);
+
+    if ($slug[0] === '/') {
+        URLUtils::backWithMessage("Slugs can't start with a slash.");
+        exit;
+    }
+
+    foreach (Config::$short_url_forbidden_slugs as $test) {
+        if (strpos($slug, $test) === 0) {
+            URLUtils::backWithMessage("You can't use '$test' as a slug. Sorry. Please choose another one.");
+            exit;
+        }
+    }
+
     if (empty($data['id'])) {
         //create new
-        $shortUrl = MyRadio_ShortURL::create($data['slug'], $data['redirect_to']);
+        $shortUrl = MyRadio_ShortURL::create($slug, $data['redirect_to']);
     } else {
         //submit edit
         $shortUrl = MyRadio_ShortURL::getInstance($data['id'])
-            ->setSlug($data['slug'])
+            ->setSlug($slug)
             ->setRedirectTo($data['redirect_to']);
     }
 
