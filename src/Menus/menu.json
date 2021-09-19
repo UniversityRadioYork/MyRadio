@@ -33,7 +33,7 @@
                         },
                         {
                             "title": "Add Studio Training Session",
-                            "url": "module=Scheduler,action=createDemo",
+                            "url": "module=Training,action=createDemo",
                             "description": "Add a training slot for presenters-to-be to sign up to."
                         },
                         {
