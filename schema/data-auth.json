@@ -84,5 +84,6 @@
     ["View Messages for Any Show", "AUTH_ANY_SHOW_MESSAGES", true],
     ["Give Anyone Any Training Status", "AUTH_AWARDANYTRAINING", true],
     ["Create Events", "AUTH_CREATEEVENT", true],
-    ["Edit Any Event", "AUTH_EDITANYEVENT", true]
+    ["Edit Any Event", "AUTH_EDITANYEVENT", true],
+    ["Edit Short URLs", "AUTH_EDITSHORTURLS", true]
 ]

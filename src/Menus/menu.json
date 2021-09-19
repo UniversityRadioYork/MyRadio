@@ -60,24 +60,14 @@
                             "description": "Management are the people that get the really boring paperwork emails. If that's what you need, then click here. They'd also appreciate a fun random email every once in a while for fun."
                         },
                         {
-                            "title": "Get Beds/Jingles",
-                            "url": "https://docs.google.com/forms/d/e/1FAIpQLSdLauYhir0wRBHAJBXIw1OcpyRtdJulIueoVUz0CyM12qObSQ/viewform",
-                            "description": "The Audio Resources team have a huge library and a little experience - give them a shot if you want that little something that makes your show stand out."
-                        },
-                        {
-                            "title": "Get Computing/Engineering Support",
+                            "title": "Report a Technical Fault",
                             "url": "module=Mail,action=send,list=30",
                             "description": "Having a problem? Report it here and Computing and/or Engineering team will fix it for you. Or at least try."
                         },
                         {
-                            "title": "Apply for an Event",
-                            "url": "https://docs.google.com/forms/d/e/1FAIpQLSezvdE92zWlT4r1mrVkLG-L5LO1m6jTw138oz-7_01Ue6jiSw/viewform",
-                            "description": "Planning an event? Make sure our Management and Production teams are aware of it by completing the following form."
-                        },
-                        {
-                            "title": "Get My Show Visualised",
-                            "url": "https://docs.google.com/forms/d/e/1FAIpQLSeemET6POjd3S_TeKy5Dy9qgGRy7U-24BIjxlMhaihVOTtiWg/viewform",
-                            "description": "If you would like to have your show live-streamed with video, fill out this form."
+                            "title": "Get Beds/Jingles",
+                            "url": "https://docs.google.com/forms/d/e/1FAIpQLSdLauYhir0wRBHAJBXIw1OcpyRtdJulIueoVUz0CyM12qObSQ/viewform",
+                            "description": "The Audio Resources team have a huge library and a little experience - give them a shot if you want that little something that makes your show stand out."
                         },
                         {
                             "title": "Request Marketing for My Show",
@@ -128,9 +118,6 @@
                             "title": "WebStudio",
                             "url": "module=MyRadio,action=webstudio",
                             "description": "Access WebStudio. Plan, create, practise and broadcast your shows!"
-                        },
-                        {
-                            "template": "MyRadio/showPlanner.twig"
                         }
                     ]
                 },
