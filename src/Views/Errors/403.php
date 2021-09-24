@@ -3,8 +3,17 @@
  * This View renders a HTTP/1.1 403 Error - for when a <code>AuthUtils::requirePermission()</code> call returns false.
  */
 use \MyRadio\MyRadio\CoreUtils;
+use \MyRadio\MyRadio\URLUtils;
 
 header('HTTP/1.1 403 Forbidden');
+
+if (isset($err_type){
+	switch ($err_type){
+	case 'contract':
+		$link = array("text"=>"Sign Contract", "href"=>URLUtils::makeURL('Profile', 'edit', []));
+		break;
+	}
+}else{$link = array("text"=>"Go back", "href"=>'javascript:history.go(-1)');}
 
 CoreUtils::getTemplateObject()->setTemplate('error.twig')
     ->addVariable('serviceName', 'Error')
@@ -21,4 +30,5 @@ CoreUtils::getTemplateObject()->setTemplate('error.twig')
             : $message
         )
     )
+    ->addVariable('link', $link)
     ->render();

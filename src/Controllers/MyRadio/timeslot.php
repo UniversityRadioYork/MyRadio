@@ -55,7 +55,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     //Submitted Current
     setupTimeslot(MyRadio_Timeslot::getCurrentTimeslot());
 } elseif (!empty(Config::$contract_uri) && !MyRadio_User::getInstance()->hasSignedContract()) {
-    $message = "You need to have signed the Presenter's Contract to view this";
+	$message = "You need to have signed the Presenter's Contract to view this";
+	$err_type = "contract";
     require_once 'Controllers/Errors/403.php';
 } else {
     //Not Submitted

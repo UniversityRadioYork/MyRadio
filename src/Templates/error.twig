@@ -1,5 +1,6 @@
 {% extends 'stripe.twig' %}
 {% block stripecontent %}
-<center>{{ body | raw}}</center>
-<a href="javascript:history.go(-1)">Go back</a>
+<center>{{ body | raw }}
+<br>
+<a href="{{link_href}}">{{linkText}}</a></center>
 {% endblock %}
