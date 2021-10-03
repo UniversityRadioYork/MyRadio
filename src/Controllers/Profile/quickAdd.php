@@ -17,7 +17,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $params['phone']
     );
 
-    URLUtils::backWithMessage('New Member has been created with ID '.$user->getID());
+    if ($user === null) {
+        $msg = 'This member already has an account!';
+    } else {
+        $msg = 'New Member has been created with ID '.$user->getID();
+    }
+    URLUtils::backWithMessage($msg);
 } else {
     //Not Submitted
     MyRadio_User::getQuickAddForm()->render();

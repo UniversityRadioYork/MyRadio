@@ -1948,7 +1948,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
      *
      * @api POST
      *
-     * @return MyRadio_User
+     * @return MyRadio_User|null
      */
     public static function createOrActivate(
         $fname,
@@ -1967,8 +1967,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
         }
 
         if ($user !== null && $user->activateMemberThisYear($paid)) {
-            // @todo send welcome email to already existing users?
-            return $user;
+            return null;
         } else {
             $data = [
                 'fname' => $fname,
