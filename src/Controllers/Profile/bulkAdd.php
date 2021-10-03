@@ -23,7 +23,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $params['eduroam'],
                 $params['collegeid']
             );
-            $template->addInfo('Added Member with ID '.$user->getID());
+            if ($user === null) {
+                $template->addInfo($params['fname'] . ' ' . $params['sname'] . ' already has an account!');
+            } else {
+                $template->addInfo('Added Member with ID '.$user->getID());
+            }
         } catch (MyRadioException $e) {
             $template->addError('Could not add '.$params['eduroam'].': '.$e->getMessage());
         }
