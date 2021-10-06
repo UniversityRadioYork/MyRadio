@@ -22,7 +22,7 @@ $news_clickthrough = Config::$members_news_enable && empty($news['seen']);
 $events = MyRadio_Event::getNext(3);
 
 $twig = CoreUtils::getTemplateObject()->setTemplate('MyRadio/menu.twig')
-        ->addVariable('title', 'Menu')
+        ->addVariable('title', 'Welcome to '.Config::$short_name.', '. $user->fname. '!')
         ->addVariable('menu', $menu)
         ->addVariable('news_clickthrough', $news_clickthrough)
         /*
