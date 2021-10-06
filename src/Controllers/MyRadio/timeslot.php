@@ -27,8 +27,7 @@ function setupTimeslot(MyRadio_Timeslot $timeslot)
         $message = "You don't have permission to view this show";
         require_once 'Controllers/Errors/403.php';
     } else {
-        $_SESSION['timeslotid'] = $timeslot->getID();
-        $_SESSION['timeslotname'] = CoreUtils::happyTime($timeslot->getStartTime());
+        MyRadio_Timeslot::setUserSelectedTimeslot($timeslot);
         //Handle sign-ins
         foreach (($_REQUEST['signin'] ?? []) as $memberid) {
             if (!isset($_REQUEST["location"]) || $_REQUEST["location"] == "unselected") {
@@ -55,7 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     //Submitted Current
     setupTimeslot(MyRadio_Timeslot::getCurrentTimeslot());
 } elseif (!empty(Config::$contract_uri) && !MyRadio_User::getInstance()->hasSignedContract()) {
-    $message = "You need to have signed the Presenter's Contract to view this";
+    $message = "You need to have signed the Presenter's Contract to view this. You'll find it in the main menu.";
     require_once 'Controllers/Errors/403.php';
 } else {
     //Not Submitted

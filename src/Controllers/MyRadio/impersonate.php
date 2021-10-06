@@ -9,6 +9,7 @@ use \MyRadio\Database;
 use \MyRadio\Config;
 use \MyRadio\MyRadio\AuthUtils;
 use \MyRadio\ServiceAPI\MyRadio_User;
+use \MyRadio\ServiceAPI\MyRadio_Timeslot;
 
 if (isset($_REQUEST['memberid'])) {
     //Impersonate
@@ -32,10 +33,20 @@ if (isset($_REQUEST['memberid'])) {
         $_SESSION['name'] = $impersonatee->getName();
         $_SESSION['email'] = $impersonatee->getEmail();
         $_SESSION['auth_use_locked'] = false;
+
+        // Now to reset the timeslot if we should have it once impersonated.
+        $timeslot = MyRadio_Timeslot::getUserSelectedTimeslot();
+        if ($timeslot) {
+            //Can the user access this timeslot?
+            if (!($timeslot->isCurrentUserAnOwner() || AuthUtils::hasPermission(AUTH_EDITSHOWS))) {
+                MyRadio_Timeslot::setUserSelectedTimeslot(); // Don't have perms, reset it.
+            }
+        }
     }
 } elseif (isset($_SESSION['myradio-impersonating'])) {
     //Unimpersonate
     $impersonate = $_SESSION['myradio-impersonating'];
+    // This will jump back the selected timeslot back too.
     $_SESSION = $impersonate;
 }
 
