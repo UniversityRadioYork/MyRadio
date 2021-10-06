@@ -617,7 +617,7 @@ final class Config
     public static $auth_ldap_root = 'ou=people,ou=csrv,ou=nos,dc=york,dc=ac,dc=uk';
     public static $auth_db_user = '';
     public static $auth_db_pass = '';
-    public static $auth_ldap_regex = ''; // eg '/[a-z]{2,}[0-9]+(@york.ac.uk)?/'
+    public static $auth_ldap_regex = '/[a-z]{2,}[0-9]+(@york\.ac\.uk|)$/';
 
     /**
      * Optional eduroam auth domain (probably .ac.uk).
