@@ -38,11 +38,9 @@ class MyRadioLDAPAuthenticator implements \MyRadio\Iface\MyRadioAuthenticator
     public function validateCredentials($user, $password)
     {
         # Check that it looks like a legit user first.
-        if (!empty(Config::$auth_ldap_regex)) {
-            if (!preg_match($auth_ldap_regex, $user)) {
-                sleep(0.01); # Emulate the speed of LDAP to help with timing attacks.
-                return false;
-            }
+        if (!empty(Config::$auth_ldap_regex) && !preg_match($auth_ldap_regex, $user)) {
+            sleep(0.01); # Emulate the speed of LDAP to help with timing attacks.
+            return false;
         }
         if (@ldap_bind($this->ldap_handle, 'uid='.$user.','.Config::$auth_ldap_root, $password)) {
             return MyRadio_User::findByEmail($user);
