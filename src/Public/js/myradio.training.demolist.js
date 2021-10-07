@@ -1,8 +1,17 @@
 $(".twig-datatable").dataTable({
   "aoColumns": [
-    //timeslot
+    //demo id
     {
       "bVisible" : false
+    },
+    // online/in person
+    {
+      "sTitle": "",
+      "bSortable": false
+    },
+    //training type
+    {
+      "sTitle": "Training"
     },
     //start time
     {
@@ -17,6 +26,11 @@ $(".twig-datatable").dataTable({
       "sTitle": "Attending"
     },
     //attend
+    {
+      "sTitle": "",
+      "bSortable": false
+    },
+    //finish and marked trained
     {
       "sTitle": "",
       "bSortable": false

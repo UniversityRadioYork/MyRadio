@@ -1,7 +1,9 @@
 <?php
+
 /**
  * Allows a User to configure an iTones Playlist.
  */
+
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\iTones\iTones_Playlist;
@@ -13,13 +15,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (empty($data['id'])) {
         //Create
-        $playlist = iTones_Playlist::create($data['title'], $data['description'], $data['category']);
+        $playlist = iTones_Playlist::create($data['title'], $data['description'], $data['category'], $data['archived']);
         URLUtils::redirect(
             'iTones',
             'configurePlaylist',
             [
-            'playlistid' => $playlist->getID(),
-            'message' => base64_encode('The playlist has been created.'),
+                'playlistid' => $playlist->getID(),
+                'message' => base64_encode('The playlist has been created.'),
             ]
         );
     } else {
@@ -29,6 +31,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $playlist->setTitle($data['title']);
         $playlist->setDescription($data['description']);
         $playlist->setCategoryById($data['category']);
+        $playlist->setArchived($data['archived']);
+
         URLUtils::backWithMessage('The playlist has been updated.');
     }
 } else {
@@ -36,8 +40,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($_REQUEST['playlistid'])) {
         //Create
         $playlist = iTones_Playlist::getForm()
-                    ->setTemplate('iTones/configurePlaylist.twig')
-                    ->render();
+            ->setTemplate('iTones/configurePlaylist.twig')
+            ->render();
     } else {
         //Update
         $playlist = iTones_Playlist::getInstance($_REQUEST['playlistid']);

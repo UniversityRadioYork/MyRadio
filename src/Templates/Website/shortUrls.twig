@@ -1,0 +1,6 @@
+{% extends 'table.twig' %}
+{% block stripecontent %}
+<p>Short URLs let you create shorter versions of long, unwieldy URLs.</p>
+<a id="createlink" href="{{newshorturlurl}}">Create a new short URL</a>
+{{ parent() }}
+{% endblock %}

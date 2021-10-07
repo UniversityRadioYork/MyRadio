@@ -308,9 +308,9 @@ class MyRadio_Season extends MyRadio_Metadata_Common
         if (isset($params['studio-request']) && $params['studio-request']) {
             MyRadioEmail::sendEmailToList(
                 MyRadio_List::getByName("programming"),
-                "Studio Usage Request",
+                "WebStudio Usage Request",
                 "Season " . $season_id . " of " . $newSeason->getMeta("title")
-                . " has requested studio usage."
+                . " has requested WebStudio usage."
             );
         }
 
@@ -388,15 +388,9 @@ class MyRadio_Season extends MyRadio_Metadata_Common
                 'studio-request',
                 MyRadioFormField::TYPE_CHECK,
                 [
-                    'explanation' => 'If ticked, you\'ll be requesting to present your show from our studios.
-                    It is very important that you have read the 
-                    <a href="https://drive.google.com/file/d/1Th_ih_XibBNTDg9izxgYFIOenFBKqwDq/view?usp=sharing"
-                    target="_blank">Studio Usage Rules</a>, 
-                    including that you can only do a solo show, or have people from the same household as you.
-                    Also, you can only do a studio show if you\'ve been previously studio trained,
-                    as we can\'t do training. There is <b>no</b>
-                    flexibility with this, and your right to use the studios can be stripped very quickly.',
-                    'label' => 'Request Studio Usage',
+                    'explanation' => 'If ticked, you\'ll be requesting to present your show from home.
+                    Please contact the Programme Controller to give more information.',
+                    'label' => 'Request WebStudio Usage',
                     'options' => ['checked' => false],
                     'required' => false,
                 ]
