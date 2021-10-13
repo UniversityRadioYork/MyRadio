@@ -15,8 +15,8 @@ apt-get update
 apt-get install -y apache2 \
 	libapache2-mod-php \
 	php-common \
-	postgresql-11 \
-	postgresql-client-11 \
+	postgresql-12 \
+	postgresql-client-12 \
 	memcached \
 	php-curl \
 	php-geoip \
@@ -37,7 +37,7 @@ a2enmod ssl
 a2enmod rewrite
 service apache2 stop
 
-cat <<EOF >> /etc/php/7.3/mods-available/xdebug.ini
+cat <<EOF >> /etc/php/7.4/mods-available/xdebug.ini
 xdebug.default_enable=1
 xdebug.remote_enable=1
 xdebug.remote_autostart=0
@@ -80,9 +80,9 @@ update-rc.d apache2 defaults
 service apache2 start
 
 # Create DB cluster/database/user
-pg_dropcluster 11 main --stop || true # Seriously, don't use this anywhere other than vagrant
-if ! `pg_lsclusters | grep -q myradio`; then pg_createcluster 11 myradio -p 5432; fi
-systemctl start postgresql@11-myradio
+pg_dropcluster 12 main --stop || true # Seriously, don't use this anywhere other than vagrant
+if ! `pg_lsclusters | grep -q myradio`; then pg_createcluster 12 myradio -p 5432; fi
+systemctl start postgresql@12-myradio
 su - postgres -c "cat /vagrant/sample_configs/postgres.sql | psql"
 
 rm -f /vagrant/src/MyRadio_Config.local.php # Remove any existing config
