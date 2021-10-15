@@ -98,7 +98,7 @@ if (isset($_REQUEST['msg'])) {
             $twig->addInfo('You have successfully been added to this session.');
             break;
         case 1: //full
-            $twig->addError('Sorry, but a maximum two people can join a session.');
+            $twig->addError('Sorry, but too many people are already attending this session.');
             break;
         case 2: //attending already
             $twig->addError('You can only attend one session for that training at a time.');
