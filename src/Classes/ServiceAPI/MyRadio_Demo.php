@@ -27,6 +27,7 @@ class MyRadio_Demo extends ServiceAPI
     private $demo_link;
     private $presenterstatusid;
     private $memberid;
+    private $demo_max_participants;
 
     protected function __construct($demoid)
     {
@@ -46,6 +47,7 @@ class MyRadio_Demo extends ServiceAPI
 
         $this->demo_time = $result['demo_time'];
         $this->demo_link = $result['demo_link'];
+        $this->demo_max_participants = $result['max_participants'];
         $this->presenterstatusid = $result['presenterstatusid'];
         $this->memberid = $result["memberid"];
     }
@@ -55,7 +57,7 @@ class MyRadio_Demo extends ServiceAPI
         return $this->demo_id;
     }
 
-    public static function registerDemo($time, $training_type, $link = null)
+    public static function registerDemo($time, $training_type, $max_participants, $link = null)
     {
         if ($time == null || $training_type == null || !is_numeric($time)) {
             throw new MyRadioException("A training demo must have a time and training date.", 400);
@@ -66,9 +68,9 @@ class MyRadio_Demo extends ServiceAPI
                 self::initDB();
 
                 self::$db->query(
-                    "INSERT INTO schedule.demo (presenterstatusid, demo_time, demo_link, memberid)
-            VALUES ($1, $2, $3, $4)",
-                    [$training_type, CoreUtils::getTimestamp($time), $link, $_SESSION["memberid"]]
+                    "INSERT INTO schedule.demo (presenterstatusid, demo_time, demo_link, max_participants, memberid)
+            VALUES ($1, $2, $3, $4, $5)",
+                    [$training_type, CoreUtils::getTimestamp($time), $link, $max_participants ,$_SESSION["memberid"]]
                 );
                 date_default_timezone_set(Config::$timezone);
 
@@ -93,21 +95,24 @@ class MyRadio_Demo extends ServiceAPI
         return true;
     }
 
-    public function editDemo($time, $training_type, $link = null)
+    public function editDemo($time, $training_type, $max_participants, $link = null)
     {
 
         // TODO, Only edit your training demos, or any if you have perms
         // TODO: Allow changing demoer
 
-        if ($time == null || $training_type == null) {
-            throw new MyRadioException("A training demo must have a time and training date.", 400);
+        if ($time == null || $training_type == null || $max_participants == null) {
+            throw new MyRadioException(
+                "A training demo must have a time, training date and maximum number of participants.",
+                400);
         } else {
             if ($time != $this->demo_time || $link != $this->demo_link || $training_type != $this->presenterstatusid) {
                 // Do the Update
                 self::$db->query(
-                    "UPDATE schedule.demo SET demo_time = $1, demo_link = $2, presenterstatusid = $3
-                WHERE demo_id = $4",
-                    [CoreUtils::getTimestamp($time), $link, $training_type, $this->getID()]
+                    "UPDATE schedule.demo SET demo_time = $1, demo_link = $2, presenterstatusid = $3,
+                         max_participants = $4
+                WHERE demo_id = $5",
+                    [CoreUtils::getTimestamp($time), $link, $training_type, $max_participants, $this->getID()]
                 );
                 // Email People
                 $attendees = $this->myRadioUsersAttendingDemo();
@@ -178,6 +183,20 @@ class MyRadio_Demo extends ServiceAPI
                     "required" => false
                 ]
             )
+        )->addField(
+            new MyRadioFormField(
+                'demo_max_participants',
+                MyRadioFormField::TYPE_NUMBER,
+                [
+                    'label' => "Maximum Number of People who can sign up to training session",
+                    'options' => [
+                        'min' => 1,
+                        'max' => 4,
+                    ],
+                    'value' => 2,
+                    'required' => true
+                ]
+            )
         );
     }
 
@@ -205,9 +224,9 @@ class MyRadio_Demo extends ServiceAPI
         return count($r) > 0;
     }
 
-    public function isSpaceOnDemo()
+    public function isSpaceOnDemo(): bool
     {
-        return $this->attendingDemoCount() < 2;
+        return $this->attendingDemoCount() < $this->demo_max_participants;
     }
 
     // Grrr...this returns names, not users.
