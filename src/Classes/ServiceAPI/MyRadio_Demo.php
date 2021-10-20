@@ -283,7 +283,7 @@ class MyRadio_Demo extends ServiceAPI
 
         $result = self::$db->fetchAll(
             "SELECT demo_id, demo_link, presenterstatusid, demo_time, memberid FROM schedule.demo
-            WHERE demo_time > NOW() ORDER BY demo_time ASC"
+            WHERE demo_time > NOW() - INTERVAL '6 hours' ORDER BY demo_time ASC"
         );
 
         //Add the credits for each member
