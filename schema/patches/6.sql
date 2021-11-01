@@ -10,6 +10,7 @@ create table schedule.demo
 			references l_presenterstatus,
 	demo_time timestamp with time zone not null,
 	demo_link text,
+	num_people int,
 	memberid int
 		constraint demo_member_memberid_fk
 			references member
