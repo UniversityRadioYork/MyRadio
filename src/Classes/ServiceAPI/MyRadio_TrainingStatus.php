@@ -331,9 +331,9 @@ class MyRadio_TrainingStatus extends ServiceAPI
 
         $statuses = [];
         foreach (self::getAll() as $status) {
-            if ((!$status->isAwardedTo($to))
+            if ($status->canAward($by)
                 && $status->hasDependency($to)
-                && $status->canAward($by)
+                && (!$status->isAwardedTo($to))
             ) {
                 $statuses[] = $status;
             }
