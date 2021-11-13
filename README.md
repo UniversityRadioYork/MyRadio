@@ -38,7 +38,8 @@ CONNECT:
 DATABASE:
  - On the intro screen press "Click here to continue"
  - Enter the database details (see Database Credentials) and press Next
- - Press "run task"
+ - Press "run task", wait a few seconds and then press "run task" again.
+ - [This delay and repetition is a workaround for a slight bug in how we build the database]
  
 USER:
  - [Here you can make config changes but the defaults are autofilled]

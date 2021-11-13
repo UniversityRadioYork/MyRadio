@@ -17,10 +17,12 @@ $action = 'ERROR';
 try {
     $result = Database::getInstance()->fetchColumn('SELECT value FROM myradio.schema WHERE attr=\'version\'');
 } catch (Exception $e) {
-    $result = 0;
+    $result = null;
 }
+
 if (!isset($result[0])) {
     //Well, it looks like MyRadio isn't installed here.
+    $version = 0;
     $operation = 'NEW';
 } else {
     $version = (int) $result[0];
@@ -51,18 +53,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 ->render();
                 exit;
             }
-            //Tell the upgrade operation to apply patches
-            $version = 0;
-            $next = '?c=dbdata';
-            //Break deliberately ommitted
+
+            //Force a repeat until it recognises that base.sql has been imported
+            $next = '?c=dbschema';
+            //Break deliberately ommitted - fallthrough to UPGRADE
         case 'UPGRADE':
-            $db = Database::getInstance();
+            if (!isset($db)) {
+                $db = Database::getInstance();
+            }
+
             $db->query('BEGIN');
-            while ($version < MYRADIO_CURRENT_SCHEMA_VERSION) {
+	    while ($version < MYRADIO_CURRENT_SCHEMA_VERSION) {
                 ++$version;
                 try {
                     $db->query(file_get_contents(SCHEMA_DIR.'patches/'.$version.'.sql'));
-                    $db->query('UPDATE myradio.schema SET value=$1 WHERE attr=\'version\'', [$version]);
+                    $db->query('UPDATE myradio.schema SET value='.$version.' WHERE attr=\'version\'');
                 } catch (MyRadioException $e) {
                     $error = pg_last_error();
                     CoreUtils::getTemplateObject()
@@ -74,12 +79,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
             $db->query('COMMIT');
             if (!isset($next)) {
-                $next = '?c=???';
+                $next = '?c=dbdata';
             }
             break;
         case 'NEWER_WARN':
         case 'CURRENT':
-            $next = '?c=???';
+            $next = '?c=dbdata';
             break;
         default:
             die('Unexpected database operation.');
