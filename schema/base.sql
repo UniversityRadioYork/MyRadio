@@ -830,7 +830,6 @@ CREATE TABLE auth (
 COMMENT ON TABLE auth IS 'Grants users temporary permissions on the back end.';
 COMMENT ON COLUMN auth.lookupid IS 'Permission granded to the user';
 COMMENT ON COLUMN auth.endtime IS 'Permission runs out now; NULL = permenant.';
-SET default_with_oids = false;
 CREATE TABLE auth_group (
     id integer NOT NULL,
     name character varying(80) NOT NULL
@@ -842,13 +841,11 @@ CREATE SEQUENCE auth_group_id_seq
     NO MAXVALUE
     CACHE 1;
 ALTER SEQUENCE auth_group_id_seq OWNED BY auth_group.id;
-
 CREATE TABLE auth_officer (
     officerid integer NOT NULL,
     lookupid integer NOT NULL
 );
 COMMENT ON TABLE auth_officer IS 'Grants permanent back end permissions to people currently holding officer posts.';
-SET default_with_oids = false;
 CREATE TABLE auth_subnet (
     typeid integer NOT NULL,
     subnet cidr NOT NULL
@@ -897,7 +894,6 @@ CREATE SEQUENCE banner_category_categoryid_seq
     NO MINVALUE
     NO MAXVALUE
     CACHE 1;
-
 CREATE TABLE baps_audio (
     audioid integer NOT NULL,
     trackid integer,
@@ -1104,7 +1100,6 @@ CREATE SEQUENCE baps_user_userid_seq
     NO MAXVALUE
     CACHE 1;
 ALTER SEQUENCE baps_user_userid_seq OWNED BY baps_user.userid;
-SET default_with_oids = false;
 CREATE TABLE chart (
     chartweek integer NOT NULL,
     lastweek text NOT NULL,
@@ -1129,7 +1124,6 @@ CREATE TABLE gammu (
     "Version" numeric
 );
 COMMENT ON TABLE gammu IS 'Do not delete - Gammu will break';
-
 CREATE TABLE l_action (
     typeid integer DEFAULT nextval(('"l_action_typeid_seq"'::text)::regclass) NOT NULL,
     descr character varying(255) NOT NULL,
@@ -1166,7 +1160,6 @@ CREATE SEQUENCE l_musicinterest_typeid_seq
     NO MINVALUE
     MAXVALUE 2147483647
     CACHE 1;
-SET default_with_oids = false;
 CREATE TABLE l_newsfeed (
     feedid integer NOT NULL,
     feedname character varying(30) NOT NULL
@@ -1183,7 +1176,6 @@ CREATE SEQUENCE l_newsfeeds_feedid_seq
     NO MAXVALUE
     CACHE 1;
 ALTER SEQUENCE l_newsfeeds_feedid_seq OWNED BY l_newsfeed.feedid;
-
 CREATE TABLE l_presenterstatus (
     presenterstatusid integer NOT NULL,
     descr character varying(40) NOT NULL,
@@ -1204,7 +1196,6 @@ CREATE TABLE l_status (
     statusid character(1) NOT NULL,
     descr character varying(255) NOT NULL
 );
-SET default_with_oids = false;
 CREATE TABLE l_subnet (
     subnet cidr NOT NULL,
     iscollege boolean NOT NULL,
@@ -1282,7 +1273,6 @@ CREATE TABLE mail_subscription (
     listid integer NOT NULL
 );
 COMMENT ON TABLE mail_subscription IS 'If a list is subscribable, then all members here are subscribed.  If a list is not, then all members here are opted out.';
-
 CREATE TABLE member (
     memberid integer DEFAULT nextval(('"member_memberid_seq"'::text)::regclass) NOT NULL,
     fname character varying(255) NOT NULL,
@@ -1317,7 +1307,6 @@ CREATE SEQUENCE member_memberid_seq
     NO MINVALUE
     MAXVALUE 2147483647
     CACHE 1;
-SET default_with_oids = false;
 CREATE TABLE member_news_feed (
     membernewsfeedid integer NOT NULL,
     newsentryid integer NOT NULL,
@@ -1338,7 +1327,6 @@ CREATE SEQUENCE member_office_member_office_seq
     NO MINVALUE
     MAXVALUE 2147483647
     CACHE 1;
-
 CREATE TABLE member_officer (
     member_officerid integer DEFAULT nextval(('"member_office_member_office_seq"'::text)::regclass) NOT NULL,
     officerid integer NOT NULL,
@@ -1346,13 +1334,11 @@ CREATE TABLE member_officer (
     from_date date NOT NULL,
     till_date date
 );
-SET default_with_oids = false;
 CREATE TABLE member_pass (
     memberid integer NOT NULL,
     password character varying
 );
 COMMENT ON TABLE member_pass IS 'User password. Access only to be granted to Shibbobleh, Dovecot Users. Exim authenticates via IMAP.';
-
 CREATE TABLE member_presenterstatus (
     memberid integer NOT NULL,
     presenterstatusid integer NOT NULL,
@@ -1374,7 +1360,6 @@ CREATE TABLE member_year (
     year smallint NOT NULL,
     paid numeric(4,2) DEFAULT 0 NOT NULL
 );
-SET default_with_oids = false;
 CREATE TABLE net_switchport (
     portid integer NOT NULL,
     vlanid integer,
@@ -1414,7 +1399,6 @@ CREATE TABLE nipsweb_migrate (
     enforced boolean DEFAULT false
 );
 COMMENT ON TABLE nipsweb_migrate IS 'Used to migrate users from BAPSWeb to NIPSWeb.';
-
 CREATE TABLE officer (
     officerid integer DEFAULT nextval(('"officer_officerid_seq"'::text)::regclass) NOT NULL,
     officer_name character varying(255) NOT NULL,
@@ -1445,7 +1429,6 @@ CREATE TABLE rec_genrelookup (
     genre_code character(1) NOT NULL,
     genre_descr text NOT NULL
 );
-SET default_with_oids = false;
 CREATE TABLE rec_itunes (
     trackid integer NOT NULL,
     link text,
@@ -1454,7 +1437,6 @@ CREATE TABLE rec_itunes (
     identifier text
 );
 COMMENT ON TABLE rec_itunes IS 'itunes affiliation program';
-
 CREATE TABLE rec_labelqueue (
     recordid integer,
     queueid integer DEFAULT nextval(('"rec_labelqueue_queueid_seq"'::text)::regclass) NOT NULL,
@@ -1470,7 +1452,6 @@ CREATE TABLE rec_locationlookup (
     location_code character(1) NOT NULL,
     location_descr text NOT NULL
 );
-SET default_with_oids = false;
 CREATE TABLE rec_lookup (
     code_type text NOT NULL,
     code character(1) NOT NULL,
@@ -1487,7 +1468,6 @@ CREATE SEQUENCE rec_lookup_description_seq
     NO MAXVALUE
     CACHE 1;
 ALTER SEQUENCE rec_lookup_description_seq OWNED BY rec_lookup.description;
-
 CREATE TABLE rec_medialookup (
     media_code character(1) NOT NULL,
     media_descr text NOT NULL
@@ -1527,7 +1507,6 @@ CREATE SEQUENCE rec_track_trackid_seq
     NO MINVALUE
     MAXVALUE 2147483647
     CACHE 1;
-SET default_with_oids = false;
 CREATE TABLE rec_trackcorrection (
     correctionid integer NOT NULL,
     trackid integer NOT NULL,
@@ -1589,9 +1568,7 @@ COMMENT ON COLUMN show_metadata.memberid IS 'The ID of the member who submitted 
 COMMENT ON COLUMN show_metadata.approvedid IS 'The ID of the member who approved the change to the show metadata item. A value of NULL means not yet approved or this item does not need to be approved.';
 COMMENT ON COLUMN show_metadata.effective_to IS 'The timestamp of the period at which this metadatum stops being effective.  If NULL, the metadatum is effective indefinitely from effective_from.';
 SET search_path = public, pg_catalog;
-
 SET search_path = schedule, pg_catalog;
-SET default_with_oids = false;
 CREATE TABLE show_season (
     show_season_id integer NOT NULL,
     show_id integer NOT NULL,
@@ -1637,13 +1614,11 @@ CREATE SEQUENCE selector_selid_seq
     NO MAXVALUE
     CACHE 1;
 ALTER SEQUENCE selector_selid_seq OWNED BY selector.selid;
-SET default_with_oids = false;
 CREATE TABLE sso_session (
     id character varying(32) NOT NULL,
     data text,
     "timestamp" timestamp without time zone NOT NULL
 );
-
 CREATE TABLE strm_useragent (
     useragentid integer NOT NULL,
     useragent character varying(255) NOT NULL
@@ -1708,7 +1683,6 @@ CREATE SEQUENCE team_teamid_seq
     NO MINVALUE
     MAXVALUE 2147483647
     CACHE 1;
-SET default_with_oids = false;
 CREATE TABLE terms (
     start timestamp with time zone NOT NULL,
     descr character varying(10) NOT NULL,
