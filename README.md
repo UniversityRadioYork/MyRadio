@@ -60,6 +60,13 @@ Other:
  - To connect to the VM directly, login (with "vagrant", "vagrant") using SSH or VirtualBox
  - Vagrant bootstrap script gives the myradio user CREATEDB permissions so be sure to never run this in a production environment, or remove the permission before doing so.
 
+Docker Quickstart
+==========
+
+If you have Docker on your system, you can use Docker Compose to set up an environment.
+To do this, simply run `docker compose up -d`, and visit "https://localhost:4443/myradio/".
+Then follow the steps above.
+
 Quickstart
 ==========
 Install Apache2, PHP, Composer and PostgreSQL on your prefered Unix-based
