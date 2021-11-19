@@ -55,7 +55,7 @@ cd /vagrant
 mkdir -p /vagrant/src/vendor
 su vagrant -c 'composer --no-progress update'
 
-ln -sf /vagrant/src /var/www/myradio
+ln -sf /vagrant/src /var/www/myradio/src
 ln -sf /vagrant/sample_configs/apache.conf /etc/apache2/sites-available/myradio.conf
 a2ensite myradio
 a2dissite 000-default
