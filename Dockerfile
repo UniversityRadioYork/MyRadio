@@ -37,7 +37,7 @@ RUN mkdir -p /var/www/myradio && chown -R www-data:www-data /var/www/myradio && 
     mkdir -p /var/log/myradio && chown -R www-data:www-data /var/log/myradio
 
 WORKDIR /var/www/myradio
-COPY composer.* .
+COPY composer.* /var/www/myradio/
 RUN COMPOSER_VENDOR_DIR=/var/www/myradio/vendor composer install
 
 COPY schema schema

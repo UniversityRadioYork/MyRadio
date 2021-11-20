@@ -1,0 +1,1 @@
+FROM ghcr.io/universityradioyork/myradio/dev-base:latest
