@@ -36,6 +36,6 @@ jobs:
         username: ${{ github.actor }}
         password: ${{ secrets.GITHUB_TOKEN }}
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag ghcr.io/UniversityRadioYork/MyRadio/dev-base:${{ github.event.inputs.docker-tag || 'latest' }}
+      run: docker build . --file Dockerfile --tag ghcr.io/universityradioyork/myradio/dev-base:${{ github.event.inputs.docker-tag || 'latest' }}
     - name: Push
-      run: docker push ghcr.io/UniversityRadioYork/MyRadio/dev-base:${{ github.event.inputs.docker-tag || 'latest' }}
+      run: docker push ghcr.io/universityradioyork/myradio/dev-base:${{ github.event.inputs.docker-tag || 'latest' }}
