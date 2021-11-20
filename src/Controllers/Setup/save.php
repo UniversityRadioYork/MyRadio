@@ -28,7 +28,10 @@ foreach ($old_config as $line) {
 }
 
 //Work out URLs
-if (!empty($_SERVER['HTTP_HOST'])) {
+// We might be behind a reverse proxy
+if (!empty($_SERVER['HTTP_X_FORWARDED_HOST'])) {
+    $domain = $_SERVER['HTTP_X_FORWARDED_HOST'];
+} else if (!empty($_SERVER['HTTP_HOST'])) {
     $domain = $_SERVER['HTTP_HOST'];
 } else {
     $domain = $_SERVER['SERVER_NAME'];

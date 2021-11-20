@@ -36,7 +36,8 @@
 		"bmewburn.vscode-intelephense-client",
 		"felixfbecker.php-debug",
 		"mtxr.sqltools",
-		"mtxr.sqltools-driver-pg"
+		"mtxr.sqltools-driver-pg",
+		"whatwedo.twig"
 	],
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
