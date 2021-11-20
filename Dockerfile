@@ -16,7 +16,7 @@ RUN pecl install xdebug-2.9.5 && docker-php-ext-enable xdebug \
  && echo 'xdebug.remote_connect_back=1' >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 
 COPY --from=aheadworks/mhsendmail:latest /usr/bin/mhsendmail /usr/local/bin/mhsendmail
-# RUN echo sendmail_path = /usr/local/bin/mhsendmail >> /etc/php/php.ini
+RUN echo sendmail_path = /usr/local/bin/mhsendmail >> /usr/local/etc/php/conf.d/sendmail.ini
 
 # Self-signed certificate
 RUN openssl req -nodes -new -subj "/C=GB/ST=North Yorkshire/L=York/O=University Radio York/OU=Localhost/CN=localhost" > myradio.csr && \
