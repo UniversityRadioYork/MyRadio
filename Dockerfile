@@ -38,7 +38,7 @@ RUN mkdir -p /var/www/myradio && chown -R www-data:www-data /var/www/myradio && 
 
 WORKDIR /var/www/myradio
 COPY composer.* /var/www/myradio/
-RUN COMPOSER_VENDOR_DIR=/var/www/myradio/vendor composer install
+RUN COMPOSER_VENDOR_DIR=/var/www/myradio/src/vendor composer install
 
 COPY schema schema
 COPY src src
@@ -46,6 +46,4 @@ COPY src src
 COPY sample_configs/docker-config.php src/MyRadio_Config.local.php
 RUN chown www-data:www-data /var/www/myradio/src/MyRadio_Config.local.php && chmod 664 /var/www/myradio/src/MyRadio_Config.local.php
 
-# COPY scripts/docker-entrypoint.sh /docker-entrypoint.sh
-# ENTRYPOINT ["/docker-entrypoint.sh"]
 CMD ["apache2-foreground"]

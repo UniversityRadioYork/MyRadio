@@ -121,12 +121,7 @@ class MyRadioException extends \RuntimeException implements ClientAware
             }
 
             //Configuration is available, use this to decide what to do
-            if (!$silent
-                && Config::$display_errors
-                || (class_exists('\MyRadio\MyRadio\AuthUtils')
-                && defined('AUTH_SHOWERRORS')
-                && AuthUtils::hasPermission(AUTH_SHOWERRORS))
-            ) {
+            if (false) {
                 if ($is_ajax) {
                     //This is an Ajax/CLI request. Return JSON
                     header('HTTP/1.1 '.$this->code.' '.$this->getCodeName());

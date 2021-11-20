@@ -20,5 +20,6 @@ services:
     
     volumes:
       # Update this to wherever you want VS Code to mount the folder of your project
-      - ./schema:/var/www/myradio/schema:cached
-      - ./src:/var/www/myradio/src:cached
+      - .:/workspaces/MyRadio:cached
+      - ./sample_configs/codespaces-server-name.conf:/etc/apache2/conf-enabled/server-name.conf
+      - ./sample_configs/codespaces-apache.conf:/etc/apache2/sites-available/myradio.conf
