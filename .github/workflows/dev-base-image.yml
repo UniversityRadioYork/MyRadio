@@ -1,0 +1,29 @@
+name: Update development base image
+
+on:
+  push:
+    branches: [ master ]
+    paths:
+    - sample_configs/*
+    - composer.*
+    - .github/*
+    - .devcontainer/*
+
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Docker Login
+      uses: docker/login-action@v1.10.0
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    - name: Build the Docker image
+      run: docker build . --file Dockerfile --tag ghcr.io/UniversityRadioYork/MyRadio/dev-base:latest
+    - name: Push
+      run: docker push ghcr.io/UniversityRadioYork/MyRadio/dev-base:latest
