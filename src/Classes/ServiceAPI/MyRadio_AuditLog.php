@@ -2,12 +2,13 @@
 
 namespace MyRadio\ServiceAPI;
 
+use MyRadio\MyRadio\CoreUtils;
 use MyRadio\ServiceAPI\MyRadio_User;
 use MyRadio\MyRadioException;
 
 class MyRadio_AuditLog extends ServiceAPI
 {
-    private const BASE_SQL = "SELECT entry_id, entry_type, target_class, target_id, actor_id, payload, entry_time FROM myradio.audit_log";
+    private const BASE_SQL = "SELECT log_entry_id, entry_type, target_class, target_id, actor_id, payload, entry_time FROM myradio.audit_log";
 
     private int $entry_id;
 
@@ -25,13 +26,51 @@ class MyRadio_AuditLog extends ServiceAPI
 
     protected function __construct(array $data)
     {
-        $this->entry_id = (int) $data['entry_id'];
+        $this->entry_id = (int) $data['log_entry_id'];
         $this->entry_type = $data['entry_type'];
         $this->target_class = $data['target_class'];
         $this->target_id = (int) $data['target_id'];
         $this->actor_id = (int) $data['actor_id'];
-        $this->payload = $data['payload'];
-        $this->entry_time = (int) $data['entry_time'];
+        $this->payload = json_decode($data['payload'], true);
+        $this->entry_time = strtotime($data['entry_time']);
+    }
+
+    public function getID()
+    {
+        return $this->entry_id;
+    }
+
+    public function getEventType()
+    {
+        return $this->entry_type;
+    }
+
+    public function getTargetClass()
+    {
+        return $this->target_class;
+    }
+
+    public function getTargetID()
+    {
+        return $this->target_id;
+    }
+
+    /**
+     * @return MyRadio\ServiceAPI\MyRadio_User
+     */
+    public function getActor()
+    {
+        return MyRadio_User::getInstance($this->actor_id);
+    }
+
+    public function getPayload()
+    {
+        return $this->payload;
+    }
+
+    public function getEntryTime()
+    {
+        return $this->entry_time;
     }
 
     /**
@@ -52,6 +91,42 @@ class MyRadio_AuditLog extends ServiceAPI
             $sql,
             [$type, $target_class, $target_id, $actor_id, json_encode($payload)]
         );
+    }
+
+    /**
+     * @return self[]
+     */
+    public static function getEvents(int $since, int $until, array $query = [])
+    {
+        $sql = self::BASE_SQL . ' WHERE entry_time >= $1 AND entry_time <= $2';
+        $paramId = 0;
+        $params = [CoreUtils::getTimestamp($since), CoreUtils::getTimestamp($until)];
+        if (in_array('event_type', $query))
+        {
+            $sql .= " AND event_type = $$paramId";
+            $params[] = $query['event_type'];
+            $paramId++;
+        }
+        if (in_array('target_type', $query))
+        {
+            $sql .= " AND target_type = $$paramId";
+            $params[] = $query['target_type'];
+            $paramId++;
+        }
+        if (in_array('actor_id', $query))
+        {
+            $sql .= " AND actor_id = $$paramId";
+            $params[] = $query['actor_id'];
+            $paramId++;
+        }
+
+        $rows = self::$db->fetchAll($sql, $params);
+        $result = [];
+        foreach ($rows as $row)
+        {
+            $result[] = new self($row);
+        }
+        return $result;
     }
 
     protected static function factory($itemid)
