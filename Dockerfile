@@ -2,7 +2,7 @@ FROM php:7.4-apache
 
 RUN apt-get update && apt-get install -y libpq-dev libpng-dev libjpeg-dev libldap-dev unzip \
                                          libcurl4-openssl-dev libxslt-dev git libz-dev libzip-dev libmemcached-dev \
-                                         postgresql-client jq
+                                         postgresql-client jq msmtp-mta
 
 RUN docker-php-ext-install pgsql pdo_pgsql gd ldap curl xsl zip
 
@@ -15,8 +15,7 @@ RUN pecl install xdebug-2.9.5 && docker-php-ext-enable xdebug \
  && echo 'xdebug.remote_enable=1' >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
  && echo 'xdebug.remote_connect_back=1' >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 
-COPY --from=aheadworks/mhsendmail:latest /usr/bin/mhsendmail /usr/local/bin/mhsendmail
-RUN echo sendmail_path = /usr/local/bin/mhsendmail >> /usr/local/etc/php/conf.d/sendmail.ini
+RUN echo sendmail_path = "/usr/bin/msmtp -t --host mail --port 1025 --from myradio@ury.dev" > /usr/local/etc/php/conf.d/sendmail.ini
 
 # Self-signed certificate
 RUN openssl req -nodes -new -subj "/C=GB/ST=North Yorkshire/L=York/O=University Radio York/OU=Localhost/CN=localhost" > myradio.csr && \
