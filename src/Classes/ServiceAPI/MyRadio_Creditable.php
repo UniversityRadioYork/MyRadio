@@ -27,7 +27,7 @@ trait MyRadio_Creditable
      * @param MyRadio_Metadata_Common $parent Used when there is inheritance enabled
      *                                        for this object. In this case credits are merged.
      *
-     * @return type
+     * @return array
      */
     public function getCredits(\MyRadio\ServiceAPI\MyRadio_Metadata_Common $parent = null)
     {
