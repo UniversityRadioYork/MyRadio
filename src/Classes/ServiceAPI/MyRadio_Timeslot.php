@@ -8,6 +8,7 @@ namespace MyRadio\ServiceAPI;
 
 use DateTime;
 use MyRadio\Config;
+use MyRadio\MyRadio\AuditLogTypes;
 use MyRadio\MyRadio\AuthUtils;
 use MyRadio\MyRadioException;
 use MyRadio\MyRadio\CoreUtils;
@@ -17,6 +18,7 @@ use MyRadio\MyRadio\MyRadioForm;
 use MyRadio\MyRadio\MyRadioFormField;
 use MyRadio\NIPSWeb\NIPSWeb_TimeslotItem;
 use MyRadio\NIPSWeb\NIPSWeb_BAPSUtils;
+use MyRadio\ServiceAPI\MyRadio_AuditLog;
 use MyRadio\SIS\SIS_Utils;
 use Spatie\IcalendarGenerator\Components\Event;
 
@@ -323,6 +325,11 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             'show_season_timeslot_id'
         );
         $this->updateCacheObject();
+        MyRadio_AuditLog::log(
+            AuditLogTypes::MetaUpdated,
+            $this->season_id,
+            ['key' => $string_key, 'value' => $value]
+        );
 
         return $r;
     }
@@ -969,6 +976,11 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             'Episode of ' . $this->getMeta('title') . ' Cancelled',
             $email
         );
+        MyRadio_AuditLog::log(
+            AuditLogTypes::Cancelled,
+            $this->timeslot_id,
+            ['type' => 'admin', 'reason' => $reason]
+        );
         return true;
     }
 
@@ -999,6 +1011,11 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             MyRadio_List::getByName('programming'),
             'Episode of ' . $this->getMeta('title') . ' Cancelled',
             $email2
+        );
+        MyRadio_AuditLog::log(
+            AuditLogTypes::Cancelled,
+            $this->timeslot_id,
+            ['type' => 'self_service', 'reason' => $reason]
         );
         return true;
     }
@@ -1056,6 +1073,11 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
         );
 
         self::$cache->purge();
+        MyRadio_AuditLog::log(
+            AuditLogTypes::Moved,
+            $this->timeslot_id,
+            ['new_start' => CoreUtils::getRfc2822Timestamp($newStart), 'new_end' => CoreUtils::getRfc2822Timestamp($newEnd)]
+        );
         return $r;
     }
 
@@ -1201,6 +1223,11 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
         );
         $this->playout = $playout;
         $this->updateCacheObject();
+        MyRadio_AuditLog::log(
+            AuditLogTypes::Edited,
+            $this->timeslot_id,
+            ['playout' => $playout]
+        );
     }
 
     public function getAutoVizConfig()
