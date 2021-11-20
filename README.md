@@ -19,10 +19,18 @@ Visual Studio Code running in the cloud, pre-configured for MyRadio.
 
 To do this, go to [Codespaces](https://github.com/UniversityRadioYork/MyRadio/codespaces),
 and hit New Codespace. After a minute or so you'll be dropped into a Visual Studio
-Code window, running remotely on a GitHub server. Switch to the Ports tab on the bottom,
+Code window, running remotely on a GitHub server. Switch to the Ports tab on the bottom (or,
+if it doesn't show up, press <kbd>Ctrl+Shift+P</kbd> and select `View: Toggle Ports`),
 and click on the Local Address next to port 7080 to open a MyRadio browser tab. Then,
 follow the steps below from Database onwards - the database hostname is `postgres` and
 the database password is `myradio`.
+
+To debug the code, press <kbd>F5</kbd>, or <kbd>Ctrl+Shift+P</kbd> and select `Start Debugging`.
+You can place breakpoints anywhere in the PHP code by clicking to the left of the line number, and
+execution will be paused when that line is reached.
+
+The codespace includes Mailhog, which will trap any emails sent by MyRadio. To see them,
+click the Local Address next to port 8025 in the Ports panel.
 
 Super Quickstart
 ==========
