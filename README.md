@@ -11,6 +11,19 @@ MyRadio is part of a suite of upcoming public projects, including:
 - loggerng, our python audio logging and retrieving system
 - Bootstrapping scripts for setting up and configuring all the dependencies
 
+Super Duper Quickstart
+==========
+
+MyRadio is pre-configured for GitHub Codespaces, which let you start a version of
+Visual Studio Code running in the cloud, pre-configured for MyRadio.
+
+To do this, go to [Codespaces](https://github.com/UniversityRadioYork/MyRadio/codespaces),
+and hit New Codespace. After a minute or so you'll be dropped into a Visual Studio
+Code window, running remotely on a GitHub server. Switch to the Ports tab on the bottom,
+and click on the Local Address next to port 7080 to open a MyRadio browser tab. Then,
+follow the steps below from Database onwards - the database hostname is `postgres` and
+the database password is `myradio`.
+
 Super Quickstart
 ==========
 MyRadio comes with a Vagrantfile based on Ubuntu 19.10.
@@ -38,7 +51,7 @@ CONNECT:
 DATABASE:
  - On the intro screen press "Click here to continue"
  - Enter the database details (see Database Credentials) and press Next
- - Press "run task", wait a few seconds and then press "run task" again.
+ - Press "run task", wait a few seconds and then press "run task" again. (And possibly a third time.)
  - [This delay and repetition is a workaround for a slight bug in how we build the database]
  
 USER:
