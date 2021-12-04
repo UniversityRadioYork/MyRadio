@@ -1,5 +1,6 @@
 BEGIN;
 
+-- Give the option for podcasts to be explicit (true or false)
 ALTER TABLE schedule.show
     ADD COLUMN podcast_explicit BOOLEAN DEFAULT 'f';
 

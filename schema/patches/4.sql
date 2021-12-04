@@ -1,5 +1,7 @@
 BEGIN;
 
+-- Mailing lists used to be show/hide. Now you can define their listed order
+--  To hide, set the "ordering" to a negative number.
 ALTER TABLE public.mail_list
     ADD COLUMN ordering INTEGER DEFAULT 0;
 
