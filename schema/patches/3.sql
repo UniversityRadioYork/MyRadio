@@ -14,7 +14,8 @@ CREATE TABLE myradio.analytics (
     time timestamptz
 );
 
--- Take a given memberid and find its officerships and shows
+-- For a given page, take a given memberid and find its officerships and shows
+--  Useful for finding analytics of a page, based on attributes of its viewers
 --  Inserts this into the "myradio.analytics" table
 CREATE FUNCTION myradio.create_analytics_record(
     page TEXT,
@@ -49,7 +50,7 @@ AS $$
 
         -- Right, we've got what we need so dump output into analytics table
 	--  Preserve reference data (like session_id, current datetime) for comparison
-	--  TODO Explain why num_shows is rounded in that way
+	--  Note that no identifiable details are preserved (hence why num_shows is rounded)
         INSERT INTO myradio.analytics
         (page, ref, member_officerships, member_shows_bucketed, session_id, time)
         VALUES (
