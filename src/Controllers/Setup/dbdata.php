@@ -2,7 +2,6 @@
 /**
  * Sets up the database data for a new installation of MyRadio.
  *
- * @todo    Apply patches
  * @todo    there's some duplication in setUpFullActionsAuth and DBDATA_BLANK
  */
 use \MyRadio\Database;
