@@ -17,6 +17,8 @@ CREATE TABLE myradio.analytics (
 -- For a given page, take a given memberid and find its officerships and shows
 --  Useful for finding analytics of a page, based on attributes of its viewers
 --  Inserts this into the "myradio.analytics" table
+-- Note: Read 'create_analytics_record.memberid' as the function's 'memberid' argument
+--  It's not reading that value from a table - it's more like a local variable
 CREATE FUNCTION myradio.create_analytics_record(
     page TEXT,
     ref TEXT,
@@ -30,7 +32,6 @@ AS $$
         num_shows INTEGER;
     BEGIN
         -- Find the officerships this member currently has
-	--  Checks both analytics history and officers with this memberid
         SELECT array_agg(officerid) INTO officerships
         FROM public.member_officer
         WHERE member_officer.memberid = create_analytics_record.memberid
@@ -38,13 +39,12 @@ AS $$
         AND (till_date IS NULL OR till_date >= (NOW() + '28 days'::INTERVAL));
 
         -- Find the number of shows this member has
-	--  Checks both analytics history and shows with this memberid
         SELECT COUNT(*) INTO num_shows
         FROM schedule.show
-        WHERE show.memberid=create_analytics_record.memberid
+        WHERE show.memberid = create_analytics_record.memberid
         OR show_id IN (
                SELECT show_id FROM schedule.show_credit
-                  WHERE creditid=create_analytics_record.memberid AND
+                  WHERE creditid = create_analytics_record.memberid AND
                       (effective_to >= NOW() OR effective_to IS NULL)
         );
 
