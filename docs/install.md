@@ -84,7 +84,7 @@ USER:
 
 ## Default Credentials
 Database: (when building the database, these credentials are needed)
- - Hostname: localhost
+ - Hostname: `postgres` if running in Docker, `localhost` otherwise
  - Database: myradio
  - Username: myradio
  - Password: myradio
