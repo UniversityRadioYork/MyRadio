@@ -7,8 +7,19 @@
 //Load the basic MyRadio framework
 
 use \MyRadio\MyRadio\URLUtils;
+use MyRadio\Config;
+use MyRadio\ServiceAPI\MyRadio_APIKey;
+use MyRadio\ServiceAPI\MyRadio_Swagger2;
 
 require_once __DIR__.'/root_cli.php';
+
+if (defined('SHIBBOBLEH_ALLOW_API') && SHIBBOBLEH_ALLOW_API === true
+    && (!isset($_SESSION['memberid']))) {
+    $caller = MyRadio_Swagger2::getAPICaller();
+    if ($caller instanceof MyRadio_APIKey) {
+        $_SESSION['memberid'] = Config::$system_user;
+    }
+}
 
 //Check the current authentication status of the user
 if ((!isset($_SESSION['memberid']) or $_SESSION['auth_use_locked'])
