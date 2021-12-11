@@ -40,12 +40,6 @@ class MyRadio_APIKey extends ServiceAPI implements APICaller
     protected function __construct($key)
     {
         $this->key = $key;
-        $revoked = self::$db->fetchColumn('SELECT revoked from myury.api_key WHERE key_string=$1', [$key]);
-        if (count($revoked) === 0)
-        {
-            return null;
-        }
-        $this->revoked = ($revoked[0] == 't');
         $this->permissions = array_map(
             'intval',
             self::$db->fetchColumn(
@@ -70,5 +64,17 @@ class MyRadio_APIKey extends ServiceAPI implements APICaller
     public function isRevoked()
     {
         return $this->revoked;
+    }
+
+    public static function factory($key)
+    {
+        $apiKey = new static($key);
+        $revoked = self::$db->fetchColumn('SELECT revoked from myury.api_key WHERE key_string=$1', [$key]);
+        if (count($revoked) === 0)
+        {
+            return null;
+        }
+        $apiKey->revoked = ($revoked[0] == 't');
+        return $apiKey;
     }
 }
