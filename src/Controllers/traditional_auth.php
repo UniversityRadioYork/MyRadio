@@ -8,6 +8,7 @@
 
 use \MyRadio\MyRadio\URLUtils;
 use MyRadio\Config;
+use MyRadio\MyRadioException;
 use MyRadio\ServiceAPI\MyRadio_APIKey;
 use MyRadio\ServiceAPI\MyRadio_Swagger2;
 
@@ -15,8 +16,16 @@ require_once __DIR__.'/root_cli.php';
 
 if (defined('SHIBBOBLEH_ALLOW_API') && SHIBBOBLEH_ALLOW_API === true &&
     (isset($_REQUEST['api_key']) || isset($_REQUEST['apiKey']))) {
-    $caller = MyRadio_Swagger2::getAPICaller();
-    $authed = $caller instanceof MyRadio_APIKey && !$caller->isRevoked();
+    try {
+        $caller = MyRadio_Swagger2::getAPICaller();
+        $authed = $caller instanceof MyRadio_APIKey && !$caller->isRevoked();
+    } catch (MyRadioException $e) {
+        if ($e->getCode() === 404) {
+            $authed = false;
+        } else {
+            throw $e;
+        }
+    }
 } else {
     $authed = isset($_SESSION['memberid']) && !$_SESSION['auth_use_locked'];
 }
