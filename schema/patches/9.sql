@@ -1,3 +1,6 @@
+-- Link show tracklists to selector sources
+--  Moved from base.sql into a separate patch
+--  TODO Explain this better
 CREATE TABLE selsources (
     selaction integer NOT NULL,
     sourceid character(1) NOT NULL

@@ -1,3 +1,4 @@
+-- Change all instances of 'myury' to 'myradio'
 ALTER TABLE myury.act_permission SET SCHEMA myradio;
 ALTER TABLE myury.actions SET SCHEMA myradio;
 ALTER TABLE myury.api_class_map SET SCHEMA myradio;
