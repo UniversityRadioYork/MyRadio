@@ -6,6 +6,7 @@
 namespace MyRadio\ServiceAPI;
 
 use MyRadio\Iface\APICaller;
+use MyRadio\MyRadioException;
 
 /**
  * The APIKey Class provies information and management of API Keys for the MyRadio
@@ -40,6 +41,10 @@ class MyRadio_APIKey extends ServiceAPI implements APICaller
     {
         $this->key = $key;
         $revoked = self::$db->fetchColumn('SELECT revoked from myury.api_key WHERE key_string=$1', [$key]);
+        if (count($revoked) === 0)
+        {
+            throw new MyRadioException('Invalid API key', 404);
+        }
         $this->revoked = ($revoked[0] == 't');
         $this->permissions = array_map(
             'intval',
