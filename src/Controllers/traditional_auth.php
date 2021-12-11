@@ -13,8 +13,9 @@ use MyRadio\ServiceAPI\MyRadio_Swagger2;
 
 require_once __DIR__.'/root_cli.php';
 
-if (defined('SHIBBOBLEH_ALLOW_API') && SHIBBOBLEH_ALLOW_API === true
-    && (!isset($_SESSION['memberid']))) {
+if (defined('SHIBBOBLEH_ALLOW_API') && SHIBBOBLEH_ALLOW_API === true &&
+    (isset($_REQUEST['api_key']) || isset($_REQUEST['apiKey']))) {
+    define('DISABLE_SESSION', true);
     $caller = MyRadio_Swagger2::getAPICaller();
     if ($caller instanceof MyRadio_APIKey) {
         $_SESSION['memberid'] = Config::$system_user;
