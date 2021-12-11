@@ -1,6 +1,7 @@
 <?php
 
-
+// Test if the API responds to queries
+//  TODO Expand this test file and explain what it's for
 class SanitySpecCest
 {
     public function _before(ApiTester $I)
@@ -11,7 +12,6 @@ class SanitySpecCest
     {
     }
 
-    // tests
     public function getConfig(\Step\Api\MyRadioTester $I)
     {
         $I->wantTo("retrieve the public config");

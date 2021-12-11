@@ -4,6 +4,7 @@
 
 set -eux
 
+# Prevents this script being run outside of vagrant
 if [ ! -d /vagrant ]; then
 	echo "This script should only ever be run on a vagrant virtual machine"
 	echo "Seriously, don't run this anywhere other than vagrant, it will ruin your day";
@@ -55,12 +56,13 @@ cd /vagrant
 mkdir -p /vagrant/src/vendor
 su vagrant -c 'composer --no-progress update'
 
+# Link convenient folders to /vagrant inside the VM
 ln -sf /vagrant/src /var/www/myradio/src
 ln -sf /vagrant/sample_configs/apache.conf /etc/apache2/sites-available/myradio.conf
 a2ensite myradio
 a2dissite 000-default
 
-# Generate an SSL cert
+# Generate a random SSL cert
 export PASSPHRASE=$(head -c 500 /dev/urandom | tr -dc a-z0-9A-Z | head -c 128; echo)
 subj="
 C=UK
@@ -75,7 +77,6 @@ openssl req -newkey rsa:2048 -nodes -subj "$(echo -n "$subj" | tr "\n" "/")" -ke
 -addext extendedKeyUsage=serverAuth -addext subjectAltName=DNS:localhost
 
 # Start httpd back up
-
 update-rc.d apache2 defaults
 service apache2 start
 
@@ -87,12 +88,14 @@ su - postgres -c "cat /vagrant/sample_configs/postgres.sql | psql"
 
 rm -f /vagrant/src/MyRadio_Config.local.php # Remove any existing config
 
-# Somewhere to store audio uploads
+# Create folders to store audio uploads
+#  Don't put spaces in folder names
 music_dirs="records membersmusic beds jingles podcasts"
-for i in ${music_dirs}; do # no spaces
+for i in ${music_dirs}; do
 	mkdir -p /music/$i
 	chown www-data:www-data /music/$i
 done
+
 # And logs
 mkdir -p /var/log/myradio
 chown www-data:www-data /var/log/myradio
