@@ -4,7 +4,7 @@ There are a few different ways to install myradio
 
 ## GitHub Codespaces
 
-If you have access to the GitHub Codespaces beta (if you don't, [sign up here]()),
+If you have access to the GitHub Codespaces beta (if you don't, [sign up here](https://github.com/features/codespaces/signup)),
 MyRadio is pre-configured for it, which let you start a version of
 Visual Studio Code running in the cloud, alongside a MyRadio instance.
 
