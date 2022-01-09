@@ -11,6 +11,8 @@ use MyRadio\ServiceAPI\ServiceAPI;
 use MyRadio\ServiceAPI\MyRadio_User;
 use MyRadio\ServiceAPI\MyRadio_List;
 
+use PHPMailer\PHPMailer\PHPMailer;
+
 /**
  * Provides email functions so that MyRadio can send email.
  */
@@ -20,16 +22,16 @@ class MyRadioEmail extends ServiceAPI
      * @var string carriage return + newline
      */
     private static $rtnl = "\r\n";
-    private static $multipart_boundary = 'muryp2c6cf41f304e3';
     private $email_id;
     private $r_lists = [];
     private $r_users = [];
     private $subject;
-    private $body;
-    private $body_transformed;
-    private $multipart = false;
-    private $from;
+    private ?MyRadio_User $from;
     private $timestamp;
+    private string $body;
+    private string $body_alt;
+
+    private PHPMailer $mailer;
 
     protected function __construct($eid)
     {
@@ -42,7 +44,6 @@ class MyRadioEmail extends ServiceAPI
         }
 
         $this->subject = $info['subject'];
-        $this->body = $info['body'];
         $this->from = (empty($info['sender']) ? null : MyRadio_User::getInstance($info['sender']));
         $this->timestamp = strtotime($info['timestamp']);
         $this->email_id = $eid;
@@ -56,28 +57,31 @@ class MyRadioEmail extends ServiceAPI
             [$eid]
         );
 
+        $this->mailer = new PHPMailer(true);
+
+        if ($this->from !== null) {
+            $this->mailer->setFrom($this->from->getEmail(), $this->from->getName());
+            $this->mailer->Sender = $this->from->getEmail();
+        } else {
+            $this->mailer->setFrom('no-reply@'.Config::$email_domain, Config::$long_name);
+            $this->mailer->Sender = 'no-reply@'.Config::$email_domain;
+        }
+
         /*
          * Check if the body needs to be split into multipart.
          * This creates a string with both Text and HTML parts.
          */
-        $split = strip_tags($this->body);
-        if ($this->body !== $split) {
+        $body = $info['body'];
+        $split = strip_tags($body);
+        if ($body !== $split) {
             //There's HTML in there
-            $split = \Html2Text\Html2Text::convert($this->body, true); // ignore errors
-            $this->multipart = true;
-            $body_transformed = 'This is a MIME encoded message.'
-                    .self::$rtnl.self::$rtnl.'--'.self::$multipart_boundary.self::$rtnl
-                    .'Content-Type: text/plain;charset=utf-8'.self::$rtnl.self::$rtnl
-                    .self::addFooter($split).self::$rtnl.self::$rtnl.'--'.self::$multipart_boundary.self::$rtnl
-                    .'Content-Type: text/html;charset=utf-8'.self::$rtnl.self::$rtnl
-                    .self::addHTMLFooter($this->body).self::$rtnl.self::$rtnl.'--'.self::$multipart_boundary.'--';
+            $split = \Html2Text\Html2Text::convert($body, true); // ignore errors
+            $this->mailer->isHTML(true);
+            $this->body = self::addHTMLFooter($body);
+            $this->body_alt = self::addFooter($split);
         } else {
-            $body_transformed = self::addFooter($this->body);
+            $this->body = self::addFooter($body);
         }
-
-        // PHP's mail function doesn't deal with the fact there's a line limit for
-        // emails for you, other than to mention it's a thing in the docs.
-        $this->body_transformed = wordwrap($body_transformed, 80, "\r\n", true);
     }
 
     /**
@@ -161,30 +165,6 @@ class MyRadioEmail extends ServiceAPI
         return new self($eid);
     }
 
-    private function getHeader()
-    {
-        $headers = ['MIME-Version: 1.0'];
-
-        if ($this->from !== null) {
-            $headers[] = 'From: '.$this->from->getName().' <'.$this->from->getEmail().'>';
-            $headers[] = 'Return-Path: '.$this->from->getEmail();
-        } else {
-            $headers[] = 'From: '.Config::$long_name.' <no-reply@'.Config::$email_domain.'>';
-            $headers[] = 'Return-Path: no-reply@'.Config::$email_domain;
-        }
-
-        /*
-         * !! Multipart headers must be *last* or things Go Badly
-         */
-        if ($this->multipart) {
-            $headers[] = 'Content-Type: multipart/alternative;boundary='.self::$multipart_boundary;
-        } else {
-            $headers[] = 'Content-Type: text/plain; charset=utf-8';
-        }
-
-        return implode(self::$rtnl, $headers);
-    }
-
     private static function addFooter($message)
     {
         $footer = 'This email was sent automatically from MyRadio. '
@@ -209,6 +189,7 @@ class MyRadioEmail extends ServiceAPI
             return;
         }
         $this->body_transformed = utf8_encode($this->body_transformed);
+        /** @var MyRadio_User $user */
         foreach ($this->getUserRecipients() as $user) {
             if (!$this->getSentToUser($user)) {
                 //Don't send if the user has opted out
@@ -217,36 +198,47 @@ class MyRadioEmail extends ServiceAPI
                     if (substr($u_subject, 0, 1) !== '[') {
                         $u_subject = '['.Config::$short_name.'] '.$u_subject;
                     }
-                    $u_message = str_ireplace('#NAME', $user->getFName(), $this->body_transformed);
-                    if (!mail(
-                        $user->getName() . ' <' . $user->getEmail() . '>',
-                        $u_subject,
-                        $u_message,
-                        $this->getHeader()
-                    )) {
-                        continue;
+                    $this->mailer->Subject = $u_subject;
+                    $this->mailer->Body = str_ireplace('#NAME', $user->getFName(), $this->body);
+                    if (!empty($this->body_alt)) {
+                        $this->mailer->AltBody = str_ireplace('#NAME', $user->getFName(), $this->body_alt);
+                    }
+                    try {
+                        $this->mailer->addAddress($user->getEmail(), $user->getName());
+                        $this->mailer->send();
+                    } catch (\Exception $e) {
+                        trigger_error($e->getMessage(), E_USER_NOTICE);
                     }
                 }
                 $this->setSentToUser($user);
+                $this->mailer->clearAddresses();
             }
         }
 
+        /** @var MyRadio_List $list */
         foreach ($this->getListRecipients() as $list) {
             if (!$this->getSentToList($list)) {
+                /** @var MyRadio_User $user */
                 foreach ($list->getMembers() as $user) {
                     //Don't send if the user has opted out
                     if ($user->getReceiveEmail()) {
-                        $u_subject = str_ireplace('#NAME', $user->getFName(), $this->subject);
-                        $u_message = str_ireplace('#NAME', $user->getFName(), $this->body_transformed);
-                        if (!mail(
-                            $list->getName().' <'.$user->getEmail().'>',
-                            '['.Config::$short_name.'] '.$u_subject,
-                            $u_message,
-                            $this->getHeader()
-                        )) {
-                            continue;
+                        $u_subject = trim(str_ireplace('#NAME', $user->getFName(), $this->subject));
+                        if (substr($u_subject, 0, 1) !== '[') {
+                            $u_subject = '['.Config::$short_name.'] '.$u_subject;
+                        }
+                        $this->mailer->Subject = $u_subject;
+                        $this->mailer->Body = str_ireplace('#NAME', $user->getFName(), $this->body);
+                        if (!empty($this->body_alt)) {
+                            $this->mailer->AltBody = str_ireplace('#NAME', $user->getFName(), $this->body_alt);
+                        }
+                        try {
+                            $this->mailer->addAddress($user->getEmail(), $user->getName());
+                            $this->mailer->send();
+                        } catch (\Exception $e) {
+                            trigger_error($e->getMessage(), E_USER_NOTICE);
                         }
                     }
+                    $this->mailer->clearAddresses();
                 }
                 $this->setSentToList($list);
             }
