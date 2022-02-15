@@ -196,7 +196,11 @@ class MyRadio_Demo extends ServiceAPI
                     'label' => "Signup Cutoff (Hours)",
                     'explanation' => 'If set, people will only be able to join this many hours before your session starts. Set to 0 to disable.',
                     "required" => false,
-                    'min' => 0
+                    'options' => [
+                        'min' => 0,
+                    ],
+                    'value' => 0,
+                    'required' => true
                 ]
             )
         )->addField(
