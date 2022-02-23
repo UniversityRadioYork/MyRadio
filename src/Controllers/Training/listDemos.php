@@ -32,19 +32,33 @@ foreach ($demos as $demo) {
         ];
     } else {
         if ($demo_object->isUserAttendingDemo($currentUser->getID())) {
-            $demo['attending'] = 'You are attending this demo';
-            $demo['join'] = [
-                'display' => 'text',
-                'value' => 'Leave',
-                'url' => URLUtils::makeURL('Training', 'leaveDemo', ['demoid' => $demo['demo_id']]),
-            ];
+            if ($demo_object->tooCloseToStart()) {
+                $demo['attending'] = 'You are attending this demo. Please contact your trainer if you can no longer make it.';
+                $demo['join'] = [
+                    'display' => 'none',
+                ];
+            } else {
+                $demo['attending'] = 'You are attending this demo';
+                $demo['join'] = [
+                    'display' => 'text',
+                    'value' => 'Leave',
+                    'url' => URLUtils::makeURL('Training', 'leaveDemo', ['demoid' => $demo['demo_id']]),
+                ];
+            }
         } elseif ($demo_object->isSpaceOnDemo()) {
-            $demo['attending'] = 'Space available!';
-            $demo['join'] = [
-                'display' => 'text',
-                'value' => 'Join',
-                'url' => URLUtils::makeURL('Training', 'attendDemo', ['demoid' => $demo['demo_id']]),
-            ];
+            if ($demo_object->tooCloseToStart()) {
+                $demo['attending'] = 'Too late to sign up';
+                $demo['join'] = [
+                    'display' => 'none',
+                ];
+            } else {
+                $demo['attending'] = 'Space available!';
+                $demo['join'] = [
+                    'display' => 'text',
+                    'value' => 'Join',
+                    'url' => URLUtils::makeURL('Training', 'attendDemo', ['demoid' => $demo['demo_id']]),
+                ];
+            }
         } else {
             $demo['attending'] = 'Demo full';
             $demo['join'] = ['display' => 'none'];
@@ -84,13 +98,19 @@ if (isset($_REQUEST['msg'])) {
             $twig->addInfo('You have successfully been added to this session.');
             break;
         case 1: //full
-            $twig->addError('Sorry, but a maximum two people can join a session.');
+            $twig->addError('Sorry, but too many people are already attending this session.');
             break;
         case 2: //attending already
             $twig->addError('You can only attend one session for that training at a time.');
             break;
-        case 3: // Left session
+        case 3: //too late
+            $twig->addError('It is now too late to join this session. If you still wish to attend, please contact the trainer directly to see if there is space available.');
+            break;
+        case -1: // Left session
             $twig->addInfo('You have left the training session.');
+            break;
+        case -3: //too late
+            $twig->addError('It is now too late to leave this session. If you cannot make it, please contact the trainer directly.');
             break;
         case 4: // Mark attendees as trained
             $twig->addInfo("You have marked the attendees as trained.");

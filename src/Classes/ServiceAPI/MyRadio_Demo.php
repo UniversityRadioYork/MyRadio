@@ -27,6 +27,8 @@ class MyRadio_Demo extends ServiceAPI
     private $demo_link;
     private $presenterstatusid;
     private $memberid;
+    private $signup_cutoff_hours;
+    private $demo_max_participants;
 
     protected function __construct($demoid)
     {
@@ -46,8 +48,10 @@ class MyRadio_Demo extends ServiceAPI
 
         $this->demo_time = $result['demo_time'];
         $this->demo_link = $result['demo_link'];
+        $this->demo_max_participants = $result['max_participants'];
         $this->presenterstatusid = $result['presenterstatusid'];
         $this->memberid = $result["memberid"];
+        $this->signup_cutoff_hours = (int) $result['signup_cutoff_hours'];
     }
 
     public function getID()
@@ -55,7 +59,7 @@ class MyRadio_Demo extends ServiceAPI
         return $this->demo_id;
     }
 
-    public static function registerDemo($time, $training_type, $link = null)
+    public static function registerDemo($time, $training_type, $max_participants, $link = null, $signup_cutoff_hours = 0)
     {
         if ($time == null || $training_type == null || !is_numeric($time)) {
             throw new MyRadioException("A training demo must have a time and training date.", 400);
@@ -66,9 +70,9 @@ class MyRadio_Demo extends ServiceAPI
                 self::initDB();
 
                 self::$db->query(
-                    "INSERT INTO schedule.demo (presenterstatusid, demo_time, demo_link, memberid)
-            VALUES ($1, $2, $3, $4)",
-                    [$training_type, CoreUtils::getTimestamp($time), $link, $_SESSION["memberid"]]
+                    "INSERT INTO schedule.demo (presenterstatusid, demo_time, demo_link, max_participants, memberid, signup_cutoff_hours)
+                    VALUES ($1, $2, $3, $4, $5, $6)",
+                    [$training_type, CoreUtils::getTimestamp($time), $link, $max_participants, $_SESSION["memberid"], $signup_cutoff_hours]
                 );
                 date_default_timezone_set(Config::$timezone);
 
@@ -93,21 +97,27 @@ class MyRadio_Demo extends ServiceAPI
         return true;
     }
 
-    public function editDemo($time, $training_type, $link = null)
+    public function editDemo($time, $training_type, $max_participants, $link = null, $signup_cutoff_hours = 0)
     {
 
         // TODO, Only edit your training demos, or any if you have perms
         // TODO: Allow changing demoer
 
-        if ($time == null || $training_type == null) {
-            throw new MyRadioException("A training demo must have a time and training date.", 400);
+        if ($time == null || $training_type == null || $max_participants == null) {
+            throw new MyRadioException(
+                "A training demo must have a time, training date and maximum number of participants.",
+                400);
         } else {
             if ($time != $this->demo_time || $link != $this->demo_link || $training_type != $this->presenterstatusid) {
                 // Do the Update
                 self::$db->query(
-                    "UPDATE schedule.demo SET demo_time = $1, demo_link = $2, presenterstatusid = $3
-                WHERE demo_id = $4",
-                    [CoreUtils::getTimestamp($time), $link, $training_type, $this->getID()]
+                    "UPDATE schedule.demo SET demo_time = $1,
+                        demo_link = $2,
+                        presenterstatusid = $3,
+                        signup_cutoff_hours = $4,
+                        max_participants = $5
+                    WHERE demo_id = $6",
+                    [CoreUtils::getTimestamp($time), $link, $training_type, $signup_cutoff_hours, $max_participants, $this->getID()]
                 );
                 // Email People
                 $attendees = $this->myRadioUsersAttendingDemo();
@@ -178,6 +188,36 @@ class MyRadio_Demo extends ServiceAPI
                     "required" => false
                 ]
             )
+        )->addField(
+            new MyRadioFormField(
+                'signup_cutoff_hours',
+                MyRadioFormField::TYPE_NUMBER,
+                [
+                    'label' => "Signup Cutoff (Hours)",
+                    'explanation' => 'If set, people will only be able to join this many hours before your session starts. Set to 0 to disable.',
+                    "required" => false,
+                    'options' => [
+                        'min' => 0,
+                    ],
+                    'value' => 0,
+                    'required' => true
+                ]
+            )
+        )->addField(
+            new MyRadioFormField(
+                'demo_max_participants',
+                MyRadioFormField::TYPE_NUMBER,
+                [
+                    'label' => "Attendee Limit",
+                    'explanation' => "Maximum number of people who can sign up to training session",
+                    'options' => [
+                        'min' => 1,
+                        'max' => 4,
+                    ],
+                    'value' => 2,
+                    'required' => true
+                ]
+            )
         );
     }
 
@@ -190,7 +230,9 @@ class MyRadio_Demo extends ServiceAPI
                 [
                     "demo_training_type" => $this->getTrainingType()->getID(),
                     "demo_datetime" => CoreUtils::happyTime($this->getDemoTime()),
-                    "demo_link" => $this->getLink()
+                    "demo_link" => $this->getLink(),
+                    "demo_max_participants" => $this->demo_max_participants,
+                    'signup_cutoff_hours' => $this->signup_cutoff_hours,
                 ]
             );
     }
@@ -205,9 +247,17 @@ class MyRadio_Demo extends ServiceAPI
         return count($r) > 0;
     }
 
-    public function isSpaceOnDemo()
+    public function isSpaceOnDemo(): bool
     {
-        return $this->attendingDemoCount() < 2;
+        return $this->attendingDemoCount() < $this->demo_max_participants;
+    }
+
+    public function tooCloseToStart()
+    {
+        if ($this->signup_cutoff_hours === 0) {
+            return false;
+        }
+        return time() > ($this->demo_time - ($this->signup_cutoff_hours * 60 * 60));
     }
 
     // Grrr...this returns names, not users.
@@ -283,6 +333,7 @@ class MyRadio_Demo extends ServiceAPI
      * Return 0: Success
      * Return 1: Demo Full
      * Return 2: Already Attending a Demo.
+     * Return 3: Too Late.
      */
     public function attend()
     {
@@ -301,6 +352,10 @@ class MyRadio_Demo extends ServiceAPI
             [$_SESSION['memberid'], $this->presenterstatusid]
         )) !== 0) {
             return 2;
+        }
+
+        if ($this->tooCloseToStart()) {
+            return 3;
         }
 
         self::$db->query(
@@ -343,9 +398,14 @@ class MyRadio_Demo extends ServiceAPI
 
     /**
      * The current user is unmarked as attending a demo.
+     * Returns 0: successful
+     * Returns 3: too late, need to contact trainer
      */
     public function leave()
     {
+        if ($this->tooCloseToStart()) {
+            return 3;
+        }
 
         self::$db->query(
             "DELETE FROM schedule.demo_attendee
