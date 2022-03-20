@@ -478,7 +478,7 @@ class MyRadio_TracklistItem extends ServiceAPI
     }
 
     /**
-     * Get an amalgamation of all tracks played by BAPS. This looks at all played tracks within the proposed timeframe,
+     * Get an amalgamation of all tracks played by various sources (just not jukebox). This looks at all played tracks within the proposed timeframe,
      * and outputs the play count of each Track, including the total time played.
      *
      * @param int  $start     Period to start log from. Default 0.
@@ -500,7 +500,7 @@ class MyRadio_TracklistItem extends ServiceAPI
         $result = self::$db->fetchAll(
             'SELECT COUNT(trackid) AS num_plays, trackid FROM tracklist.tracklist
             LEFT JOIN tracklist.track_rec ON tracklist.audiologid = track_rec.audiologid
-            WHERE source=\'b\' AND timestart >= $1 AND timestart <= $2 AND trackid IS NOT NULL
+            WHERE source != \'j\' AND timestart >= $1 AND timestart <= $2 AND trackid IS NOT NULL
             GROUP BY trackid ORDER BY num_plays DESC',
             [$start, $end]
         );
