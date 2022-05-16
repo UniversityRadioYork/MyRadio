@@ -81,6 +81,13 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
     private $show_id;
 
     /**
+     * The category name of the podcast
+     * 
+     * @var string
+     */
+    private $category;
+
+    /**
      * Construct the API Key Object.
      *
      * @param string $key
@@ -90,7 +97,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
         $this->podcast_id = (int) $podcast_id;
 
         $result = self::$db->fetchOne(
-            'SELECT file, memberid, approvedid, submitted, suspended, show_id, (
+            'SELECT file, memberid, approvedid, submitted, suspended, show_id, category_name (
                 SELECT array_to_json(array(
                     SELECT metadata_key_id FROM uryplayer.podcast_metadata
                     WHERE podcast_id=$1 AND effective_from <= NOW()
@@ -127,6 +134,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
             ) AS credits
             FROM uryplayer.podcast
             LEFT JOIN schedule.show_podcast_link USING (podcast_id)
+            INNER JOIN uryplayer.podcast_category ON podcast.category_id=podcast_category.podcast_category_id
             WHERE podcast_id=$1',
             [$podcast_id]
         );
@@ -141,6 +149,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
         $this->submitted = strtotime($result['submitted']);
         $this->suspended = ($result['suspended'] === 't') ? true : false;
         $this->show_id = (int) $result['show_id'];
+        $this->category = $result['category_name'];
 
         //Deal with the Credits arrays
         $credit_types = json_decode($result['credit_types']);
@@ -708,6 +717,17 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
     }
 
     /**
+     * Get the podcast category
+     * 
+     * @return string
+     */
+
+    public function getCategory()
+    {
+        return $this->category;
+    }
+
+    /**
      * Set the suspended status of this podcast.
      *
      * @param bool $is_suspended
@@ -818,6 +838,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
             'status' => $this->getStatus(),
             'time' => $this->getSubmitted(),
             'uri' => $this->getURI(),
+            'category' => $this->getCategory(),
             'editlink' => [
                 'display' => 'icon',
                 'value' => 'pencil',
@@ -1027,27 +1048,36 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
      * @param int $page The page required.
      * @param bool $include_suspended Whether to include suspended podcasts in the result
      * @param bool $include_pending Whether to include pending (future publish/processing) podcasts in the result
-     *
+     * @param int | null $category_id - the ID number of the category of podcast to filter by
+     * 
      * @return Array[MyRadio_Podcast]
      */
     public static function getAllPodcasts(
         $include_suspended = false,
         $include_pending = false,
+        $category_id = null,
         $num_results = 0,
         $page = 1
     ) {
         $where = '';
-        if (!$include_suspended || !$include_pending) {
-            $where = 'WHERE ';
-            if (!$include_suspended) {
-                $where .= 'suspended = false';
-            }
-            if (!$include_suspended && !$include_pending) {
-                $where .= ' AND ';
-            }
-            if (!$include_pending) {
-                $where .= 'submitted IS NOT NULL';
-            }
+        $filter_strings = [];
+
+        if (!$include_suspended) {
+            array_push($filter_strings, 'suspended = false');
+        }
+
+        if (!$include_pending) {
+            array_push($filter_strings, 'submitted IS NOT NULL');
+        }
+
+        if (!isNull($category_id)) {
+            array_push($filter_strings, sprintf('category_id = %u', $category_id));
+        }
+
+        $where = join(" AND ", $filter_strings);
+
+        if ($where != "") {
+            $where = 'WHERE ' . $where;
         }
 
         $filterLimit = $num_results == 0 ? 'ALL' : $num_results;
