@@ -25,7 +25,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data['tags'],
             $data['file']['tmp_name'],
             empty($data['show']) ? null : MyRadio_Show::getInstance($data['show']),
-            $data['credits']
+            $data['credits'],
+            $data['category']
         );
         $return_message = "New Podcast Created";
     } else {

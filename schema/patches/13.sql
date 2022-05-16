@@ -1,18 +1,18 @@
 create table uryplayer.podcast_category
 (
-	podcast_catagry_id serial not null,
+	podcast_category_id serial not null,
 	category_name text not null
 );
 
 create unique index podcast_category_category_name_uindex
 	on uryplayer.podcast_category (category_name);
 
-create unique index podcast_category_podcast_catagry_id_uindex
-	on uryplayer.podcast_category (podcast_catagry_id);
+create unique index podcast_category_podcast_category_id_uindex
+	on uryplayer.podcast_category (podcast_category_id);
 
 alter table uryplayer.podcast_category
 	add constraint podcast_category_pk
-		primary key (podcast_catagry_id);
+		primary key (podcast_category_id);
 
 insert into uryplayer.podcast_category (category_name) values ('URY Podcast'), ('Music Team Interview');
 

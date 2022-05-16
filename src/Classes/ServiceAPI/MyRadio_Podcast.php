@@ -181,6 +181,15 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
     }
 
     /**
+     * Get all podcast categories
+     */
+    public static function getPodcastCategories() {
+        return self::$db->fetchAll(
+            'SELECT podcast_category_id AS value, category_name AS text FROM uryplayer.podcast_category'
+        );
+    }
+
+    /**
      * Get all the Podcasts that the User is Owner of Creditor of.
      *
      * @param int|string|MyRadio_User $user Default current user.
@@ -256,6 +265,15 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
                 'description',
                 MyRadioFormField::TYPE_BLOCKTEXT,
                 ['label' => 'Description']
+            )
+        )->addField(
+            new MyRadioFormField(
+                'category',
+                MyRadioFormField::TYPE_SELECT,
+                [
+                    'label' => 'Category',
+                    'options' => MyRadio_Podcast::getPodcastCategories()
+                ]
             )
         )->addField(
             new MyRadioFormField(
@@ -494,7 +512,8 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
         $tags,
         $file,
         MyRadio_Show $show = null,
-        $credits = null
+        $credits = null,
+        $category_id
     ) {
         //Validate the tags
         $tags = CoreUtils::explodeTags($tags);
@@ -504,9 +523,9 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
         //Get an ID for the new Podcast
         $id = (int) self::$db->fetchColumn(
             'INSERT INTO uryplayer.podcast '
-            .'(memberid, approvedid, submitted) VALUES ($1, $1, NULL) '
+            .'(memberid, approvedid, submitted, category_id) VALUES ($1, $1, NULL, $2) '
             .'RETURNING podcast_id',
-            [MyRadio_User::getInstance()->getID()]
+            [MyRadio_User::getInstance()->getID(), $category_id]
         )[0];
 
         // DANGER WILL ROBINSON DANGER
