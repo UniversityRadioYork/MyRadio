@@ -115,6 +115,11 @@
                             "description": "List your applied-for and scheduled shows."
                         },
                         {
+                            "title": "Automatic Visualisation",
+                            "url": "module=Scheduler,action=autoViz",
+                            "description": "Request automatic visualisation of your shows, and download clips of past shows"
+                        },
+                        {
                             "title": "Podcast Manager",
                             "url": "module=Podcast",
                             "description": "Upload, edit and manage podcasts."
