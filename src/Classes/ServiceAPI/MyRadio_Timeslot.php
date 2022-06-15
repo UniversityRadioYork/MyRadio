@@ -773,6 +773,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
      * @param int|null $time time to check, defaults to current time
      * @param int $n number of next shows to return
      * @param int[] $filter defines a filter of show_type ids
+     * @return MyRadio_Timeslot[]
      */
     public static function getCurrentAndNextObjects($time = null, $n = 1, $filter = [1])
     {
@@ -1094,6 +1095,19 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
         $this->updateCacheObject();
     }
 
+    public function getAutoViz(): bool
+    {
+        return $this->getMeta('autoviz_enabled') === 'true';
+    }
+
+    public function setAutoViz(bool $value)
+    {
+        $this->setMeta(
+            'autoviz_enabled',
+            $value ? 'true' : 'false'
+        );
+    }
+
     /**
      * Return location name
      *
@@ -1308,14 +1322,14 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
     public static function getCancelForm()
     {
         return (new MyRadioForm(
-                'sched_cancel',
-                'Scheduler',
-                'cancelEpisode',
-                [
-                    'debug' => false,
-                    'title' => 'Cancel Episode',
-                ]
-            )
+            'sched_cancel',
+            'Scheduler',
+            'cancelEpisode',
+            [
+                'debug' => false,
+                'title' => 'Cancel Episode',
+            ]
+        )
         )->addField(
             new MyRadioFormField(
                 'reason',
@@ -1335,15 +1349,15 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
     {
         $title = $this->getMeta('title') . ' - ' . CoreUtils::happyTime($this->getStartTime());
         return (new MyRadioForm(
-                'sched_move',
-                'Scheduler',
-                'moveEpisode',
-                [
-                    'debug' => false,
-                    'title' => 'Move Episode',
-                    'subtitle' => "Moving $title"
-                ]
-            ))->addField(new MyRadioFormField(
+            'sched_move',
+            'Scheduler',
+            'moveEpisode',
+            [
+                'debug' => false,
+                'title' => 'Move Episode',
+                'subtitle' => "Moving $title"
+            ]
+        ))->addField(new MyRadioFormField(
             'grp_info',
             MyRadioFormField::TYPE_SECTION,
             [

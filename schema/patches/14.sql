@@ -1,5 +1,5 @@
 BEGIN;
-INSERT INTO metadata_key (
+INSERT INTO metadata.metadata_key (
         name,
         allow_multiple,
         description,

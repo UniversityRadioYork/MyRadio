@@ -6,7 +6,7 @@ use MyRadio\Config;
 use MyRadio\MyRadio\CoreUtils;
 use MyRadio\MyRadioException;
 
-class AutoVizClip extends ServiceAPI
+class MyRadio_AutoVizClip extends ServiceAPI
 {
     /*
      * Clip file naming conventions:
