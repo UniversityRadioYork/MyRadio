@@ -5,6 +5,7 @@ use MyRadio\MyRadio\URLUtils;
 use MyRadio\ServiceAPI\MyRadio_AutoVizClip;
 use MyRadio\ServiceAPI\MyRadio_Timeslot;
 
+// FIXME: this needs to filter the current user's timeslots, not all of them!
 $upcoming = MyRadio_Timeslot::getCurrentAndNextObjects(null, empty($_GET['n']) ? 10 : intval($_GET['n']));
 
 $rows = [];
