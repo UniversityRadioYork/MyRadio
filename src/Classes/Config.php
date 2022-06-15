@@ -544,6 +544,9 @@ final class Config
     public static $recaptcha_public_key = 'YOUR_API_KEY';
     public static $recaptcha_private_key = 'YOUR_PRIVATE_KEY';
 
+    public static $autoviz_clips_path = '';
+    public static $autoviz_public_clips_base = '/media/autoviz-clips';
+
     /**
      * Array of tabs and plugins to be used by SIS. They will be loaded in order.
      */

@@ -141,8 +141,10 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             if (empty($credits[$i])) {
                 continue;
             }
-            $this->credits[] = ['type' => (int)$credit_types[$i], 'memberid' => $credits[$i],
-                'User' => MyRadio_User::getInstance($credits[$i]),];
+            $this->credits[] = [
+                'type' => (int)$credit_types[$i], 'memberid' => $credits[$i],
+                'User' => MyRadio_User::getInstance($credits[$i]),
+            ];
         }
     }
 
@@ -262,10 +264,10 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
     }
 
     /**
-    * Returns the currently selected timeslot (from the navbar).
-    *
-    * @return array  Time, id If null, no timeslot is selected/user is logged out.
-    */
+     * Returns the currently selected timeslot (from the navbar).
+     *
+     * @return array  Time, id If null, no timeslot is selected/user is logged out.
+     */
     public static function getUserSelectedTimeslot()
     {
         if (isset($_SESSION['timeslotid'])) {
@@ -1305,16 +1307,15 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
 
     public static function getCancelForm()
     {
-        return (
-        new MyRadioForm(
-            'sched_cancel',
-            'Scheduler',
-            'cancelEpisode',
-            [
-                'debug' => false,
-                'title' => 'Cancel Episode',
-            ]
-        )
+        return (new MyRadioForm(
+                'sched_cancel',
+                'Scheduler',
+                'cancelEpisode',
+                [
+                    'debug' => false,
+                    'title' => 'Cancel Episode',
+                ]
+            )
         )->addField(
             new MyRadioFormField(
                 'reason',
@@ -1333,36 +1334,35 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
     public function getMoveForm()
     {
         $title = $this->getMeta('title') . ' - ' . CoreUtils::happyTime($this->getStartTime());
-        return (
-        new MyRadioForm(
-            'sched_move',
-            'Scheduler',
-            'moveEpisode',
-            [
-                'debug' => false,
-                'title' => 'Move Episode',
-                'subtitle' => "Moving $title"
-            ]
-        ))->addField(new MyRadioFormField(
+        return (new MyRadioForm(
+                'sched_move',
+                'Scheduler',
+                'moveEpisode',
+                [
+                    'debug' => false,
+                    'title' => 'Move Episode',
+                    'subtitle' => "Moving $title"
+                ]
+            ))->addField(new MyRadioFormField(
             'grp_info',
             MyRadioFormField::TYPE_SECTION,
             [
-                    'label' => 'New Time',
-                    'explanation' => 'Enter the new time to move the episode to. Take care with the end time.'
-                ]
+                'label' => 'New Time',
+                'explanation' => 'Enter the new time to move the episode to. Take care with the end time.'
+            ]
         ))->addField(new MyRadioFormField(
             'new_start_time',
             MyRadioFormField::TYPE_DATETIME,
             [
-                    'label' => 'New Start Time',
-                    'value' => date('d/m/Y H:i', $this->getStartTime())
+                'label' => 'New Start Time',
+                'value' => date('d/m/Y H:i', $this->getStartTime())
             ]
         ))->addField(new MyRadioFormField(
             'new_end_time',
             MyRadioFormField::TYPE_DATETIME,
             [
-            'label' => 'New End Time',
-            'value' => date('d/m/Y H:i', $this->getEndTime())
+                'label' => 'New End Time',
+                'value' => date('d/m/Y H:i', $this->getEndTime())
             ]
         ))->addField(new MyRadioFormField(
             'grp_info_close',
