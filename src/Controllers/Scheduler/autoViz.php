@@ -16,7 +16,12 @@ foreach ($timeslots as $timeslot) {
     $rows[] = [
         'title' => $timeslot->getMeta('title'),
         'start_time' => CoreUtils::happyTime($timeslot->getStartTime()),
-        'togglelink' => ($timeslot->getAutoViz()) ? [
+        'togglelink' => ($timeslot->getStartTime() < time()) ? [
+            'display' => 'icon',
+            'value' => 'times',
+            'title' => 'Show is in the past!',
+            'url' => '#',
+        ] : (($timeslot->getAutoViz()) ? [
             'display' => 'text',
             'value' => 'Enabled',
             'title' => 'Disable Automatic Visualisation',
@@ -26,7 +31,7 @@ foreach ($timeslots as $timeslot) {
             'value' => 'Disabled',
             'title' => 'Enable Automatic Visualisation',
             'url' => URLUtils::makeURL('Scheduler', 'setAutoViz', ['timeslotid' => $timeslot->getID(), 'value' => 'true']),
-        ],
+        ]),
         'clipslink' => empty($clips) ? 'No clips available' : [
             'display' => 'text',
             'value' => 'Clips',
