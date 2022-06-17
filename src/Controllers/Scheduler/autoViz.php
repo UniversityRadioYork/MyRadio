@@ -5,18 +5,7 @@ use MyRadio\MyRadio\URLUtils;
 use MyRadio\ServiceAPI\MyRadio_AutoVizClip;
 use MyRadio\ServiceAPI\MyRadio_Timeslot;
 
-// FIXME: this needs to filter the current user's timeslots, not all of them!
-$cAN = MyRadio_Timeslot::getCurrentAndNextObjects(null, empty($_GET['n']) ? 10 : intval($_GET['n']));
-
-/** @type MyRadio_Timeslot[] */
-$timeslots = [];
-if (isset($cAN['next']) && !empty($cAN['next'])) {
-    $timeslots = $cAN['next'];
-}
-if (!empty($cAN['current'])) {
-    $timeslots[] = $cAN['current'];
-}
-$timeslots = array_merge($timeslots, MyRadio_Timeslot::getPreviousTimeslots(time(), 5));
+$timeslots = array_merge(MyRadio_Timeslot::getCurrentUserPreviousTimeslots(), MyRadio_Timeslot::getCurrentUserNextTimeslots());
 
 $rows = [];
 foreach ($timeslots as $timeslot) {

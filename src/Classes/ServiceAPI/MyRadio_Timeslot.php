@@ -799,6 +799,62 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
         return $value;
     }
 
+    public static function getCurrentUserNextTimeslots($n = 10)
+    {
+        $ids = self::$db->fetchColumn(
+            'select show_season_timeslot_id from schedule.show_season_timeslot ts
+            where (memberid = $1
+            or $1 in (
+                select memberid from schedule.show_credit
+                where show_id = (
+                        SELECT show_id FROM schedule.show_season_timeslot
+                        JOIN schedule.show_season USING (show_season_id)
+                        WHERE show_season_timeslot_id=ts.show_season_timeslot_id
+                    )
+                AND effective_from < (start_time + duration)
+                                AND (effective_to IS NULL OR effective_to > start_time)
+                                AND approvedid IS NOT NULL
+                ))
+            and start_time >= NOW()
+            order by start_time
+            limit $2',
+            [$_SESSION['memberid'], $n]
+        );
+        $results = [];
+        foreach ($ids as $id) {
+            $results[] = self::getInstance($id);
+        }
+        return $results;
+    }
+
+    public static function getCurrentUserPreviousTimeslots($n = 10)
+    {
+        $ids = self::$db->fetchColumn(
+            'select show_season_timeslot_id from schedule.show_season_timeslot ts
+            where (memberid = $1
+            or $1 in (
+                select memberid from schedule.show_credit
+                where show_id = (
+                        SELECT show_id FROM schedule.show_season_timeslot
+                        JOIN schedule.show_season USING (show_season_id)
+                        WHERE show_season_timeslot_id=ts.show_season_timeslot_id
+                    )
+                AND effective_from < (start_time + duration)
+                                AND (effective_to IS NULL OR effective_to > start_time)
+                                AND approvedid IS NOT NULL
+                ))
+            and start_time < NOW()
+            order by start_time
+            limit $2',
+            [$_SESSION['memberid'], $n]
+        );
+        $results = [];
+        foreach ($ids as $id) {
+            $results[] = self::getInstance($id);
+        }
+        return $results;
+    }
+
     /**
      * Deletes this Timeslot from the Schedule, and everything associated with it.
      *
