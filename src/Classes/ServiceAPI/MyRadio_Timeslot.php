@@ -844,7 +844,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
                                 AND approvedid IS NOT NULL
                 ))
             and start_time < NOW()
-            order by start_time
+            order by start_time desc
             limit $2',
             [$_SESSION['memberid'], $n]
         );
