@@ -63,7 +63,7 @@ class MyRadio_AutoVizClip extends ServiceAPI
             throw new MyRadioException('Timeslot ID must be an int!');
         }
         $path = Config::$autoviz_clips_path . '/' . $timeslot_id;
-        if (!file_exists($path)) {
+        if (!is_dir($path)) {
             return [];
         }
 

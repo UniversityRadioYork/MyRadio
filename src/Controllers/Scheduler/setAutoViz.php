@@ -7,7 +7,7 @@ use MyRadio\ServiceAPI\MyRadio_Timeslot;
 $timeslot = MyRadio_Timeslot::getInstance($_REQUEST['timeslotid']);
 
 //Check the user has permission to edit this show
-if (!$timeslot->getShow()->isCurrentUserAnOwner()) {
+if (!$timeslot->getSeason()->isCurrentUserAnOwner()) {
     AuthUtils::requirePermission(AUTH_EDITSHOWS);
 }
 

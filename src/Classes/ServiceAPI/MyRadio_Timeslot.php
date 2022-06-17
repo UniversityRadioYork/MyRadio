@@ -354,8 +354,8 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
                 'start_time' => CoreUtils::happyTime($this->getStartTime()),
                 'duration' => $this->getDuration(),
                 'mixcloud_status' => $this->getMeta('upload_state'),
-                'mixcloud_starttime' => $this->getMeta('upload_starttime'),
-                'mixcloud_endtime' => $this->getMeta('upload_endtime'),
+                // 'mixcloud_starttime' => $this->getMeta('upload_starttime'),
+                // 'mixcloud_endtime' => $this->getMeta('upload_endtime'),
                 'rejectlink' => [
                     'display' => 'icon',
                     'value' => 'trash',
@@ -773,7 +773,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
      * @param int|null $time time to check, defaults to current time
      * @param int $n number of next shows to return
      * @param int[] $filter defines a filter of show_type ids
-     * @return MyRadio_Timeslot[]
+     * @return array
      */
     public static function getCurrentAndNextObjects($time = null, $n = 1, $filter = [1])
     {
@@ -1106,6 +1106,29 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             'autoviz_enabled',
             $value ? 'true' : 'false'
         );
+    }
+
+    public static function getNextAutovizTimeslots()
+    {
+        $data = self::getCurrentAndNextObjects();
+        /** @type MyRadio_Timeslot[] | array[] */
+        $timeslots = [$data['current'], ...($data['next'])];
+        $timeslots = array_filter($timeslots, function ($ts) {
+            return $ts !== null && (!is_array($ts));
+        });
+        $result = [];
+        foreach ($timeslots as $ts) {
+            if ($ts->getAutoViz()) {
+                $result[] = [
+                    'name' => $ts->getMeta('title') . ' - ' . CoreUtils::happyTime($ts->getStartTime()),
+                    'timeslotid' => $ts->getID(),
+                    'startTime' => CoreUtils::getIso8601Timestamp($ts->getStartTime()),
+                    'endTime' => CoreUtils::getIso8601Timestamp($ts->getEndTime()),
+                    'record' => true
+                ];
+            }
+        }
+        return $result;
     }
 
     /**
