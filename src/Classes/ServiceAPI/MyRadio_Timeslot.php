@@ -1151,37 +1151,30 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
         $this->updateCacheObject();
     }
 
-    public function getAutoViz(): bool
+    public function getAutoVizConfig()
     {
-        return $this->getMeta('autoviz_enabled') === 'true';
+        return MyRadio_AutoVizConfiguration::getConfigForTimeslot($this->timeslot_id);
     }
 
-    public function setAutoViz(bool $value)
+    public function getAutoViz(): bool
     {
-        $this->setMeta(
-            'autoviz_enabled',
-            $value ? 'true' : 'false'
-        );
+        return MyRadio_AutoVizConfiguration::getConfigForTimeslot($this->timeslot_id) !== null;
     }
 
     public static function getNextAutovizTimeslots()
     {
         $data = self::getCurrentAndNextObjects();
-        /** @type MyRadio_Timeslot[] | array[] */
+        /** @type MyRadio_Timeslot[] */
         $timeslots = [$data['current'], ...($data['next'])];
         $timeslots = array_filter($timeslots, function ($ts) {
             return $ts !== null && (!is_array($ts));
         });
         $result = [];
+        /** @var MyRadio_Timeslot $ts */
         foreach ($timeslots as $ts) {
-            if ($ts->getAutoViz()) {
-                $result[] = [
-                    'name' => $ts->getMeta('title') . ' - ' . CoreUtils::happyTime($ts->getStartTime()),
-                    'timeslotid' => $ts->getID(),
-                    'startTime' => CoreUtils::getIso8601Timestamp($ts->getStartTime()),
-                    'endTime' => CoreUtils::getIso8601Timestamp($ts->getEndTime()),
-                    'record' => true
-                ];
+            $cfg = MyRadio_AutoVizConfiguration::getConfigForTimeslot($ts->timeslot_id);
+            if ($cfg !== null) {
+                $result[] = $cfg->toTask();
             }
         }
         return $result;

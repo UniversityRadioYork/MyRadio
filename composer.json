@@ -1,6 +1,6 @@
 {
     "require": {
-        "php": ">=7.3 <8.0",
+        "php": ">=7.4 <8.0",
         "james-heinrich/getid3": "~1.9",
         "ezyang/htmlpurifier": "~4.10",
         "google/recaptcha": "~1.1",
