@@ -180,7 +180,13 @@ class MyRadio_Season extends MyRadio_Metadata_Common
                 throw new MyRadioException('Parameter '.$field.' was not provided.', 400);
             }
         }
-        $tags = (!empty($params['tags'])) ? CoreUtils::explodeTags($params['tags']) : [];
+        if (empty($params['tags'])) {
+            $tags = [];
+        } else if (is_array($params['tags'])) {
+            $tags = $params['tags'];
+        } else {
+            $tags = CoreUtils::explodeTags($params['tags']);
+        }
 
         /**
          * Select an appropriate value for $term_id.
