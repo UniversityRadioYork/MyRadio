@@ -17,7 +17,7 @@ class MyRadio_AutoVizConfiguration extends ServiceAPI
 
     protected function __construct(array $data)
     {
-                $this->autoviz_config_id = (int) $data['autoviz_config_id'];
+        $this->autoviz_config_id = (int) $data['autoviz_config_id'];
         $this->show_season_timeslot_id = (int) $data['show_season_timeslot_id'];
         $this->record = $data['record'];
         $this->stream_url = $data['stream_url'];
