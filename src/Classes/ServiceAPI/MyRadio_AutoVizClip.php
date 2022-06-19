@@ -50,7 +50,7 @@ class MyRadio_AutoVizClip extends ServiceAPI
 
     public function getPublicURL(): string
     {
-        return Config::$autoviz_public_clips_base . '/' . $this->filename;
+        return Config::$autoviz_public_clips_base . '/' . $this->timeslot_id . '/' . $this->filename;
     }
 
     /**
