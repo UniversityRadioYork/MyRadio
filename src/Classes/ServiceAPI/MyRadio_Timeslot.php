@@ -141,8 +141,10 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             if (empty($credits[$i])) {
                 continue;
             }
-            $this->credits[] = ['type' => (int)$credit_types[$i], 'memberid' => $credits[$i],
-                'User' => MyRadio_User::getInstance($credits[$i]),];
+            $this->credits[] = [
+                'type' => (int)$credit_types[$i], 'memberid' => $credits[$i],
+                'User' => MyRadio_User::getInstance($credits[$i]),
+            ];
         }
     }
 
@@ -262,10 +264,10 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
     }
 
     /**
-    * Returns the currently selected timeslot (from the navbar).
-    *
-    * @return array  Time, id If null, no timeslot is selected/user is logged out.
-    */
+     * Returns the currently selected timeslot (from the navbar).
+     *
+     * @return array  Time, id If null, no timeslot is selected/user is logged out.
+     */
     public static function getUserSelectedTimeslot()
     {
         if (isset($_SESSION['timeslotid'])) {
@@ -771,6 +773,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
      * @param int|null $time time to check, defaults to current time
      * @param int $n number of next shows to return
      * @param int[] $filter defines a filter of show_type ids
+     * @return array
      */
     public static function getCurrentAndNextObjects($time = null, $n = 1, $filter = [1])
     {
@@ -794,6 +797,62 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
         }
 
         return $value;
+    }
+
+    public static function getCurrentUserNextTimeslots($n = 10)
+    {
+        $ids = self::$db->fetchColumn(
+            'select show_season_timeslot_id from schedule.show_season_timeslot ts
+            where (memberid = $1
+            or $1 in (
+                select memberid from schedule.show_credit
+                where show_id = (
+                        SELECT show_id FROM schedule.show_season_timeslot
+                        JOIN schedule.show_season USING (show_season_id)
+                        WHERE show_season_timeslot_id=ts.show_season_timeslot_id
+                    )
+                AND effective_from < (start_time + duration)
+                                AND (effective_to IS NULL OR effective_to > start_time)
+                                AND approvedid IS NOT NULL
+                ))
+            and start_time >= NOW()
+            order by start_time
+            limit $2',
+            [$_SESSION['memberid'], $n]
+        );
+        $results = [];
+        foreach ($ids as $id) {
+            $results[] = self::getInstance($id);
+        }
+        return $results;
+    }
+
+    public static function getCurrentUserPreviousTimeslots($n = 10)
+    {
+        $ids = self::$db->fetchColumn(
+            'select show_season_timeslot_id from schedule.show_season_timeslot ts
+            where (memberid = $1
+            or $1 in (
+                select memberid from schedule.show_credit
+                where show_id = (
+                        SELECT show_id FROM schedule.show_season_timeslot
+                        JOIN schedule.show_season USING (show_season_id)
+                        WHERE show_season_timeslot_id=ts.show_season_timeslot_id
+                    )
+                AND effective_from < (start_time + duration)
+                                AND (effective_to IS NULL OR effective_to > start_time)
+                                AND approvedid IS NOT NULL
+                ))
+            and start_time < NOW()
+            order by start_time desc
+            limit $2',
+            [$_SESSION['memberid'], $n]
+        );
+        $results = [];
+        foreach ($ids as $id) {
+            $results[] = self::getInstance($id);
+        }
+        return $results;
     }
 
     /**
@@ -1092,6 +1151,35 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
         $this->updateCacheObject();
     }
 
+    public function getAutoVizConfig()
+    {
+        return MyRadio_AutoVizConfiguration::getConfigForTimeslot($this->timeslot_id);
+    }
+
+    public function getAutoViz(): bool
+    {
+        return MyRadio_AutoVizConfiguration::getConfigForTimeslot($this->timeslot_id) !== null;
+    }
+
+    public static function getNextAutovizTimeslots()
+    {
+        $data = self::getCurrentAndNextObjects();
+        /** @type MyRadio_Timeslot[] */
+        $timeslots = [$data['current'], ...($data['next'])];
+        $timeslots = array_filter($timeslots, function ($ts) {
+            return $ts !== null && (!is_array($ts));
+        });
+        $result = [];
+        /** @var MyRadio_Timeslot $ts */
+        foreach ($timeslots as $ts) {
+            $cfg = MyRadio_AutoVizConfiguration::getConfigForTimeslot($ts->timeslot_id);
+            if ($cfg !== null) {
+                $result[] = $cfg->toTask();
+            }
+        }
+        return $result;
+    }
+
     /**
      * Return location name
      *
@@ -1305,8 +1393,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
 
     public static function getCancelForm()
     {
-        return (
-        new MyRadioForm(
+        return (new MyRadioForm(
             'sched_cancel',
             'Scheduler',
             'cancelEpisode',
@@ -1333,8 +1420,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
     public function getMoveForm()
     {
         $title = $this->getMeta('title') . ' - ' . CoreUtils::happyTime($this->getStartTime());
-        return (
-        new MyRadioForm(
+        return (new MyRadioForm(
             'sched_move',
             'Scheduler',
             'moveEpisode',
@@ -1347,22 +1433,22 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             'grp_info',
             MyRadioFormField::TYPE_SECTION,
             [
-                    'label' => 'New Time',
-                    'explanation' => 'Enter the new time to move the episode to. Take care with the end time.'
-                ]
+                'label' => 'New Time',
+                'explanation' => 'Enter the new time to move the episode to. Take care with the end time.'
+            ]
         ))->addField(new MyRadioFormField(
             'new_start_time',
             MyRadioFormField::TYPE_DATETIME,
             [
-                    'label' => 'New Start Time',
-                    'value' => date('d/m/Y H:i', $this->getStartTime())
+                'label' => 'New Start Time',
+                'value' => date('d/m/Y H:i', $this->getStartTime())
             ]
         ))->addField(new MyRadioFormField(
             'new_end_time',
             MyRadioFormField::TYPE_DATETIME,
             [
-            'label' => 'New End Time',
-            'value' => date('d/m/Y H:i', $this->getEndTime())
+                'label' => 'New End Time',
+                'value' => date('d/m/Y H:i', $this->getEndTime())
             ]
         ))->addField(new MyRadioFormField(
             'grp_info_close',
