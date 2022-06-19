@@ -1,5 +1,7 @@
 BEGIN;
 
+-- Give the option for podcasts to be explicit (true or false).
+-- This is used when generating RSS feeds for iTunes.
 ALTER TABLE schedule.show
     ADD COLUMN podcast_explicit BOOLEAN DEFAULT 'f';
 

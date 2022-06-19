@@ -1,5 +1,7 @@
 BEGIN;
 
+-- Force users to declare where a show is, and who is attending
+--  This was required for shows during Covid19
 ALTER TABLE sis2.member_signin
     ADD COLUMN location INTEGER REFERENCES schedule.location (location_id);
 

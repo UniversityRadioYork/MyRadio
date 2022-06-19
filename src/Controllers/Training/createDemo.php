@@ -15,11 +15,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         MyRadio_Demo::getInstance($demoinfo['id'])->editDemo(
             $demoinfo['demo_datetime'],
             $demoinfo['demo_training_type'],
-            $demoinfo['demo_link']
+            $demoinfo['demo_max_participants'],
+            $demoinfo['demo_link'],
+            $demoinfo['signup_cutoff_hours']
         );
     } else {
         // Create a New Demo
-        MyRadio_Demo::registerDemo($demoinfo['demo_datetime'], $demoinfo['demo_training_type'], $demoinfo['demo_link']);
+        MyRadio_Demo::registerDemo($demoinfo['demo_datetime'], $demoinfo['demo_training_type'], $demoinfo['demo_max_participants'], $demoinfo['demo_link'], $demoinfo['signup_cutoff_hours']);
     }
     URLUtils::backWithMessage('Session Updated!');
 } else {

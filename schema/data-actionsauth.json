@@ -182,5 +182,7 @@
     ["Website", "createCampaign", "AUTH_EDIT_HOME_BANNERS"],
     ["Website", "default", "AUTH_EDIT_HOME_BANNERS"],
     ["Website", "editBanner", "AUTH_EDIT_HOME_BANNERS"],
-    ["Website", "editCampaign", "AUTH_EDIT_HOME_BANNERS"]
+    ["Website", "editCampaign", "AUTH_EDIT_HOME_BANNERS"],
+    ["Website", "editShortUrl", "AUTH_EDITSHORTURLS"],
+    ["Website", "shortUrls", "AUTH_EDITSHORTURLS"]
 ]

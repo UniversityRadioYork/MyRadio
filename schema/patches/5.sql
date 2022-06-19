@@ -1,5 +1,6 @@
 BEGIN;
 
+-- Create a table for calendar events, with possible parent/child relation
 CREATE TABLE public.events (
    eventid SERIAL PRIMARY KEY,
    title TEXT,

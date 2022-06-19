@@ -2,6 +2,7 @@
 
 use \Codeception\Util\HttpCode;
 
+// Tests if new shows can be created and appear where they are expected
 class ShowSpecCest
 {
     public static $user = [
@@ -33,13 +34,13 @@ class ShowSpecCest
     {
     }
 
-    // tests
     public function testShowCreate(\Step\Api\MyRadioTester $I)
     {
         ShowSpecCest::$show["credits"] = [
             "credittype" => [1], // Show creation requires these extra arrays :(
             "memberid" => [ShowSpecCest::$user["id"]],
         ];
+	// Tests /show - If a new show can be made
         $I->wantTo("create a show");
         $I->sendPOST("/show?api_key=travis-test-key", ShowSpecCest::$show);
         $I->checkAPIResponse(HttpCode::CREATED);
@@ -56,6 +57,7 @@ class ShowSpecCest
             ],
         ]);
 
+	// Tests /show/../numberofseasons - If shows default to having no seasons
         $I->wantTo("check the show has no seasons");
         $showid = $I->grabDataFromResponseByJsonPath("$.payload.show_id")[0];
         $I->sendGET("/show/".$showid."/numberofseasons?api_key=travis-test-key");
@@ -64,6 +66,7 @@ class ShowSpecCest
             "payload" => 0,
         ]);
 
+	// Tests /show/../credits - If the test user credited
         $I->wantTo("check the show has a credit");
         $I->sendGET("/show/".$showid."/credits?api_key=travis-test-key");
         $I->checkAPIResponse();
@@ -71,6 +74,7 @@ class ShowSpecCest
             "payload" => ["memberid" => ShowSpecCest::$user["id"]],
         ]);
 
+	// Tests /show/allshows - If new show appears on show list as expected
         $I->wantTo("see the show in the All Shows list");
         $I->sendGET("/show/allshows?api_key=travis-test-key");
         $I->checkAPIResponse();

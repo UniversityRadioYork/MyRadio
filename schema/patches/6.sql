@@ -1,39 +1,42 @@
 BEGIN;
 
-create table schedule.demo
+-- Create table for scheduling training sessions
+CREATE TABLE schedule.demo
 (
-	demo_id serial
-		constraint demo_pk
-			primary key,
-	presenterstatusid int not null
-		constraint demo_l_presenterstatus_presenterstatusid_fk
-			references l_presenterstatus,
-	demo_time timestamp with time zone not null,
-	demo_link text,
-	memberid int
-		constraint demo_member_memberid_fk
-			references member
+	demo_id SERIAL
+		CONSTRAINT demo_pk
+			PRIMARY KEY,
+	presenterstatusid INT NOT NULL
+		CONSTRAINT demo_l_presenterstatus_presenterstatusid_fk
+			REFERENCES l_presenterstatus,
+	demo_time TIMESTAMP WITH time zone NOT NULL,
+	demo_link TEXT,
+	memberid INT
+		CONSTRAINT demo_member_memberid_fk
+			REFERENCES member
 );
 
-create table schedule.demo_attendee
+-- Allow arbitrary training attendees
+CREATE TABLE schedule.demo_attendee
 (
-	demo_id int not null
-		constraint demo_attendee_demo_demo_id_fk
-			references schedule.demo,
-	memberid int not null
-		constraint demo_attendee_member_memberid_fk
-			references member
+	demo_id INT NOT NULL
+		CONSTRAINT demo_attendee_demo_demo_id_fk
+			REFERENCES schedule.demo,
+	memberid INT NOT NULL
+		CONSTRAINT demo_attendee_member_memberid_fk
+			REFERENCES member
 );
 
-create table schedule.demo_waiting_list
+-- Allow people to express interest in getting trained
+CREATE TABLE schedule.demo_waiting_list
 (
-	memberid int
-		constraint demo_waiting_list_member_memberid_fk
-			references member (memberid),
-	presenterstatusid int
-		constraint demo_waiting_list_l_presenterstatus_presenterstatusid_fk
-			references l_presenterstatus (presenterstatusid),
-	date_added timestamp with time zone
+	memberid INT
+		CONSTRAINT demo_waiting_list_member_memberid_fk
+			REFERENCES member (memberid),
+	presenterstatusid INT
+		CONSTRAINT demo_waiting_list_l_presenterstatus_presenterstatusid_fk
+			REFERENCES l_presenterstatus (presenterstatusid),
+	date_added TIMESTAMP WITH time zone
 );
 
 

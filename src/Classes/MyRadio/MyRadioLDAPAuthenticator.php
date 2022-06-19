@@ -37,6 +37,10 @@ class MyRadioLDAPAuthenticator implements \MyRadio\Iface\MyRadioAuthenticator
      */
     public function validateCredentials($user, $password)
     {
+        # Check that it looks like a legit user first.
+        if (!empty(Config::$auth_ldap_regex) && !preg_match(Config::$auth_ldap_regex, $user)) {
+            return false;
+        }
         if (@ldap_bind($this->ldap_handle, 'uid='.$user.','.Config::$auth_ldap_root, $password)) {
             return MyRadio_User::findByEmail($user);
         } else {
@@ -97,3 +101,4 @@ class MyRadioLDAPAuthenticator implements \MyRadio\Iface\MyRadioAuthenticator
                .' login, please click here.</a></div>';
     }
 }
+

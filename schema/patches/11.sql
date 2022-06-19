@@ -1,2 +1,3 @@
-alter table jukebox.playlists
-	add archived bool default false not null;
+-- Allow Jukebox playlists to be archived (true/false)
+ALTER TABLE jukebox.playlists
+	ADD archived BOOL DEFAULT FALSE NOT NULL;

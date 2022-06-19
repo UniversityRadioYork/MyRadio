@@ -1,0 +1,44 @@
+version: '3'
+services:
+  postgres:
+    image: postgres:alpine
+    environment:
+      POSTGRES_DB: myradio
+      POSTGRES_USER: myradio
+      POSTGRES_PASSWORD: myradio
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+  memcached:
+    image: memcached:alpine
+
+  mail:
+    image: mailhog/mailhog:latest
+    ports:
+      - 8025:8025
+
+  myradio:
+    build: .
+    depends_on:
+      - postgres
+      - memcached
+    ports:
+      - 7080:80
+      - 4443:443
+    volumes:
+      - ./schema:/var/www/myradio/schema
+      - ./src:/var/www/myradio/src:rw
+  # daemon:
+  #   build: .
+  #   depends_on:
+  #     - postgres
+  #     - memcached
+  #   ports:
+  #     - 7080:80
+  #     - 4443:443
+  #   volumes:
+  #     - ./schema:/var/www/schema
+  #     - ./src:/var/www/myradio
+  #   command: ['/usr/local/bin/php', '/var/www/myradio/src/Controllers/daemon.php']
+volumes:
+  db-data:

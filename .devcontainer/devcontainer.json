@@ -1,0 +1,59 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the README at:
+// https://github.com/microsoft/vscode-dev-containers/tree/v0.203.0/containers/docker-existing-docker-compose
+// If you want to run as a non-root user in the container, see .devcontainer/docker-compose.yml.
+{
+	"name": "MyRadio + Postgres, Memcached, Mailhog",
+
+	// Update the 'dockerComposeFile' list if you have more compose files or use different names.
+	// The .devcontainer/docker-compose.yml file contains any overrides you need/want to make.
+	"dockerComposeFile": [
+		"../docker-compose.yml",
+		"docker-compose.yml"
+	],
+
+	"service": "myradio",
+
+	// The optional 'workspaceFolder' property is the path VS Code should open by default when
+	// connected. This is typically a file mount in .devcontainer/docker-compose.yml
+	"workspaceFolder": "/var/www/myradio",
+
+	// Set *default* container specific settings.json values on container create.
+	"settings": {
+		"sqltools.connections": [{
+			"name": "Container database",
+			"driver": "PostgreSQL",
+			"server": "postgres",
+			"previewLimit": 50,
+			"port": 5432,
+			"database": "myradio",
+			"username": "myradio",
+			"password": "myradio"
+		}]
+	},
+
+	// Add the IDs of extensions you want installed when the container is created.
+	"extensions": [
+		"bmewburn.vscode-intelephense-client",
+		"felixfbecker.php-debug",
+		"mtxr.sqltools",
+		"mtxr.sqltools-driver-pg",
+		"whatwedo.twig"
+	],
+
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	"forwardPorts": [7080, 8025],
+
+	// "initializeCommand": ""
+
+	// Uncomment the next line if you want start specific services in your Docker Compose config.
+	// "runServices": [],
+
+	// Uncomment the next line if you want to keep your containers running after VS Code shuts down.
+	// "shutdownAction": "none",
+
+	// Uncomment the next line to run commands after the container is created - for example installing curl.
+	"postCreateCommand": "COMPOSER_VENDOR_DIR=/workspaces/MyRadio/src/vendor composer install && apachectl restart",
+
+	// Uncomment to connect as a non-root user if you've added one. See https://aka.ms/vscode-remote/containers/non-root.
+	// "remoteUser": "vscode"
+}
