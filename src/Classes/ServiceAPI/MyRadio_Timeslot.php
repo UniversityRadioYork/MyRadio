@@ -805,7 +805,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             'select show_season_timeslot_id from schedule.show_season_timeslot ts
             where (memberid = $1
             or $1 in (
-                select memberid from schedule.show_credit
+                select creditid from schedule.show_credit
                 where show_id = (
                         SELECT show_id FROM schedule.show_season_timeslot
                         JOIN schedule.show_season USING (show_season_id)
@@ -833,7 +833,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             'select show_season_timeslot_id from schedule.show_season_timeslot ts
             where (memberid = $1
             or $1 in (
-                select memberid from schedule.show_credit
+                select creditid from schedule.show_credit
                 where show_id = (
                         SELECT show_id FROM schedule.show_season_timeslot
                         JOIN schedule.show_season USING (show_season_id)
