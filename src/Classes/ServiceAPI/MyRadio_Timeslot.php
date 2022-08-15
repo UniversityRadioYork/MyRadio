@@ -665,33 +665,35 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
      */
     public static function getCurrentAndNext($time = null, $n = 1, $filter = [1])
     {
-        $isTerm = MyRadio_Scheduler::isTerm();
         $timeslot = self::getCurrentTimeslot($time, $filter);
         $next = self::getNextTimeslot($time, $filter);
 
         //Still display a show if there's one scheduled for whatever reason.
-        if (!$isTerm && empty($timeslot)) {
-            //We're outside term time.
-            $response = [
-                'current' => [
-                    'title' => 'Off Air',
-                    'desc' => 'We\'re not broadcasting right now, we\'ll be back next term.',
-                    'photo' => Config::$offair_uri,
-                    'end_time' => $next ? $next->getStartTime() : 'The End of Time',
-                ],
-            ];
-        } elseif (empty($timeslot)) {
-            //There's currently not a show on.
-            $response = [
-                'current' => [
-                    'title' => Config::$short_name . ' Jukebox',
-                    'desc' => 'There are currently no shows on right now, even our presenters
+        if (empty($timeslot)) {
+            // Checking if it's term time according to the schedule is unreliable. Instead, check which selector source
+            // is on.
+            $source = MyRadio_Selector::getStudioAtTime();
+            if ($source === MyRadio_Selector::SEL_OFFAIR) {
+                $response = [
+                    'current' => [
+                        'title' => 'Off Air',
+                        'desc' => 'We\'re not broadcasting right now, we\'ll be back next term.',
+                        'photo' => Config::$offair_uri,
+                        'end_time' => $next ? $next->getStartTime() : 'The End of Time',
+                    ],
+                ];
+            } else {
+                $response = [
+                    'current' => [
+                        'title' => Config::$short_name . ' Jukebox',
+                        'desc' => 'There are currently no shows on right now, even our presenters
                                 need a break. But it\'s okay, ' . Config::$short_name .
-                        ' Jukebox has got you covered, playing the best music for your ears!',
-                    'photo' => Config::$default_show_uri,
-                    'end_time' => $next ? $next->getStartTime() : 'The End of Time',
-                ],
-            ];
+                            ' Jukebox has got you covered, playing the best music for your ears!',
+                        'photo' => Config::$default_show_uri,
+                        'end_time' => $next ? $next->getStartTime() : 'The End of Time',
+                    ],
+                ];
+            }
         } else {
             //There's a show on!
             $response = [
@@ -805,7 +807,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             'select show_season_timeslot_id from schedule.show_season_timeslot ts
             where (memberid = $1
             or $1 in (
-                select memberid from schedule.show_credit
+                select creditid from schedule.show_credit
                 where show_id = (
                         SELECT show_id FROM schedule.show_season_timeslot
                         JOIN schedule.show_season USING (show_season_id)
@@ -833,7 +835,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             'select show_season_timeslot_id from schedule.show_season_timeslot ts
             where (memberid = $1
             or $1 in (
-                select memberid from schedule.show_credit
+                select creditid from schedule.show_credit
                 where show_id = (
                         SELECT show_id FROM schedule.show_season_timeslot
                         JOIN schedule.show_season USING (show_season_id)
