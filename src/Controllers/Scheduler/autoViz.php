@@ -23,12 +23,12 @@ foreach ($timeslots as $timeslot) {
             'url' => '#',
         ] : (($timeslot->getAutoViz()) ? [
             'display' => 'text',
-            'value' => 'Enabled',
+            'value' => 'Enabled - Click here to disable',
             'title' => 'Disable Automatic Visualisation',
             'url' => URLUtils::makeURL('Scheduler', 'setAutoViz', ['timeslotid' => $timeslot->getID(), 'value' => 'false']),
         ] : [
             'display' => 'text',
-            'value' => 'Disabled',
+            'value' => 'Disabled - Click here to enable',
             'title' => 'Enable Automatic Visualisation',
             'url' => URLUtils::makeURL('Scheduler', 'setAutoViz', ['timeslotid' => $timeslot->getID(), 'value' => 'true']),
         ]),
