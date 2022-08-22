@@ -1636,6 +1636,12 @@ EOF
         $sources = ['b', 'm', 'o', 'w', 'a', 's', 'j', '1', '2', '4'],
         $allowOffAir = false
     ) {
+        // Deal with the boolean coming through the API as a string,
+        // and therefore is always true
+        if ($allowOffAir == "false") {
+            $allowOffAir = false;
+        }
+
         // Start a transaction. We're gonna have some fun.
         self::$db->query('BEGIN');
 
