@@ -543,6 +543,7 @@ final class Config
      */
     public static $recaptcha_public_key = 'YOUR_API_KEY';
     public static $recaptcha_private_key = 'YOUR_PRIVATE_KEY';
+    public static $jwt_signing_secret = 'SECRET_HERE';
 
     public static $autoviz_clips_path = '';
     public static $autoviz_public_clips_base = '/media/autoviz-clips';
