@@ -288,6 +288,24 @@ class MyRadioForm
     }
 
     /**
+     * Sets the values of this form to the given data. Note that this does not set the other fields needed to make it
+     * an "edit" form - if you want that, you likely want {@link editMode}.
+     * @param $values array
+     * @return self
+     */
+    public function setValues($values)
+    {
+        foreach ($values as $k => $v) {
+            if ($k === 'id') {
+                // You probably don't want this.
+                continue;
+            }
+            $this->setFieldValue($k, $v);
+        }
+        return $this;
+    }
+
+    /**
      * Renders a page using the template engine.
      *
      * @param array $frmcustom An optional array of custom fields to send to the Renderer. Useful when using a custom
