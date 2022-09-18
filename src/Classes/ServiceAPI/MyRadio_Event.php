@@ -12,7 +12,7 @@ use Recurr\Rule;
 
 class MyRadio_Event extends ServiceAPI
 {
-    private const BASE_SQL = "SELECT eventid, title, description_html, start_time, end_time, hostid, rrule, master_id
+    private const BASE_SQL = "SELECT eventid, title, description_html, start_time, end_time, hostid
                                 FROM public.events";
 
     /**
@@ -45,16 +45,6 @@ class MyRadio_Event extends ServiceAPI
      */
     private $hostId;
 
-    /**
-     * @var string|null
-     */
-    private $rrule;
-
-    /**
-     * @var int|null
-     */
-    private $masterId;
-
     public function __construct(array $data)
     {
         $this->eventid = (int)$data['eventid'];
@@ -65,10 +55,6 @@ class MyRadio_Event extends ServiceAPI
         $this->endTime = strtotime($data['end_time']);
 
         $this->hostId = (int)$data['hostid'];
-
-        $this->rrule = $data['rrule'];
-
-        $this->masterId = is_null($data['master_id']) ? null : (int)$data['master_id'];
     }
 
     /**
@@ -188,22 +174,6 @@ class MyRadio_Event extends ServiceAPI
     }
 
     /**
-     * @return string|null
-     */
-    public function getRrule(): ?string
-    {
-        return $this->rrule;
-    }
-
-    /**
-     * @return int|null
-     */
-    public function getMasterId(): ?int
-    {
-        return $this->masterId;
-    }
-
-    /**
      * Updates this event's data.
      *
      * Note that this method does not do any authorisation of its own.
@@ -305,48 +275,18 @@ class MyRadio_Event extends ServiceAPI
             }
         }
 
-        // First, create the master
         $hostid = MyRadio_User::getCurrentOrSystemUser()->getID();
 
-        $sql = "INSERT INTO public.events (title, description_html, start_time, end_time, hostid, rrule)
-                VALUES ($1, $2, $3, $4, $5, $6) RETURNING eventid";
-
-        self::$db->query('BEGIN');
+        $sql = "INSERT INTO public.events (title, description_html, start_time, end_time, hostid)
+                VALUES ($1, $2, $3, $4, $5) RETURNING eventid";
 
         $result = self::$db->fetchColumn($sql, [
             $data['title'], $data['description_html'],
             CoreUtils::getTimestamp($data['start_time']), CoreUtils::getTimestamp($data['end_time']),
-            $hostid, $data['rrule']
+            $hostid
         ]);
 
-        if (empty($result)) {
-            throw new MyRadioException("Creation of event failed!", 500);
-        }
-
-        $newEventId = $result[0];
-
-        // Now, apply the RRule and create child events
-        if (!(empty($data['rrule']))) {
-            $length = (int)$data['end_time'] - $data['start_time'];
-            $start = (new \DateTime("now", new \DateTimeZone('UTC')))->setTimestamp($data['start_time']);
-            $rrule = new Rule($data['rrule'], $start, null, 'UTC');
-            foreach ($rrule->getRDates() as $date) {
-                self::$db->fetchOne('INSERT INTO public.events
-                        (title, description_html, start_time, end_time, hostid, rrule, master_id)
-                        VALUES ($1, $2, $3, $4, $5, $6, $7)', [
-                    $data['title'], $data['description_html'],
-                    CoreUtils::getTimestamp($date->date->getTimestamp()),
-                    CoreUtils::getTimestamp($date->date->getTimestamp() + $length),
-                    $hostid, $data['rrule'],
-                    $newEventId
-                ]);
-            }
-        }
-
-        self::$db->query('COMMIT');
-
-        // Return the master
-        return self::factory($newEventId);
+        return self::factory($result[0]);
     }
 
     protected static function factory($itemid)
@@ -437,8 +377,6 @@ class MyRadio_Event extends ServiceAPI
             'start' => CoreUtils::getIso8601Timestamp($this->startTime),
             'end' => CoreUtils::getIso8601Timestamp($this->endTime),
             'host' => MyRadio_User::getInstance($this->hostId)->toDataSource($mixins),
-            'rrule' => $this->rrule,
-            'master' => (is_null($this->masterId) ? null : self::getInstance($this->masterId)->toDataSource($mixins))
         ];
     }
 
