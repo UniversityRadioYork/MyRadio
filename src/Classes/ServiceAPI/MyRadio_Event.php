@@ -3,12 +3,14 @@
 
 namespace MyRadio\ServiceAPI;
 
+use DateTime;
 use MyRadio\MyRadio\AuthUtils;
 use MyRadio\MyRadio\CoreUtils;
 use MyRadio\MyRadio\MyRadioForm;
 use MyRadio\MyRadio\MyRadioFormField;
 use MyRadio\MyRadioException;
 use Recurr\Rule;
+use Spatie\IcalendarGenerator\Components\Event;
 
 class MyRadio_Event extends ServiceAPI
 {
@@ -380,6 +382,15 @@ class MyRadio_Event extends ServiceAPI
         ];
     }
 
+    public function toIcalEvent()
+    {
+        return Event::create($this->getTitle())
+            ->startsAt((new DateTime())->setTimestamp($this->getStartTime()))
+            ->endsAt((new DateTime())->setTimestamp($this->getEndTime()))
+            ->description(html_entity_decode(strip_tags($this->getDescriptionHtml())))
+            ->organizer($this->getHost()->getPublicEmail(), $this->getHost()->getName());
+    }
+
     public function canWeEdit()
     {
         return $this->getHost()->getID() === MyRadio_User::getCurrentOrSystemUser()->getID()
@@ -391,5 +402,70 @@ class MyRadio_Event extends ServiceAPI
         if ($this->getHost()->getID() !== MyRadio_User::getCurrentOrSystemUser()->getID()) {
             AuthUtils::requirePermission(AUTH_EDITANYEVENT);
         }
+    }
+
+    public static function createCalendarTokenFor($memberid = null)
+    {
+        if ($memberid === null) {
+            $currentUser = MyRadio_User::getCurrentUser();
+            if ($currentUser === null) {
+                throw new MyRadioException('Can\'t create a calendar token with no user!');
+            }
+            $memberid = $currentUser->getId();
+        }
+        // We could in theory have a collision, but it'll get caught by postgres.
+        // The likelihood is so small that we'll just let it crash and let the user try again.
+        $tokenStr = CoreUtils::randomString(16);
+        self::$db->query(
+            'INSERT INTO public.calendar_tokens (memberid, token_str) VALUES ($1, $2)',
+            [$memberid, $tokenStr]
+        );
+        return $tokenStr;
+    }
+
+    public static function validateCalendarToken($token)
+    {
+        $result = self::$db->fetchOne(
+            'SELECT memberid FROM public.calendar_tokens WHERE token_str = $1 AND revoked = FALSE',
+            [$token]
+        );
+        if (empty($result)) {
+            return null;
+        }
+        return $result['memberid'];
+    }
+
+    public static function getCalendarTokenFor($memberid = null)
+    {
+        if ($memberid === null) {
+            $currentUser = MyRadio_User::getCurrentUser();
+            if ($currentUser === null) {
+                throw new MyRadioException('Can\'t revoke a calendar token with no user!');
+            }
+            $memberid = $currentUser->getId();
+        }
+        $result = self::$db->fetchOne(
+            'SELECT token_str FROM public.calendar_tokens WHERE memberid = $1 AND revoked = FALSE',
+            [$memberid]
+        );
+        if (empty($result)) {
+            return null;
+        }
+        return $result['token_str'];
+    }
+
+    public static function revokeCalendarTokenFor($memberid = null)
+    {
+        if ($memberid === null) {
+            $currentUser = MyRadio_User::getCurrentUser();
+            if ($currentUser === null) {
+                throw new MyRadioException('Can\'t revoke a calendar token with no user!');
+            }
+            $memberid = $currentUser->getId();
+        }
+        self::$db->query(
+            'UPDATE public.calendar_tokens SET revoked = TRUE WHERE memberid = $1',
+            [$memberid]
+        );
     }
 }

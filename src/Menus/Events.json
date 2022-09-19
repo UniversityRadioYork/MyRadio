@@ -10,6 +10,11 @@
       "title": "Create Event",
       "url": "module=Events,action=editEvent",
       "description": "Add an event to the calendar."
+    },
+    {
+      "title": "Add to Calendar",
+      "url": "module=Events,action=addToCalendar",
+      "description": "Add the station calendar to your personal calendar"
     }
   ]
 }
