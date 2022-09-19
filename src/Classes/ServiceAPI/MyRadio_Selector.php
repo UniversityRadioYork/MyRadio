@@ -47,6 +47,11 @@ class MyRadio_Selector
     const SEL_WS = 5;
 
     /**
+     * The current "studio" is the off-air loop.
+     */
+    const SEL_OFFAIR = 8;
+
+    /**
      * The studio selection was made by the Selector Telnet interface.
      */
     const FROM_AUX = 0;
