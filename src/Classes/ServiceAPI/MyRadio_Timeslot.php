@@ -6,6 +6,7 @@
 
 namespace MyRadio\ServiceAPI;
 
+use DateTime;
 use MyRadio\Config;
 use MyRadio\MyRadio\AuthUtils;
 use MyRadio\MyRadioException;
@@ -17,6 +18,7 @@ use MyRadio\MyRadio\MyRadioFormField;
 use MyRadio\NIPSWeb\NIPSWeb_TimeslotItem;
 use MyRadio\NIPSWeb\NIPSWeb_BAPSUtils;
 use MyRadio\SIS\SIS_Utils;
+use Spatie\IcalendarGenerator\Components\Event;
 
 /**
  * The Timeslot class is used to view and manupulate Timeslot within the new MyRadio Scheduler Format.
@@ -801,7 +803,13 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
         return $value;
     }
 
-    public static function getCurrentUserNextTimeslots($n = 10)
+    /**
+     * Returns the next $n timeslots for the given user.
+     * @param int $memberid
+     * @param int $n
+     * @return self[]
+     */
+    public static function getUserNextTimeslots(int $memberid, int $n = 10): array
     {
         $ids = self::$db->fetchColumn(
             'select show_season_timeslot_id from schedule.show_season_timeslot ts
@@ -820,7 +828,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             and start_time >= NOW()
             order by start_time
             limit $2',
-            [$_SESSION['memberid'], $n]
+            [$memberid, $n]
         );
         $results = [];
         foreach ($ids as $id) {
@@ -829,7 +837,22 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
         return $results;
     }
 
-    public static function getCurrentUserPreviousTimeslots($n = 10)
+    /**
+     * Returns the next $n timeslots for the current user.
+     * @param int $n
+     * @return self[]
+     */
+    public static function getCurrentUserNextTimeslots(int $n = 10): array
+    {
+        return self::getUserNextTimeslots($_SESSION['memberid'], $n);
+    }
+
+    /**
+     * Returns the last $n timeslots for the given user.
+     * @param int $n
+     * @return self[]
+     */
+    public static function getUserPreviousTimeslots(int $memberid, int $n = 10): array
     {
         $ids = self::$db->fetchColumn(
             'select show_season_timeslot_id from schedule.show_season_timeslot ts
@@ -848,13 +871,23 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             and start_time < NOW()
             order by start_time desc
             limit $2',
-            [$_SESSION['memberid'], $n]
+            [$memberid, $n]
         );
         $results = [];
         foreach ($ids as $id) {
             $results[] = self::getInstance($id);
         }
         return $results;
+    }
+
+    /**
+     * Returns the last $n timeslots for the current user.
+     * @param int $n
+     * @return self[]
+     */
+    public static function getCurrentUserPreviousTimeslots(int $n = 10): array
+    {
+        return self::getUserPreviousTimeslots($_SESSION['memberid'], $n);
     }
 
     /**
@@ -1391,6 +1424,14 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
                 htmlspecialchars($guestInfo, ENT_QUOTES)
             ]
         );
+    }
+
+    public function toIcalEvent(): Event
+    {
+        return Event::create($this->getMeta('title'))
+            ->startsAt((new DateTime())->setTimestamp($this->getStartTime()))
+            ->endsAt((new DateTime())->setTimestamp($this->getEndTime()))
+            ->description(html_entity_decode(strip_tags($this->getMeta('description'))));
     }
 
     public static function getCancelForm()
