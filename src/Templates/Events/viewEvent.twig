@@ -20,6 +20,12 @@
         >
             Edit Event
         </a>
+        <a
+                class="btn btn-secondary"
+                href="{{ MyRadio.makeURL(config, 'Events', 'duplicateEvent', {eventid: event.ID()}) }}"
+        >
+            Duplicate Event
+        </a>
         <form
                 id="eventDeleteForm"
                 action="{{ MyRadio.makeURL(config, 'Events', 'deleteEvent', {}) }}"
