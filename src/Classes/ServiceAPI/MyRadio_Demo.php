@@ -257,7 +257,7 @@ class MyRadio_Demo extends ServiceAPI
         if ($this->signup_cutoff_hours === 0) {
             return false;
         }
-        return time() > ($this->demo_time - ($this->signup_cutoff_hours * 60 * 60));
+        return time() > (strtotime($this->demo_time) - ($this->signup_cutoff_hours * 60 * 60));
     }
 
     // Grrr...this returns names, not users.
