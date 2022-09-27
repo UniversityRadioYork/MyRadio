@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     URLUtils::backWithMessage('Session Updated!');
 } else {
     //Not Submitted
-    if ($_REQUEST["demo_id"]) {
+    if (isset($_REQUEST["demo_id"])) {
         // Update Demo
         MyRadio_Demo::getInstance($_REQUEST["demo_id"])
             ->getEditForm()
