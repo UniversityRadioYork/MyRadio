@@ -2,7 +2,7 @@ name: Staging stack
 
 on:
   push:
-    branches: [ "master" ]
+    branches: ["master"]
 
   workflow_dispatch:
 
@@ -12,3 +12,4 @@ jobs:
     with:
       stack: myradio
       environment: staging
+    secrets: inherit
