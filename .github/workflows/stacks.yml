@@ -1,4 +1,4 @@
-name: Docker Image and Stack
+name: Staging stack
 
 on:
   push:
@@ -12,5 +12,3 @@ jobs:
     with:
       stack: myradio
       environment: staging
-      image: MyRadio
-      tag: ${{ github.sha }}
