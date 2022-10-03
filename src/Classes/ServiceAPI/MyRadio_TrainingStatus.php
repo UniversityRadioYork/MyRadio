@@ -212,7 +212,11 @@ class MyRadio_TrainingStatus extends ServiceAPI
             return true;
         }
 
-        return $this->getAwarder()->isAwardedTo($user);
+        if (!$this->getAwarder()->isAwardedTo($user)) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
