@@ -63,6 +63,13 @@ class MyRadio_TrainingStatus extends ServiceAPI
     private $detail;
 
     /**
+     * An archived training status will still be visible for people who already have it, but cannot be newly awarded.
+     *
+     * @var bool
+     */
+    private bool $archived;
+
+    /**
      * Users who have achieved this Training Status.
      *
      * This array is initialised the first time it is requested.
@@ -100,6 +107,7 @@ class MyRadio_TrainingStatus extends ServiceAPI
         $this->descr = $result['descr'];
         $this->ordering = (int) $result['ordering'];
         $this->detail = $result['detail'];
+        $this->archived = isset($result['archived']) && $result['archived'] === 't';
 
         $this->depends = empty($result['depends']) ? null : $result['depends'];
         $this->can_award = empty($result['can_award']) ? null : $result['can_award'];
@@ -135,6 +143,15 @@ class MyRadio_TrainingStatus extends ServiceAPI
     public function getDetail()
     {
         return $this->detail;
+    }
+
+    /**
+     * Is this training status archived?
+     * @return bool
+     */
+    public function isArchived(): bool
+    {
+        return $this->archived;
     }
 
     /**
@@ -203,6 +220,10 @@ class MyRadio_TrainingStatus extends ServiceAPI
      */
     public function canAward(MyRadio_User $user = null)
     {
+        if ($this->isArchived()) {
+            return false;
+        }
+
         if ($user === null) {
             $user = MyRadio_User::getInstance();
         }
@@ -307,6 +328,9 @@ class MyRadio_TrainingStatus extends ServiceAPI
     {
         $options = [];
         foreach (self::getAll() as $status) {
+            if ($status->isArchived()) {
+                continue;
+            }
             if ($status->canAward($user)) {
                 $options[] = ["value" => $status->getID(), "text" => $status->getTitle()];
             }
@@ -335,6 +359,9 @@ class MyRadio_TrainingStatus extends ServiceAPI
 
         $statuses = [];
         foreach (self::getAll() as $status) {
+            if ($status->isArchived()) {
+                continue;
+            }
             if ((!$status->isAwardedTo($to))
                 && $status->hasDependency($to)
                 && $status->canAward($by)
@@ -358,6 +385,9 @@ class MyRadio_TrainingStatus extends ServiceAPI
     {
         $statuses = [];
         foreach (self::getAll() as $status) {
+            if ($status->isArchived()) {
+                continue;
+            }
             if ((!$status->isAwardedTo($to))
                 && $status->hasDependency($to)
             ) {
