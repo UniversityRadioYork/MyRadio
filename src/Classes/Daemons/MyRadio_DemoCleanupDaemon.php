@@ -23,8 +23,8 @@ class MyRadio_DemoCleanupDaemon extends MyRadio_Daemon
 
     public static function run()
     {
-        $weekkey = __CLASS__ . '_last_run_hourly';
-        if (self::getVal($weekkey) > time() - 3600) {
+        $runKey = __CLASS__ . '_last_run_hourly';
+        if (self::getVal($runKey) > time() - 3600) {
             return;
         }
 
@@ -32,7 +32,7 @@ class MyRadio_DemoCleanupDaemon extends MyRadio_Daemon
             self::cleanUp();
         } finally {
             // Done
-            self::setVal($weekkey, time());
+            self::setVal($runKey, time());
         }
     }
 
