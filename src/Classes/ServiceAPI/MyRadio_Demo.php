@@ -150,6 +150,9 @@ class MyRadio_Demo extends ServiceAPI
                 $this->demo_link = $link;
                 $this->demo_time = CoreUtils::getTimestamp($time);
                 $this->presenterstatusid = $training_type;
+                $this->signup_cutoff_hours = $signup_cutoff_hours;
+                $this->max_participants = $max_participants;
+                $this->updateCacheObject();
             }
         }
     }
