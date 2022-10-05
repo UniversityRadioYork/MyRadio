@@ -323,7 +323,7 @@ class MyRadio_Demo extends ServiceAPI
         //Add the credits for each member
         $demos = [];
         foreach ($result as $demo) {
-            $demo['demo_time'] = date('d M H:i', strtotime($demo['demo_time']));
+            $demo['demo_time'] = date('D d M H:i', strtotime($demo['demo_time']));
             $demo['memberid'] = MyRadio_User::getInstance($demo['memberid'])->getName();
             $demo['presenterstatusid'] = MyRadio_TrainingStatus::getInstance($demo['presenterstatusid'])->getTitle();
             $demos[] = $demo;
