@@ -182,7 +182,7 @@ class MyRadio_TrainingStatus extends ServiceAPI
      */
     public function getDepends()
     {
-        return empty($this->depends) ? null : self::getInstance($this->depends);
+        return empty($this->depends) ? null : MyRadio_TrainingStatus::getInstance($this->depends);
     }
 
     /**
@@ -208,7 +208,7 @@ class MyRadio_TrainingStatus extends ServiceAPI
      */
     public function getAwarder()
     {
-        return self::getInstance($this->can_award);
+        return MyRadio_TrainingStatus::getInstance($this->can_award);
     }
 
     /**
