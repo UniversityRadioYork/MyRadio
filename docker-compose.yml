@@ -8,6 +8,8 @@ services:
       POSTGRES_PASSWORD: myradio
     volumes:
       - db-data:/var/lib/postgresql/data
+    ports:
+      - 55432:5432
 
   memcached:
     image: memcached:alpine
@@ -18,7 +20,9 @@ services:
       - 8025:8025
 
   myradio:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
     depends_on:
       - postgres
       - memcached
