@@ -67,6 +67,11 @@ class MyRadio_StatsGenDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
      */
     private static function generateJukeboxReport()
     {
+        $list = MyRadio_List::getByName(Config::$reporting_list);
+        if ($list === null) {
+            dlog('No reporting list configured, not sending jukebox report.', E_WARNING);
+            return;
+        }
         //Review of whole week on Sundays
         if (date('N') == 7) {
             $info = MyRadio_TracklistItem::getTracklistStatsForJukebox(time() - (86400 * 7));
@@ -93,7 +98,7 @@ class MyRadio_StatsGenDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
         $table .= '</table>';
 
         MyRadioEmail::sendEmailToList(
-            MyRadio_List::getByName(Config::$reporting_list),
+            $list,
             'Jukebox Playout Report',
             $table
         );

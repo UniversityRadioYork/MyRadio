@@ -52,17 +52,30 @@ unset($_basepath);
  */
 require 'vendor/autoload.php';
 
+$config_path = 'MyRadio_Config.local.php';
+if (isset($_ENV['MYRADIO_CONFIG_PATH'])) {
+    $config_path = $_ENV['MYRADIO_CONFIG_PATH'];
+}
+
 /*
  * Load configuration specific to this system.
  * Or, if it doesn't exist, kick into setup.
  */
-if (stream_resolve_include_path('MyRadio_Config.local.php')) {
-    require_once 'MyRadio_Config.local.php';
+if (stream_resolve_include_path($config_path)) {
+    require_once $config_path;
     if (Config::$setup === true) {
+        if (defined('MYRADIO_CLI') && MYRADIO_CLI) {
+            echo "MyRadio is not configured. Please create a MyRadio_Config.local.php.";
+            exit(1);
+        }
         require 'Controllers/Setup/root.php';
         exit;
     }
 } else {
+    if (defined('MYRADIO_CLI') && MYRADIO_CLI) {
+        echo "MyRadio is not configured. Please create a MyRadio_Config.local.php.";
+        exit(1);
+    }
     /**
      * This install hasn't been configured yet. We should do that.
      */

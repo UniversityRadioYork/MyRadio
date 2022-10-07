@@ -157,7 +157,7 @@ while (true) {
     }
 
     //Reload the configuration to see if it has changed
-    include 'MyRadio_Config.local.php';
+    include $config_path;
 }
 
 unlink($pidfile);

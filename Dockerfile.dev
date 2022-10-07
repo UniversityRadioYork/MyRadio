@@ -9,9 +9,25 @@ RUN docker-php-ext-install pgsql pdo_pgsql gd ldap curl xsl zip
 RUN pecl install memcached && \
     echo extension=memcached.so >> /usr/local/etc/php/conf.d/memcached.ini
 
-RUN a2enmod rewrite
+RUN pecl install xdebug-3.1.1 && docker-php-ext-enable xdebug \
+    && echo 'xdebug.client_port=9003' >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+    && echo 'xdebug.mode=develop,debug' >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+    && echo 'xdebug.client_host=host.docker.internal' >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 
-COPY sample_configs/docker-apache.conf /etc/apache2/sites-available/myradio.conf
+RUN echo 'error_reporting=E_ALL' >> /usr/local/etc/php/conf.d/error-reporting.ini
+
+RUN echo sendmail_path = "/usr/bin/msmtp -t --host mail --port 1025 --from myradio@ury.dev" > /usr/local/etc/php/conf.d/sendmail.ini
+
+# Self-signed certificate
+RUN openssl req -nodes -new -subj "/C=GB/ST=North Yorkshire/L=York/O=University Radio York/OU=Localhost/CN=localhost" > myradio.csr && \
+    openssl rsa -in privkey.pem -out myradio.key && \
+    openssl x509 -in myradio.csr -out myradio.crt -req -signkey myradio.key -days 999 && \
+    cp myradio.crt /etc/apache2/myradio.crt && \
+    cp myradio.key /etc/apache2/myradio.key
+
+RUN a2enmod rewrite ssl
+
+COPY sample_configs/apache.conf /etc/apache2/sites-available/myradio.conf
 RUN a2dissite 000-default && a2ensite myradio && \
     service apache2 restart && apachectl -S
 

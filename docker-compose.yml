@@ -8,6 +8,8 @@ services:
       POSTGRES_PASSWORD: myradio
     volumes:
       - db-data:/var/lib/postgresql/data
+    ports:
+      - 55432:5432
 
   memcached:
     image: memcached:alpine
@@ -17,8 +19,10 @@ services:
     ports:
       - 8025:8025
 
-  myradio:
-    build: .
+  myradio: &myradio
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
     depends_on:
       - postgres
       - memcached
@@ -28,17 +32,20 @@ services:
     volumes:
       - ./schema:/var/www/myradio/schema
       - ./src:/var/www/myradio/src:rw
-  # daemon:
-  #   build: .
-  #   depends_on:
-  #     - postgres
-  #     - memcached
-  #   ports:
-  #     - 7080:80
-  #     - 4443:443
-  #   volumes:
-  #     - ./schema:/var/www/schema
-  #     - ./src:/var/www/myradio
-  #   command: ['/usr/local/bin/php', '/var/www/myradio/src/Controllers/daemon.php']
+    environment:
+      MYRADIO_DB_HOSTNAME: postgres
+      MYRADIO_DB_NAME: myradio
+      MYRADIO_DB_USER: myradio
+      MYRADIO_DB_PASS: myradio
+      MYRADIO_SHORT_NAME: URD
+      MYRADIO_LONG_NAME: 'University Radio Docker'
+      MYRADIO_BASE_URL: 'http://localhost:7080/myradio/'
+      MYRADIO_CACHE_ENABLE: 'true'
+      MYRADIO_CACHE_MEMCACHED_SERVERS: '[["memcached", 11211]]'
+      MYRADIO_SETUP: "false"
+  daemon:
+    <<: *myradio
+    ports: []
+    command: ['/usr/local/bin/php', '/var/www/myradio/src/Controllers/daemon.php']
 volumes:
   db-data:
