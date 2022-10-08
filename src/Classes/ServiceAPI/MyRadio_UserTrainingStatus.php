@@ -209,7 +209,7 @@ class MyRadio_UserTrainingStatus extends MyRadio_TrainingStatus
             throw new MyRadioException($awarded_by.' does not have permission to award '.$status);
         }
 
-        if ($status->hasDependency($awarded_to)) {
+        if (!$status->hasDependency($awarded_to)) {
             throw new MyRadioException($awarded_to.' does not have the prerequisite training to be awarded '.$status);
         }
 
