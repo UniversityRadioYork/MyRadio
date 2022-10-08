@@ -298,7 +298,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
     public function isStudioDemoed()
     {
         foreach ($this->getAllTraining(true) as $train) {
-            if ($train->getTitle() === "Studio Proficient" || $train->getTitle() === "WebStudio Trained") {
+            if ($train->getTitle() === "Studio Trained" || $train->getTitle() === "WebStudio Trained") {
                 return true;
             }
         }
