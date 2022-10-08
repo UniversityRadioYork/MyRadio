@@ -205,29 +205,11 @@ class MyRadio_UserTrainingStatus extends MyRadio_TrainingStatus
             $awarded_by = MyRadio_User::getInstance();
         }
 
-        //Check whether this user can do that.
-        if (in_array(
-            array_map(
-                function ($x) {
-                    return $x->getID();
-                },
-                $awarded_by->getAllTraining(true)
-            ),
-            $status->getAwarder()->getID()
-        ) === false) {
+        if (!$status->canAward($awarded_by)) {
             throw new MyRadioException($awarded_by.' does not have permission to award '.$status);
         }
 
-        //Check whether the target user has the prerequisites
-        if ($status->getDepends() !== null and in_array(
-            $status->getDepends()->getID(),
-            array_map(
-                function ($x) {
-                    return $x->getID();
-                },
-                $awarded_to->getAllTraining(true)
-            )
-        ) === false) {
+        if ($status->hasDependency($awarded_to)) {
             throw new MyRadioException($awarded_to.' does not have the prerequisite training to be awarded '.$status);
         }
 
