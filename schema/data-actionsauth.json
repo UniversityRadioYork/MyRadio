@@ -147,6 +147,7 @@
     ["Scheduler", "stop", "AUTH_STOPBROADCAST"],
     ["Scheduler", "upgrade", "AUTH_ALLOCATESLOTS"],
     ["Scheduler", "upgradeRefs", "AUTH_ALLOCATESLOTS"],
+    ["Scheduler", "programming", "AUTH_APPLYFORSHOW"],
     ["SIS", "default", "AUTH_USESIS"],
     ["SIS", "help.hide", "AUTH_USESIS"],
     ["SIS", "messages.markread", "AUTH_USESIS"],
