@@ -334,7 +334,13 @@ class MyRadio_Demo extends ServiceAPI
     }
 
 
-    public function delete($deleteWithAttendees = false)
+    /**
+     * Deletes this demo and all attendees (if any).
+     * @param bool $deleteWithAttendees if true, will remove all attendees (and email them).
+     * @return void
+     * @throws MyRadioException with code 409 if the demo has attendees and $deleteWithAttendees is false
+     */
+    public function delete(bool $deleteWithAttendees = false)
     {
         $attendees = $this->attendingDemoCount();
         if ($attendees > 0 && !$deleteWithAttendees) {
