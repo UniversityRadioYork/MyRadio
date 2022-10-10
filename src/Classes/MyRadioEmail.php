@@ -166,8 +166,8 @@ class MyRadioEmail extends ServiceAPI
         $headers = ['MIME-Version: 1.0'];
 
         if ($this->from !== null) {
-            $headers[] = 'From: '.$this->from->getName().' <'.$this->from->getEmail().'>';
-            $headers[] = 'Return-Path: '.$this->from->getEmail();
+            $headers[] = 'From: '.$this->from->getName().' <'.$this->from->getPublicEmail().'>';
+            $headers[] = 'Return-Path: '.$this->from->getPublicEmail();
         } else {
             $headers[] = 'From: '.Config::$long_name.' <no-reply@'.Config::$email_domain.'>';
             $headers[] = 'Return-Path: no-reply@'.Config::$email_domain;
@@ -201,6 +201,7 @@ class MyRadioEmail extends ServiceAPI
 
     /**
      * Actually send the email.
+     * This should only ever be called by MyRadio_EmailQueueDaemon.
      */
     public function send()
     {
@@ -296,7 +297,7 @@ class MyRadioEmail extends ServiceAPI
      *
      * @param MyRadio_User $to
      * @param string       $subject email subject
-     * @param sting        $message email message
+     * @param string        $message email message
      *
      * @todo Check if "Receive Emails" is enabled for the User
      */

@@ -285,7 +285,9 @@ class MyRadio_Demo extends ServiceAPI
         return $str;
     }
 
-    // Lets fix the above with this...grrr....
+    /**
+     * @return MyRadio_User[]
+     */
     public function myRadioUsersAttendingDemo()
     {
         $r = self::$db->fetchColumn(
@@ -331,6 +333,51 @@ class MyRadio_Demo extends ServiceAPI
         return $demos;
     }
 
+
+    /**
+     * Deletes this demo and all attendees (if any).
+     * @param bool $deleteWithAttendees if true, will remove all attendees (and email them).
+     * @return void
+     * @throws MyRadioException with code 409 if the demo has attendees and $deleteWithAttendees is false
+     */
+    public function delete(bool $deleteWithAttendees = false)
+    {
+        self::$db->query('BEGIN');
+        $attendees = $this->attendingDemoCount();
+        if ($attendees > 0) {
+            if (!$deleteWithAttendees) {
+                self::$db->query('ROLLBACK');
+                throw new MyRadioException(
+                    'This demo has attendees.',
+                    409
+                );
+            }
+            foreach ($this->myRadioUsersAttendingDemo() as $user) {
+                $time = CoreUtils::happyTime($this->getDemoTime());
+                $name = $user->getFName();
+                $listLink = URLUtils::makeURL('Training', 'listDemos');
+                $stationName = Config::$long_name;
+                MyRadioEmail::sendEmailToUser($user, 'Training Session Cancelled',
+                    "Hi $name,<br>" .
+                    "The training session you were due to attend at $time has been cancelled.<br>" .
+                    "Please check the <a href=\"$listLink\">training schedule</a> to see if there are any other sessions you can attend.<br>" .
+                    "Thanks,<br>".
+                    "$stationName Training"
+                );
+            }
+            self::$db->query(
+                'DELETE FROM schedule.demo_attendee WHERE demo_id = $1',
+                [$this->demo_id]
+            );
+        }
+        self::$db->query(
+            'DELETE FROM schedule.demo WHERE demo_id = $1',
+            [$this->demo_id]
+        );
+        self::$db->query('COMMIT');
+        self::$cache->delete(self::getCacheKey($this->demo_id));
+    }
+
     /**
      * The current user is marked as attending a demo
      * Return 0: Success
@@ -340,8 +387,7 @@ class MyRadio_Demo extends ServiceAPI
      */
     public function attend()
     {
-        //Get # of attendees
-        if ($this->attendingDemoCount() >= 2) {
+        if (!$this->isSpaceOnDemo()) {
             return 1;
         }
 

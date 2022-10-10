@@ -34,6 +34,11 @@ $(".twig-datatable").dataTable({
     {
       "sTitle": "",
       "bSortable": false
+    },
+    // cancel
+    {
+      "sTitle": "",
+      "bSortable": false
     }
   ],
   "bPaginate": false,

@@ -2,6 +2,8 @@
 /**
  * @todo Proper Documentation
  */
+
+use MyRadio\MyRadio\AuthUtils;
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_Demo;
@@ -17,7 +19,7 @@ $currentUser = MyRadio_User::getInstance();
 
 foreach ($demos as $demo) {
     $demo_object = MyRadio_Demo::getInstance($demo["demo_id"]);
-    if ($currentUser->hasAuth(AUTH_ADDDEMOS)) {
+    if (AuthUtils::hasPermission(AUTH_ADDDEMOS)) {
         $demo['attending'] = $demo_object->usersAttendingDemo();
         $demo['join'] = [
             'display' => 'text',
@@ -29,6 +31,12 @@ foreach ($demos as $demo) {
             "value" => "ok",
             "title" => "Mark Attendees as Trained",
             "url" => URLUtils::makeURL("Training", "finishDemo", ["demo_id" => $demo["demo_id"]])
+        ];
+        $demo['cancel'] = [
+            'display' => 'icon',
+            'value' => 'trash',
+            'title' => 'Cancel Demo',
+            'url' => URLUtils::makeURL('Training', 'cancelDemo', ['demo_id' => $demo['demo_id']]),
         ];
     } else {
         if ($demo_object->isUserAttendingDemo($currentUser->getID())) {
@@ -64,6 +72,7 @@ foreach ($demos as $demo) {
             $demo['join'] = ['display' => 'none'];
         }
         $demo["finish"] = "";
+        $demo["cancel"] = '';
     }
 
     if ($demo['demo_link']) {
