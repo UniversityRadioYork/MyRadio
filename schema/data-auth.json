@@ -86,5 +86,6 @@
     ["Create Events", "AUTH_CREATEEVENT", true],
     ["Edit Any Event", "AUTH_EDITANYEVENT", true],
     ["Edit Short URLs", "AUTH_EDITSHORTURLS", true],
-    ["Use Automatic Visualisation", "AUTH_AUTOVIZ", true]
+    ["Use Automatic Visualisation", "AUTH_AUTOVIZ", true],
+    ["Cancel Any Training Session", "AUTH_CANCELANYDEMO", true]
 ]

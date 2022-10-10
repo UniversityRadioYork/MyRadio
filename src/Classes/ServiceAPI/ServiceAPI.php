@@ -68,6 +68,11 @@ abstract class ServiceAPI
         self::initCache();
     }
 
+    /**
+     * Loads an instance of this object from either the cache or the DB.
+     * @param $itemid
+     * @return static
+     */
     public static function getInstance($itemid)
     {
         self::initCache();
@@ -123,9 +128,9 @@ abstract class ServiceAPI
      *
      * @param int[] $ids
      *
-     * @return ServiceAPI[]
+     * @return static[]
      */
-    public static function resultSetToObjArray($ids)
+    public static function resultSetToObjArray($ids): array
     {
         $response = [];
         $child = get_called_class();
