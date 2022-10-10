@@ -342,9 +342,11 @@ class MyRadio_Demo extends ServiceAPI
      */
     public function delete(bool $deleteWithAttendees = false)
     {
+        self::$db->query('BEGIN');
         $attendees = $this->attendingDemoCount();
         if ($attendees > 0) {
             if (!$deleteWithAttendees) {
+                self::$db->query('ROLLBACK');
                 throw new MyRadioException(
                     'This demo has attendees.',
                     409
@@ -372,6 +374,7 @@ class MyRadio_Demo extends ServiceAPI
             'DELETE FROM schedule.demo WHERE demo_id = $1',
             [$this->demo_id]
         );
+        self::$db->query('COMMIT');
         self::$cache->delete(self::getCacheKey($this->demo_id));
     }
 
