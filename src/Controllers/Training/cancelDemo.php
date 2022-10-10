@@ -33,7 +33,7 @@ if ($attendees > 0) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $data = $form->readValues();
     try {
-        $demo->delete($data['cancel_attendees']);
+        $demo->delete($data['cancel_attendees'] ?? false);
     } catch (MyRadioException $e) {
         if ($e->getCode() === 409) {
             URLUtils::backWithMessage('This demo has attendees, please confirm you wish to cancel it.');
