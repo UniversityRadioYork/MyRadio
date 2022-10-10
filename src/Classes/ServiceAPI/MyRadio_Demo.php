@@ -343,13 +343,13 @@ class MyRadio_Demo extends ServiceAPI
     public function delete(bool $deleteWithAttendees = false)
     {
         $attendees = $this->attendingDemoCount();
-        if ($attendees > 0 && !$deleteWithAttendees) {
-            throw new MyRadioException(
-                'This demo has attendees.',
-                409
-            );
-        }
         if ($attendees > 0) {
+            if (!$deleteWithAttendees) {
+                throw new MyRadioException(
+                    'This demo has attendees.',
+                    409
+                );
+            }
             foreach ($this->myRadioUsersAttendingDemo() as $user) {
                 $time = CoreUtils::happyTime($this->getDemoTime());
                 $name = $user->getFName();
