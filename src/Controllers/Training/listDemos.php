@@ -26,12 +26,6 @@ foreach ($demos as $demo) {
             'value' => 'Edit Demo',
             'url' => URLUtils::makeURL('Training', 'createDemo', ['demo_id' => $demo['demo_id']]),
         ];
-        $demo["finish"] = [
-            "display" => "icon",
-            "value" => "ok",
-            "title" => "Mark Attendees as Trained",
-            "url" => URLUtils::makeURL("Training", "finishDemo", ["demo_id" => $demo["demo_id"]])
-        ];
         $demo['cancel'] = [
             'display' => 'icon',
             'value' => 'trash',
@@ -71,7 +65,6 @@ foreach ($demos as $demo) {
             $demo['attending'] = 'Demo full';
             $demo['join'] = ['display' => 'none'];
         }
-        $demo["finish"] = "";
         $demo["cancel"] = '';
     }
 
@@ -92,7 +85,7 @@ foreach ($demos as $demo) {
 }
 
 if (empty($tabledata)) {
-    $tabledata = [['', '', '', '', '', '', 'Error' => 'There are currently no training slots available.', '']];
+    $tabledata = [['', '', '', '', '', 'Error' => 'There are currently no training slots available.', '']];
 }
 
 //print_r($tabledata);
@@ -120,9 +113,6 @@ if (isset($_REQUEST['msg'])) {
             break;
         case -3: //too late
             $twig->addError('It is now too late to leave this session. If you cannot make it, please contact the trainer directly.');
-            break;
-        case 4: // Mark attendees as trained
-            $twig->addInfo("You have marked the attendees as trained.");
             break;
     }
 }
