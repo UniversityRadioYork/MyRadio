@@ -44,7 +44,7 @@ class MyRadio_DemoCleanupDaemon extends MyRadio_Daemon
             FROM schedule.demo_attendee da
             INNER JOIN schedule.demo d on d.demo_id = da.demo_id
             LEFT JOIN public.member_presenterstatus mps ON mps.memberid = da.memberid AND mps.presenterstatusid = d.presenterstatusid
-            WHERE d.demo_time < NOW()
+            WHERE d.demo_time < (NOW() - '1 hour'::interval)
             AND mps.memberpresenterstatusid IS NULL
         ');
         foreach ($records as $row) {
