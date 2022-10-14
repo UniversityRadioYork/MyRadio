@@ -696,6 +696,7 @@ final class Config
     public static $d_StatsGen_enabled = true;
     public static $d_TrackAndTrace_enabled = true;
     public static $d_Explicit_enabled = false;
+    public static $d_DemoCleanup_enabled = true;
 
     /**** STRINGS ****/
     public static $short_name = 'URY';
