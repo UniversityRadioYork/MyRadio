@@ -26,6 +26,7 @@
         "\\MyRadio\\ServiceAPI\\MyRadio_ShowSubtype": "showSubtype",
         "\\MyRadio\\ServiceAPI\\MyRadio_Event": "event",
         "\\MyRadio\\ServiceAPI\\MyRadio_ShortURL": "shortUrl",
+        "\\MyRadio\\ServiceAPI\\MyRadio_Highlight": "highlight",
         "\\MyRadio\\iTones\\iTones_Utils": "iTones",
         "\\MyRadio\\iTones\\iTones_Playlist": "playlist",
         "\\MyRadio\\MyRadio\\AuthUtils": "auth",

@@ -23,6 +23,41 @@ class MyRadio_Highlight extends ServiceAPI
         $this->notes = (string) $data['notes'];
     }
 
+    public static function createFromLastSegment(int $timeslot_id, int $attempts = 10, string $notes = ''): MyRadio_Highlight
+    {
+        $ts = MyRadio_Timeslot::getInstance($timeslot_id);
+        $i = 0;
+        $segmentStart = null;
+        $segmentEnd = null;
+        do {
+            $tracklist = MyRadio_TracklistItem::getTracklistForTimeslot($ts);
+            if (count($tracklist) < 2) {
+                if ($i <= $attempts) {
+                    sleep(1);
+                    $i++;
+                    continue;
+                } else {
+                    goto fallback;
+                }
+            }
+            $last = $tracklist[count($tracklist) - 1];
+            if ($last->getEndTime() !== false) {
+                if ($i <= $attempts) {
+                    sleep(1);
+                    $i++;
+                    continue;
+                } else {
+                    goto fallback;
+                }
+            }
+            $segmentStart = $tracklist[count($tracklist) - 2]->getEndTime();
+            $segmentEnd = $last->getEndTime();
+        } while ($segmentStart === null && $segmentEnd === null);
+        return self::create($timeslot_id, $segmentStart, $segmentEnd, $notes);
+    fallback:
+        return self::create($timeslot_id, time() - 60*5, time(), $notes);
+    }
+
     public static function create(int $timeslot_id, int $start_time, int $end_time, $notes = ''): self
     {
         $sql = 'INSERT INTO schedule.highlight (show_season_timeslot_id, start_time, end_time, notes) VALUES ($1, $2, $3, $4) RETURNING highlight_id';

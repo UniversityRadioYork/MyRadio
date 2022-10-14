@@ -273,7 +273,7 @@ class MyRadio_TracklistItem extends ServiceAPI
      * @param int|MyRadio_Timeslot $timeslotid The ID of the Timeslot
      * @param int $offset     Skip items with an audiologid <= this
      *
-     * @return array
+     * @return self[]
      */
     public static function getTracklistForTimeslot($timeslotid, $offset = 0)
     {
