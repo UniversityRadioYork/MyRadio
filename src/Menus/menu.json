@@ -115,6 +115,11 @@
                             "description": "List your applied-for and scheduled shows."
                         },
                         {
+                            "title": "Highlights",
+                            "url": "module=Scheduler,action=highlights",
+                            "description": "Listen and watch back to highlights from your shows"
+                        },
+                        {
                             "title": "Automatic Visualisation",
                             "url": "module=Scheduler,action=autoViz",
                             "description": "Request automatic visualisation of your shows, and download clips of past shows"
