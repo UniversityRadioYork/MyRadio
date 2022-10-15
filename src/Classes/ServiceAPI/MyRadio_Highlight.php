@@ -23,6 +23,12 @@ class MyRadio_Highlight extends ServiceAPI
         $this->notes = (string) $data['notes'];
     }
 
+    /**
+     * @param int|null $timeslot_id
+     * @param int $attempts
+     * @param string $notes
+     * @return MyRadio_Highlight
+     */
     public static function createFromLastSegment(int $timeslot_id = null, int $attempts = 10, string $notes = ''): MyRadio_Highlight
     {
         if ($timeslot_id === null) {
@@ -65,6 +71,13 @@ class MyRadio_Highlight extends ServiceAPI
         return self::create($ts->getID(), $segmentStart, $segmentEnd, $notes);
     }
 
+    /**
+     * @param int $timeslot_id
+     * @param int $start_time
+     * @param int $end_time
+     * @param $notes
+     * @return static
+     */
     public static function create(int $timeslot_id, int $start_time, int $end_time, $notes = ''): self
     {
         $sql = 'INSERT INTO schedule.highlight (show_season_timeslot_id, start_time, end_time, notes) VALUES ($1, $2, $3, $4) RETURNING highlight_id';
