@@ -2,6 +2,8 @@
 
 namespace MyRadio\ServiceAPI;
 
+use MyRadio\Config;
+use MyRadio\MyRadio\LoggerNGAPI;
 use MyRadio\MyRadioException;
 use MyRadio\ServiceAPI\MyRadio_Timeslot;
 use MyRadio\MyRadio\CoreUtils;
@@ -75,15 +77,44 @@ class MyRadio_Highlight extends ServiceAPI
      * @param int $timeslot_id
      * @param int $start_time
      * @param int $end_time
-     * @param $notes
+     * @param string $notes
      * @return static
      */
-    public static function create(int $timeslot_id, int $start_time, int $end_time, $notes = ''): self
+    public static function create(int $timeslot_id, int $start_time, int $end_time, string $notes = ''): self
     {
         $sql = 'INSERT INTO schedule.highlight (show_season_timeslot_id, start_time, end_time, notes) VALUES ($1, $2, $3, $4) RETURNING highlight_id';
         $ret = self::$db->fetchColumn($sql, [$timeslot_id, CoreUtils::getTimestamp($start_time), CoreUtils::getTimestamp($end_time), $notes]);
 
-        return self::getInstance($ret[0]);
+        $hl =  self::getInstance($ret[0]);
+
+        LoggerNGAPI::getInstance()->make($hl->getLogTitle(), $hl->start_time, $hl->end_time);
+
+        return $hl;
+    }
+
+    private function getLogTitle(): string
+    {
+        return 'Highlight: ' . $this->getTimeslot()->getMeta('title') . ' ' . CoreUtils::happyTime($this->start_time);
+    }
+
+    public function hasAudioLog(): bool
+    {
+        try {
+            LoggerNGAPI::getInstance()->download($this->getLogTitle(), $this->start_time, $this->end_time);
+            return true;
+        } catch (MyRadioException $e) {
+            if ($e->getCode() === 403) {
+                // lol loggerng
+                return false;
+            }
+            throw $e;
+        }
+    }
+
+    public function audioLogPath(): string
+    {
+        $res = LoggerNGAPI::getInstance()->download($this->getLogTitle(), $this->start_time, $this->end_time);
+        return Config::$audio_logs_path . '/' . $res['filename_disk'];
     }
 
     public static function getHighlightsForTimeslot(int $timeslot_id): array
@@ -154,5 +185,10 @@ class MyRadio_Highlight extends ServiceAPI
             'notes' => $this->notes,
             'autoviz_clip' => $clip === null ? null : $clip->toDataSource($mixins)
         ];
+    }
+
+    public function getID()
+    {
+        return $this->id;
     }
 }

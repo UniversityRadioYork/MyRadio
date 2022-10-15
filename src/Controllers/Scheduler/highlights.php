@@ -1,6 +1,7 @@
 <?php
 
 use MyRadio\MyRadio\CoreUtils;
+use MyRadio\MyRadio\URLUtils;
 use MyRadio\ServiceAPI\MyRadio_Highlight;
 
 $highlights = MyRadio_Highlight::getLastHighlightsForCurrentUser(25);
@@ -12,8 +13,17 @@ foreach ($highlights as $hl) {
         'display' => 'text',
         'value' => 'Audio Logger',
         'title' => 'Download this clip',
-        'url' => $clip->getPublicURL(),
     ];
+    if ($hl->hasAudioLog()) {
+        $row['loglink'] = [
+            'display' => 'text',
+            'value' => 'Audio Clip',
+            'title' => 'Download this highlight',
+            'url' => URLUtils::makeURL('Scheduler', 'higlightLog', ['highlight_id' => $hl->getID()])
+        ];
+    } else {
+        $row['loglink'] = 'No audio available yet';
+    }
     $clip = $hl->getAutoVizClip();
     if ($clip === null) {
         $row['autovizlink'] = 'No video clip available';

@@ -685,6 +685,18 @@ final class Config
      */
     public static $short_url_forbidden_slugs = [];
 
+    /**
+     * Base URL of a LoggerNG Server instance.
+     * @var string
+     */
+    public static $loggerng_url;
+
+    /**
+     * The path on disk that the logs are stored.
+     * @var string
+     */
+    public static $audio_logs_path;
+
     /**** DAEMON CONFIGURATION ****/
     public static $d_BAPSSync_enabled = false;
     public static $d_EmailQueue_enabled = true;
