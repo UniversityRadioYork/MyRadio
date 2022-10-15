@@ -2,7 +2,7 @@
 
 namespace MyRadio\ServiceAPI;
 
-use MyRadio\ServiceAPI\ServiceAPI;
+use MyRadio\MyRadioException;
 use MyRadio\ServiceAPI\MyRadio_Timeslot;
 use MyRadio\MyRadio\CoreUtils;
 
@@ -23,9 +23,16 @@ class MyRadio_Highlight extends ServiceAPI
         $this->notes = (string) $data['notes'];
     }
 
-    public static function createFromLastSegment(int $timeslot_id, int $attempts = 10, string $notes = ''): MyRadio_Highlight
+    public static function createFromLastSegment(int $timeslot_id = null, int $attempts = 10, string $notes = ''): MyRadio_Highlight
     {
-        $ts = MyRadio_Timeslot::getInstance($timeslot_id);
+        if ($timeslot_id === null) {
+            $ts = MyRadio_Timeslot::getCurrentTimeslot();
+            if ($ts === null) {
+                throw new MyRadioException('No current timeslot', 400);
+            }
+        } else {
+            $ts = MyRadio_Timeslot::getInstance($timeslot_id);
+        }
         $i = 0;
         $segmentStart = null;
         $segmentEnd = null;
@@ -37,7 +44,8 @@ class MyRadio_Highlight extends ServiceAPI
                     $i++;
                     continue;
                 } else {
-                    goto fallback;
+                    // fallback
+                    return self::create($ts->getID(), time() - 60*5, time(), $notes);
                 }
             }
             $last = $tracklist[count($tracklist) - 1];
@@ -47,15 +55,14 @@ class MyRadio_Highlight extends ServiceAPI
                     $i++;
                     continue;
                 } else {
-                    goto fallback;
+                    // fallback
+                    return self::create($ts->getID(), time() - 60*5, time(), $notes);
                 }
             }
             $segmentStart = $tracklist[count($tracklist) - 2]->getEndTime();
             $segmentEnd = $last->getEndTime();
         } while ($segmentStart === null && $segmentEnd === null);
-        return self::create($timeslot_id, $segmentStart, $segmentEnd, $notes);
-    fallback:
-        return self::create($timeslot_id, time() - 60*5, time(), $notes);
+        return self::create($ts->getID(), $segmentStart, $segmentEnd, $notes);
     }
 
     public static function create(int $timeslot_id, int $start_time, int $end_time, $notes = ''): self
