@@ -19,7 +19,7 @@ foreach ($highlights as $hl) {
             'display' => 'text',
             'value' => 'Audio Clip',
             'title' => 'Download this highlight',
-            'url' => URLUtils::makeURL('Scheduler', 'higlightLog', ['highlight_id' => $hl->getID()])
+            'url' => URLUtils::makeURL('Scheduler', 'highlightLog', ['highlight_id' => $hl->getID()])
         ];
     } else {
         $row['loglink'] = 'No audio available yet';
