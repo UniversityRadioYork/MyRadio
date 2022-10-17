@@ -266,10 +266,10 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
     }
 
     /**
-     * Returns the currently selected timeslot (from the navbar).
-     *
-     * @return array  Time, id If null, no timeslot is selected/user is logged out.
-     */
+    * Returns the currently selected timeslot (from the navbar).
+    *
+    * @return MyRadio_Timeslot|null If null, user has no selected timeslot.
+    */
     public static function getUserSelectedTimeslot()
     {
         if (isset($_SESSION['timeslotid'])) {
@@ -278,6 +278,23 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             return $timeslot;
         }
         return null;
+    }
+
+    /**
+     * Sets the current user selected timeslot. NOTE: No auth checking here.
+     *
+     * @param MyRadioTimeslot|null $timeslot The timeslot (or none) to set the current user timeslot to.
+     *
+     * @return MyRadio_Timeslot|null If null, user has no selected timeslot.
+     */
+    public static function setUserSelectedTimeslot($timeslot = null) {
+        if ($timeslot) {
+            $_SESSION['timeslotid'] = $timeslot->getID();
+            $_SESSION['timeslotname'] = CoreUtils::happyTime($timeslot->getStartTime());
+        } else {
+            $_SESSION['timeslotid'] = null;
+            $_SESSION['timeslotname'] = null;
+        }
     }
 
     /**
