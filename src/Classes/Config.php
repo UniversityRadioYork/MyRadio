@@ -559,6 +559,7 @@ final class Config
         'selector',
         'webcam',
         'obit',
+        'highlights',
     ];
 
     /**

@@ -49,7 +49,7 @@ class MyRadioNews
     /**
      * Returns the latest news item for the given feed, and if given a user, the timestamp of when they saw it.
      *
-     * @param id           $newsfeedid The ID of the newsfeed to check
+     * @param int          $newsfeedid The ID of the newsfeed to check
      * @param MyRadio_User $user       The User object to check if seen. Default null, won't return a seen column.
      *
      * @return array
