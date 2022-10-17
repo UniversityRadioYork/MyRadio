@@ -15,14 +15,16 @@ class MyRadio_Highlight extends ServiceAPI
     private int $start_time;
     private int $end_time;
     private string $notes;
+    private bool $audioLogRequested;
 
-    public function __construct(array $data)
+    protected function __construct(array $data)
     {
         $this->id = (int) $data['highlight_id'];
         $this->timeslot_id = (int) $data['show_season_timeslot_id'];
         $this->start_time = strtotime($data['start_time']);
         $this->end_time = strtotime($data['end_time']);
         $this->notes = (string) $data['notes'];
+        $this->audioLogRequested = $data['audio_log_requested'] == 't';
     }
 
     protected static function factory($itemid)
@@ -95,8 +97,6 @@ class MyRadio_Highlight extends ServiceAPI
 
         $hl =  self::getInstance($ret[0]);
 
-        LoggerNGAPI::getInstance()->make($hl->getLogTitle(), $hl->start_time, $hl->end_time);
-
         return $hl;
     }
 
@@ -117,6 +117,14 @@ class MyRadio_Highlight extends ServiceAPI
             }
             throw $e;
         }
+    }
+
+    public function requestAudioLog()
+    {
+        LoggerNGAPI::getInstance()->make($this->getLogTitle(), $this->start_time, $this->end_time);
+        self::$db->query('UPDATE schedule.highlight SET audio_log_requested = \'t\' WHERE highlight_id = $1', [$this->id]);
+        $this->audioLogRequested = true;
+        $this->updateCacheObject();
     }
 
     public function audioLogPath(): string
@@ -198,5 +206,29 @@ class MyRadio_Highlight extends ServiceAPI
     public function getID()
     {
         return $this->id;
+    }
+
+    /**
+     * @return int
+     */
+    public function getStartTime(): int
+    {
+        return $this->start_time;
+    }
+
+    /**
+     * @return string
+     */
+    public function getNotes(): string
+    {
+        return $this->notes;
+    }
+
+    /**
+     * @return int
+     */
+    public function getEndTime()
+    {
+        return $this->end_time;
     }
 }

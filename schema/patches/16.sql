@@ -4,7 +4,8 @@ CREATE TABLE schedule.highlight (
     show_season_timeslot_id INTEGER REFERENCES schedule.show_season_timeslot(show_season_timeslot_id) ON DELETE CASCADE,
     start_time TIMESTAMPTZ NOT NULL,
     end_time TIMESTAMPTZ NOT NULL,
-    notes TEXT DEFAULT ''
+    notes TEXT DEFAULT '',
+    audio_log_requested BOOL DEFAULT 'f'
 );
 UPDATE myradio.schema
 SET value = 16
