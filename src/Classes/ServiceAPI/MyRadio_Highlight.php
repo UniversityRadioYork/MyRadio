@@ -19,11 +19,19 @@ class MyRadio_Highlight extends ServiceAPI
     public function __construct(array $data)
     {
         $this->id = (int) $data['highlight_id'];
-        $this->timeslot_id = (int) $data['timeslot_id'];
+        $this->timeslot_id = (int) $data['show_season_timeslot_id'];
         $this->start_time = (int) $data['start_time'];
         $this->end_time = (int) $data['end_time'];
         $this->notes = (string) $data['notes'];
     }
+
+    protected static function factory($itemid)
+    {
+        $sql = 'SELECT highlight_id, show_season_timeslot_id, start_time, end_time, notes FROM schedule.highlight WHERE highlight_id = $1 LIMIT 1';
+        $data = self::$db->fetchOne($sql, [$itemid]);
+        return new self($data);
+    }
+
 
     /**
      * @param int|null $timeslot_id
