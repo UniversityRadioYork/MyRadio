@@ -20,8 +20,8 @@ class MyRadio_Highlight extends ServiceAPI
     {
         $this->id = (int) $data['highlight_id'];
         $this->timeslot_id = (int) $data['show_season_timeslot_id'];
-        $this->start_time = (int) $data['start_time'];
-        $this->end_time = (int) $data['end_time'];
+        $this->start_time = strtotime($data['start_time']);
+        $this->end_time = strtotime($data['end_time']);
         $this->notes = (string) $data['notes'];
     }
 
