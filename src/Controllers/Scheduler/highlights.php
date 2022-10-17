@@ -9,11 +9,6 @@ $highlights = MyRadio_Highlight::getLastHighlightsForCurrentUser(25);
 $rows = [];
 foreach ($highlights as $hl) {
     $row = $hl->toDataSource();
-    $row['loggerlink'] = [
-        'display' => 'text',
-        'value' => 'Audio Logger',
-        'title' => 'Download this clip',
-    ];
     if ($hl->hasAudioLog()) {
         $row['loglink'] = [
             'display' => 'text',
