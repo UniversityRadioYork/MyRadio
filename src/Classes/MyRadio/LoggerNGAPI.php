@@ -31,13 +31,20 @@ class LoggerNGAPI
         if ($memberid === null) {
             $memberid = MyRadio_User::getCurrentOrSystemUser()->getID();
         }
-        return $this->request('make', [
-            'user' => $memberid,
-            'start' => $startTime,
-            'end' => $endTime,
-            'format' => $format,
-            'title' => $title
-        ]);
+        try {
+            return $this->request('make', [
+                'user' => $memberid,
+                'start' => $startTime,
+                'end' => $endTime,
+                'format' => $format,
+                'title' => $title
+            ]);
+        } catch (MyRadioException $e) {
+            if ($e->getCode() === 403 && strpos($e->getMessage(), 'this user is requesting a log that they have already requested') !== false) {
+                return true;
+            }
+            throw $e;
+        }
     }
 
     public function download(string $title, int $startTime, int $endTime, string $format = 'mp3', int $memberid = null)
