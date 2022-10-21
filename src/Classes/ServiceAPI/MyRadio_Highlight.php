@@ -78,7 +78,7 @@ class MyRadio_Highlight extends ServiceAPI
                 }
             }
             $segmentStart = $tracklist[count($tracklist) - 2]->getEndTime();
-            $segmentEnd = $last->getEndTime();
+            $segmentEnd = $last->getStartTime();
         } while ($segmentStart === null && $segmentEnd === null);
         return self::create($ts->getID(), $segmentStart, $segmentEnd, $notes);
     }
