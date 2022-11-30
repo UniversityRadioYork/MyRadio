@@ -82,6 +82,12 @@ class MyRadio_Officer extends ServiceAPI
      */
     private $permissions;
 
+    /**
+     * How many people can have this officership - should be 1 for most.
+     * @var int
+     */
+    private $num_places;
+
     protected function __construct($id)
     {
         $result = self::$db->fetchOne(
@@ -101,6 +107,7 @@ class MyRadio_Officer extends ServiceAPI
             $this->description = $result['descr'];
             $this->status = $result['status'];
             $this->type = $result['type'];
+            $this->num_places = (int) $result['num_places'];
 
             //Get the officer's permissions
             $this->updatePermissions();
@@ -543,6 +550,11 @@ class MyRadio_Officer extends ServiceAPI
         );
     }
 
+    public function getNumPlaces()
+    {
+        return $this->num_places;
+    }
+
     /**
      * Returns all the officer's active permission flags.
      *
@@ -661,6 +673,16 @@ class MyRadio_Officer extends ServiceAPI
             )
         )->addField(
             new MyRadioFormField(
+                'num_places',
+                MyRadioFormField::TYPE_NUMBER,
+                [
+                    'label' => 'Number of Places',
+                    'explanation' => 'How many people can have this officership at a time.',
+                    'value' => 1,
+                ]
+            )
+        )->addField(
+            new MyRadioFormField(
                 'status',
                 MyRadioFormField::TYPE_SELECT,
                 [
@@ -759,6 +781,7 @@ class MyRadio_Officer extends ServiceAPI
                     'team' => $this->getTeam()->getID(),
                     'type' => $this->getType(),
                     'status' => $this->getStatus(),
+                    'num_places' => $this->getNumPlaces(),
                     'permissions.permission' => array_map(
                         function ($perm) {
                             return $perm['value'];
@@ -828,6 +851,7 @@ class MyRadio_Officer extends ServiceAPI
             'description' => $this->getDescription(),
             'status' => $this->getStatus(),
             'type' => $this->getType(),
+            'num_places' => $this->getNumPlaces(),
         ];
 
         $this->addMixins($data, $mixins, $mixin_funcs);
