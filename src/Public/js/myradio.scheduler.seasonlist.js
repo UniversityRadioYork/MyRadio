@@ -38,8 +38,8 @@ $(".twig-datatable").dataTable({
     },
     //editlink
     {
-      "sTitle": "Edit",
-      "bVisible": true
+      //"sTitle": "Edit",
+      "bVisible": false
     },
     //applylink
     {
