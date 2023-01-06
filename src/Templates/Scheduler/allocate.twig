@@ -10,6 +10,13 @@
 <li>{{credit.type_name}}: {{credit.User.fname}} {{credit.User.sname}}</li>
 {% endfor %}
 </ul>
+
+{% for credit in frm_custom.credits %}
+{% if credit.User.contract_signed != 1 %}
+<div class="alert alert-danger"><strong>{{credit.User.name}}</strong> has not signed the Presenter's Contract</div>
+{% endif %}
+{% endfor %}
+
 {{ parent() }}
 <div id="schedule-preview"></div>
 {% endblock %}

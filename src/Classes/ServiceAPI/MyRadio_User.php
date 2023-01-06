@@ -2252,6 +2252,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
             'public_email' => $this->getPublicEmail(),
             'url' => $this->getURL(),
             'receive_email' => $this->getReceiveEmail(),
+            'contract_signed' => $this->hasSignedContract()
         ];
 
         $data['photo'] = $this->getProfilePhoto() === null ?
