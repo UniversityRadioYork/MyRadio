@@ -13,7 +13,7 @@
 
 {% for credit in frm_custom.credits %}
 {% if credit.User.contract_signed != 1 %}
-<div class="alert alert-danger"><strong>{{credit.User.fname}} {{credit.User.sname}}</strong> has not signed the Presenter's Contract</div>
+<div class="alert alert-danger"><strong>{{credit.User.name}}</strong> has not signed the Presenter's Contract</div>
 {% endif %}
 {% endfor %}
 
