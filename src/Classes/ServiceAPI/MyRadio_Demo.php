@@ -431,7 +431,7 @@ class MyRadio_Demo extends ServiceAPI
                 . $user->getName()
                 . ($this->getLink() ? '. The training session will be available at '
                     . $this->getLink() : '. Just head over to the station in Vanbrugh College just before your slot '
-                    . ' and the trainer will be waiting for you.')
+                    . 'and the trainer will be waiting for you.')
                 . "\r\n\r\nSee you on air soon!\r\n"
                 . Config::$long_name
                 . ' Training'
