@@ -1152,7 +1152,7 @@ EOT
         MyRadio_AuditLog::log(
             AuditLogTypes::Scheduled,
             $this->season_id,
-            ['times' => explode('\n', $times)]
+            ['times' => explode("\n", $times)]
         );
 
         //COMMIT
