@@ -163,6 +163,11 @@
                             "title": "Website Tools",
                             "url": "module=Website",
                             "description": "Edit website banners, navigation and probably other stuff too."
+                        },
+                        {
+                            "title": "MyRadio Audit Log",
+                            "url": "module=Audit",
+                            "description": "View the MyRadio audit log."
                         }
                     ]
                 },

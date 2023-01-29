@@ -14,7 +14,8 @@ class MyRadio_AuditLog extends ServiceAPI
 
     private string $entry_type;
 
-    private string $target_class;
+    /** @var string|null */
+    private $target_class;
 
     private int $target_id;
 
@@ -82,7 +83,7 @@ class MyRadio_AuditLog extends ServiceAPI
     {
         if ($target_class === '')
         {
-            $caller = debug_backtrace(0, 1);
+            $caller = debug_backtrace(!DEBUG_BACKTRACE_PROVIDE_OBJECT|DEBUG_BACKTRACE_IGNORE_ARGS,2)[1];
             $target_class = $caller['class'];
         }
         $actor_id = MyRadio_User::getCurrentOrSystemUser()->getID();
