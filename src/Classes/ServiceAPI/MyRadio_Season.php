@@ -319,7 +319,7 @@ class MyRadio_Season extends MyRadio_Metadata_Common
         MyRadio_AuditLog::log(
             AuditLogTypes::Created,
             $newSeason->season_id,
-            $newSeason->toDataSource()
+            ['show_id' => $newSeason->show_id, 'term_id' => $newSeason->term_id, 'requested_weeks' => $newSeason->requested_weeks, 'requested_times' => $newSeason->requested_times],
         );
 
         return $newSeason;

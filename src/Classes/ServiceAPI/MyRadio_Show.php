@@ -388,7 +388,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         MyRadio_AuditLog::log(
             AuditLogTypes::Created,
             $show_id,
-            $show->toDataSource()
+            array_intersect_key($show->toDataSource(), array_flip(['title', 'description'])),
         );
 
         /*
