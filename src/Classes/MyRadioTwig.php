@@ -9,6 +9,7 @@ use MyRadio\MyRadio\URLUtils;
 use MyRadio\MyRadio\MyRadioMenu;
 use MyRadio\MyRadioException;
 use MyRadio\MyRadioError;
+use MyRadio\ServiceAPI\ServiceAPI;
 use Twig\TwigFunction;
 use Twig_Loader_Filesystem;
 use Twig_Environment;
@@ -89,6 +90,11 @@ class MyRadioTwig implements \MyRadio\Iface\TemplateEngine
 
         if (isset($_REQUEST['message'])) {
             $this->addInfo(strip_tags(base64_decode($_REQUEST['message']), '<a>'));
+        }
+
+        $cacheDebug = ServiceAPI::getCacheDebugLog();
+        if ($cacheDebug) {
+            $this->addVariable('cacheDebugLog', $cacheDebug);
         }
     }
 

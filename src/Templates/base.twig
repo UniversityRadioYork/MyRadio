@@ -35,6 +35,31 @@
               &nbsp;<a href="http://ury.org.uk/contact/">Contact Us</a>
             </div>
           </div>
+          {% if cacheDebugLog %}
+            <div class="row">
+              <h6>Cache Debug Log</h6>
+              <table>
+                <thead>
+                <tr>
+                  <th>Action</th>
+                  <th>Key(s)</th>
+                  <th>Value</th>
+                  <th>Result</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for entry in cacheDebugLog %}
+                  <tr>
+                    <td>{{ entry.action }}</td>
+                    <td>{% if entry.keys %}{{ entry.keys|json_encode }}{% else %}{{ entry.key }}{% endif %}</td>
+                    <td>{{ entry.value|json_encode }}</td>
+                    <td>{{ entry.result|json_encode }}</td>
+                  </tr>
+                {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          {% endif %}
         </div>
       </footer>
     {% endblock %}

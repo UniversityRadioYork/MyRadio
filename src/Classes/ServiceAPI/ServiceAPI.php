@@ -6,6 +6,7 @@ namespace MyRadio\ServiceAPI;
 
 use MyRadio\Config;
 use MyRadio\Database;
+use MyRadio\DebugCacheProvider;
 use MyRadio\Iface\CacheProvider;
 use MyRadio\MyRadioException;
 
@@ -51,6 +52,9 @@ abstract class ServiceAPI
         if (!self::$cache) {
             $cache = Config::$cache_provider;
             self::$cache = $cache::getInstance();
+            if ($_REQUEST['debugCache'] === 'true' || $_SERVER['HTTP_X_MYRADIO_DEBUG_CACHE'] === 'true') {
+                self::$cache = new DebugCacheProvider(self::$cache);
+            }
         }
     }
 
@@ -210,6 +214,17 @@ abstract class ServiceAPI
     {
         return true;
         unset(self::$singletons[self::getCacheKey($this->getID())]);
+    }
+
+    /**
+     * If cache debugging is enabled, returns the action log.
+     * @return array|null
+     */
+    public static function getCacheDebugLog() {
+        if (self::$cache instanceof DebugCacheProvider) {
+            return self::$cache->getActions();
+        }
+        return null;
     }
 
 }
