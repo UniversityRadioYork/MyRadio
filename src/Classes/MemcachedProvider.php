@@ -190,6 +190,8 @@ class MemcachedProvider implements \MyRadio\Iface\CacheProvider
 
     private function getKeyPrefix()
     {
-        return 'MyRadioCache-';
+        $configuredPrefix = Config::$cache_key_prefix;
+        $prefix = $configuredPrefix === '' ? '' : $configuredPrefix . '-';
+        return 'MyRadioCache-'.$prefix;
     }
 }

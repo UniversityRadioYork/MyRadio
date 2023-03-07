@@ -126,6 +126,13 @@ final class Config
     public static $cache_default_timeout = 86400;
 
     /**
+     * A prefix to add to all cache keys. Useful if you are running multiple MyRadio instances against
+     * the same Memcached server.
+     * @var string
+     */
+    public static $cache_key_prefix = '';
+
+    /**
      * A path to a GeoLite2 or GeoIP2 "City" database file.
      * @var string
      */
