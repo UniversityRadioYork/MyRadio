@@ -22,6 +22,34 @@
         <div class="alert alert-{{notice.state}}"><span class="glyphicon glyphicon-{{notice.icon}}"></span>&nbsp;{{notice.message | raw}}</div>
       {% endfor %}
       {% block content %}{% endblock %}
+      {% if cacheDebugLog %}
+        <div class="row">
+          <h6>Cache Debug Log</h6>
+          <button class="btn btn-link" data-toggle="collapse" data-target="#cacheDebug" aria-expanded="false" aria-controls="#cacheDebug">Toggle</button>
+          <table class="collapse" id="cacheDebug">
+            <thead>
+            <tr>
+              <th>Action</th>
+              <th>Key(s)</th>
+              <th>Value</th>
+              <th>Expiry</th>
+              <th>Result</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for entry in cacheDebugLog %}
+              <tr>
+                <td>{{ entry.type }}</td>
+                <td>{% if entry.keys %}{{ entry.keys|json_encode }}{% else %}{{ entry.key }}{% endif %}</td>
+                <td>{{ entry.value|json_encode }}</td>
+                <td>{{ entry.expires }}</td>
+                <td>{{ entry.result|json_encode }}</td>
+              </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      {% endif %}
     </div>
     {% block footer %}
       <footer class="footer">
@@ -35,34 +63,6 @@
               &nbsp;<a href="http://ury.org.uk/contact/">Contact Us</a>
             </div>
           </div>
-          {% if cacheDebugLog %}
-            <div class="row">
-              <h6>Cache Debug Log</h6>
-              <button class="btn btn-link" data-toggle="collapse" data-target="#cacheDebug" aria-expanded="false" aria-controls="#cacheDebug">Toggle</button>
-              <table class="collapse" id="cacheDebug">
-                <thead>
-                <tr>
-                  <th>Action</th>
-                  <th>Key(s)</th>
-                  <th>Value</th>
-                  <th>Expiry</th>
-                  <th>Result</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for entry in cacheDebugLog %}
-                  <tr>
-                    <td>{{ entry.type }}</td>
-                    <td>{% if entry.keys %}{{ entry.keys|json_encode }}{% else %}{{ entry.key }}{% endif %}</td>
-                    <td>{{ entry.value|json_encode }}</td>
-                    <td>{{ entry.expires }}</td>
-                    <td>{{ entry.result|json_encode }}</td>
-                  </tr>
-                {% endfor %}
-                </tbody>
-              </table>
-            </div>
-          {% endif %}
         </div>
       </footer>
     {% endblock %}
