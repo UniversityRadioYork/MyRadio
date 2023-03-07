@@ -92,7 +92,7 @@ class URLUtils
     public static function redirectURI($URI)
     {
         if (MyRadioDebug::isActive()) {
-            $twig = MyRadioTwig::getInstance()->setTemplate('debugRedirect');
+            $twig = MyRadioTwig::getInstance()->setTemplate('debugRedirect.twig');
             $twig->addVariable('url', $URI);
             $twig->render();
             exit;
