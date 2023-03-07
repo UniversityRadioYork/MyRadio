@@ -8,6 +8,7 @@ namespace MyRadio\MyRadio;
 use MyRadio\Config;
 use MyRadio\Database;
 use MyRadio\MyRadioError;
+use MyRadio\ServiceAPI\ServiceAPI;
 
 /**
  * URL API Utilities.
@@ -26,11 +27,13 @@ class URLUtils
      */
     public static function back()
     {
+        self::preserveCacheDebug();
         header('Location: '.$_SERVER['HTTP_REFERER']);
     }
 
     public static function backWithMessage($message)
     {
+        self::preserveCacheDebug();
         header('Location: '.$_SERVER['HTTP_REFERER']
             .(strstr($_SERVER['HTTP_REFERER'], '?') !== false ? '&' : '?').'message='.base64_encode($message));
     }
@@ -42,6 +45,12 @@ class URLUtils
     {
         header('HTTP/1.1 204 No Content');
         exit;
+    }
+
+    private static function preserveCacheDebug() {
+        $info = ServiceAPI::getCacheDebugLog();
+        if (empty($info)) return;
+        $_SESSION['cacheDebugData'] = $info;
     }
 
     /**
