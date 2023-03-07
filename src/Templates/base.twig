@@ -22,7 +22,7 @@
         <div class="alert alert-{{notice.state}}"><span class="glyphicon glyphicon-{{notice.icon}}"></span>&nbsp;{{notice.message | raw}}</div>
       {% endfor %}
       {% block content %}{% endblock %}
-      {% if cacheDebugLog %}
+      {% if debug %}
         <div class="row">
           <h6>Cache Debug Log</h6>
           <button class="btn btn-link" data-toggle="collapse" data-target="#cacheDebug" aria-expanded="false" aria-controls="#cacheDebug">Toggle</button>
@@ -44,6 +44,23 @@
                 <td>{{ entry.value|json_encode }}</td>
                 <td>{{ entry.expires }}</td>
                 <td>{{ entry.result|json_encode }}</td>
+              </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+          <h6>Pending Cache Writes</h6>
+          <table>
+            <thead>
+            <tr>
+              <th>Key</th>
+              <th>Value</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for debug in pendingCacheWrites %}
+              <tr>
+                <td>{{ debug.key }}</td>
+                <td>{{ debug.value|json_encode }}</td>
               </tr>
             {% endfor %}
             </tbody>

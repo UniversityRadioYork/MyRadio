@@ -35,6 +35,8 @@ abstract class ServiceAPI
 
     protected $change = false;
 
+    private static $debugPendingChanges = [];
+
     /**
      * Start up the connection to the Database.
      */
@@ -193,7 +195,17 @@ abstract class ServiceAPI
             $this->write();
         } else {
             $this->change = true;
+            if (MyRadioDebug::isActive()) {
+                self::$debugPendingChanges[] = [
+                    'key' => self::getCacheKey($this->getID()),
+                    'value' => $this->toDataSource()
+                ];
+            }
         }
+    }
+
+    public static function getDebugPendingChanges() {
+        return self::$debugPendingChanges;
     }
 
     /**

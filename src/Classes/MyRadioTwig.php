@@ -5,6 +5,7 @@ namespace MyRadio;
 use MyRadio\Config;
 use MyRadio\Database;
 use MyRadio\MyRadio\AuthUtils;
+use MyRadio\MyRadio\MyRadioDebug;
 use MyRadio\MyRadio\URLUtils;
 use MyRadio\MyRadio\MyRadioMenu;
 use MyRadio\MyRadioException;
@@ -92,9 +93,10 @@ class MyRadioTwig implements \MyRadio\Iface\TemplateEngine
             $this->addInfo(strip_tags(base64_decode($_REQUEST['message']), '<a>'));
         }
 
-        $cacheDebug = ServiceAPI::getCacheDebugLog();
-        if ($cacheDebug) {
-            $this->addVariable('cacheDebugLog', $cacheDebug);
+        if (MyRadioDebug::isActive()) {
+            $this->addVariable('debug', true)
+                ->addVariable('cacheDebugLog', ServiceAPI::getCacheDebugLog())
+                ->addVariable('pendingCacheWrites', ServiceAPI::getDebugPendingChanges());
         }
     }
 
