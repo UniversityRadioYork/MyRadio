@@ -30,7 +30,7 @@ class DebugCacheProvider implements Iface\CacheProvider
         $this->actions[] = [
             'type' => 'set',
             'key' => $key,
-            'value' => $value,
+//            'value' => $value,
             'expires' => $expires
         ];
     }
