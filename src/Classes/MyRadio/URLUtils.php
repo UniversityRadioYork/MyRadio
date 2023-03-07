@@ -47,10 +47,15 @@ class URLUtils
         exit;
     }
 
+    /**
+     * Temporarily saves the cache debug log into the session before redirecting the user, so that it can be
+     * displayed upon the next request.
+     * @return void
+     */
     private static function preserveCacheDebug() {
         $info = ServiceAPI::getCacheDebugLog();
         if (empty($info)) return;
-        $_SESSION['cacheDebugData'] = $info;
+        $_SESSION['cacheDebug'] = $info;
     }
 
     /**
