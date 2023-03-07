@@ -52,7 +52,7 @@ abstract class ServiceAPI
         if (!self::$cache) {
             $cache = Config::$cache_provider;
             self::$cache = $cache::getInstance();
-            if ($_REQUEST['debugCache'] === 'true' || $_SERVER['HTTP_X_MYRADIO_DEBUG_CACHE'] === 'true') {
+            if (($_REQUEST['debugCache'] ?? '') === 'true' || ($_SERVER['HTTP_X_MYRADIO_DEBUG_CACHE'] ?? '') === 'true') {
                 self::$cache = new DebugCacheProvider(self::$cache);
             }
         }

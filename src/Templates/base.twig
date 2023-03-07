@@ -44,15 +44,17 @@
                   <th>Action</th>
                   <th>Key(s)</th>
                   <th>Value</th>
+                  <th>Expiry</th>
                   <th>Result</th>
                 </tr>
                 </thead>
                 <tbody>
                 {% for entry in cacheDebugLog %}
                   <tr>
-                    <td>{{ entry.action }}</td>
+                    <td>{{ entry.type }}</td>
                     <td>{% if entry.keys %}{{ entry.keys|json_encode }}{% else %}{{ entry.key }}{% endif %}</td>
                     <td>{{ entry.value|json_encode }}</td>
+                    <td>{{ entry.expires }}</td>
                     <td>{{ entry.result|json_encode }}</td>
                   </tr>
                 {% endfor %}
