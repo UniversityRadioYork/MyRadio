@@ -58,7 +58,7 @@ class DebugCacheProvider implements Iface\CacheProvider
         $this->actions[] = [
             'type' => 'getAll',
             'keys' => $keys,
-            'result' => $result
+//            'result' => $result
         ];
         return $result;
     }
