@@ -38,7 +38,8 @@
           {% if cacheDebugLog %}
             <div class="row">
               <h6>Cache Debug Log</h6>
-              <table>
+              <button class="btn btn-link" data-toggle="cacheDebug" aria-expanded="false" aria-controls="#cacheDebug">Toggle</button>
+              <table id="cacheDebug">
                 <thead>
                 <tr>
                   <th>Action</th>
