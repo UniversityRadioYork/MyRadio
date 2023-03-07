@@ -8,6 +8,7 @@ use MyRadio\Config;
 use MyRadio\Database;
 use MyRadio\DebugCacheProvider;
 use MyRadio\Iface\CacheProvider;
+use MyRadio\MyRadio\MyRadioDebug;
 use MyRadio\MyRadioException;
 
 /**
@@ -52,7 +53,7 @@ abstract class ServiceAPI
         if (!self::$cache) {
             $cache = Config::$cache_provider;
             self::$cache = $cache::getInstance();
-            if (($_REQUEST['debugCache'] ?? '') === 'true' || ($_SERVER['HTTP_X_MYRADIO_DEBUG_CACHE'] ?? '') === 'true') {
+            if (MyRadioDebug::isActive()) {
                 self::$cache = new DebugCacheProvider(self::$cache);
             }
         }

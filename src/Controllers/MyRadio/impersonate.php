@@ -8,6 +8,7 @@
 use \MyRadio\Database;
 use \MyRadio\Config;
 use \MyRadio\MyRadio\AuthUtils;
+use MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_User;
 use \MyRadio\ServiceAPI\MyRadio_Timeslot;
 
@@ -51,7 +52,7 @@ if (isset($_REQUEST['memberid'])) {
 }
 
 if (isset($_REQUEST['next'])) {
-    header('Location: '.$_REQUEST['next']);
+    URLUtils::redirectURI($_REQUEST['next']);
 } else {
-    header('Location: '.Config::$base_url);
+    URLUtils::redirectURI(Config::$base_url);
 }

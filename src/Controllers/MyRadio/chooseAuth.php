@@ -32,4 +32,4 @@ if ($_REQUEST['authenticator'] !== '\MyRadio\MyRadio\MyRadioDefaultAuthenticator
 //Remove the lock on Session access
 $_SESSION['auth_use_locked'] = false;
 
-header('Location: '.$_REQUEST['next']);
+URLUtils::redirectURI($_REQUEST['next']);

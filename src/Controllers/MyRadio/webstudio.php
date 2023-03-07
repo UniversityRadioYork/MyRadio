@@ -2,10 +2,9 @@
 
 use \MyRadio\Config;
 use \MyRadio\MyRadio\CoreUtils;
+use MyRadio\MyRadio\URLUtils;
 
 CoreUtils::requireTimeslot();
 
 $location = Config::$website_url . 'webstudio';
-
-header("HTTP/1.1 302 Found");
-header("Location: $location");
+URLUtils::redirectURI($location);

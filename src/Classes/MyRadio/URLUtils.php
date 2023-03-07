@@ -8,6 +8,7 @@ namespace MyRadio\MyRadio;
 use MyRadio\Config;
 use MyRadio\Database;
 use MyRadio\MyRadioError;
+use MyRadio\MyRadioTwig;
 use MyRadio\ServiceAPI\ServiceAPI;
 
 /**
@@ -27,15 +28,13 @@ class URLUtils
      */
     public static function back()
     {
-        self::preserveCacheDebug();
-        header('Location: '.$_SERVER['HTTP_REFERER']);
+        self::redirectURI($_SERVER['HTTP_REFERER']);
     }
 
     public static function backWithMessage($message)
     {
-        self::preserveCacheDebug();
-        header('Location: '.$_SERVER['HTTP_REFERER']
-            .(strstr($_SERVER['HTTP_REFERER'], '?') !== false ? '&' : '?').'message='.base64_encode($message));
+        $url = $_SERVER['HTTP_REFERER'].(strstr($_SERVER['HTTP_REFERER'], '?') !== false ? '&' : '?').'message='.base64_encode($message);
+        self::redirectURI($url);
     }
 
     /**
@@ -87,7 +86,7 @@ class URLUtils
      */
     public static function redirect($module, $action = null, $params = [])
     {
-        header('Location: '.self::makeURL($module, $action, $params));
+        self::redirectURI(self::makeURL($module, $action, $params));
     }
 
     public static function redirectWithMessage($module, $action, $message, $params = [])
@@ -103,6 +102,12 @@ class URLUtils
      */
     public static function redirectURI($URI)
     {
+        if (MyRadioDebug::isActive()) {
+            $twig = MyRadioTwig::getInstance()->setTemplate('debugRedirect');
+            $twig->addVariable('url', $URI);
+            $twig->render();
+            exit;
+        }
         header('Location: '.$URI);
     }
 

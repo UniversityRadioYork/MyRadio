@@ -39,7 +39,7 @@ function setupTimeslot(MyRadio_Timeslot $timeslot)
         if (!empty($_REQUEST['guest_info'])) {
             $timeslot->signInGuests($_REQUEST['guest_info'], $_REQUEST['location']);
         }
-        header('Location: ' . ($_REQUEST['next'] !== '' ? $_REQUEST['next'] : Config::$base_url));
+        URLUtils::redirectURI(($_REQUEST['next'] !== '' ? $_REQUEST['next'] : Config::$base_url));
     }
 }
 

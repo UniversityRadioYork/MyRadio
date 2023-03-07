@@ -166,7 +166,7 @@ if (isset($_SESSION['memberid'])) {
             ->render(['error' => true]);
         } else {
             if (isset($data['next'])) {
-                header('Location: '.$data['next']);
+                URLUtils::redirectURI($data['next']);
             } else {
                 URLUtils::redirect(Config::$default_module);
             }
