@@ -19,10 +19,6 @@ class DebugCacheProvider implements Iface\CacheProvider
     public function __construct(CacheProvider $wrapped)
     {
         $this->wrapped = $wrapped;
-        if (!empty($_SESSION['cacheDebug'])) { // set in URLUtils
-            $this->actions = $_SESSION['cacheDebug'];
-            unset($_SESSION['cacheDebug']);
-        }
     }
 
     /**
