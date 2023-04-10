@@ -738,6 +738,8 @@ class MyRadio_Show extends MyRadio_Metadata_Common
     */
     public function setShowPhoto($tmp_path)
     {
+        // The getimagesize() below can fail, so we want this in a transaction
+        self::$db->query('BEGIN');
         $result = self::$db->fetchColumn(
             'INSERT INTO schedule.show_image_metadata (memberid, approvedid, metadata_key_id, metadata_value, show_id)
             VALUES ($1, $1, $2, $3, $4) RETURNING show_image_metadata_id',
@@ -769,6 +771,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         );
         
         $this->photo_url = Config::$public_media_uri.'/'.$suffix;
+        self::$db->query('COMMIT');
         $this->updateCacheObject();
     }
 
