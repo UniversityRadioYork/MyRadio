@@ -16,6 +16,7 @@ foreach ($members as $k => $v) {
         'url' => URLUtils::makeURL('Profile', 'view', ['memberid' => $v['memberid']]),
         'value' => $v['name'],
     ];
+    unset($members[$k]['email']);
 }
 
 CoreUtils::getTemplateObject()->setTemplate('table.twig')
