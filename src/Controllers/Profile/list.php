@@ -17,6 +17,7 @@ foreach ($members as $k => $v) {
         'value' => $v['name'],
     ];
     unset($members[$k]['email']);
+    unset($members[$k]['eduroam']);
 }
 
 CoreUtils::getTemplateObject()->setTemplate('table.twig')
