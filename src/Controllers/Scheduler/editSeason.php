@@ -16,7 +16,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (empty($data['id'])) {
         //create new
-        MyRadio_Season::create($data);
+        MyRadio_Season::create($data, $term_weeks);
         URLUtils::redirectWithMessage(
             'Scheduler',
             'myShows',
@@ -50,6 +50,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 } else {
     //Not Submitted
+    $current_term_info = MyRadio_Scheduler::getActiveApplicationTermInfo();
+    $current_term = $current_term_info['descr'];
+
     if (isset($_REQUEST['seasonid'])) {
         //edit form
         $season = MyRadio_Season::getInstance($_REQUEST['seasonid']);
@@ -62,9 +65,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $season->getEditForm()->render();
     } else {
         //create form
-
-        $current_term_info = MyRadio_Scheduler::getActiveApplicationTermInfo();
-        $current_term = $current_term_info['descr'];
 
         MyRadio_Season::getForm()
             ->setFieldValue('show_id', (int) $_REQUEST['showid'])

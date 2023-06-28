@@ -7,13 +7,16 @@ use \MyRadio\ServiceAPI\MyRadio_Season;
 use \MyRadio\ServiceAPI\MyRadio_Scheduler;
 use \MyRadio\MyRadioException;
 
+$current_term_info = MyRadio_Scheduler::getActiveApplicationTermInfo();
+$term_weeks = $current_term_info['weeks'];
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     //Submitted
 
     // Note Slightly ugly hack to get the season ID from the submitted form
     $season = MyRadio_Season::getInstance($_POST['sched_allocate-season_id']);
     $data = $season->getAllocateForm()->readValues();
-    $season->schedule($data);
+    $season->schedule($data, $term_weeks);
 
     URLUtils::redirectWithMessage('Scheduler', 'default', 'Season Allocated!');
 } else {

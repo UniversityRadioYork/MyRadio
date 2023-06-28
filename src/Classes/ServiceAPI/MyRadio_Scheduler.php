@@ -96,22 +96,23 @@ class MyRadio_Scheduler extends ServiceAPI
      *
      * @return int The new termid
      */
-    public static function addTerm($start, $descr)
+    public static function addTerm($start, $descr, $num_weeks)
     {
         if (date('D', $start) !== 'Mon') {
             throw new MyRadioException('Terms must start on a Monday.', 400);
         }
-
+        if (!is_numeric($num_weeks)){
+            throw new MyRadioException('Weeks must be an integer.', 400); 
+        }
+        $num_weeks = (int)$num_weeks;
         // Let's make this a GMT thing, exactly midnight
         $ts = gmdate('Y-m-d 00:00:00+00', $start);
-        $end = $start + (86400 * 68); // +68 days, to Friday of the 10th week
+        $end = $start + (86400 * ((7*$num_weeks)-2)); // to Friday of the final week
         $te = gmdate('Y-m-d 00:00:00+00', $end);
-
-        echo "INSERT INTO terms (start, finish, descr) VALUES ('$ts', '$te', '$descr') RETURNING termid";
-
+        
         return self::$db->fetchColumn(
-            'INSERT INTO terms (start, finish, descr) VALUES ($1, $2, $3) RETURNING termid',
-            [$ts, $te, $descr]
+            'INSERT INTO terms (start, finish, descr, weeks) VALUES ($1, $2, $3, $4) RETURNING termid',
+            [$ts, $te, $descr, $num_weeks]
         )[0];
     }
 
@@ -163,7 +164,7 @@ class MyRadio_Scheduler extends ServiceAPI
             return;
         }
 
-        return ['termid' => $termid, 'descr' => self::getTermDescr($termid)];
+        return ['termid' => $termid, 'descr' => self::getTermDescr($termid), 'weeks' => self::getTermWeeks($termid), 'start' => self::getTermStartDate($termid)];
     }
 
     public static function getTermDescr($termid)
@@ -174,6 +175,23 @@ class MyRadio_Scheduler extends ServiceAPI
         );
 
         return $return['descr'].date(' Y', strtotime($return['start']));
+    }
+
+    /**
+     * Gives the number of weeks in a given term.
+     *
+     * @param int $term_id id of the term to get the number of weeks of
+     *
+     * @return int the number of weeks in the term
+     */
+    public static function getTermWeeks($termid)
+    {
+        $return = self::$db->fetchOne(
+            'SELECT weeks FROM terms WHERE termid=$1',
+            [$termid]
+        );
+
+        return $return['weeks'];
     }
 
     /**
@@ -375,6 +393,15 @@ class MyRadio_Scheduler extends ServiceAPI
                     'options' => ['maxlength' => 10],
                 ]
             )
+            )->addField(
+                new MyRadioFormField(
+                    'numweeks',
+                    MyRadioFormField::TYPE_NUMBER,
+                    [
+                        'explanation' => 'How many weeks will there be in the term?',
+                        'label' => 'Term weeks',
+                    ]
+                )
         )->addField(
             new MyRadioFormField(
                 'start',
@@ -385,5 +412,6 @@ class MyRadio_Scheduler extends ServiceAPI
                 ]
             )
         );
+        
     }
 }

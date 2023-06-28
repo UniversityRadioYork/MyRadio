@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (empty($data['id'])) {
         //create new
-        $term = MyRadio_Scheduler::addTerm($data['start'], $data['descr']);
+        $term = MyRadio_Scheduler::addTerm($data['start'], $data['descr'], $data['numweeks']);
         if (is_numeric($term)) {
             URLUtils::redirectWithMessage('Scheduler', 'listTerms', 'Term '.$data['descr'].', has been added.');
         } else {
