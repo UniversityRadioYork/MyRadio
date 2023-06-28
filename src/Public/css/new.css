@@ -1,5 +1,4 @@
 body:not(.nonav) {
-  background-color: #FFFFFF;
   margin-top: 50px; /* Bootstrap navbar offset */
 }
 

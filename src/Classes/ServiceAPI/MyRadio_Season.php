@@ -35,6 +35,7 @@ class MyRadio_Season extends MyRadio_Metadata_Common
     protected function __construct($season_id)
     {
         $this->season_id = (int) $season_id;
+        $this->$num_weeks = 11;
         //Init Database
         self::initDB();
 
@@ -208,7 +209,8 @@ class MyRadio_Season extends MyRadio_Metadata_Common
 
         //Now let's allocate store the requested weeks for a term
         $any_weeks = false;
-        for ($i = 1; $i <= 10; ++$i) {
+        echo $num_weeks."-213";
+        for ($i = 1; $i <= $num_weeks; ++$i) {
             if ($params['weeks']["wk$i"]) {
                 self::$db->query(
                     'INSERT INTO schedule.show_season_requested_week (show_season_id, week) VALUES ($1, $2)',
@@ -317,11 +319,12 @@ class MyRadio_Season extends MyRadio_Metadata_Common
         return $newSeason;
     }
 
-    public static function getForm()
+    public static function getForm($num_weeks)
     {
         //Set up the weeks checkboxes
+        echo "massive".$num_weeks;
         $weeks = [];
-        for ($i = 1; $i <= 10; ++$i) {
+        for ($i = 1; $i <= $num_weeks; ++$i) {
             $weeks[] = new MyRadioFormField(
                 'wk'.$i,
                 MyRadioFormField::TYPE_CHECK,
@@ -458,7 +461,8 @@ class MyRadio_Season extends MyRadio_Metadata_Common
     {
         $showSubtype = $this->getShow()->getSubtype()->getClass();
         $seasonSubtype = $this->getSubtype()->getClass();
-        return self::getForm()
+        echo "huge";
+        return self::getForm(12)
             ->setSubTitle('Edit Season')
             ->editMode(
                 $this->getID(),
@@ -494,7 +498,7 @@ class MyRadio_Season extends MyRadio_Metadata_Common
 
         //Set up the weeks checkboxes
         $weeks = [];
-        for ($i = 1; $i <= 10; ++$i) {
+        for ($i = 1; $i <= $num_weeks; ++$i) {
             $weeks[] = new MyRadioFormField(
                 'wk'.$i,
                 MyRadioFormField::TYPE_CHECK,
@@ -1061,7 +1065,7 @@ EOT
          * then schedule it if it should. Simples.
          */
         $times = '';
-        for ($i = 1; $i <= 10; ++$i) {
+        for ($i = 1; $i <= $num_weeks; ++$i) {
             if (isset($params['weeks']['wk'.$i]) && $params['weeks']['wk'.$i] == 1) {
                 $day_start = $start_day + (($i - 1) * 7 * 86400);
                 $gmt_show_time = $day_start + $req_time['start_time'];

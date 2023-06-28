@@ -65,8 +65,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         $current_term_info = MyRadio_Scheduler::getActiveApplicationTermInfo();
         $current_term = $current_term_info['descr'];
+        $term_weeks = $current_term_info['weeks'];
 
-        MyRadio_Season::getForm()
+        MyRadio_Season::getForm($term_weeks)
             ->setFieldValue('show_id', (int) $_REQUEST['showid'])
             ->setTemplate('Scheduler/createSeason.twig')
             ->render(
