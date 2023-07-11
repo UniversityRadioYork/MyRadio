@@ -35,7 +35,6 @@ class MyRadio_Season extends MyRadio_Metadata_Common
     protected function __construct($season_id)
     {
         $this->season_id = (int) $season_id;
-        $this->$num_weeks = 11;
         //Init Database
         self::initDB();
 
@@ -172,7 +171,7 @@ class MyRadio_Season extends MyRadio_Metadata_Common
      *
      * @throws MyRadioException
      */
-    public static function create($params = [])
+    public static function create($params = [], $num_weeks)
     {
         //Validate input
         $required = ['show_id', 'weeks', 'times'];
@@ -209,7 +208,6 @@ class MyRadio_Season extends MyRadio_Metadata_Common
 
         //Now let's allocate store the requested weeks for a term
         $any_weeks = false;
-        echo $num_weeks."-213";
         for ($i = 1; $i <= $num_weeks; ++$i) {
             if ($params['weeks']["wk$i"]) {
                 self::$db->query(
@@ -319,17 +317,18 @@ class MyRadio_Season extends MyRadio_Metadata_Common
         return $newSeason;
     }
 
-    public static function getForm($num_weeks)
+    public static function getForm($num_weeks, $startdate)
     {
         //Set up the weeks checkboxes
-        echo "massive".$num_weeks;
         $weeks = [];
+        $date = $startdate;
         for ($i = 1; $i <= $num_weeks; ++$i) {
             $weeks[] = new MyRadioFormField(
                 'wk'.$i,
                 MyRadioFormField::TYPE_CHECK,
-                ['label' => 'Week '.$i, 'required' => false]
+                ['label' => 'Week beginning '.date("Y-m-d",$date), 'required' => false]
             );
+            $date = $date + (86400 * 7); //one week
         }
 
         return (
@@ -457,12 +456,11 @@ class MyRadio_Season extends MyRadio_Metadata_Common
         );
     }
 
-    public function getEditForm()
+    public function getEditForm($num_weeks, $term_start)
     {
         $showSubtype = $this->getShow()->getSubtype()->getClass();
         $seasonSubtype = $this->getSubtype()->getClass();
-        echo "huge";
-        return self::getForm(12)
+        return self::getForm($num_weeks, $term_start)
             ->setSubTitle('Edit Season')
             ->editMode(
                 $this->getID(),
@@ -475,7 +473,7 @@ class MyRadio_Season extends MyRadio_Metadata_Common
             );
     }
 
-    public function getAllocateForm()
+    public function getAllocateForm($num_weeks, $startdate)
     {
         $form = (
             new MyRadioForm(
@@ -498,16 +496,18 @@ class MyRadio_Season extends MyRadio_Metadata_Common
 
         //Set up the weeks checkboxes
         $weeks = [];
+        $date = $startdate;
         for ($i = 1; $i <= $num_weeks; ++$i) {
             $weeks[] = new MyRadioFormField(
                 'wk'.$i,
                 MyRadioFormField::TYPE_CHECK,
                 [
-                    'label' => 'Week '.$i,
+                    'label' => 'Week beginning '.date("Y-m-d",$date),
                     'required' => false,
                     'options' => ['checked' => in_array($i, $this->getRequestedWeeks())],
                 ]
             );
+            $date = $date + (86400 * 7); //one week
         }
 
         //Set up the requested times radios
@@ -1019,7 +1019,7 @@ EOT
      * @todo Email the user notifying them of scheduling
      * @todo Verify the timeslot is free before scheduling
      */
-    public function schedule($params)
+    public function schedule($params, $num_weeks)
     {
         //Verify that the input time is valid
         if (!isset($params['time']) or !is_numeric($params['time'])) {

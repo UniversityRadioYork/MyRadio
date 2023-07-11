@@ -12,11 +12,14 @@ use \MyRadio\ServiceAPI\MyRadio_Show;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     //Submitted
-    $data = MyRadio_Season::getForm()->readValues();
+    $current_term_info = MyRadio_Scheduler::getActiveApplicationTermInfo();
+    $term_weeks = $current_term_info['weeks'];
+    $term_start = $current_term_info['start'];
+    $data = MyRadio_Season::getForm($term_weeks, $term_start)->readValues();
 
     if (empty($data['id'])) {
         //create new
-        MyRadio_Season::create($data);
+        MyRadio_Season::create($data, $term_weeks);
         URLUtils::redirectWithMessage(
             'Scheduler',
             'myShows',
@@ -50,6 +53,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 } else {
     //Not Submitted
+    $current_term_info = MyRadio_Scheduler::getActiveApplicationTermInfo();
+    $current_term = $current_term_info['descr'];
+    $term_weeks = $current_term_info['weeks'];
+    $term_start = $current_term_info['start'];
+
     if (isset($_REQUEST['seasonid'])) {
         //edit form
         $season = MyRadio_Season::getInstance($_REQUEST['seasonid']);
@@ -59,15 +67,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             AuthUtils::requirePermission(AUTH_EDITSHOWS);
         }
 
-        $season->getEditForm()->render();
+        $season->getEditForm($term_weeks, $term_start)->render();
     } else {
         //create form
 
-        $current_term_info = MyRadio_Scheduler::getActiveApplicationTermInfo();
-        $current_term = $current_term_info['descr'];
-        $term_weeks = $current_term_info['weeks'];
-
-        MyRadio_Season::getForm($term_weeks)
+        MyRadio_Season::getForm($term_weeks, $term_start)
             ->setFieldValue('show_id', (int) $_REQUEST['showid'])
             ->setTemplate('Scheduler/createSeason.twig')
             ->render(

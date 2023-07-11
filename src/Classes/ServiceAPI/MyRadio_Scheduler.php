@@ -166,7 +166,7 @@ class MyRadio_Scheduler extends ServiceAPI
             return;
         }
 
-        return ['termid' => $termid, 'descr' => self::getTermDescr($termid), 'weeks' => self::getTermWeeks($termid)];
+        return ['termid' => $termid, 'descr' => self::getTermDescr($termid), 'weeks' => self::getTermWeeks($termid), 'start' => self::getTermStartDate($termid)];
     }
 
     public static function getTermDescr($termid)
