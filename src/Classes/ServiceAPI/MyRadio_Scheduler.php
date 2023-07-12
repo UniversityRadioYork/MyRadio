@@ -101,13 +101,13 @@ class MyRadio_Scheduler extends ServiceAPI
         if (date('D', $start) !== 'Mon') {
             throw new MyRadioException('Terms must start on a Monday.', 400);
         }
-        $num_weeks = (int)$num_weeks;
-        if (!is_int($num_weeks)){
+        if (!is_numeric($num_weeks)){
             throw new MyRadioException('Weeks must be an integer.', 400); 
         }
+        $num_weeks = (int)$num_weeks;
         // Let's make this a GMT thing, exactly midnight
         $ts = gmdate('Y-m-d 00:00:00+00', $start);
-        $end = $start + (86400 * ((7*$num_weeks)-2)); // to Friday of the 10th week
+        $end = $start + (86400 * ((7*$num_weeks)-2)); // to Friday of the final week
         $te = gmdate('Y-m-d 00:00:00+00', $end);
 
         echo "INSERT INTO terms (start, finish, descr, weeks) VALUES ('$ts', '$te', '$descr', '$num_weeks') RETURNING termid";
@@ -179,6 +179,13 @@ class MyRadio_Scheduler extends ServiceAPI
         return $return['descr'].date(' Y', strtotime($return['start']));
     }
 
+    /**
+     * Gives the number of weeks in a given term.
+     *
+     * @param int $term_id id of the term to get the number of weeks of
+     *
+     * @return int the number of weeks in the term
+     */
     public static function getTermWeeks($termid)
     {
         $return = self::$db->fetchOne(

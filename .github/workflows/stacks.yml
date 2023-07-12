@@ -1,0 +1,15 @@
+name: Staging stack
+
+on:
+  push:
+    branches: ["master"]
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    uses: UniversityRadioYork/stacks/.github/workflows/build.yml@main
+    with:
+      stack: myradio
+      environment: staging
+    secrets: inherit
