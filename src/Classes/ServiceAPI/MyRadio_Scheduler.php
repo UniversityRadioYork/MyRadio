@@ -109,9 +109,7 @@ class MyRadio_Scheduler extends ServiceAPI
         $ts = gmdate('Y-m-d 00:00:00+00', $start);
         $end = $start + (86400 * ((7*$num_weeks)-2)); // to Friday of the final week
         $te = gmdate('Y-m-d 00:00:00+00', $end);
-
-        echo "INSERT INTO terms (start, finish, descr, weeks) VALUES ('$ts', '$te', '$descr', '$num_weeks') RETURNING termid";
-
+        
         return self::$db->fetchColumn(
             'INSERT INTO terms (start, finish, descr, weeks) VALUES ($1, $2, $3, $4) RETURNING termid',
             [$ts, $te, $descr, $num_weeks]

@@ -12,6 +12,7 @@ use MyRadio\MyRadio\URLUtils;
 use MyRadio\MyRadio\MyRadioForm;
 use MyRadio\MyRadio\MyRadioFormField;
 use MyRadio\MyRadioEmail;
+use \MyRadio\ServiceAPI\MyRadio_Scheduler;
 
 /**
  * The Season class is used to create, view and manipulate Seasons within the new MyRadio Scheduler Format.
@@ -317,8 +318,11 @@ class MyRadio_Season extends MyRadio_Metadata_Common
         return $newSeason;
     }
 
-    public static function getForm($num_weeks, $startdate)
+    public static function getForm()
     {
+        $current_term_info = MyRadio_Scheduler::getActiveApplicationTermInfo();
+        $num_weeks = $current_term_info['weeks'];
+        $startdate = $current_term_info['start'];
         //Set up the weeks checkboxes
         $weeks = [];
         $date = $startdate;
@@ -456,11 +460,11 @@ class MyRadio_Season extends MyRadio_Metadata_Common
         );
     }
 
-    public function getEditForm($num_weeks, $term_start)
+    public function getEditForm()
     {
         $showSubtype = $this->getShow()->getSubtype()->getClass();
         $seasonSubtype = $this->getSubtype()->getClass();
-        return self::getForm($num_weeks, $term_start)
+        return self::getForm()
             ->setSubTitle('Edit Season')
             ->editMode(
                 $this->getID(),
@@ -473,8 +477,11 @@ class MyRadio_Season extends MyRadio_Metadata_Common
             );
     }
 
-    public function getAllocateForm($num_weeks, $startdate)
+    public function getAllocateForm()
     {
+        $current_term_info = MyRadio_Scheduler::getActiveApplicationTermInfo();
+        $num_weeks = $current_term_info['weeks'];
+        $startdate = $current_term_info['start'];
         $form = (
             new MyRadioForm(
                 'sched_allocate',
