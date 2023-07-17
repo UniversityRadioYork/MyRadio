@@ -32,7 +32,6 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
         if (!$force && self::getVal($hourkey) > time() - 3500) {
             return;
         }
-
         self::updateMostPlayedPlaylist();
         self::updateNewestUploadsPlaylist();
         self::updateRandomTracksPlaylist();
@@ -242,7 +241,6 @@ class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
         if (!self::playlistGenPrepare('newest-auto')) {
             return;
         }
-
         self::playlistGenCommit(
             'newest-auto',
             NIPSWeb_AutoPlaylist::findByName('Newest Tracks')->getTracks()

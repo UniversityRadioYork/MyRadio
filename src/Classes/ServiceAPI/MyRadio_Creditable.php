@@ -234,6 +234,10 @@ trait MyRadio_Creditable
      */
     private function updateLocalCredits($new)
     {
+    	// HACK
+	if ($_SESSION['memberid'] == 11673) {
+		var_dump('Updating local credits', $new);
+	}
         $this->credits = $new;
     }
 

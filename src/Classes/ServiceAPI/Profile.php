@@ -73,7 +73,7 @@ class Profile extends ServiceAPI
         self::wakeup();
 
         return self::$db->fetchAll(
-            'SELECT member.memberid, sname || \', \' || fname AS name, l_college.descr AS college, paid
+            'SELECT member.memberid, sname || \', \' || fname AS name, l_college.descr AS college, paid, email, eduroam
             FROM member INNER JOIN (SELECT * FROM member_year WHERE year = $1) AS member_year
             ON ( member.memberid = member_year.memberid ), l_college
             WHERE member.college = l_college.collegeid
