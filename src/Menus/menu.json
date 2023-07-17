@@ -1,40 +1,39 @@
 {
     "columns": [
         {
-            "title": "My Stuff",
             "sections": [
                 {
                     "title": "About Me",
                     "items": [
-                        {
-                            "title": "Change My Password",
-                            "url": "module=MyRadio,action=pwChange",
-                            "description": "Go here to update your MyRadio password."
-                        },
                         {
                             "title": "My Profile",
                             "url": "module=Profile",
                             "description": "Update your contact details, or just find out a little about yourself!"
                         },
                         {
-                            "title": "Webmail",
-                            "url": "/rainloop",
-                            "description": "If you have a mailbox, click here to access your emails. If you would like one, please contact the Computing Team."
+                            "title": "Change My Password",
+                            "url": "module=MyRadio,action=pwChange",
+                            "description": "Go here to update your MyRadio password."
+                        },
+                        {
+                            "title": "My Mailing Preferences",
+                            "url": "module=Mail",
+                            "description": "Manage Mailing lists and email aliases."
                         }
                     ]
                 },
                 {
-                    "title": "Get On Air",
+                    "title": "Training",
                     "items": [
                         {
-                           "title": "Join our Slack!",
-                            "url": "https://ury.slack.com/",
-                            "description": "Join our Slack server and chat with our team and members. We highly recommend joining if you're wanting to present a show."
-                        },
-                        {
-                            "title": "Add Studio Training Session",
+                            "title": "Add Training Session",
                             "url": "module=Training,action=createDemo",
                             "description": "Add a training slot for presenters-to-be to sign up to."
+                        },
+                        {
+                            "title": "Get Training",
+                            "url": "module=Training,action=listDemos",
+                            "description": "Learn how to use the studio in a 1-1 or 2-1 training session."
                         },
                         {
                             "title": "Studio Training Video",
@@ -47,72 +46,18 @@
                             "description": "Want to view our videos on how to use our online broadcasting tool WebStudio? Well here they are!"
                         },
                         {
-                            "template": "MyRadio/getOnAir.twig"
-                        }
-                    ]
-                },
-                {
-                    "title": "I want to...",
-                    "items": [
-                        {
-                            "title": "Change/Cancel Show",
-                            "url": "module=Scheduler,action=myShows",
-                            "description": "You signed a contract saying you'd give 48 hours of cancelling a show. Click here to do just that. Or if you want to fix a spelling mistake in the title of your show."
-                        },
-                        {
-                            "title": "Book an off-air studio",
-                            "url": "https://docs.google.com/spreadsheets/d/1tJ9E0laOPX-_nkWiPT9amDaliCWFRZENWDW51gLhTOM/edit?usp=sharing",
-                            "description": "Need an off-air studio? Book here now!"
-                        },
-                        {
-                            "title": "Contact Management",
-                            "url": "module=Mail,action=send,list=44",
-                            "description": "Management are the people that get the really boring paperwork emails. If that's what you need, then click here. They'd also appreciate a fun random email every once in a while for fun."
-                        },
-                        {
-                            "title": "Report a Technical Fault",
-                            "url": "module=Mail,action=send,list=30",
-                            "description": "Having a problem? Report it here and Computing and/or Engineering team will fix it for you. Or at least try."
-                        },
-                        {
-                            "title": "Get Beds/Jingles",
-                            "url": "https://docs.google.com/forms/d/e/1FAIpQLSdLauYhir0wRBHAJBXIw1OcpyRtdJulIueoVUz0CyM12qObSQ/viewform",
-                            "description": "The Audio Resources team have a huge library and a little experience - give them a shot if you want that little something that makes your show stand out."
-                        },
-                        {
-                            "title": "Request Marketing for My Show",
-                            "url": "https://docs.google.com/forms/d/e/1FAIpQLSf-zNT5m3v_sYYYXQai0s2Fg5her51N5ywhVDKVPWyGI7QwyQ/viewform?usp=sf_link",
-                            "description": "Got a specific feature or event you want to get social media and graphics for? Fill out this form!"
-                        },
-                        {
-                            "title": "Request Feedback on My Presenting",
-                            "url": "https://docs.google.com/forms/d/e/1FAIpQLSed1ddilaPWdfMVWwACOO2hUMfisVcGvRj5nHuj0ESRWwgm_g/viewform",
-                            "description": "Fill out this form to get your demo reviewed by URY members past and present."
-                        },
-                        {
-                            "title": "Request Press Access to an Event",
-                            "url": "https://docs.google.com/forms/d/1CmTXxFJIUgPhUngLLeQYsYEpU4Ivg46Gl53pSO92C5U/viewform",
-                            "description": "Want to go to a gig, festival, or any other event and cover it for URY? Fill out this form and we can try and get you press access."
-                        },
-			{
-                            "title": "Buy URY Merchandise",
-                            "url": "https://ury-2.creator-spring.com/",
-                            "description": "Buy URY merch from our online store."
-                        },
-			{
-                            "title": "Request personalised merch",
-                            "url": "https://docs.google.com/forms/d/1a9hxZopwqTsLzwYewd8JK1lvB12NixztHtqN_sWyBF8/edit?usp=drivesdk",
-                            "description": "Buy URY merch from our online store."
+                            "title": "Get Manual Upload Trained",
+                            "url": "https://docs.google.com/forms/d/e/1FAIpQLSeIkVMShKhuwtn5cKJyvJd242WNVf2vtn7elW3-myFEKrIPig/viewform",
+                            "description": "Before you upload songs to our music library, you need to learn some rules about uploading. Click here to get some training."
                         }
                     ]
                 }
             ]
         },
         {
-            "title": "My Services",
             "sections": [
                 {
-                    "title": "Show Tools",
+                    "title": "Tools",
                     "items": [
                         {
                             "title": "Audio Logger",
@@ -120,40 +65,20 @@
                             "description": "Download a high-quality log."
                         },
                         {
-                            "title": "List My Shows",
-                            "url": "module=Scheduler,action=myShows",
-                            "description": "List your applied-for and scheduled shows."
-                        },
-                        {
                             "title": "Automatic Visualisation",
                             "url": "module=Scheduler,action=autoViz",
                             "description": "Request automatic visualisation of your shows, and download clips of past shows"
                         },
                         {
-                            "title": "Podcast Manager",
-                            "url": "module=Podcast",
-                            "description": "Upload, edit and manage podcasts."
-                        },
-                        {
-                            "title": "Studio Information Service",
-                            "url": "module=SIS",
-                            "description": "Access the Studio Information Service."
-                        },
-                        {
-                            "title": "WebStudio",
-                            "url": "module=MyRadio,action=webstudio",
-                            "description": "Access WebStudio. Plan, create, practise and broadcast your shows!"
+                            "title": "Webmail",
+                            "url": "/rainloop",
+                            "description": "If you have a mailbox, click here to access your emails. If you would like one, please contact the Computing Team."
                         }
                     ]
                 },
                 {
-                    "title": "Management Tools",
+                    "title": "Admin",
                     "items": [
-                        {
-                            "title": "Chart Manager",
-                            "url": "module=Charts",
-                            "description": "Edit the chart and recommended music lists."
-                        },
                         {
                             "title": "Library Manager",
                             "url": "module=Library",
@@ -173,36 +98,80 @@
                             "title": "Website Tools",
                             "url": "module=Website",
                             "description": "Edit website banners, navigation and probably other stuff too."
-                        }
-                    ]
-                },
-                {
-                    "title": "Admin Tools",
-                    "items": [
+                        },
                         {
-                            "title": "Assign Action Permissions",
+                            "title": "MyRadio Permissions",
                             "url": "module=MyRadio,action=actionPermissions",
                             "description": "Manage the requirements to use MyRadio Actions"
                         },
                         {
-                            "title": "Campus Jukebox Manager",
+                            "title": "Jukebox Manager",
                             "url": "module=iTones",
                             "description": "Manage the system that keeps URY on air, even when you aren't."
                         },
                         {
-                            "title": "Mailing List Manager",
-                            "url": "module=Mail",
-                            "description": "Manage Mailing lists and email aliases."
+                            "title": "SIS Login Information",
+                            "url": "module=Scheduler,action=attendance",
+                            "description": "Check who's been logging into their shows and if people have actually turned up to do radio."
+                        },
+                        {
+                            "title": "Track Statistics",
+                            "url": "module=Stats,action=bapsPlayCounter",
+                            "description": "View play count statistics for library tracks."
+                        },
+                        {
+                            "title": "Edit PIS",
+                            "url": "module=MyRadio,action=news,feed=4",
+                            "description": "Edit the Presenter Information Sheet, give some information to presenters."
+                        },
+                        {
+                            "title": "Members",
+                            "url": "module=Profile,action=list",
+                            "description": "List and manage members."
+                        },
+                        {
+                            "title": "Webcams",
+                            "url": "module=Webcam",
+                            "description": "Spy on people in the office."
                         }
                     ]
                 }
             ]
         },
         {
-            "title": "My Station",
             "sections": [
                 {
                     "title": "General",
+                    "items": [
+                        {
+                            "title": "Join our Slack!",
+                            "url": "https://ury.slack.com/",
+                            "description": "Join our Slack server and chat with our team and members. We highly recommend joining if you're wanting to present a show."
+                        },
+                        {
+                            "title": "Become a Paid Member",
+                            "url": "https://ury.org.uk/yusu",
+                            "description": "Before we can let you use our shiny and expensive studio, you'll need to pay membership. Click here to do so on the YUSU website now."
+                        },
+                        {
+                            "title": "Book an off-air studio",
+                            "url": "https://docs.google.com/spreadsheets/d/1tJ9E0laOPX-_nkWiPT9amDaliCWFRZENWDW51gLhTOM/edit?usp=sharing",
+                            "description": "Need an off-air studio? Book here now!"
+                        },
+                        {
+                            "title": "Request Marketing for My Show",
+                            "url": "https://docs.google.com/forms/d/e/1FAIpQLSf-zNT5m3v_sYYYXQai0s2Fg5her51N5ywhVDKVPWyGI7QwyQ/viewform?usp=sf_link",
+                            "description": "Got a specific feature or event you want to get social media and graphics for? Fill out this form!"
+                        },
+                        {
+                            "title": "Buy URY Merchandise",
+                            "url": "https://ury-2.creator-spring.com/",
+                            "description": "Buy URY merch from our online store."
+                        }
+                    ]
+                },
+                {
+                    "title": "Info",
                     "items": [
                         {
                             "title": "Constitution",
@@ -215,25 +184,11 @@
                             "description": "The Presenter's Contract is URY's station rules and regulations."
                         },
                         {
-                            "title": "Members",
-                            "url": "module=Profile,action=list",
-                            "description": "List and manage members."
-                        },
-                        {
-                            "title": "Minutes",
-                            "url": "https://drive.google.com/drive/folders/1txLjiR0LUvaZo9DvuDjN7uGHrPkGGmkX",
-                            "description": "Want to know what happened in previous station meetings? Check the documents out here."
-                        },
-                        {
-                            "title": "Officers",
+                            "title": "Committee",
                             "url": "module=Profile,action=officers",
                             "description": "List and manage officerships and their permissions."
                         },
-                        {
-                            "title": "Webcam",
-                            "url": "module=Webcam",
-                            "description": "Spy on people in the office."
-                        },
+
                         {
                             "title": "Wiki",
                             "url": "/wiki/",
@@ -243,46 +198,6 @@
                             "title": "Events Calendar",
                             "url": "module=Events",
                             "description": "View upcoming station events."
-                        }
-                    ]
-                },
-                {
-                    "title": "Info",
-                    "items": [
-                        {
-                            "title": "How to Get Involved",
-                            "url": "/wiki/HowTo_Index",
-                            "description": "Find out how to get involved in URY."
-                        },
-                        {
-                            "title": "SIS Login Information",
-                            "url": "module=Scheduler,action=attendance",
-                            "description": "Check who's been logging into their shows and if people have actually turned up to do radio."
-                        },
-                        {
-                            "title": "Track Statistics",
-                            "url": "module=Stats,action=bapsPlayCounter",
-                            "description": "View play count statistics for library tracks."
-                        }
-                    ]
-                },
-                {
-                    "title": "Members",
-                    "items": [
-                        {
-                            "title": "Edit Members News",
-                            "url": "module=MyRadio,action=news,feed=1",
-                            "description": "Edit the members news feed."
-                        },
-                        {
-                            "title": "Edit PIS",
-                            "url": "module=MyRadio,action=news,feed=4",
-                            "description": "Edit the Presenter Information Sheet, give some information to presenters."
-                        },
-                        {
-                            "title": "Edit Tech News",
-                            "url": "module=MyRadio,action=news,feed=2",
-                            "description": "Edit the Tech News feed."
                         }
                     ]
                 }

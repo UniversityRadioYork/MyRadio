@@ -25,15 +25,6 @@ $twig = CoreUtils::getTemplateObject()->setTemplate('MyRadio/menu.twig')
         ->addVariable('title', 'Welcome to '.Config::$short_name.', '. $user->getFName(). '!')
         ->addVariable('menu', $menu)
         ->addVariable('news_clickthrough', $news_clickthrough)
-        /*
-         * This is some bonus stuff for the Get On Air item
-         */
-        ->addVariable('studio_trained', $user->isStudioTrained())
-        ->addVariable('studio_demoed', $user->isStudioDemoed())
-        ->addVariable('is_trainer', $user->isTrainer())
-        ->addVariable('has_show', $user->hasShow())
-        ->addVariable('paid', $user->isCurrentlyPaid())
-        ->addVariable('contract_signed', $user->hasSignedContract())
         ->addVariable('events', $events);
 
 if (Config::$members_news_enable) {
