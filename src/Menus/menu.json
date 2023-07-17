@@ -1,6 +1,7 @@
 {
     "columns": [
         {
+	    "title": "",
             "sections": [
                 {
                     "title": "About Me",
@@ -55,6 +56,7 @@
             ]
         },
         {
+	    "title": "",
             "sections": [
                 {
                     "title": "Tools",
@@ -139,6 +141,7 @@
             ]
         },
         {
+	    "title": "",
             "sections": [
                 {
                     "title": "General",

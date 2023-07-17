@@ -3,21 +3,35 @@
 
 {% block stripecontent %}
 
+<div class="col-md-6">
+<table>
+<tr>
+<td><button>Get Training</button></td>
+<td><button>Apply for a New Show</button></td>
+<td><button>Change/Cancel a Show</button></td>
+</tr><tr>
+<td><button>Podcast Manager</button></td>
+<td><button>Studio Information Service</button></td>
+<td><button>WebStudio</button></td>
+</tr>
+</table>
+
+</div>
+<div class="col-md-6">
 {% if events %}
   <div class="row">
-    <div class="well col-md-12 events">
-      <h2>Upcoming Events</h2>
-      <ul class="list-group events-list">
+    <!--<div class="well col-md-12 events">-->
+
+      <h3>Upcoming Events</h3>
+      <ul class="list-group">
         {% for event in events %}
-          <li class="list-group-item event">
-            <h3>
+          <li>
+            <span>
               <a
                 href="{{MyRadio.makeURL(config, 'Events', 'viewEvent', {eventid: event.ID()})}}"
               >
               {{ event.Title() }}
-              </a>
-            </h3>
-            <p>
+              </a> |
               {{ event.StartTime() | date('d F Y H:i') }}
               &mdash;
               {% if is_next_day(event.StartTime(), event.EndTime) %}
@@ -25,13 +39,14 @@
               {% else %}
                 {{ event.EndTime() | date('H:i') }}
               {% endif %}
-            </p>
+            </span>
           </li>
         {% endfor %}
       </ul>
-    </div>
+<!--    </div>-->
   </div>
 {% endif %}
+</div>
 
 {% for column in menu %}
 <div class="col-md-4">
