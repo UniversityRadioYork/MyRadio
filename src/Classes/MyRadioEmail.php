@@ -163,7 +163,7 @@ class MyRadioEmail extends ServiceAPI
 
     private function getHeader()
     {
-        $headers = ['MIME-Version: 1.0'];
+        $headers = ['MIME-Version: 1.0', 'Content-Transfer-Encoding: quoted-printable'];
 
         if ($this->from !== null) {
             $headers[] = 'From: '.$this->from->getName().' <'.$this->from->getPublicEmail().'>';
@@ -222,7 +222,7 @@ class MyRadioEmail extends ServiceAPI
                     if (!mail(
                         $user->getName() . ' <' . $user->getEmail() . '>',
                         $u_subject,
-                        $u_message,
+                        quoted_printable_encode($u_message),
                         $this->getHeader()
                     )) {
                         continue;
