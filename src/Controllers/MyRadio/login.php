@@ -59,7 +59,7 @@ if (isset($_SESSION['memberid'])) {
     )->setTemplate('MyRadio/login.twig');
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['myradio_login-user'])) {
-        //Submitted
+//Submitted
         $status = null;
         $data = $form->readValues();
 

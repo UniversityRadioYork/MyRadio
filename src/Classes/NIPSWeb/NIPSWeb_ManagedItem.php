@@ -198,7 +198,6 @@ class NIPSWeb_ManagedItem extends \MyRadio\ServiceAPI\ServiceAPI
 
         $getID3 = new \getID3();
         $fileInfo = $getID3->analyze(Config::$audio_upload_tmp_dir.'/'.$filename);
-
         //The entire $fileInfo array will break Session.
         $_SESSION['uploadInfo'][$filename] = [
             'fileformat' => $fileInfo['fileformat'],

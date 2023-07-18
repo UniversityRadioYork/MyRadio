@@ -68,14 +68,16 @@ if (isset($_SESSION['memberid'])) {
         throw new MyRadioException('Password reset token required.', 400);
     } else {
         $db = Database::getInstance();
+	$tokenStr = $_REQUEST[$var];
+	$tokenStr = str_replace(["\r", "\n"], ['',''], $tokenStr);
         $token = $db->fetchOne(
             'SELECT * FROM myury.password_reset_token
             WHERE token=$1 AND expires > NOW() AND used IS NULL',
-            [$_REQUEST[$var]]
+            [$tokenStr]
         );
 
         if (empty($token)) {
-            throw new MyRadioException('Password reset token invalid. It may have expired or already been used.', 400);
+            throw new MyRadioException('Password reset token invalid. It may have expired or already been used. Alternatively, try removing the %0D%0A from the URL. If you\'re joining computing team, maybe you could help us solve that bug', 400);
         } else {
             $form->addField(
                 new MyRadioFormField(
