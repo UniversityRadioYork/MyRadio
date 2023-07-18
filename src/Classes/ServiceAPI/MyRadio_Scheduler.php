@@ -153,6 +153,8 @@ class MyRadio_Scheduler extends ServiceAPI
      */
     public static function isTerm()
     {
+	//$timeslot = self::getCurrentTimeslot($time, $filter);
+        return true;
         return (!empty(self::getTerms(true)));
     }
 
