@@ -458,6 +458,7 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
 
         //Note the ordering is important - create is static!
         if ($name === 'testCredentials'
+            || $name === 'setUserSelectedTimeslot'
             || CoreUtils::startsWith($name, 'create')
             || CoreUtils::startsWith($name, 'add')
         ) {
