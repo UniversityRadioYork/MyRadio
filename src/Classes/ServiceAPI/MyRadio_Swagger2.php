@@ -457,7 +457,10 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
         $name = $method->getName();
 
         //Note the ordering is important - create is static!
+        // setUserSelectedTimeslot is here too because it's a static
+        // method setting a 'global' (in the session) variable
         if ($name === 'testCredentials'
+            || $name === 'setUserSelectedTimeslot'
             || CoreUtils::startsWith($name, 'create')
             || CoreUtils::startsWith($name, 'add')
         ) {
