@@ -135,7 +135,7 @@ class Profile extends ServiceAPI
         if (self::$officers === false) {
             self::wakeup();
             self::$officers = self::$db->fetchAll(
-                'SELECT team.team_name AS team, officer.type, officer.officer_name AS officership,
+                'SELECT team.team_name AS team, officer.type, officer.officer_name AS officership, officer.num_places,
                     fname || \' \' || sname AS name, member.memberid, officer.officerid
                 FROM team
                 LEFT JOIN officer ON team.teamid = officer.teamid AND officer.status = \'c\'
@@ -145,8 +145,43 @@ class Profile extends ServiceAPI
                 WHERE team.status = \'c\' AND officer.type != \'m\'
                 ORDER BY team.ordering, officer.ordering, sname'
             );
+            // Insert into the list duplicate entries for vacant positions
+            // For example, if ASM has num_positions=2, and only one is filled,
+            // we need to insert another ASM entry with null name/memberid
+
+            // keyed by officerid
+            $num_filled_positions = [];
+            // dto - avoid iterating multiple times
+            $num_avail_positions = [];
+            $last_index_of_officer = [];
+            foreach (self::$officers as $i => $off) {
+                $num_avail_positions[$off['officerid']] = (int)$off['num_places'];
+                if ($off['memberid'] !== null) {
+                    $num_filled_positions[$off['officerid']]++;
+                }
+                $last_index_of_officer[$off['officerid']] = $i;
+            }
+
+            $offset = 0;
+            foreach ($num_avail_positions as $officerid => $avail) {
+                if ($num_filled_positions[$officerid] < $avail && $avail > 1) {
+                    $vacancies = ($avail ?? 1) - $num_filled_positions[$officerid];
+                    if ($num_filled_positions[$officerid] == 0) {
+                        $vacancies--;
+                    }
+                    for ($i = 0; $i < $vacancies; $i++) {
+                        $vacancy = self::$officers[$last_index_of_officer[$officerid]+$offset];
+                        $vacancy['memberid'] = null;
+                        $vacancy['name'] = null;
+                        array_splice(self::$officers, $last_index_of_officer[$officerid]+$offset+1, 0, [$vacancy]);
+                        $offset++;
+                    }
+                }
+            }
+
             self::$cache->set('MyRadioProfile_officers', self::$officers);
         }
+        // var_dump(self::$officers);
 
         return self::$officers;
     }

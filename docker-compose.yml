@@ -8,6 +8,8 @@ services:
       POSTGRES_PASSWORD: myradio
     volumes:
       - db-data:/var/lib/postgresql/data
+    ports:
+      - 55432:5432
 
   memcached:
     image: memcached:alpine

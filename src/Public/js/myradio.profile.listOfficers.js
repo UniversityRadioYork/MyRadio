@@ -12,6 +12,10 @@ $(".twig-datatable").dataTable({
     {
       "sTitle": "Officership",
     },
+    // numPlaces
+    {
+      bVisible: false
+    },
     //name
     {
       "sTitle": "Name"

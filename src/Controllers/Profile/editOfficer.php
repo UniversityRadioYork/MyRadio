@@ -17,7 +17,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $data['alias'],
             $data['ordering'],
             $data['team'],
-            $data['type']
+            $data['type'],
+            (int) $data['num_places']
         );
     } else {
         //submit edit
@@ -31,7 +32,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ->setOrdering($data['ordering'])
             ->setTeam($data['team'])
             ->setType($data['type'])
-            ->setStatus($data['status']);
+            ->setStatus($data['status'])
+            ->setNumPlaces((int) $data['num_places']);
 
         // remove empty permissions values
         $data['permissions'] = array_filter($data['permissions']['permission']) ?: [];

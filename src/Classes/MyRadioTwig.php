@@ -98,7 +98,7 @@ class MyRadioTwig implements \MyRadio\Iface\TemplateEngine
      * @param string $name  The name of the variable
      * @param mixed  $value The value of the variable - literally any valid type
      *
-     * @return \MyRadioTwig This for chaining
+     * @return MyRadioTwig This for chaining
      */
     public function addVariable($name, $value)
     {

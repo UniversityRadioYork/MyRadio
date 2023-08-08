@@ -82,6 +82,12 @@ class MyRadio_Officer extends ServiceAPI
      */
     private $permissions;
 
+    /**
+     * How many people can have this officership - should be 1 for most.
+     * @var int
+     */
+    private $num_places;
+
     protected function __construct($id)
     {
         $result = self::$db->fetchOne(
@@ -101,6 +107,7 @@ class MyRadio_Officer extends ServiceAPI
             $this->description = $result['descr'];
             $this->status = $result['status'];
             $this->type = $result['type'];
+            $this->num_places = (int) $result['num_places'];
 
             //Get the officer's permissions
             $this->updatePermissions();
@@ -110,23 +117,24 @@ class MyRadio_Officer extends ServiceAPI
     /**
      * Create a new Officer position.
      *
-     * @param string       $name     The position name, e.g. "Station Cat"
-     * @param string       $descr    A description of the position "official feline"
-     * @param string       $alias    Email alias (may be NULL) e.g. station.cat
-     * @param int          $ordering Weighting when appearing in lists e.g. 0
-     * @param MyRadio_Team $team     The Team the Officer is part of
-     * @param char         $type     'm'ember, 'o'fficer, 'a'ssistant head, 'h'ead
+     * @param string       $name       The position name, e.g. "Station Cat"
+     * @param string       $descr      A description of the position "official feline"
+     * @param string       $alias      Email alias (may be NULL) e.g. station.cat
+     * @param int          $ordering   Weighting when appearing in lists e.g. 0
+     * @param MyRadio_Team $team       The Team the Officer is part of
+     * @param char         $type       'm'ember, 'o'fficer, 'a'ssistant head, 'h'ead
+     * @param int          $num_places How many people can have this officership (default 1)
      *
      * @return MyRadio_Officer The new Officer position
      */
-    public static function createOfficer($name, $descr, $alias, $ordering, MyRadio_Team $team, $type = 'o')
+    public static function createOfficer($name, $descr, $alias, $ordering, MyRadio_Team $team, $type = 'o', $num_places = 1)
     {
         return self::getInstance(
             self::$db->fetchColumn(
                 'INSERT INTO public.officer
-                (officer_name, officer_alias, teamid, ordering, descr, type)
-                VALUES ($1, $2, $3, $4, $5, $6) RETURNING officerid',
-                [$name, $alias, $team->getID(), $ordering, $descr, $type]
+                (officer_name, officer_alias, teamid, ordering, descr, type, num_places)
+                VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING officerid',
+                [$name, $alias, $team->getID(), $ordering, $descr, $type, $num_places]
             )[0]
         );
     }
@@ -543,6 +551,22 @@ class MyRadio_Officer extends ServiceAPI
         );
     }
 
+    public function getNumPlaces()
+    {
+        return $this->num_places;
+    }
+
+    public function setNumPlaces(int $val)
+    {
+        self::$db->query('
+            UPDATE public.officer
+            SET num_places = $1
+            WHERE officerid = $2
+        ', [$val, $this->getID()]);
+        $this->num_places = $val;
+        $this->updateCacheObject();
+    }
+
     /**
      * Returns all the officer's active permission flags.
      *
@@ -661,6 +685,16 @@ class MyRadio_Officer extends ServiceAPI
             )
         )->addField(
             new MyRadioFormField(
+                'num_places',
+                MyRadioFormField::TYPE_NUMBER,
+                [
+                    'label' => 'Number of Places',
+                    'explanation' => 'How many people can have this officership at a time.',
+                    'value' => 1,
+                ]
+            )
+        )->addField(
+            new MyRadioFormField(
                 'status',
                 MyRadioFormField::TYPE_SELECT,
                 [
@@ -759,6 +793,7 @@ class MyRadio_Officer extends ServiceAPI
                     'team' => $this->getTeam()->getID(),
                     'type' => $this->getType(),
                     'status' => $this->getStatus(),
+                    'num_places' => $this->getNumPlaces(),
                     'permissions.permission' => array_map(
                         function ($perm) {
                             return $perm['value'];
@@ -828,6 +863,7 @@ class MyRadio_Officer extends ServiceAPI
             'description' => $this->getDescription(),
             'status' => $this->getStatus(),
             'type' => $this->getType(),
+            'num_places' => $this->getNumPlaces(),
         ];
 
         $this->addMixins($data, $mixins, $mixin_funcs);
