@@ -164,7 +164,7 @@ class MyRadio_Scheduler extends ServiceAPI
             return;
         }
 
-        return ['termid' => $termid, 'descr' => self::getTermDescr($termid), 'weeks' => self::getTermWeeks($termid), 'start' => self::getTermStartDate($termid)];
+        return ['termid' => $termid, 'descr' => self::getTermDescr($termid), 'weeks' => self::getTermWeeks($termid), 'start' => self::getTermStartDate($termid), 'week_names' => self::getTermWeekNames($termid)];
     }
 
     public static function getTermDescr($termid)
@@ -192,6 +192,21 @@ class MyRadio_Scheduler extends ServiceAPI
         );
 
         return $return['weeks'];
+    }
+
+    /**
+	Return an array of week names in a term
+	Stored as a JSON array in the DB.
+
+	i.e. ['Week 0 Sem 1', 'Week 1 Sem 1'] etc
+
+	@param int $termid id of the term
+	@return array of strings, the week names
+    }
+    */
+    public static function getTermWeekNames($termid)
+    {
+	return json_decode(self::$db->fetchOne("SELECT week_names FROM terms WHERE termid = $1", [$termid])["week_names"]);
     }
 
     /**
