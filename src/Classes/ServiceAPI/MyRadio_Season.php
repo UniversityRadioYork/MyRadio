@@ -332,7 +332,7 @@ class MyRadio_Season extends MyRadio_Metadata_Common
             $weeks[] = new MyRadioFormField(
                 'wk'.$i,
                 MyRadioFormField::TYPE_CHECK,
-                ['label' => $week_names[$i - 1] . ' w/c ' . date("Y-m-d",$date), 'required' => false]
+                ['label' => $week_names[$i - 1] . ' (w/c ' . date("Y-m-d",$date) .')', 'required' => false]
             );
             $date = $date + (86400 * 7); //one week
         }
@@ -512,7 +512,7 @@ class MyRadio_Season extends MyRadio_Metadata_Common
                 'wk'.$i,
                 MyRadioFormField::TYPE_CHECK,
                 [
-                    'label' => $week_names[$i - 1] . ' w/c '.date("Y-m-d",$date),
+                    'label' => $week_names[$i - 1] . ' (w/c '.date("Y-m-d",$date) . ')',
                     'required' => false,
                     'options' => ['checked' => in_array($i, $this->getRequestedWeeks())],
                 ]
