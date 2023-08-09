@@ -323,6 +323,8 @@ class MyRadio_Season extends MyRadio_Metadata_Common
         $current_term_info = MyRadio_Scheduler::getActiveApplicationTermInfo();
         $num_weeks = $current_term_info['weeks'];
         $startdate = $current_term_info['start'];
+	$week_names = $current_term_info['week_names'];
+
         //Set up the weeks checkboxes
         $weeks = [];
         $date = $startdate;
@@ -330,7 +332,7 @@ class MyRadio_Season extends MyRadio_Metadata_Common
             $weeks[] = new MyRadioFormField(
                 'wk'.$i,
                 MyRadioFormField::TYPE_CHECK,
-                ['label' => 'Week beginning '.date("Y-m-d",$date), 'required' => false]
+                ['label' => $week_names[$i - 1] . ' (w/c ' . date("Y-m-d",$date) .')', 'required' => false]
             );
             $date = $date + (86400 * 7); //one week
         }
@@ -482,6 +484,7 @@ class MyRadio_Season extends MyRadio_Metadata_Common
         $current_term_info = MyRadio_Scheduler::getActiveApplicationTermInfo();
         $num_weeks = $current_term_info['weeks'];
         $startdate = $current_term_info['start'];
+	$week_names = $current_term_info['week_names'];
         $form = (
             new MyRadioForm(
                 'sched_allocate',
@@ -509,7 +512,7 @@ class MyRadio_Season extends MyRadio_Metadata_Common
                 'wk'.$i,
                 MyRadioFormField::TYPE_CHECK,
                 [
-                    'label' => 'Week beginning '.date("Y-m-d",$date),
+                    'label' => $week_names[$i - 1] . ' (w/c '.date("Y-m-d",$date) . ')',
                     'required' => false,
                     'options' => ['checked' => in_array($i, $this->getRequestedWeeks())],
                 ]
