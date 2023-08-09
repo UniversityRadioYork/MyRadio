@@ -7,11 +7,13 @@ namespace MyRadio\ServiceAPI;
 
 use MyRadio\Config;
 use MyRadio\MyRadioException;
+use MyRadio\MyRadio\AuditLogTypes;
 use MyRadio\MyRadio\CoreUtils;
 use MyRadio\MyRadio\URLUtils;
 use MyRadio\MyRadio\MyRadioForm;
 use MyRadio\MyRadio\MyRadioFormField;
 use MyRadio\MyRadioEmail;
+use MyRadio\ServiceAPI\MyRadio_AuditLog;
 
 /**
  * The Season class is used to create, view and manipulate Seasons within the new MyRadio Scheduler Format.
@@ -313,6 +315,12 @@ class MyRadio_Season extends MyRadio_Metadata_Common
                 . " has requested WebStudio usage."
             );
         }
+
+        MyRadio_AuditLog::log(
+            AuditLogTypes::Created,
+            $newSeason->season_id,
+            ['show_id' => $newSeason->show_id, 'term_id' => $newSeason->term_id, 'requested_weeks' => $newSeason->requested_weeks, 'requested_times' => $newSeason->requested_times],
+        );
 
         return $newSeason;
     }
@@ -618,6 +626,12 @@ class MyRadio_Season extends MyRadio_Metadata_Common
         $r = parent::setCredits($users, $credittypes, 'schedule.show_credit', 'show_id');
         $this->updateCacheObject();
 
+        MyRadio_AuditLog::log(
+            AuditLogTypes::Edited,
+            $this->season_id,
+            ['credits' => ['users' => $users, 'credit_types' => $credittypes]]
+        );
+
         return $r;
     }
 
@@ -703,6 +717,12 @@ EOT
             );
         }
 
+        MyRadio_AuditLog::log(
+            AuditLogTypes::Rejected,
+            $this->season_id,
+            ['reason' => $reason]
+        );
+
         self::$db->query('COMMIT');
     }
 
@@ -754,6 +774,12 @@ EOT
         );
         $this->metadata[$string_key] = $value;
         $this->updateCacheObject();
+
+        MyRadio_AuditLog::log(
+            AuditLogTypes::MetaUpdated,
+            $this->season_id,
+            ['key' => $string_key, 'value' => $value]
+        );
 
         return $r;
     }
@@ -809,6 +835,11 @@ EOT
         self::$db->query('UPDATE schedule.show_season_subtype SET show_subtype_id = $1 WHERE season_id = $1', [
             $subtypeId, $this->season_id
         ]);
+        MyRadio_AuditLog::log(
+            AuditLogTypes::Edited,
+            $this->season_id,
+            ['subtype' => $this->getSubtype()->toDataSource()]
+        );
     }
 
     /**
@@ -824,6 +855,11 @@ EOT
             WHERE season_id = $1',
             [$this->season_id, $subtypeName]
         );
+        MyRadio_AuditLog::log(
+            AuditLogTypes::Edited,
+            $this->season_id,
+            ['subtype' => $this->getSubtype()->toDataSource()]
+        );
     }
 
     /**
@@ -832,6 +868,11 @@ EOT
     public function clearSubtype()
     {
         self::$db->query('DELETE FROM schedule.show_season_subtype WHERE season_id = $1', [$this->season_id]);
+        MyRadio_AuditLog::log(
+            AuditLogTypes::Edited,
+            $this->season_id,
+            ['subtype' => null]
+        );
     }
 
     public function getRequestedTimes()
@@ -1107,6 +1148,13 @@ EOT
                 self::$cache->delete('MyRadioScheduleFor'.$weekAndYear[0].'W'.$weekAndYear[1]);
             }
         }
+
+        MyRadio_AuditLog::log(
+            AuditLogTypes::Scheduled,
+            $this->season_id,
+            ['times' => explode("\n", $times)]
+        );
+
         //COMMIT
         self::$db->query('COMMIT');
         $this->updateCacheObject();
@@ -1168,6 +1216,12 @@ $times
             $u = MyRadio_User::getInstance($credit);
             MyRadioEmail::sendEmailToUser($u, 'Show Cancelled', $email);
         }
+
+        MyRadio_AuditLog::log(
+            AuditLogTypes::SeasonCancelled,
+            $this->season_id,
+            ['timeslots' => explode('\r\n', $timeslot_str)]
+        );
 
         $r = (bool) self::$db->query(
             'DELETE FROM schedule.show_season_timeslot WHERE show_season_id=$1 AND start_time >= NOW()',

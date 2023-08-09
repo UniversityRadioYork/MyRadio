@@ -7,10 +7,12 @@ namespace MyRadio\ServiceAPI;
 use MyRadio\Config;
 use MyRadio\Database;
 use MyRadio\MyRadioException;
+use MyRadio\MyRadio\AuditLogTypes;
 use MyRadio\MyRadio\CoreUtils;
 use MyRadio\MyRadio\URLUtils;
 use MyRadio\MyRadio\MyRadioForm;
 use MyRadio\MyRadio\MyRadioFormField;
+use MyRadio\ServiceAPI\MyRadio_AuditLog;
 use MyRadio\ServiceAPI\MyRadio_User;
 use MyRadio\ServiceAPI\MyRadio_Season;
 use MyRadio\ServiceAPI\MyRadio_Scheduler;
@@ -383,6 +385,12 @@ class MyRadio_Show extends MyRadio_Metadata_Common
 
         $show = self::factory($show_id);
 
+        MyRadio_AuditLog::log(
+            AuditLogTypes::Created,
+            $show_id,
+            array_intersect_key($show->toDataSource(), array_flip(['title', 'description'])),
+        );
+
         /*
          * Enable mixcloud upload if requested
          */
@@ -714,6 +722,11 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         self::$db->query('UPDATE schedule.show_season_subtype SET show_subtype_id = $1 WHERE show_id = $1', [
             $subtypeId, $this->show_id
         ]);
+        MyRadio_AuditLog::log(
+            AuditLogTypes::Edited,
+            $this->show_id,
+            ['subtype' => $this->getSubtype()->toDataSource()]
+        );
     }
 
     /**
@@ -728,6 +741,11 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             FROM (SELECT show_subtype_id FROM schedule.show_subtypes WHERE show_subtypes.class = $2) AS subtype
             WHERE show_id = $1',
             [$this->show_id, $subtypeName]
+        );
+        MyRadio_AuditLog::log(
+            AuditLogTypes::Edited,
+            $this->show_id,
+            ['subtype' => $this->getSubtype()->toDataSource()]
         );
     }
 
@@ -773,6 +791,12 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         $this->photo_url = Config::$public_media_uri.'/'.$suffix;
         self::$db->query('COMMIT');
         $this->updateCacheObject();
+        
+        MyRadio_AuditLog::log(
+            AuditLogTypes::Edited,
+            $this->show_id,
+            ['photo' => ['url' => $this->photo_url]]
+        );
     }
 
     /**
@@ -802,6 +826,12 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         );
         $this->updateCacheObject();
 
+        MyRadio_AuditLog::log(
+            AuditLogTypes::MetaUpdated,
+            $this->show_id,
+            ['key' => $string_key, 'value' => $value]
+        );
+
         return $r;
     }
 
@@ -827,6 +857,11 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             );
             $this->genres = [$genreid];
             $this->updateCacheObject();
+            MyRadio_AuditLog::log(
+                AuditLogTypes::Edited,
+                $this->show_id,
+                ['genre' => $genreid]
+            );
         }
     }
 
@@ -841,6 +876,11 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             [$this->getID(), $value ? 1 : 0]
         );
         $this->updateCacheObject();
+        MyRadio_AuditLog::log(
+            AuditLogTypes::Edited,
+            $this->show_id,
+            ['podcast_explicit' => $value]
+        );
     }
 
     /**
@@ -856,6 +896,12 @@ class MyRadio_Show extends MyRadio_Metadata_Common
     {
         $r = parent::setCredits($users, $credittypes, 'schedule.show_credit', 'show_id');
         $this->updateCacheObject();
+
+        MyRadio_AuditLog::log(
+            AuditLogTypes::Edited,
+            $this->show_id,
+            ['credits' => ['users' => $users, 'credit_types' => $credittypes]]
+        );
 
         return $r;
     }
