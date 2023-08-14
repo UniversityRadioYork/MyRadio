@@ -12,6 +12,14 @@ $(".twig-datatable").dataTable({
     //descr
     {
       "sTitle": "Name"
+    },
+    //num_weeks
+    {
+      "bVisible": false
+    },
+    //week_names
+    {
+      "bVisible": false,
     }
   ],
   "bPaginate": true

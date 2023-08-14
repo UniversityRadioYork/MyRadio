@@ -173,7 +173,7 @@ class MyRadio_Season extends MyRadio_Metadata_Common
      *
      * @throws MyRadioException
      */
-    public static function create($params = [], $num_weeks)
+    public static function create($params = [])
     {
         //Validate input
         $required = ['show_id', 'weeks', 'times'];
@@ -188,6 +188,7 @@ class MyRadio_Season extends MyRadio_Metadata_Common
          * Select an appropriate value for $term_id.
          */
         $term_id = MyRadio_Term::getActiveApplicationTerm()->getID();
+	$num_weeks = MyRadio_Term::getActiveApplicationTerm()->getTermWeeks();
 
         //Start a transaction
         self::$db->query('BEGIN');

@@ -1,6 +1,10 @@
 <?php
 
 namespace MyRadio\ServiceAPI;
+use MyRadio\MyRadio\CoreUtils;
+use MyRadio\MyRadio\MyRadioForm;
+use MyRadio\MyRadio\MyRadioFormField;
+use MyRadio\MyRadioException;
 
 /**
  * 
@@ -15,25 +19,26 @@ class MyRadio_Term extends ServiceAPI
     private int $term_id;
     private string $descr;
     private int $num_weeks;
-    private []string $week_names;
+    private $week_names;
     private $start_date;
 
     protected function __construct($term_id) {
         $this->term_id = (int) $term_id;
 
+	self::initDB();
         $result = self::$db->fetchOne(
-            "SEECT * FROM public.terms WHERE termid=$1",
-            [$term_id]
+            "SELECT * FROM public.terms WHERE termid=$1;",
+            [$this->term_id]
         );
 
         if (empty($result)) {
-            throw new MyRadioException("The specified term " . $term_id . "doesn't exist.");
+            throw new MyRadioException("The specified term " . $this->term_id . " doesn't exist" . json_encode($result));
             return;
         }
 
         $this->start_date = $result['start'];
         $this->descr = $result['descr'] . date(" Y", strtotime($this->start_date));
-        $this->num_weeks = (int) $result['num_weeks'];
+        $this->num_weeks = (int) $result['weeks'];
         $this->week_names = json_decode($result['week_names']);
         
     }
@@ -100,15 +105,15 @@ class MyRadio_Term extends ServiceAPI
     }
 
     public function getID() {
-        return $self->term_id;
+        return $this->term_id;
     }
 
     public function getTermDescr() {
-        return $self->descr;
+        return $this->descr;
     }
 
     public function getTermWeeks() {
-        return $self->num_weeks;
+        return $this->num_weeks;
     }
 
     /**
@@ -121,11 +126,11 @@ class MyRadio_Term extends ServiceAPI
     }
     */
     public function getTermWeekNames() {
-        return $self->week_names;
+        return $this->week_names;
     }
 
     public function getTermStartDate() {
-        return strtotime('Midnight '.gmdate('d-m-Y', strtotime($self->start_date)).' GMT');
+        return strtotime('Midnight '.gmdate('d-m-Y', strtotime($this->start_date)).' GMT');
     }
 
     /**
@@ -193,4 +198,13 @@ class MyRadio_Term extends ServiceAPI
         
     }
 
+	public function toDataSource($mixins = []) {
+		return [
+			"term_id" => $this->getID(),
+			"descr" => $this->getTermDescr(),
+			"num_weeks" => $this->getTermWeeks(),
+			"week_names" => $this->getTermWeekNames(),
+			"start" => $this->getTermStartDate()
+		];
+	}
 }

@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (empty($data['id'])) {
         //create new
-        MyRadio_Season::create($data, $term_weeks);
+        MyRadio_Season::create($data);
         URLUtils::redirectWithMessage(
             'Scheduler',
             'myShows',
