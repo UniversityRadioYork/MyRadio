@@ -249,7 +249,7 @@ type Track implements Node & MyRadioObject {
     outro: Int
     clean: Boolean
     digitised: Boolean!
-    length: Duration
+    length: String #Duration
     genre: String # TODO enum
     digitisedBy: User
     lastEditedTime: DateTime
