@@ -6,15 +6,15 @@
  */
 use \MyRadio\MyRadioException;
 use \MyRadio\MyRadio\URLUtils;
-use \MyRadio\ServiceAPI\MyRadio_Scheduler;
+use \MyRadio\ServiceAPI\MyRadio_Term;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     //Submitted
-    $data = MyRadio_Scheduler::getTermForm()->readValues();
+    $data = MyRadio_Term::getTermForm()->readValues();
 
     if (empty($data['id'])) {
         //create new
-        $term = MyRadio_Scheduler::addTerm($data['start'], $data['descr'], $data['numweeks']);
+        $term = MyRadio_Term::addTerm($data['start'], $data['descr'], $data['numweeks']);
         if (is_numeric($term)) {
             URLUtils::redirectWithMessage('Scheduler', 'listTerms', 'Term '.$data['descr'].', has been added.');
         } else {
@@ -32,10 +32,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 } else {
     //Not Submitted
     if (isset($_REQUEST['termid'])) {
-        MyRadio_Scheduler::getTermEditForm($_REQUEST['termid'])->render();
+        MyRadio_Term::getTermEditForm($_REQUEST['termid'])->render();
     } else {
         //create form
-        MyRadio_Scheduler::getTermForm()
+        MyRadio_Term::getTermForm()
             ->render();
     }
 }

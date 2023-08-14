@@ -3,7 +3,7 @@
  *
  */
 use \MyRadio\MyRadio\CoreUtils;
-use \MyRadio\ServiceAPI\MyRadio_Scheduler;
+use \MyRadio\ServiceAPI\MyRadio_Term;
 
 $terms = array_map(
     function ($x) {
@@ -11,7 +11,7 @@ $terms = array_map(
 
         return $x;
     },
-    MyRadio_Scheduler::getTerms()
+    MyRadio_Term::getAllTerms()
 );
 
 CoreUtils::getTemplateObject()->setTemplate('Scheduler/listTerms.twig')
