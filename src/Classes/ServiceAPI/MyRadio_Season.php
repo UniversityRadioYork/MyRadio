@@ -13,6 +13,7 @@ use MyRadio\MyRadio\MyRadioForm;
 use MyRadio\MyRadio\MyRadioFormField;
 use MyRadio\MyRadioEmail;
 use \MyRadio\ServiceAPI\MyRadio_Scheduler;
+use \MyRadio\ServiceAPI\MyRadio_Term;
 
 /**
  * The Season class is used to create, view and manipulate Seasons within the new MyRadio Scheduler Format.
@@ -172,7 +173,7 @@ class MyRadio_Season extends MyRadio_Metadata_Common
      *
      * @throws MyRadioException
      */
-    public static function create($params = [], $num_weeks)
+    public static function create($params = [])
     {
         //Validate input
         $required = ['show_id', 'weeks', 'times'];
@@ -186,7 +187,8 @@ class MyRadio_Season extends MyRadio_Metadata_Common
         /**
          * Select an appropriate value for $term_id.
          */
-        $term_id = MyRadio_Scheduler::getActiveApplicationTerm();
+        $term_id = MyRadio_Term::getActiveApplicationTerm()->getID();
+	$num_weeks = MyRadio_Term::getActiveApplicationTerm()->getTermWeeks();
 
         //Start a transaction
         self::$db->query('BEGIN');
@@ -320,10 +322,10 @@ class MyRadio_Season extends MyRadio_Metadata_Common
 
     public static function getForm()
     {
-        $current_term_info = MyRadio_Scheduler::getActiveApplicationTermInfo();
-        $num_weeks = $current_term_info['weeks'];
-        $startdate = $current_term_info['start'];
-	$week_names = $current_term_info['week_names'];
+        $current_term_info = MyRadio_Term::getActiveApplicationTerm();
+        $num_weeks = $current_term_info->getTermWeeks();
+        $startdate = $current_term_info->getTermStartDate();
+        $week_names = $current_term_info->getTermWeekNames();
 
         //Set up the weeks checkboxes
         $weeks = [];
@@ -481,10 +483,10 @@ class MyRadio_Season extends MyRadio_Metadata_Common
 
     public function getAllocateForm()
     {
-        $current_term_info = MyRadio_Scheduler::getActiveApplicationTermInfo();
-        $num_weeks = $current_term_info['weeks'];
-        $startdate = $current_term_info['start'];
-	$week_names = $current_term_info['week_names'];
+        $current_term_info = MyRadio_Term::getActiveApplicationTerm();
+        $num_weeks = $current_term_info->getTermWeeks();
+        $startdate = $current_term_info->getTermStartDate();
+        $week_names = $current_term_info->getTermWeekNames();
         $form = (
             new MyRadioForm(
                 'sched_allocate',
@@ -1066,7 +1068,7 @@ EOT
         /*
          * Since terms start on the Monday, we just +1 day to it
          */
-        $start_day = MyRadio_Scheduler::getTermStartDate() + ($req_time['day'] * 86400);
+        $start_day = MyRadio_Term::getTermStartDate() + ($req_time['day'] * 86400);
 
         //Now it's time to BEGIN to COMMIT!
         self::$db->query('BEGIN');

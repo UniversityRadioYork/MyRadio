@@ -15,6 +15,7 @@ use MyRadio\MyRadio\URLUtils;
 use MyRadio\MyRadio\MyRadioDefaultAuthenticator;
 use MyRadio\MyRadio\MyRadioForm;
 use MyRadio\MyRadio\MyRadioFormField;
+use MyRadio\ServiceAPI\MyRadio_Term;
 
 /**
  * The user object provides and stores information about a user
@@ -809,7 +810,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
                             WHERE schedule.show_season.show_id=schedule.show.show_id
                             AND schedule.show_season.termid=$2
                         )';
-            $params[] = MyRadio_Scheduler::getActiveApplicationTerm();
+            $params[] = MyRadio_Term::getActiveApplicationTerm()->getID();
         }
 
         $sql .= ' ORDER BY (SELECT start_time FROM schedule.show_season_timeslot

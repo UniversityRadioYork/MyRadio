@@ -3,15 +3,16 @@
  *
  */
 use \MyRadio\MyRadio\CoreUtils;
-use \MyRadio\ServiceAPI\MyRadio_Scheduler;
+use \MyRadio\ServiceAPI\MyRadio_Term;
 
 $terms = array_map(
-    function ($x) {
+    function ($term) {
+	$x = $term->toDataSource();
         $x['start'] = date('d/m/Y', $x['start']);
 
         return $x;
     },
-    MyRadio_Scheduler::getTerms()
+    MyRadio_Term::getAllTerms()
 );
 
 CoreUtils::getTemplateObject()->setTemplate('Scheduler/listTerms.twig')
