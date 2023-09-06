@@ -22,7 +22,7 @@ class MyRadio_Term extends ServiceAPI
     private $week_names;
     private $start_date;
 
-    protected function __construct($term_id) {
+    public function __construct($term_id) {
         $this->term_id = (int) $term_id;
 
 	self::initDB();

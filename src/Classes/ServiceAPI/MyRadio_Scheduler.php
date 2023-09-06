@@ -185,7 +185,7 @@ class MyRadio_Scheduler extends ServiceAPI
     {
         self::initDB();
         $conflicts = [];
-        $start_day = MyRadio_Term($term_id)->getTermStartDate() + ($time['day'] * 86400);
+        $start_day = (new MyRadio_Term($term_id))->getTermStartDate() + ($time['day'] * 86400);
         //Iterate over each week
         for ($i = 1; $i <= 10; ++$i) {
             $day_start = $start_day + (($i - 1) * 7 * 86400);
