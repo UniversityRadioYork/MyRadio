@@ -23,13 +23,13 @@ foreach ($demos as $demo) {
         $demo['attending'] = $demo_object->usersAttendingDemo();
         $demo['join'] = [
             'display' => 'text',
-            'value' => 'Edit Demo',
+            'value' => 'Edit Session',
             'url' => URLUtils::makeURL('Training', 'createDemo', ['demo_id' => $demo['demo_id']]),
         ];
         $demo['cancel'] = [
             'display' => 'icon',
             'value' => 'trash',
-            'title' => 'Cancel Demo',
+            'title' => 'Cancel Session',
             'url' => URLUtils::makeURL('Training', 'cancelDemo', ['demo_id' => $demo['demo_id']]),
         ];
     } else {
@@ -78,7 +78,7 @@ foreach ($demos as $demo) {
         $demo['demo_link'] = [
             "display" => "icon",
             "value" => "user",
-            "title" => "In Person Training"
+            "title" => "In-Person Training"
         ];
     }
     $tabledata[] = $demo;
