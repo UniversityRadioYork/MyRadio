@@ -1068,7 +1068,7 @@ EOT
         /*
          * Since terms start on the Monday, we just +1 day to it
          */
-        $start_day = MyRadio_Term::getTermStartDate() + ($req_time['day'] * 86400);
+        $start_day = (MyRadio_Term::getActiveApplicationTerm())->getTermStartDate() + ($req_time['day'] * 86400);
 
         //Now it's time to BEGIN to COMMIT!
         self::$db->query('BEGIN');
