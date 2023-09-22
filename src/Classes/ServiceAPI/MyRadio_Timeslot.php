@@ -688,7 +688,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
         $timeslot = self::getCurrentTimeslot($time, $filter);
         $next = self::getNextTimeslot($time, $filter);
 
-        $currentJukebox = iTones_playlist::getCurrentPlaylist();
+        $currentJukebox = itones_playlist::getCurrentPlaylist();
 
         //Still display a show if there's one scheduled for whatever reason.
         if (empty($timeslot)) {
