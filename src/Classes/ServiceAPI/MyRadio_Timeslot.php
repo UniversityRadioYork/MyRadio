@@ -8,6 +8,7 @@ namespace MyRadio\ServiceAPI;
 
 use DateTime;
 use MyRadio\Config;
+use MyRadio\iTones\itones_Playlist;
 use MyRadio\MyRadio\AuthUtils;
 use MyRadio\MyRadioException;
 use MyRadio\MyRadio\CoreUtils;
@@ -687,6 +688,8 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
         $timeslot = self::getCurrentTimeslot($time, $filter);
         $next = self::getNextTimeslot($time, $filter);
 
+        $currentJukebox = iTones_playlist::getCurrentPlaylist();
+
         //Still display a show if there's one scheduled for whatever reason.
         if (empty($timeslot)) {
             // Checking if it's term time according to the schedule is unreliable. Instead, check which selector source
@@ -695,7 +698,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             if ($source === MyRadio_Selector::SEL_OFFAIR) {
                 $response = [
                     'current' => [
-                        'title' => 'Off Air',
+                        'title' => $currentJukebox,
                         'desc' => 'We\'re not broadcasting right now, we\'ll be back next term.',
                         'photo' => Config::$offair_uri,
                         'end_time' => $next ? $next->getStartTime() : 'The End of Time',
