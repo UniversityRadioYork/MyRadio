@@ -75,6 +75,11 @@
                             "description": "Having a problem? Report it here and Computing and/or Engineering team will fix it for you. Or at least try."
                         },
                         {
+                            "title": "Request a Song for the Music Library",
+                            "url": "https://song-requests.ury.org.uk",
+                            "description": "Want to play a song that's not in our library? Request it here and we'll (probably) buy it for you!"
+                        },
+                        {
                             "title": "Get Beds/Jingles",
                             "url": "https://docs.google.com/forms/d/e/1FAIpQLSdLauYhir0wRBHAJBXIw1OcpyRtdJulIueoVUz0CyM12qObSQ/viewform",
                             "description": "The Audio Resources team have a huge library and a little experience - give them a shot if you want that little something that makes your show stand out."
