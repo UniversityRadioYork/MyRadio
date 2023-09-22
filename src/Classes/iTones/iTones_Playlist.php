@@ -253,7 +253,7 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
             GROUP BY playlist_availability_id
         )
         LIMIT 1', $current_time);
-        return $getplaylist;
+        return $current_time;
     }
 
     /**
