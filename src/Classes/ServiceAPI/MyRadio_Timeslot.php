@@ -8,7 +8,7 @@ namespace MyRadio\ServiceAPI;
 
 use DateTime;
 use MyRadio\Config;
-use MyRadio\iTones\itones_Playlist;
+use MyRadio\iTones\iTones_Playlist;
 use MyRadio\MyRadio\AuthUtils;
 use MyRadio\MyRadioException;
 use MyRadio\MyRadio\CoreUtils;
@@ -688,7 +688,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
         $timeslot = self::getCurrentTimeslot($time, $filter);
         $next = self::getNextTimeslot($time, $filter);
 
-        $currentJukebox = itones_playlist::getCurrentPlaylist();
+        $currentJukebox = iTones_playlist::getCurrentPlaylist();
 
         //Still display a show if there's one scheduled for whatever reason.
         if (empty($timeslot)) {
