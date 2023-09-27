@@ -9,6 +9,7 @@ use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_Scheduler;
 use \MyRadio\ServiceAPI\MyRadio_Season;
 use \MyRadio\ServiceAPI\MyRadio_Show;
+use \MyRadio\ServiceAPI\MyRadio_Term;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     //Submitted
@@ -50,6 +51,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 } else {
     //Not Submitted
+    $current_term_info = MyRadio_Term::getActiveApplicationTerm();
+    $current_term = $current_term_info->getTermDescr();
+
     if (isset($_REQUEST['seasonid'])) {
         //edit form
         $season = MyRadio_Season::getInstance($_REQUEST['seasonid']);
@@ -62,9 +66,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $season->getEditForm()->render();
     } else {
         //create form
-
-        $current_term_info = MyRadio_Scheduler::getActiveApplicationTermInfo();
-        $current_term = $current_term_info['descr'];
 
         MyRadio_Season::getForm()
             ->setFieldValue('show_id', (int) $_REQUEST['showid'])
