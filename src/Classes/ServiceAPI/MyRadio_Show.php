@@ -1235,6 +1235,12 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                 'title' => 'Apply for a new Season',
                 'url' => URLUtils::makeURL('Scheduler', 'editSeason', ['showid' => $this->getID()]),
             ],
+            'uploadlink' => [
+                'display' => 'icon',
+                'value' => 'upload',
+                'title' => 'upload show art',
+                'url' => URLUtils::makeURL('Scheduler', 'showPhoto', ['show_id' => $this->getID()]),
+            ],
             'micrositelink' => [
                 'display' => 'icon',
                 'value' => 'link',

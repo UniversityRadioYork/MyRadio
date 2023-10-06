@@ -45,6 +45,11 @@ $(".twig-datatable").dataTable({
       "sTitle": "New Season",
       "bSortable": false
     },
+    //uploadlink
+    {
+      "sTitle": "Show Art",
+      "bSortable": false
+    },
     //micrositelink
     {
       "sTitle": "Site",
