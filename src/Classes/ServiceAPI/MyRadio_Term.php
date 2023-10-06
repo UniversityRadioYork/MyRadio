@@ -101,6 +101,7 @@ class MyRadio_Term extends ServiceAPI
      */
     public static function isTerm()
     {
+    	return true;
         return (!empty(self::getAllTerms(true)));
     }
 
