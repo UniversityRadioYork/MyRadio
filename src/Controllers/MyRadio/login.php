@@ -109,6 +109,9 @@ if (isset($_SESSION['memberid'])) {
                     }
                     $user->updateLastLogin();
                     $status = 'success';
+                    if (!$user->isGDPRSigned()){
+                        $status = 'gdpr';
+                    }
                     $authenticators[$i] = true;
                     if ($user->getRequirePasswordChange()) {
                         //The user needs to change their password
@@ -128,7 +131,6 @@ if (isset($_SESSION['memberid'])) {
                 $authenticators[$i] = false;
             }
         }
-
         if ($status === 'choose') {
             //The user needs to set a login provider
             $twig = CoreUtils::getTemplateObject()->setTemplate('MyRadio/chooseAuth.twig')
@@ -158,6 +160,8 @@ if (isset($_SESSION['memberid'])) {
                 ->render();
         } elseif ($status === 'change') {
             URLUtils::redirect('MyRadio', 'pwChange');
+        } elseif ($status == 'gdpr'){
+            URLUtils::redirect('MyRadio', 'privacystatement');
         } elseif ($status !== 'success') {
             $form->setFieldValue(
                 'next',

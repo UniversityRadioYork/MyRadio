@@ -28,7 +28,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         ->setEmail($data['email'])
         ->setReceiveEmail($data['receive_email'])
         ->setEduroam($data['eduroam'])
-        ->setBio($data['bio']);
+        ->setBio($data['bio'])
+        ->setHideProfile($data['hide']);
+
+    if ($data['data_removal']) {
+        $user->setDataRemoval('optout');
+    } else {
+        $user->setDataRemoval('default');
+    }
 
     if (!empty(Config::$contract_uri)) {
         $user->setContractSigned($data['contract']);
