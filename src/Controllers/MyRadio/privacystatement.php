@@ -1,3 +1,1 @@
-<?php
-echo "you priv";
-?>
+<h1>Privacy Statement </h1>
