@@ -397,6 +397,7 @@ class MyRadio_Team extends ServiceAPI
 
         $this->addMixins($data, $mixins, $mixin_funcs);
 
+
         return $data;
     }
 }
