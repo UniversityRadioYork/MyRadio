@@ -204,6 +204,30 @@ class MyRadio_User extends ServiceAPI implements APICaller
     private $contract_signed;
 
     /**
+     * True if user has agreed to our privacy statement.
+     *
+     * @var bool
+     */
+    private $gdpr_accepted;
+
+    /**
+     * default if user can be deleted
+     * informed if user has been warned about deletion
+     * optout if user has opted out of deletion
+     * deleted if user has been deleted
+     *
+     * @var enum
+     */
+    private $data_removal;
+
+        /**
+     * If true, hides user data from API.
+     *
+     * @var bool
+     */
+    private $hide_profile;
+
+    /**
      * Initiates the User variables.
      *
      * @param int $memberid The ID of the member to initialise
@@ -216,7 +240,8 @@ class MyRadio_User extends ServiceAPI implements APICaller
             'SELECT fname, sname, college AS collegeid, l_college.descr AS college,
             phone, email, receive_email::boolean::text, local_name, local_alias, eduroam,
             account_locked::boolean::text, last_login, joined, profile_photo, bio,
-            auth_provider, require_password_change::boolean::text, contract_signed::boolean::text
+            auth_provider, require_password_change::boolean::text, contract_signed::boolean::text, gdpr_accepted::boolean::text, 
+            data_removal, hide_profile::boolean::text
             FROM member, l_college
             WHERE memberid=$1
             AND member.college = l_college.collegeid
@@ -332,6 +357,11 @@ class MyRadio_User extends ServiceAPI implements APICaller
      */
     public function getAllTraining($ignore_revoked = false)
     {
+
+        if($this->isProfileHidden()){
+            return [];
+        }
+
         if (!$this->training) {
             // Get Training info all into array
             $this->training = self::$db->fetchColumn(
@@ -677,6 +707,10 @@ class MyRadio_User extends ServiceAPI implements APICaller
      */
     public function getOfficerships($includeMemberships = false)
     {
+        if ($this->isProfileHidden()){
+            return [];
+        }
+
         if (!empty($this->officerships) && !$includeMemberships) {
             return $this->officerships;
         }
@@ -775,6 +809,12 @@ class MyRadio_User extends ServiceAPI implements APICaller
         }
     }
 
+    public function hasOptedOutDeletion()
+    {
+        return $this->data_removal == 'optout';
+    }
+
+
     /**
      * Get whether the user needs to change their password.
      *
@@ -783,6 +823,16 @@ class MyRadio_User extends ServiceAPI implements APICaller
     public function getRequirePasswordChange()
     {
         return $this->require_password_change;
+    }
+
+    public function isGDPRSigned()
+    {
+        return $this->gdpr_accepted;
+    }
+
+    public function isProfileHidden()
+    {
+        return $this->hide_profile;
     }
 
     /**
@@ -796,6 +846,11 @@ class MyRadio_User extends ServiceAPI implements APICaller
      */
     public function getShows($show_type_id = 1, $current_term_only = false)
     {
+
+        if ($this->isProfileHidden()){
+            return [];
+        }
+
         $sql = 'SELECT show_id FROM schedule.show
             WHERE memberid=$1 OR show_id IN
             (SELECT show_id FROM schedule.show_credit
@@ -1069,6 +1124,22 @@ class MyRadio_User extends ServiceAPI implements APICaller
         return $this;
     }
 
+        /**
+     * Sets the User's account hidden status.
+     *
+     * If a User's account is hidden it will reject myradio api calls towards that user.
+     *
+     * @param bool $bool True for hidden. False for unhidden.
+     *
+     * @return MyRadio_User
+     */
+    public function setHideProfile($bool = false)
+    {
+        $this->setCommonParam('hide_profile', $bool);
+
+        return $this;
+    }
+
     /**
      * Sets the user's require password change status.
      * If a user has requested a new password, this should be set to true.
@@ -1081,6 +1152,34 @@ class MyRadio_User extends ServiceAPI implements APICaller
     public function setRequirePasswordChange($bool = true)
     {
         $this->setCommonParam('require_password_change', $bool);
+
+        return $this;
+    }
+
+    /**
+     * sets if the user has signed the privacy statement.
+     *
+     * @param bool $bool True for GDPR signed
+     *
+     * @return MyRadio_User
+     */
+    public function setSignedGDPR($bool = true)
+    {
+        $this->setCommonParam('gdpr_accepted', $bool);
+
+        return $this;
+    }
+
+        /**
+     * sets if the user has signed the privacy statement.
+     *
+     * @param enum 
+     *
+     * @return MyRadio_User
+     */
+    public function setDataRemoval($removal)
+    {
+        $this->setCommonParam('data_removal', $removal);
 
         return $this;
     }
@@ -1594,6 +1693,28 @@ class MyRadio_User extends ServiceAPI implements APICaller
                 )
             );
         }
+        $form->addField(
+            new MyRadioFormField(
+                'data_removal',
+                MyRadioFormField::TYPE_CHECK ,
+                [
+                'required' => false,
+                'label' => 'I Do not wish for my data to be deleted at any point. (this can be changed later)',
+                'options' => ['checked' => $this->hasOptedOutDeletion()],
+                ]
+            )
+        );
+        $form->addField(
+            new MyRadioFormField(
+                'hide',
+                MyRadioFormField::TYPE_CHECK ,
+                [
+                'required' => false,
+                'label' => 'Hide profile on public website (Strongly discouraged for current members)',
+                'options' => ['checked' => $this->isProfileHidden()],
+                ]
+            )
+        );
         $form->addField(new MyRadioFormField('sec_personal_close', MyRadioFormField::TYPE_SECTION_CLOSE));
 
         //Contact details
@@ -2208,6 +2329,34 @@ class MyRadio_User extends ServiceAPI implements APICaller
         return $form;
     }
 
+    public function getEmptyData(){
+        $data['officerships'] = [];
+        $data['training'] = [];
+        $data['shows'] = [];
+        $data['paid'] = [];
+        $data['locked'] = false;
+        $data['college'] = 10;
+        $data['email'] = NULL;
+        $data['phone'] = NULL;
+        $data['eduroam'] = NULL;
+        $data['local_alias'] = '';
+        $data['local_name'] = 'Hidden User';
+        $data['last_login'] = NULL;
+        $data['payment'] = [];
+        $data['is_currently_paid'] = false;
+        $data['bio'] = 'This user is hidden';
+        $data['memberid'] = $this->getID();
+        $data['fname'] = 'Hidden';
+        $datap['sname'] = 'User';
+        $data['public_email'] = '';
+        $data['url'] = $this->getURL();
+        $data['receive_email'] = false;
+        $data['contract_signed'] = false;
+        $data['photo'] = Config::$default_person_uri;
+        $data['radioTime'] = $this->getRadioTime();
+        return $data;
+    }
+
     /**
      * @mixin officerships Provides 'officerships' that the user has held.
      * @mixin training Provides the 'training' that the user has had.
@@ -2216,6 +2365,10 @@ class MyRadio_User extends ServiceAPI implements APICaller
      */
     public function toDataSource($mixins = [])
     {
+        if ($this->isProfileHidden()){
+            return $this->getEmptyData();
+        }
+
         $mixin_funcs = [
             'officerships' => function (&$data) use ($mixins) {
                 $data['officerships'] = CoreUtils::setToDataSource($this->getOfficerships(), $mixins);
