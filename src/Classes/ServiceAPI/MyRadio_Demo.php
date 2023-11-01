@@ -326,7 +326,8 @@ class MyRadio_Demo extends ServiceAPI
         $demos = [];
         foreach ($result as $demo) {
             $demo['demo_time'] = date('D d M H:i', strtotime($demo['demo_time']));
-            $demo['memberid'] = MyRadio_User::getInstance($demo['memberid'])->getName();
+            $demo['member'] = MyRadio_User::getInstance($demo['memberid'])->getName();
+            $demo['memberid'] = $demo['memberid'];
             $demo['presenterstatusid'] = MyRadio_TrainingStatus::getInstance($demo['presenterstatusid'])->getTitle();
             $demos[] = $demo;
         }
