@@ -74,6 +74,11 @@
                             "url": "module=Mail,action=send,list=30",
                             "description": "Having a problem? Report it here and Computing and/or Engineering team will fix it for you. Or at least try."
                         },
+			{
+                            "title": "Request Songs",
+                            "url": "https://song-requests.ury.org.uk/",
+                            "description": "Want to play a song that we don't have? Request it here and we can buy it!"
+			},
                         {
                             "title": "Get Beds/Jingles",
                             "url": "https://docs.google.com/forms/d/e/1FAIpQLSdLauYhir0wRBHAJBXIw1OcpyRtdJulIueoVUz0CyM12qObSQ/viewform",

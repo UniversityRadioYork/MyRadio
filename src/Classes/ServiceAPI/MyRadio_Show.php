@@ -15,6 +15,7 @@ use MyRadio\ServiceAPI\MyRadio_User;
 use MyRadio\ServiceAPI\MyRadio_Season;
 use MyRadio\ServiceAPI\MyRadio_Scheduler;
 use MyRadio\ServiceAPI\MyRadio_Timeslot;
+use MyRadio\ServiceAPI\MyRadio_Term;
 
 /**
  * The Show class is used to create, view and manupulate Shows within the new MyRadio Scheduler Format.
@@ -919,7 +920,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                             WHERE schedule.show_season.show_id=schedule.show.show_id
                             AND schedule.show_season.termid=$2
                         )';
-                $params[] = MyRadio_Scheduler::getActiveApplicationTerm();
+                $params[] = MyRadio_Term::getActiveApplicationTerm()->getID();
             }
 
             $result = self::$db->fetchAll($sql, $params);
@@ -1233,6 +1234,12 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                 'value' => 'calendar',
                 'title' => 'Apply for a new Season',
                 'url' => URLUtils::makeURL('Scheduler', 'editSeason', ['showid' => $this->getID()]),
+            ],
+            'uploadlink' => [
+                'display' => 'icon',
+                'value' => 'upload',
+                'title' => 'upload show art',
+                'url' => URLUtils::makeURL('Scheduler', 'showPhoto', ['show_id' => $this->getID()]),
             ],
             'micrositelink' => [
                 'display' => 'icon',

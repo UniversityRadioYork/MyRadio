@@ -24,6 +24,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_REQUEST['officerid'])) {
         //assign form
         $officer = MyRadio_Officer::getInstance($_REQUEST['officerid']);
+	if ($officer->getStatus() == "h") {
+		throw new MyRadioException("Officer is historical.", 400);
+	}
 
         MyRadio_Officer::getAssignForm()
             ->editMode(

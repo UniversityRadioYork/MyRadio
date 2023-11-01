@@ -70,6 +70,7 @@
     ["MyRadio", "permissionUsage"],
     ["MyRadio", "errorReport"],
     ["MyRadio", "webstudio"],
+    ["MyRadio", "privacystatement"],
     ["NIPSWeb", "default"],
     ["NIPSWeb", "create_token"],
     ["NIPSWeb", "secure_play"],

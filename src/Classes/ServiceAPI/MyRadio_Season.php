@@ -12,6 +12,8 @@ use MyRadio\MyRadio\URLUtils;
 use MyRadio\MyRadio\MyRadioForm;
 use MyRadio\MyRadio\MyRadioFormField;
 use MyRadio\MyRadioEmail;
+use \MyRadio\ServiceAPI\MyRadio_Scheduler;
+use \MyRadio\ServiceAPI\MyRadio_Term;
 
 /**
  * The Season class is used to create, view and manipulate Seasons within the new MyRadio Scheduler Format.
@@ -185,7 +187,8 @@ class MyRadio_Season extends MyRadio_Metadata_Common
         /**
          * Select an appropriate value for $term_id.
          */
-        $term_id = MyRadio_Scheduler::getActiveApplicationTerm();
+        $term_id = MyRadio_Term::getActiveApplicationTerm()->getID();
+	$num_weeks = MyRadio_Term::getActiveApplicationTerm()->getTermWeeks();
 
         //Start a transaction
         self::$db->query('BEGIN');
@@ -208,7 +211,7 @@ class MyRadio_Season extends MyRadio_Metadata_Common
 
         //Now let's allocate store the requested weeks for a term
         $any_weeks = false;
-        for ($i = 1; $i <= 10; ++$i) {
+        for ($i = 1; $i <= $num_weeks; ++$i) {
             if ($params['weeks']["wk$i"]) {
                 self::$db->query(
                     'INSERT INTO schedule.show_season_requested_week (show_season_id, week) VALUES ($1, $2)',
@@ -319,14 +322,21 @@ class MyRadio_Season extends MyRadio_Metadata_Common
 
     public static function getForm()
     {
+        $current_term_info = MyRadio_Term::getActiveApplicationTerm();
+        $num_weeks = $current_term_info->getTermWeeks();
+        $startdate = $current_term_info->getTermStartDate();
+        $week_names = $current_term_info->getTermWeekNames();
+
         //Set up the weeks checkboxes
         $weeks = [];
-        for ($i = 1; $i <= 10; ++$i) {
+        $date = $startdate;
+        for ($i = 1; $i <= $num_weeks; ++$i) {
             $weeks[] = new MyRadioFormField(
                 'wk'.$i,
                 MyRadioFormField::TYPE_CHECK,
-                ['label' => 'Week '.$i, 'required' => false]
+                ['label' => $week_names[$i - 1] . ' (w/c ' . date("Y-m-d",$date) .')', 'required' => false]
             );
+            $date = $date + (86400 * 7); //one week
         }
 
         return (
@@ -473,6 +483,10 @@ class MyRadio_Season extends MyRadio_Metadata_Common
 
     public function getAllocateForm()
     {
+        $current_term_info = MyRadio_Term::getActiveApplicationTerm();
+        $num_weeks = $current_term_info->getTermWeeks();
+        $startdate = $current_term_info->getTermStartDate();
+        $week_names = $current_term_info->getTermWeekNames();
         $form = (
             new MyRadioForm(
                 'sched_allocate',
@@ -494,16 +508,18 @@ class MyRadio_Season extends MyRadio_Metadata_Common
 
         //Set up the weeks checkboxes
         $weeks = [];
-        for ($i = 1; $i <= 10; ++$i) {
+        $date = $startdate;
+        for ($i = 1; $i <= $num_weeks; ++$i) {
             $weeks[] = new MyRadioFormField(
                 'wk'.$i,
                 MyRadioFormField::TYPE_CHECK,
                 [
-                    'label' => 'Week '.$i,
+                    'label' => $week_names[$i - 1] . ' (w/c '.date("Y-m-d",$date) . ')',
                     'required' => false,
                     'options' => ['checked' => in_array($i, $this->getRequestedWeeks())],
                 ]
             );
+            $date = $date + (86400 * 7); //one week
         }
 
         //Set up the requested times radios
@@ -1015,7 +1031,7 @@ EOT
      * @todo Email the user notifying them of scheduling
      * @todo Verify the timeslot is free before scheduling
      */
-    public function schedule($params)
+    public function schedule($params, $num_weeks)
     {
         //Verify that the input time is valid
         if (!isset($params['time']) or !is_numeric($params['time'])) {
@@ -1052,7 +1068,7 @@ EOT
         /*
          * Since terms start on the Monday, we just +1 day to it
          */
-        $start_day = MyRadio_Scheduler::getTermStartDate() + ($req_time['day'] * 86400);
+        $start_day = (MyRadio_Term::getActiveApplicationTerm())->getTermStartDate() + ($req_time['day'] * 86400);
 
         //Now it's time to BEGIN to COMMIT!
         self::$db->query('BEGIN');
@@ -1061,7 +1077,7 @@ EOT
          * then schedule it if it should. Simples.
          */
         $times = '';
-        for ($i = 1; $i <= 10; ++$i) {
+        for ($i = 1; $i <= $num_weeks; ++$i) {
             if (isset($params['weeks']['wk'.$i]) && $params['weeks']['wk'.$i] == 1) {
                 $day_start = $start_day + (($i - 1) * 7 * 86400);
                 $gmt_show_time = $day_start + $req_time['start_time'];

@@ -1,4 +1,5 @@
 body:not(.nonav) {
+  background-color: #FFFFFF;
   margin-top: 50px; /* Bootstrap navbar offset */
 }
 
@@ -76,6 +77,9 @@ body:not(.nonav) {
   background-color: #2D333C;
   border-color: #2D425F;
   border: none;
+}
+.navbar-ury-pink {
+  background-color: #fc03df;
 }
 .navbar-ury .navbar-brand {
   color: #ffffff;
