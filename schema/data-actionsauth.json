@@ -75,6 +75,7 @@
     ["MyRadio", "StaticProxy", null],
     ["MyRadio", "timeslot", null],
     ["MyRadio", "webstudio", "AUTH_ACCESS_WEBSTUDIO"],
+    ["MyRadio", "privacystatement", null],
     ["NIPSWeb", "confirm_aux_upload", "AUTH_USENIPSWEB"],
     ["NIPSWeb", "confirm_central_upload", "AUTH_USENIPSWEB"],
     ["NIPSWeb", "create_token", "AUTH_USENIPSWEB"],
