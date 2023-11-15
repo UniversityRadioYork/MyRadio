@@ -187,7 +187,8 @@ class MyRadio_Scheduler extends ServiceAPI
         $conflicts = [];
         $start_day = (new MyRadio_Term($term_id))->getTermStartDate() + ($time['day'] * 86400);
         //Iterate over each week
-        for ($i = 1; $i <= 10; ++$i) {
+        //Changes to 11 weeks for semesters
+        for ($i = 1; $i <= 11; ++$i) {
             $day_start = $start_day + (($i - 1) * 7 * 86400);
 
             //Get the start time
