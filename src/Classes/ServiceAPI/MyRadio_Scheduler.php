@@ -188,10 +188,6 @@ class MyRadio_Scheduler extends ServiceAPI
         $term = new MyRadio_Term($term_id);
         $start_day = $term->getTermStartDate() + ($time['day'] * 86400);
         //Iterate over each week
-        // Changes it to get number of weeks in a semester from Myradio_term
-
-        
-
         for ($i = 1; $i <= $term->getTermWeeks(); ++$i) {
             $day_start = $start_day + (($i - 1) * 7 * 86400);
 
