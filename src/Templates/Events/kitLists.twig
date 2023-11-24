@@ -1,0 +1,9 @@
+{% extends 'stripe.twig' %}
+{% import 'macros.twig' as MyRadio %}
+
+{% block stripecontent %}
+    <h1>Kit Lists</h1>
+    <p>Please talk to Engineering if your event doesn't have kit allocated.</p>
+    {{ kitLists | raw }}
+{% endblock %}
+
