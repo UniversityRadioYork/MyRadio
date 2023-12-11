@@ -35,7 +35,8 @@
         "\\MyRadio\\NIPSWeb\\NIPSWeb_ManagedPlaylist": "nipswebPlaylist",
         "\\MyRadio\\NIPSWeb\\NIPSWeb_TimeslotItem": "timeslotItem",
         "\\MyRadio\\NIPSWeb\\NIPSWeb_ManagedItem": "nipswebItem",
-        "\\MyRadio\\Config": "config"
+        "\\MyRadio\\Config": "config",
+	"\\MyRadio\\ServiceAPI\\Profile": "profile"
     },
     "specs": {
         "quote": {

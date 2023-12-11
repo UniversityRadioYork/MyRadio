@@ -9,6 +9,7 @@ use MyRadio\MyRadioException;
 use MyRadio\MyRadio\CoreUtils;
 use MyRadio\MyRadio\MyRadioForm;
 use MyRadio\MyRadio\MyRadioFormField;
+use MyRadio\ServiceAPI\MyRadio_Term;
 
 /**
  * Abstractor for the Scheduler Module.
@@ -88,63 +89,6 @@ class MyRadio_Scheduler extends ServiceAPI
         return 0;
     }
 
-    /**
-     * Create a new term.
-     *
-     * @param int    $start The term start date
-     * @param string $descr Term description e.g. Autumn 2036
-     *
-     * @return int The new termid
-     */
-    public static function addTerm($start, $descr)
-    {
-        if (date('D', $start) !== 'Mon') {
-            throw new MyRadioException('Terms must start on a Monday.', 400);
-        }
-
-        // Let's make this a GMT thing, exactly midnight
-        $ts = gmdate('Y-m-d 00:00:00+00', $start);
-        $end = $start + (86400 * 68); // +68 days, to Friday of the 10th week
-        $te = gmdate('Y-m-d 00:00:00+00', $end);
-
-        echo "INSERT INTO terms (start, finish, descr) VALUES ('$ts', '$te', '$descr') RETURNING termid";
-
-        return self::$db->fetchColumn(
-            'INSERT INTO terms (start, finish, descr) VALUES ($1, $2, $3) RETURNING termid',
-            [$ts, $te, $descr]
-        )[0];
-    }
-
-    /**
-     * Returns a list of terms in the present or future.
-     *
-     * @param bool $currentOnly If only the present term should be output (if term time)
-     * @return Array[Array] an array of arrays of terms
-     */
-    public static function getTerms($currentOnly = false)
-    {
-        $query = 'SELECT termid, EXTRACT(EPOCH FROM start) AS start, descr FROM terms WHERE ';
-        $query .= $currentOnly ? 'start <= now() AND ' : '';
-        $query .= 'finish > now() ORDER BY start ASC';
-        return self::$db->fetchAll($query);
-    }
-
-    /**
-     * Returns term item of the id $termid.
-     *
-     * @return Array of a term
-     */
-    public static function getTerm($termid)
-    {
-        $terms = self::getTerms();
-        foreach ($terms as $term) {
-            if ($term['termid'] == $termid) {
-                return $term;
-            }
-        }
-
-        throw new MyRadioException('That term could not be found', 400);
-    }
 
     /**
      * Returns if we are currently in term time.
@@ -153,45 +97,9 @@ class MyRadio_Scheduler extends ServiceAPI
      */
     public static function isTerm()
     {
-        return (!empty(self::getTerms(true)));
+        return MyRadio_Term::isTerm();
     }
 
-    public static function getActiveApplicationTermInfo()
-    {
-        $termid = self::getActiveApplicationTerm();
-        if (empty($termid)) {
-            return;
-        }
-
-        return ['termid' => $termid, 'descr' => self::getTermDescr($termid)];
-    }
-
-    public static function getTermDescr($termid)
-    {
-        $return = self::$db->fetchOne(
-            'SELECT descr, start FROM terms WHERE termid=$1',
-            [$termid]
-        );
-
-        return $return['descr'].date(' Y', strtotime($return['start']));
-    }
-
-    /**
-     * Gives the start date for the given/current term at midnight GMT.
-     *
-     * @param int $term_id id of the term to get the date of
-     *
-     * @return int unix timestamp of midnight GMT for the start of term
-     */
-    public static function getTermStartDate($term_id = null)
-    {
-        if ($term_id === null) {
-            $term_id = self::getActiveApplicationTerm();
-        }
-        $result = self::$db->fetchOne('SELECT start FROM terms WHERE termid=$1', [$term_id]);
-
-        return strtotime('Midnight '.gmdate('d-m-Y', strtotime($result['start'])).' GMT');
-    }
 
     /**
      * Returns a list of potential genres, organised so they can be used as a SELECT MyRadioFormField data source.
@@ -249,29 +157,6 @@ class MyRadio_Scheduler extends ServiceAPI
         return 0;
     }
 
-    /**
-     * Returns the Term currently available for Season applications.
-     * Users can only apply to the current term, or 28 days before the next one
-     * starts.
-     *
-     * @return int|null Returns the id of the term or null if no active term
-     *
-     * @todo Move this into the relevant scheduler class or CoreUtils
-     */
-    public static function getActiveApplicationTerm()
-    {
-        $return = self::$db->fetchColumn(
-            'SELECT termid FROM terms
-            WHERE start <= $1 AND finish >= NOW() LIMIT 1',
-            [CoreUtils::getTimestamp(strtotime('+28 Days'))]
-        );
-
-        if (empty($return)) {
-            return;
-        }
-
-        return $return[0];
-    }
 
     /**
      * @param int   $term_id The term to check for
@@ -286,9 +171,10 @@ class MyRadio_Scheduler extends ServiceAPI
     {
         self::initDB();
         $conflicts = [];
-        $start_day = self::getTermStartDate($term_id) + ($time['day'] * 86400);
+        $term = new MyRadio_Term($term_id);
+        $start_day = $term->getTermStartDate() + ($time['day'] * 86400);
         //Iterate over each week
-        for ($i = 1; $i <= 10; ++$i) {
+        for ($i = 1; $i <= $term->getTermWeeks(); ++$i) {
             $day_start = $start_day + (($i - 1) * 7 * 86400);
 
             //Get the start time
@@ -338,38 +224,4 @@ class MyRadio_Scheduler extends ServiceAPI
         );
     }
 
-    public static function getTermForm()
-    {
-        return (
-            new MyRadioForm(
-                'sched_term',
-                'Scheduler',
-                'editTerm',
-                [
-                    'title' => 'Scheduler',
-                    'subtitle' => 'Create Term',
-                ]
-            )
-        )->addField(
-            new MyRadioFormField(
-                'descr',
-                MyRadioFormField::TYPE_TEXT,
-                [
-                    'explanation' => 'Name the term. A value of "Autumn" denotes that this '
-                                     . 'term represents the start of a new membership year.',
-                    'label' => 'Term description',
-                    'options' => ['maxlength' => 10],
-                ]
-            )
-        )->addField(
-            new MyRadioFormField(
-                'start',
-                MyRadioFormField::TYPE_DATE,
-                [
-                    'explanation' => 'Select a term start date. This must be a Monday.',
-                    'label' => 'Start date',
-                ]
-            )
-        );
-    }
 }

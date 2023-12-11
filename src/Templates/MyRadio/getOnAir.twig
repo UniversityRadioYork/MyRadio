@@ -26,6 +26,7 @@
 </li>
 
 <!--Apply for a Show-->
+<!-- debug: {{studio_demoed}}, {{paid}}, {{contract_signed}} -->
 <li {% if not (studio_demoed and paid and contract_signed) %} class="menu-checklist-disabled"{% endif %}>
   <a href="{% if not (studio_demoed and paid) %}javascript:{% else %}{{MyRadio.makeURL(config, 'Scheduler', 'myShows')}}{% endif %}"
      title="{% if not has_show %}You've passed all the stages of training. Now it's time to apply for your very first show! {%
