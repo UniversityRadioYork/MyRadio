@@ -1284,8 +1284,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             LEFT JOIN (
                 SELECT memberid, signerid, location, sign_time FROM sis2.member_signin
                 WHERE show_season_timeslot_id=$1
-            ) AS t2 USING (memberid)
-            LEFT JOIN schedule.location ON t2.location = location.location_id',
+            ) AS t2 USING (memberid)',
             [$this->getID()]
         );
 
@@ -1303,8 +1302,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
 
         // Now handle guests
         $result = self::$db->fetchAll(
-            'SELECT signerid, guest_info, sign_time, location_id, location_name FROM sis2.guest_signin
-                INNER JOIN schedule.location ON guest_signin.location = location.location_id
+            'SELECT signerid, guest_info, sign_time FROM sis2.guest_signin
                 WHERE show_season_timeslot_id=$1',
             [$this->getID()]
         );
@@ -1315,7 +1313,6 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
                 function ($x) {
                     return [
                         'signedby' => $x['signerid'] ? MyRadio_User::getInstance($x['signerid']) : null,
-                        'location' => $x['location_name'],
                         'guest_info' => $x['guest_info'],
                         'time' => strtotime($x['sign_time'])
                     ];
@@ -1412,7 +1409,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
      * @param MyRadio_User $member
      * @param int|string $locationid
      */
-    public function signIn(MyRadio_User $member, $locationid)
+    public function signIn(MyRadio_User $member)
     {
         // If member already signed in for whatever reason, don't bother trying again.
         $signedIn = !empty(self::$db->fetchOne(
@@ -1422,9 +1419,9 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
         ));
         if (!$signedIn) {
             self::$db->query(
-                'INSERT INTO sis2.member_signin (show_season_timeslot_id, memberid, signerid, location)
-                VALUES ($1, $2, $3, $4)',
-                [$this->getID(), $member->getID(), MyRadio_User::getInstance()->getID(), $locationid]
+                'INSERT INTO sis2.member_signin (show_season_timeslot_id, memberid, signerid)
+                VALUES ($1, $2, $3)',
+                [$this->getID(), $member->getID(), MyRadio_User::getInstance()->getID()]
             );
         }
     }

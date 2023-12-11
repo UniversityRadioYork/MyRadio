@@ -102,8 +102,7 @@ $("#timeslots").on(
                   .click(function() {
                     var wrapper = $("<div>");
                     wrapper.append(
-                      $("<p>Please enter the names of all guests on your show, one on each line. " +
-                        "If any are not students, please also enter their phone numbers.</p>")
+                      $("<p>Please enter the names of all guests on your show, one on each line.</p>")
                     );
                     wrapper.append(
                       $("<textarea rows='8' cols='50'>")
@@ -113,23 +112,7 @@ $("#timeslots").on(
                       .replaceWith(wrapper);
                   })
               )
-                .append("<br>")
-                .append(
-                  $("<label>")
-                    .text("Show Location")
-                );
-              var locSel = $("<select name='location'>");
-              var selectOption = $("<option selected='true' value='unselected' disabled>Please Select</option>");
-              locSel.append(selectOption);
-              for (var loc of window.myradio.locations) {
-                locSel.append(
-                  $("<option>")
-                    .attr("value", loc.value)
-                    .text(loc.text)
-                );
-              }
-              $("#signin-list")
-                .append(locSel);
+                .append("<br>");
             }
           });
         } else {

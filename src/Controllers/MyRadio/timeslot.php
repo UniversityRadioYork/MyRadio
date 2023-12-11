@@ -30,11 +30,7 @@ function setupTimeslot(MyRadio_Timeslot $timeslot)
         MyRadio_Timeslot::setUserSelectedTimeslot($timeslot);
         //Handle sign-ins
         foreach (($_REQUEST['signin'] ?? []) as $memberid) {
-            if (!isset($_REQUEST["location"]) || $_REQUEST["location"] == "unselected") {
-                URLUtils::backWithMessage("You must select where you are doing your show, for COVID Track and Trace");
-                return;
-            }
-            $timeslot->signIn(MyRadio_User::getInstance($memberid), $_REQUEST['location']);
+            $timeslot->signIn(MyRadio_User::getInstance($memberid));
         }
         if (!empty($_REQUEST['guest_info'])) {
             $timeslot->signInGuests($_REQUEST['guest_info'], $_REQUEST['location']);
@@ -93,6 +89,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     $twig
         ->addVariable('timeslots', $data)
-        ->addVariable('locations', MyRadio_Scheduler::getLocations())
         ->render();
 }
