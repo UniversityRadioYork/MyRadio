@@ -155,7 +155,14 @@
             },
             {
                 "required": ["email"]
-            }]
+            }],
+            "message": {
+                "markread": {
+                    "required": ["messageId"],
+                    "properties": {
+                        "messageId": {
+                            "type": "integer"
         }
+    
     }
-}
+}}}}}
