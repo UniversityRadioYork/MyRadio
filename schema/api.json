@@ -158,11 +158,28 @@
             }],
             "message": {
                 "markread": {
-                    "required": ["messageId"],
-                    "properties": {
-                        "messageId": {
+                    "parameters": [
+                        {
+                            "name": "id",
+                            "in": "path",
+                            "required": true,
                             "type": "integer"
-        }
+                        }
+                    ],
+                    "responses": {
+                        "200": {
+                            "description": "Successful operation"
+                        },
+                        "400": {
+                            "description": "Invalid ID supplied"
+                        },
+                        "404": {
+                            "description": "Message not found"
+                        }
+                    }
     
+                }
+            }
+        }
     }
-}}}}}
+}
