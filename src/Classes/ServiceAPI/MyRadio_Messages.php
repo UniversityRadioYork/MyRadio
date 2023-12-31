@@ -14,6 +14,6 @@ class MyRadio_Messages extends ServiceAPI
 
     SIS_Messages::setMessageStatus(intval($id), SIS_Messages::MSG_STATUS_READ);
 
-    return ['status' => 204, 'content' => 'No Content'];
+    return ['status' => 200, 'content' => 'Message marked as read.'];
   }
 }
