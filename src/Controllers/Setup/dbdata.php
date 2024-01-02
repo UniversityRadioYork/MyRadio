@@ -25,7 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $db = Database::getInstance();
     $db->query(
-        'INSERT INTO myradio.schema (attr, value) VALUES (\'datamode\', $1)',
+        'INSERT INTO myradio.schema (attr, value) VALUES (\'datamode\', $1) ON CONFLICT (attr) DO UPDATE SET value = $1 WHERE schema.attr = \'datamode\'',
         [$mode]
     );
 
@@ -45,11 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             CoreUtils::getActionId($module, $action[1]);
         }
         foreach (json_decode(file_get_contents(SCHEMA_DIR.'data-auth.json')) as $auth) {
-            try {
-                AuthUtils::addPermission($auth[0], $auth[1]);
-            } catch (MyRadioException $e) {
-                $warnings[] = 'Failed to create Permission "'.$auth[0].'". It may already exist.';
-            }
+            AuthUtils::addPermission($auth[0], $auth[1]);
         }
         foreach (json_decode(file_get_contents(SCHEMA_DIR.'data-actionsauth.json')) as $actionauth) {
             $module = CoreUtils::getModuleId($actionauth[0]);
@@ -59,8 +55,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         foreach (json_decode(file_get_contents(SCHEMA_DIR.'data-apiauth.json')) as $apiauth) {
             $db->query(
-                'INSERT INTO myury.api_method_auth (class_name, method_name, typeid) VALUES ($1, $2, $3)',
-                [$apiauth[0], $apiauth[1], constant($apiauth[2])]
+                'INSERT INTO myury.api_method_auth (class_name, method_name, typeid)
+                        VALUES ($1, $2, $3)
+                        ON CONFLICT (class_name, method_name, typeid) DO NOTHING',
+                [$apiauth[0], $apiauth[1], $apiauth[2] === null ? null : constant($apiauth[2])]
             );
         }
     }
