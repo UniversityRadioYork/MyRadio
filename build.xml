@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="MyRadio" default="build">
  <property name="vendordir" value="${basedir}/src/vendor/bin" />
- <target name="build" depends="prepare,composer,lint,phploc,pdepend,phpmd-ci,phpcs-ci,eslint-ci,phpcpd,phpdox"/>
+ <target name="build" depends="prepare,composer,lint,pdepend,phpmd-ci,phpcs-ci,eslint-ci,phpdox"/>
 
  <target name="clean" description="Cleanup build artifacts">
   <delete dir="${basedir}/build/api"/>
@@ -43,18 +43,6 @@
    </fileset>
    -->
   </apply>
- </target>
-
- <target name="phploc" description="Measure project size using PHPLOC">
-  <exec executable="${vendordir}/phploc">
-   <arg value="--count-tests" />
-   <arg value="--log-csv" />
-   <arg value="${basedir}/build/logs/phploc.csv" />
-   <arg value="--log-xml" />
-   <arg value="${basedir}/build/logs/phploc.xml" />
-   <arg value="--exclude=vendor" />
-   <arg path="${basedir}/src" />
-  </exec>
  </target>
 
  <target name="pdepend" description="Calculate software metrics using PHP_Depend">
@@ -99,14 +87,6 @@
    <arg value="--format=checkstyle" />
    <arg value="--output-file=${basedir}/build/logs/eslint.xml" />
    <arg path="${basedir}/src/Public/js" />
-  </exec>
- </target>
-
- <target name="phpcpd" description="Find duplicate code using PHPCPD">
-  <exec executable="${vendordir}/phpcpd">
-   <arg value="--log-pmd=${basedir}/build/logs/pmd-cpd.xml" />
-   <arg value="--exclude=vendor" />
-   <arg path="${basedir}/src" />
   </exec>
  </target>
 
