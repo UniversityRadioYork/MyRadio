@@ -14,7 +14,7 @@ use \MyRadio\MyRadio\MyRadioNullSession;
  * Patches are scripts in schema/patches.
  */
 define('MYRADIO_CURRENT_SCHEMA_VERSION', 15);
-
+session_start();
 /*
  * Turn on Error Reporting for the start. Once the Config object is loaded
  * this is updated to reflect Config.
