@@ -69,10 +69,11 @@ Config::$api_uri = '/api/';
 Config::$api_url = '//ury.org.uk/api';
 
 /**
- * Recaptcha Settings
+ * Auth Settings
  */
 Config::$recaptcha_public_key = 'YOUR KEY HERE';
 Config::$recaptcha_private_key = 'YOUR KEY HERE';
+Config::$jwt_signing_secret = 'SECRET_HERE';
 
 /**
  * Feature enable
