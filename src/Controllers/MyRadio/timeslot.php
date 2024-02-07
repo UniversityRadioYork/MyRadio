@@ -31,7 +31,7 @@ function setupTimeslot(MyRadio_Timeslot $timeslot)
         //Handle sign-ins
         foreach (($_REQUEST['signin'] ?? []) as $memberid) {
             if (!isset($_REQUEST["location"]) || $_REQUEST["location"] == "unselected") {
-                URLUtils::backWithMessage("You must select where you are doing your show, for COVID Track and Trace");
+                URLUtils::backWithMessage("You must select where you are doing your show");
                 return;
             }
             $timeslot->signIn(MyRadio_User::getInstance($memberid), $_REQUEST['location']);
