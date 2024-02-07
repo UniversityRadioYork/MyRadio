@@ -755,7 +755,8 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         $filetype = explode('/', getimagesize($tmp_path)['mime'])[1];
         $suffix = 'image_meta/ShowImageMetadata/'.$result.'.'.$filetype;
         $path = Config::$public_media_path.'/'.$suffix;
-        rename($tmp_path, $path);
+        move_uploaded_file($tmp_path, $path);
+        chmod($path, 0644);
 
         self::$db->query(
             'UPDATE schedule.show_image_metadata SET effective_to=NOW()
