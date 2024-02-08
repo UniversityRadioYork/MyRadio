@@ -2,7 +2,7 @@ FROM php:7.4-apache
 
 RUN apt-get update && apt-get install -y libpq-dev libpng-dev libjpeg-dev libldap-dev unzip \
                                          libcurl4-openssl-dev libxslt-dev git libz-dev libzip-dev libmemcached-dev \
-                                         postgresql-client jq msmtp-mta
+                                         postgresql-client jq msmtp-mta ffmpeg
 
 RUN docker-php-ext-install pgsql pdo_pgsql gd ldap curl xsl zip
 
@@ -17,6 +17,10 @@ RUN pecl install xdebug-3.1.1 && docker-php-ext-enable xdebug \
  && echo 'xdebug.client_host=localhost' >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
 
 RUN echo 'error_reporting=E_ALL' >> /usr/local/etc/php/conf.d/error-reporting.ini
+
+RUN echo "memory_limit=512M" >> /usr/local/etc/php/conf.d/uploads.ini
+RUN echo "upload_max_filesize=512M" >> /usr/local/etc/php/conf.d/uploads.ini
+RUN echo "post_max_size=512M" >> /usr/local/etc/php/conf.d/uploads.ini
 
 RUN echo sendmail_path = "/usr/bin/msmtp -t --host mail --port 1025 --from myradio@ury.dev" > /usr/local/etc/php/conf.d/sendmail.ini
 
