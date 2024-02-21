@@ -126,7 +126,11 @@ class Database
             pg_send_query_params($this->db, $sql, $params);
         }
         $result = pg_get_result($this->db);
-        $errmsg = pg_result_error($result);
+        if ($result === FALSE) {
+            $errmsg = pg_last_error($this->db);
+        } else {
+            $errmsg = pg_result_error($result);
+        }
         if ($errmsg != "") {
             if ($this->in_transaction) {
                 pg_query($this->db, 'ROLLBACK');

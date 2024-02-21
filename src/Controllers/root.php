@@ -13,7 +13,7 @@ use \MyRadio\MyRadio\MyRadioNullSession;
  * This number is incremented every time a database patch is released.
  * Patches are scripts in schema/patches.
  */
-define('MYRADIO_CURRENT_SCHEMA_VERSION', 15);
+define('MYRADIO_CURRENT_SCHEMA_VERSION', 18);
 
 /*
  * Turn on Error Reporting for the start. Once the Config object is loaded
@@ -56,7 +56,7 @@ require 'vendor/autoload.php';
  * Load configuration specific to this system.
  * Or, if it doesn't exist, kick into setup.
  */
-if (stream_resolve_include_path('MyRadio_Config.local.php')) {
+if (stream_resolve_include_path('MyRadio_Config.local.php') && file_exists(stream_resolve_include_path('MyRadio_Config.local.php'))) {
     require_once 'MyRadio_Config.local.php';
     if (Config::$setup === true) {
         require 'Controllers/Setup/root.php';
@@ -96,7 +96,7 @@ AuthUtils::setUpAuth();
  * Turn off visible error reporting, if needed
  * must come after AuthUtils::setUpAuth()
  */
-if (!Config::$display_errors && !AuthUtils::hasPermission(AUTH_SHOWERRORS)) {
+if (!Config::$display_errors && defined('AUTH_SHOWERRORS') && !AuthUtils::hasPermission(AUTH_SHOWERRORS)) {
     ini_set('display_errors', 'Off');
 }
 

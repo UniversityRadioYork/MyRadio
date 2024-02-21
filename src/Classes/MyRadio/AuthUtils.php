@@ -406,8 +406,10 @@ class AuthUtils
     public static function addPermission($descr, $constant)
     {
         $value = (int) Database::getInstance()->fetchColumn(
+            // This is for all intents and purposes an ON CONFLICT DO NOTHING, but if we did use that
+            // then the RETURNING wouldn't return the ID which we need, hence the no-op UPDATE.
             'INSERT INTO public.l_action (descr, phpconstant)
-            VALUES ($1, $2) RETURNING typeid',
+            VALUES ($1, $2) ON CONFLICT (phpconstant) DO UPDATE SET descr = $1 RETURNING typeid',
             [$descr, $constant]
         )[0];
         define($constant, $value);
@@ -428,7 +430,8 @@ class AuthUtils
         $db = Database::getInstance();
         $db->query(
             'INSERT INTO myury.act_permission (serviceid, moduleid, actionid, typeid)
-            VALUES ($1, $2, $3, $4)',
+            VALUES ($1, $2, $3, $4)
+            ON CONFLICT (serviceid, moduleid, actionid, typeid) DO NOTHING',
             [Config::$service_id, $module, $action, $permission]
         );
     }
