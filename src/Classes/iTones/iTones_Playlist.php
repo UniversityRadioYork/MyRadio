@@ -235,6 +235,27 @@ class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
         return $this->title;
     }
 
+    public function getPlaylistAtTime($time)
+    {
+        $getplaylist = self::$db->fetchColumn(
+        'SELECT playlist.playlistid
+        FROM jukebox.playlists playlist
+        INNER JOIN jukebox.playlist_availability avail ON playlist.playlistid=avail.playlistid
+        WHERE playlist.category=2
+        AND archived=false
+        AND avail.playlist_availability_id IN (
+            SELECT playlist_availability_id
+            FROM jukebox.playlist_timeslot
+            WHERE \''.$time.'\'
+            BETWEEN start_time
+            AND end_time
+
+            GROUP BY playlist_availability_id
+        )');
+        return $getplaylist[0];
+        //return $current_time;
+    }
+
     /**
      * Get the unique playlistid of the Playlist.
      *
