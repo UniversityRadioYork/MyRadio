@@ -1,4 +1,4 @@
-FROM php:8.2-apache
+FROM php:7.4-apache
 
 RUN apt-get update && apt-get install -y libpq-dev libpng-dev libjpeg-dev libldap-dev unzip \
                                          libcurl4-openssl-dev libxslt-dev git libz-dev libzip-dev libmemcached-dev \
@@ -9,8 +9,8 @@ RUN docker-php-ext-install pgsql pdo_pgsql gd ldap curl xsl zip
 RUN pecl install memcached && \
     echo extension=memcached.so >> /usr/local/etc/php/conf.d/memcached.ini
 
-RUN pecl install xdebug-3.3.1 && docker-php-ext-enable xdebug \
- && echo 'zend_extension="/usr/local/lib/php/extensions/no-debug-non-zts-20220829/xdebug.so"' >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
+RUN pecl install xdebug-3.1.1 && docker-php-ext-enable xdebug \
+ && echo 'zend_extension="/usr/local/lib/php/extensions/no-debug-non-zts-20190902/xdebug.so"' >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
  && echo 'xdebug.client_port=9003' >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
  && echo 'xdebug.mode=develop,debug' >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
  && echo 'xdebug.start_with_request=yes' >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
@@ -22,7 +22,7 @@ RUN echo "memory_limit=512M" >> /usr/local/etc/php/conf.d/uploads.ini
 RUN echo "upload_max_filesize=512M" >> /usr/local/etc/php/conf.d/uploads.ini
 RUN echo "post_max_size=512M" >> /usr/local/etc/php/conf.d/uploads.ini
 
-RUN echo sendmail_path = "/usr/bin/msmtp -t --host mail --port 1025 --from myradio@ury.dev" > /usr/local/etc/php/conf.d/sendmail.ini
+RUN echo sendmail_path = "/usr/bin/msmtp -t --host ury.york.ac.uk --port 587 --from noreply@ury.org.uk" > /usr/local/etc/php/conf.d/sendmail.ini
 
 # Self-signed certificate
 RUN openssl req -nodes -new -subj "/C=GB/ST=North Yorkshire/L=York/O=University Radio York/OU=Localhost/CN=localhost" > myradio.csr && \
