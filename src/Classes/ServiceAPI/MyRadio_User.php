@@ -556,7 +556,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
             //Return the local mailbox, or, failing that, eduroam
             $local = $this->getLocalName();
             if (!empty($local)) {
-                return $local;
+                return $local.'@'.Config::$email_domain;
             } else {
                 //ffs, some people don't have an eduroam either.
                 $eduroam = $this->getEduroam();

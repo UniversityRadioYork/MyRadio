@@ -17,6 +17,10 @@ $(".twig-datatable").dataTable({
     {
       "sTitle": "Time"
     },
+    //memberid
+    {
+      "bVisible": false
+    },
     //member
     {
       "sTitle": "Trainer"

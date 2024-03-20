@@ -22,7 +22,7 @@ RUN echo "memory_limit=512M" >> /usr/local/etc/php/conf.d/uploads.ini
 RUN echo "upload_max_filesize=512M" >> /usr/local/etc/php/conf.d/uploads.ini
 RUN echo "post_max_size=512M" >> /usr/local/etc/php/conf.d/uploads.ini
 
-RUN echo sendmail_path = "/usr/bin/msmtp -t --host mail --port 1025 --from myradio@ury.dev" > /usr/local/etc/php/conf.d/sendmail.ini
+RUN echo sendmail_path = "/usr/bin/msmtp -t --host ury.york.ac.uk --port 587 --from noreply@ury.org.uk" > /usr/local/etc/php/conf.d/sendmail.ini
 
 # Self-signed certificate
 RUN openssl req -nodes -new -subj "/C=GB/ST=North Yorkshire/L=York/O=University Radio York/OU=Localhost/CN=localhost" > myradio.csr && \
