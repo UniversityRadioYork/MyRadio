@@ -1,4 +1,4 @@
-FROM php:8.2-apache
+FROM php:7.4-apache
 
 RUN apt-get update && apt-get install -y libpq-dev libpng-dev libjpeg-dev libldap-dev unzip \
                                          libcurl4-openssl-dev libxslt-dev git libz-dev libzip-dev libmemcached-dev \
