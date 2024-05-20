@@ -27,12 +27,12 @@ class MyRadioSession implements \SessionHandlerInterface
         $this->db = Database::getInstance();
     }
 
-    public function open($save_path, $sesion_name)
+    public function open($save_path, $sesion_name): bool
     {
         return true;
     }
 
-    public function close()
+    public function close(): bool
     {
         return true;
     }
@@ -41,7 +41,7 @@ class MyRadioSession implements \SessionHandlerInterface
      * Clear up old session entries in the database
      * This should be called automatically by PHP every one in a while.
      */
-    public function gc($lifetime)
+    public function gc($lifetime): int|false
     {
         $this->db->query(
             'DELETE FROM sso_session WHERE timestamp<$1',
@@ -55,7 +55,7 @@ class MyRadioSession implements \SessionHandlerInterface
      * Reads the session data from the database. If no data exists, creates an
      * empty row.
      */
-    public function read($id)
+    public function read($id): string|false
     {
         if (empty($id)) {
             return false;
@@ -87,7 +87,7 @@ class MyRadioSession implements \SessionHandlerInterface
     /**
      * Writes changes to the session data to the database.
      */
-    public function write($id, $data)
+    public function write($id, $data): bool
     {
         if (empty($id)) {
             return false;
@@ -107,7 +107,7 @@ class MyRadioSession implements \SessionHandlerInterface
     /**
      * Deletes the session entry from the database.
      */
-    public function destroy($id)
+    public function destroy($id): bool
     {
         if (empty($id)) {
             return false;
