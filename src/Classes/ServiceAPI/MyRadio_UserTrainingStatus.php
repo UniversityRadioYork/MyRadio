@@ -85,7 +85,7 @@ class MyRadio_UserTrainingStatus extends MyRadio_TrainingStatus
         $this->user = (int) $result['memberid'];
         $this->awarded_time = strtotime($result['completeddate']);
         $this->awarded_by = (int) $result['confirmedby'];
-        $this->revoked_time = strtotime($result['revokedtime']);
+        $this->revoked_time = $result['revokedtime'] ? strtotime($result['revokedtime']) : null;
         $this->revoked_by = (int) $result['revokedby'];
 
         parent::__construct($result['presenterstatusid']);

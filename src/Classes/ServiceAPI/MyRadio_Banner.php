@@ -276,7 +276,7 @@ class MyRadio_Banner extends MyRadio_Photo
      *
      * @throws MyRadioException
      */
-    public static function create(MyRadio_Photo $photo, $alt = 'Unnamed Banner', $target = null, $type = 2)
+    public static function create($photo, $alt = 'Unnamed Banner', $target = null, $type = 2)
     {
         $result = self::$db->fetchColumn(
             'INSERT INTO website.banner (alt, image, target, banner_type_id, photoid)
