@@ -8,6 +8,7 @@ namespace MyRadio\ServiceAPI;
 
 use DateTime;
 use MyRadio\Config;
+use MyRadio\iTones\iTones_Playlist;
 use MyRadio\MyRadio\AuthUtils;
 use MyRadio\MyRadioException;
 use MyRadio\MyRadio\CoreUtils;
@@ -687,6 +688,8 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
         $timeslot = self::getCurrentTimeslot($time, $filter);
         $next = self::getNextTimeslot($time, $filter);
 
+        $currentJukebox = iTones_playlist::getPlaylistAtTime(date('H:i:s'));
+
         //Still display a show if there's one scheduled for whatever reason.
         if (empty($timeslot)) {
             // Checking if it's term time according to the schedule is unreliable. Instead, check which selector source
@@ -704,7 +707,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             } else {
                 $response = [
                     'current' => [
-                        'title' => Config::$short_name . ' Jukebox',
+                        'title' => 'Jukebox: ' . $currentJukebox,
                         'desc' => 'There are currently no shows on right now, even our presenters
                                 need a break. But it\'s okay, ' . Config::$short_name .
                             ' Jukebox has got you covered, playing the best music for your ears!',
@@ -738,8 +741,10 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
                     //There's not a next show, but there might be one later
                     $nextshow = self::getNextTimeslot($lastnext->getEndTime(), $filter);
 
+                    $nextJukebox = iTones_playlist::getPlaylistAtTime(date('H:i:s', ($lastnext->getEndTime()+90)));
+
                     $response['next'][] = [
-                        'title' => Config::$short_name . ' Jukebox',
+                        'title' => 'Jukebox: ' . $nextJukebox,
                         'desc' => 'There are currently no shows on right now, even our presenters
                                     need a break. But it\'s okay, ' . Config::$short_name .
                             ' Jukebox has got you covered, playing the best music for your ears!',
