@@ -16,8 +16,8 @@ $vals = $event->toDataSource();
 unset($vals['host']);
 unset($vals['start']);
 unset($vals['end']);
-$vals['start_time'] = strftime('%d/%m/%Y %H:%M', $event->getStartTime());
-$vals['end_time'] = strftime('%d/%m/%Y %H:%M', $event->getEndTime());
+$vals['start_time'] = date('d/m/Y H:i', $event->getStartTime());
+$vals['end_time'] = date('d/m/Y H:i', $event->getEndTime());
 
 MyRadio_Event::getForm()
     ->setValues($vals)

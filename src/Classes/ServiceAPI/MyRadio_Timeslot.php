@@ -1295,7 +1295,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
                     'user' => MyRadio_User::getInstance($x['memberid']),
                     'signedby' => $x['signerid'] ? MyRadio_User::getInstance($x['signerid']) : null,
                     'location' => $x['location_name'],
-                    'time' => strtotime($x['sign_time'])
+                    'time' => $x['sign_time'] !== null ? strtotime($x['sign_time']) : null
                 ];
             },
             $result
