@@ -10,8 +10,8 @@ use MyRadio\MyRadio\MyRadioMenu;
 use MyRadio\MyRadioException;
 use MyRadio\MyRadioError;
 use Twig\TwigFunction;
-use Twig_Loader_Filesystem;
-use Twig_Environment;
+use Twig\Loader\FilesystemLoader;
+use Twig\Environment;
 use Twig_Extension_Debug;
 
 /**
@@ -32,9 +32,9 @@ class MyRadioTwig implements \MyRadio\Iface\TemplateEngine
      */
     public function __construct()
     {
-        $twig_loader = new Twig_Loader_Filesystem(__DIR__.'/../Templates/');
+        $twig_loader = new FilesystemLoader(__DIR__.'/../Templates/');
         $this->contextVariables['notices'] = [];
-        $this->twig = new Twig_Environment($twig_loader, ['auto_reload' => true]);
+        $this->twig = new Environment($twig_loader, ['auto_reload' => true]);
         if (Config::$template_debug) {
             $this->twig->addExtension(new Twig_Extension_Debug());
             $this->twig->enableDebug();
@@ -175,7 +175,7 @@ class MyRadioTwig implements \MyRadio\Iface\TemplateEngine
         //Validate template
         try {
             $this->twig->parse($this->twig->tokenize(
-                new \Twig_Source(file_get_contents(__DIR__.'/../Templates/'.$template), $template)
+                new \Twig\Source(file_get_contents(__DIR__.'/../Templates/'.$template), $template)
             ));
 
             // the $template is valid

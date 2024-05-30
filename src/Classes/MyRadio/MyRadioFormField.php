@@ -332,6 +332,13 @@ class MyRadioFormField
     private $redacted = false;
 
     /**
+     * Placeholder for the field
+     * 
+     * @var mixed
+     */
+    private $placeholder = null;
+
+    /**
      * Settings that cannot be altered by the $options parameter.
      *
      * @var array
