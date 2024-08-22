@@ -116,6 +116,9 @@
                 "fname": {
                     "type": "string"
                 },
+                "nname": {
+                    "type": "string"
+                },
                 "sname": {
                     "type": "string"
                 },

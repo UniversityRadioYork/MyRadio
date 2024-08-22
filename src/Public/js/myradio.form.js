@@ -59,7 +59,7 @@ var MyRadioForm = {
           },
           {
             displayKey: function (i) {
-              return i.fname + " " + i.sname;
+              return i.fname + i.nname + i.sname;
             },
             source: memberLookup.ttAdapter(),
             templates: {
@@ -76,7 +76,13 @@ var MyRadioForm = {
                 } else {
                   identity = "(#" + i.memberid + ")";
                 }
-                return $("<p>").text(i.fname + " " + i.sname + " " + identity);
+                if (i.nname != null) {
+                  return $("<p>").text(i.fname + ' "' + i.nname + '" ' + i.sname + " " + identity);
+                }
+                else {
+                  return $("<p>").text(i.fname + " " + i.sname + " " + identity);
+                }
+                
               }
             }
           })
