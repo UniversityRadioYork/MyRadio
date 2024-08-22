@@ -2471,7 +2471,8 @@ class MyRadio_User extends ServiceAPI implements APICaller
             'fname' => $this->getFName(),
             'nname' => $this->getNName(),
             'sname' => $this->getSName(),
-            'public_email' => $this->getPublicEmail(),
+            //Warning this will leak user emails to public as the api isn't secure
+            //'public_email' => $this->getPublicEmail(),
             'url' => $this->getURL(),
             'receive_email' => $this->getReceiveEmail(),
             'contract_signed' => $this->hasSignedContract()
