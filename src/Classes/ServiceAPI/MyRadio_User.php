@@ -947,6 +947,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
         //If there's a space, split into first and last name
         $name = trim($name);
         $names = explode(' ', $name);
+        //Needs adapting to nname - TOBEFIXED
         if (isset($names[1])) {
             return self::$db->fetchAll(
                 'SELECT memberid, fname, nname, sname, eduroam, local_alias FROM member
@@ -1799,7 +1800,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
                 MyRadioFormField::TYPE_EMAIL,
                 [
                     'required' => false,
-                    'label' => 'Email',
+                    'label' => 'Public Email',
                     'value' => $this->email,
                 ]
             )
@@ -2472,7 +2473,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
             'nname' => $this->getNName(),
             'sname' => $this->getSName(),
             //Warning this will leak user emails to public as the api isn't secure
-            //'public_email' => $this->getPublicEmail(),
+            'public_email' => $this->getPublicEmail(),
             'url' => $this->getURL(),
             'receive_email' => $this->getReceiveEmail(),
             'contract_signed' => $this->hasSignedContract()

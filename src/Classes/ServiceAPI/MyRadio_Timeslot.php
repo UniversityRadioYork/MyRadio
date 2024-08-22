@@ -378,6 +378,8 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
                 'mixcloud_starttime' => $this->getMeta('upload_starttime'),
                 'mixcloud_endtime' => $this->getMeta('upload_endtime'),
                 
+                //PLEASE REMOVE THIS COMMENTED WHEN USED IN DEVELOPMENT
+
                 //'mixcloud_starttime' => $this->getMeta('description'),
                 //'mixcloud_endtime' => $this->getMeta('description'),
                 'rejectlink' => [
