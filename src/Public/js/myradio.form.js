@@ -59,7 +59,12 @@ var MyRadioForm = {
           },
           {
             displayKey: function (i) {
-              return i.fname + i.nname + i.sname;
+              if (i.nname != null) {
+                return i.fname + ' "' + i.nname + '" ' + i.sname;
+              }
+              else{ 
+                return i.fname + ' ' + i.sname;
+              }
             },
             source: memberLookup.ttAdapter(),
             templates: {
@@ -89,6 +94,7 @@ var MyRadioForm = {
           .on(
             "typeahead:selected",
             function (e, obj) {
+              
               idField.val(obj.memberid);
             }
           );

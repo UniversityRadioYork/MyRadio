@@ -947,7 +947,6 @@ class MyRadio_User extends ServiceAPI implements APICaller
         //If there's a space, split into first and last name
         $name = trim($name);
         $names = explode(' ', $name);
-        //Needs adapting to nname - TOBEFIXED
         if (isset($names[1])) {
             return self::$db->fetchAll(
                 'SELECT memberid, fname, nname, sname, eduroam, local_alias FROM member
