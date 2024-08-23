@@ -1,0 +1,2 @@
+ALTER TABLE member;
+ADD COLUMN nname VARCHAR(255);
