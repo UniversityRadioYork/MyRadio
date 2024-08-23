@@ -1,2 +1,3 @@
 ALTER TABLE member
-    ADD COLUMN nname VARCHAR(255);
+    ADD nname character varying(255),
+    
