@@ -155,5 +155,5 @@ To do this, you first need to:
 ### A note on Seasons and Terms
 MyRadio splits Shows into "Seasons". Any Season is applied to in relation to a
 "Term", which is a 10-week space of time. This is because The University of
-York has 10 week terms, if you didn't know.
+York has 12 week semesters, if you didn't know.
 
