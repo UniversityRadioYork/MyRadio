@@ -152,7 +152,7 @@ To do this, you first need to:
 - Apply for a Season of your new Show (List My Shows -> New Season)
 - Schedule the Season (Shows Scheduler)
 
-# Setting up your own 2016-site
+### Setting up your own 2016-site
 
 To setup 2016-site:
 
