@@ -156,6 +156,8 @@ To do this, you first need to:
 
 First pull [2016-site](https://github.com/UniversityRadioYork/2016-site)
 
+#### database 
+
 Next you need a api_key to allow the website to access myradio's show information,
 
 login into database with details used during setup of myradio
@@ -175,11 +177,16 @@ for example:
 2016-site uses parts of database that aren't made on myradio creation,
 such as mixcloud. This can cause issues with 2016-site not loading to fix this:
 
+#### uncomment existing myradio lines
+
 Go to:
 `src/Classes/ServiceAPI/MyRadio_Timeslot.php`
 
 - uncomment lines 379 and 380
 - comment lines 377 and 376
+
+
+#### finishing steps
 
 This will fix shows not loading on 2016-site when using the base myradio database
 
@@ -188,6 +195,7 @@ After completing all these setups:
 you can use setup guide in [2016-site](https://github.com/UniversityRadioYork/2016-site),
 And setup a reverse proxy to "https://localhost:4443/api/v2" or configure ssl for https connections
 To complete the setup.
+
 
 ### A note on Seasons and Terms
 MyRadio splits Shows into "Seasons". Any Season is applied to in relation to a
