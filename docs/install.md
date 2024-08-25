@@ -154,7 +154,7 @@ To do this, you first need to:
 
 ### Setting up your own 2016-site
 
-First pull 2016-site [2016-site](https://github.com/UniversityRadioYork/2016-site)
+First pull [2016-site](https://github.com/UniversityRadioYork/2016-site)
 
 Next you need a api_key to allow the website to access myradio's show information,
 
