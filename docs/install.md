@@ -157,6 +157,7 @@ To do this, you first need to:
 First pull 2016-site [2016-site](https://github.com/UniversityRadioYork/2016-site)
 
 Next you need a api_key to allow the website to access myradio's show information,
+
 login into database with details used during setup of myradio
 
 `INSERT INTO myury.api_key (key_string, description) VALUES ('ARANDOMSTRINGOFCHARACTERS', '2016-site development api key');`
