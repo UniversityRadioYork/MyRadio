@@ -152,8 +152,45 @@ To do this, you first need to:
 - Apply for a Season of your new Show (List My Shows -> New Season)
 - Schedule the Season (Shows Scheduler)
 
+## Setting up 2016-site - (setting up your own mini-ury)
+
+To setup 2016-site:
+
+First pull 2016-site [2016-site](https://github.com/UniversityRadioYork/2016-site)
+
+Next you need a api_key to allow the website to access myradio's show information,
+login into database with details used during setup of myradio
+
+`INSERT INTO myury.api_key (key_string, description) VALUES ('ARANDOMSTRINGOFCHARACTERS', '2016-site development api key');`
+
+`INSERT INTO myury.api_key_auth (key_string, typeid) VALUES ('ARANDOMSTRINGOFCHARACTERS', (SELECT typeid FROM l_action WHERE phpconstant = 'AUTH_APISUDO'));`
+
+[please choose a better key than 'ARANDOMSTRINGOFCHARACTERS']
+
+You might need add some other database columns to create shows 
+
+for example:
+- explict podcasts (to create shows)
+- selector (expected by 2016-site/can remove this from models/index.go 2016-site) 
+
+2016-site uses parts of database that aren't made on myradio creation,
+such as mixcloud. This can cause issues with 2016-site not loading to fix this:
+
+Go to:
+`src/Classes/ServiceAPI/MyRadio_Timeslot.php`
+
+- uncomment lines 379 and 380
+- comment lines 377 and 376
+
+This will fix shows not loading on 2016-site when using the base myradio database
+
+After completing all these setups:
+
+you can use setup guide in [2016-site](https://github.com/UniversityRadioYork/2016-site),
+And setup a reverse proxy to "https://localhost:4443/api/v2" or configure ssl for https connections
+To complete the setup.
+
 ### A note on Seasons and Terms
 MyRadio splits Shows into "Seasons". Any Season is applied to in relation to a
-"Term", which is a 10-week space of time. This is because The University of
-York has 12 week semesters, if you didn't know.
+"Term", which is a user defined space of time (normally 11-15 weeks). This is because The University of York has 12 week semesters, if you didn't know.
 
