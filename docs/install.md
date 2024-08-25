@@ -175,16 +175,6 @@ for example:
 - selector (expected by 2016-site/can remove this from models/index.go 2016-site) 
 
 2016-site uses parts of database that aren't made on myradio creation,
-such as mixcloud. This can cause issues with 2016-site not loading to fix this:
-
-#### uncomment existing myradio lines
-
-Go to:
-`src/Classes/ServiceAPI/MyRadio_Timeslot.php`
-
-- uncomment lines 379 and 380
-- comment lines 377 and 376
-
 
 #### finishing steps
 
