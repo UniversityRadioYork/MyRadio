@@ -574,6 +574,10 @@ class MyRadio_User extends ServiceAPI implements APICaller
      */
     public function getEmail()
     {
+        if (empty($this->email)) {
+            return $this->getEduroam().'@'.Config::$eduroam_domain;
+        }
+
         $domain = $domain = substr(strrchr($this->email, '@'), 1);
         if (in_array($domain, Config::$local_email_domains)) {
             //The user has set an alias or their local mailbox here.
@@ -590,8 +594,6 @@ class MyRadio_User extends ServiceAPI implements APICaller
                     return $eduroam.'@'.Config::$eduroam_domain;
                 }
             }
-        } elseif (empty($this->email)) {
-            return $this->getEduroam().'@'.Config::$eduroam_domain;
         } else {
             return $this->email;
         }
@@ -620,6 +622,9 @@ class MyRadio_User extends ServiceAPI implements APICaller
      */
     public function getEduroam()
     {
+        if ($this->eduroam == null) {
+            return "";
+        }
         return str_replace('@'.Config::$eduroam_domain, '', $this->eduroam);
     }
 

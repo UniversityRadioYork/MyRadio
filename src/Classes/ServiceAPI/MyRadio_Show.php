@@ -146,14 +146,8 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         }
 
         //Deal with the Credits arrays
-        $credit_types = json_decode($result['credit_types']);
-        $credits = json_decode($result['credits']);
-        if ($credit_types === null) {
-            $credit_types = [];
-        }
-        if ($credits === null) {
-            $credits = [];
-        }
+        $credit_types = $result['credit_types'] !== null ? json_decode($result['credit_types']) : [];
+        $credits = $result['credits'] !== null ? json_decode($result['credits']) : [];
 
         for ($i = 0; $i < sizeof($credits); ++$i) {
             if (empty($credits[$i])) {
@@ -190,8 +184,8 @@ class MyRadio_Show extends MyRadio_Metadata_Common
          * @todo Support general photo attachment?
          */
         $this->photo_url = Config::$default_person_uri;
-        $image_metadata = json_decode($result['image_metadata_values']);
         if ($result['image_metadata_values'] !== null) {
+            $image_metadata = json_decode($result['image_metadata_values']);
             $this->photo_url = Config::$public_media_uri.'/'.$image_metadata[0];
         }
 

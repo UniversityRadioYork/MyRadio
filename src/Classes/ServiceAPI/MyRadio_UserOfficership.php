@@ -85,8 +85,8 @@ class MyRadio_UserOfficership extends ServiceAPI
             // Ensure we don't get infinite recursion
             'member' => $this->getUser()->toDataSource(),
             'officer' => $this->getOfficer()->toDataSource(),
-            'from_date' => strftime("%Y-%m-%d", $this->from_date),
-            'till_date' => $this->till_date === null ? null : strftime("%Y-%m-%d", $this->till_date),
+            'from_date' => date("Y-m-d", $this->from_date),
+            'till_date' => $this->till_date === null ? null : date("Y-m-d", $this->till_date),
             // Compatibility with old MyRadio_User::getOfficerships
             'officer_name' => $this->getOfficer()->getName(),
         ];
