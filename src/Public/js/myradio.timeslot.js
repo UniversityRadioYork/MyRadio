@@ -1,3 +1,14 @@
+//Name helper function for concating names;
+function NameHelper(data) {
+  if (empty(data[row].user.nname) != false) {
+    return data[row].user.fname + ' "' + data[row].user.nname  + '" ' + data[row].user.sname;
+  }
+  else {
+    return data[row].user.fname + " " + data[row].user.sname;
+  }
+}
+
+
 /* global moment, myradio */
 /**
  * Handles the interactivityness of timeslot selection
@@ -69,14 +80,8 @@ $("#timeslots").on(
                     check.attr("name", "signin[]")
                       .attr("id", "signin_"+data[row].user.memberid)
                       .attr("value", data[row].user.memberid);
-                    if (empty(data[row].user.nname) != false) {
-                      label.attr("for", "signin_"+data[row].user.memberid)
-                        .html(data[row].user.fname + ' "' + data[row].user.nname  + '" ' + data[row].user.sname);
-                    }
-                    else {
-                      label.attr("for", "signin_"+data[row].user.memberid)
-                        .html(data[row].user.fname + " " + data[row].user.sname);
-                    }
+                    label.attr("for", "signin_"+data[row].user.memberid)
+                      .html(NameHelper(data));
                     if (data[row].signedby !== null) {
                       check.attr("checked", "checked")
                         .attr("disabled", "true");

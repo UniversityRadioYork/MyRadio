@@ -1257,7 +1257,7 @@ CREATE TABLE mail_list (
 COMMENT ON TABLE mail_list IS 'Definitions of mailing lists';
 COMMENT ON COLUMN mail_list.listid IS 'Surrogate Key';
 COMMENT ON COLUMN mail_list.listname IS 'Name of the list';
-COMMENT ON COLUMN mail_list.defn IS 'A SQL string that returns fname, nname ,sname and email address.';
+COMMENT ON COLUMN mail_list.defn IS 'A SQL string that returns fname ,sname and email address.';
 COMMENT ON COLUMN mail_list.toexim IS 'Whether to create a mail alias on the email server for this list.';
 COMMENT ON COLUMN mail_list.listaddress IS 'If the list is exported, this is the list''s email address.';
 COMMENT ON COLUMN mail_list.subscribable IS 'Whether members can (un)subscribe freely.';
