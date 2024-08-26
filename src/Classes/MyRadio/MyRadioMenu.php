@@ -93,6 +93,11 @@ class MyRadioMenu
      */
     private function getFullSubMenu($module)
     {
+        if ($module == "MyRadio") {
+            // bypass for the MyRadio module, which doesn't have header menus
+            return [];
+        }
+
         $menu = json_decode(@file_get_contents('Menus/'.$module.'.json', FILE_USE_INCLUDE_PATH), true);
 
         if (is_null($menu)) {
