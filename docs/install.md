@@ -117,6 +117,9 @@ USER:
 -   [If you enter an @york.ac.uk email you will not be able to login at all]
 -   Login using the email and password you just enterted
 
+-   If you encounter an error you need to create the file /var/www/myradio/src/MyRadio_Config.local.php with the text from the "Show Config" button
+-   [if you are using docker this needs to be done within the docker container using `docker exec -it [myradioid] bash`]
+
 ## Default Credentials
 
 Database: (when building the database, these credentials are needed)
