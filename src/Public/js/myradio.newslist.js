@@ -12,8 +12,6 @@ $(".twig-datatable").dataTable({
     {
       "sTitle": "nickname",
       "sClass": "left",
-      "aDataSort": [ 2, 1 ]
-
     },
     //posted
     {
