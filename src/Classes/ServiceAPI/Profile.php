@@ -83,7 +83,7 @@ class Profile extends ServiceAPI
         */ 
 
         $result = self::$db->fetchAll(
-            'SELECT member.memberid, CONCAT(fname, \', \' ,sname)  AS name, l_college.descr AS college, paid, email, eduroam
+            'SELECT member.memberid, CONCAT(fname, \', \' ,sname)  AS name, fname || \' "\' || nname || \'" \' || sname as nickname, l_college.descr AS college, paid, email, eduroam
             FROM member INNER JOIN (SELECT * FROM member_year WHERE year = $1) AS member_year
             ON ( member.memberid = member_year.memberid ), l_college
             WHERE member.college = l_college.collegeid
