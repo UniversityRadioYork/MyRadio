@@ -634,7 +634,11 @@ class MyRadio_Track extends ServiceAPI
 
         $title = htmlspecialchars($this->getTitle());
         $artist = htmlspecialchars($this->getArtist());
-        $userName = htmlspecialchars($currentUser->getFName() . ' ' . $currentUser->getSName());
+        if (empty($currentUser->getNName()) == True)  {
+            $userName = htmlspecialchars($currentUser->getFName() . ' ' . $currentUser->getSName());
+        } else {
+            $userName = htmlspecialchars($currentUser->getFName() . ' "' . $currentUser->getNName() . '" ' . $currentUser->getSName());
+        }
         $editUrl = URLUtils::makeURL('Library', 'editTrack', ['trackid' => $this->getID()]);
         MyRadioEmail::sendEmailToList(
             MyRadio_List::getByName('playlisting'),

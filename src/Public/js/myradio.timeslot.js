@@ -69,12 +69,24 @@ $("#timeslots").on(
                     check.attr("name", "signin[]")
                       .attr("id", "signin_"+data[row].user.memberid)
                       .attr("value", data[row].user.memberid);
-                    label.attr("for", "signin_"+data[row].user.memberid)
-                      .html(data[row].user.fname + " " + data[row].user.sname);
+                    if (empty(data[row].user.nname) != false) {
+                      label.attr("for", "signin_"+data[row].user.memberid)
+                        .html(data[row].user.fname + ' "' + data[row].user.nname  + '" ' + data[row].user.sname);
+                    }
+                    else {
+                      label.attr("for", "signin_"+data[row].user.memberid)
+                        .html(data[row].user.fname + " " + data[row].user.sname);
+                    }
                     if (data[row].signedby !== null) {
                       check.attr("checked", "checked")
                         .attr("disabled", "true");
-                      label.append(" (Signed in by "+data[row].signedby.fname + " "+data[row].signedby.sname + ")");
+                      if (empty(data[row].signedby.nname) != false ) {
+                        label.append(" (Signed in by "+data[row].signedby.fname + ' "' + data[row].signedby.nname + '" ' + data[row].signedby.sname + ")");  
+                      }
+                      else {
+                        label.append(" (Signed in by "+data[row].signedby.fname + " " + data[row].signedby.sname + ")");
+                      }
+                      
                     } else if (data[row].user.memberid == window.myradio.memberid) {
                       check.attr("checked", "checked");
                     }
@@ -86,12 +98,22 @@ $("#timeslots").on(
                   if ($("#guest-signins").is(":empty")) {
                     $("#guest-signins").append("Guest data has been added by:<br>");
                   }
-                  $("#guest-signins").append(
-                    $("<span>")
-                      .text(data[row].signedby.fname + " " + data[row].signedby.sname
-                      + " (" + moment.unix(data[row].time).fromNow() + ")")
-                      .append("<br>")
-                  );
+                  if (empty(data[row].signedby.nname) != false) {
+                    $("#guest-signins").append(
+                      $("<span>")
+                        .text(data[row].signedby.fname + ' "'  + data[row].signedby.nname + '" ' + data[row].signedby.sname
+                        + " (" + moment.unix(data[row].time).fromNow() + ")")
+                        .append("<br>")
+                    );
+                  }
+                  else {
+                    $("#guest-signins").append(
+                      $("<span>")
+                        .text(data[row].signedby.fname + " " + data[row].signedby.sname
+                        + " (" + moment.unix(data[row].time).fromNow() + ")")
+                        .append("<br>")
+                    );
+                  }
                 }
               }
               $("#signin-list").append(

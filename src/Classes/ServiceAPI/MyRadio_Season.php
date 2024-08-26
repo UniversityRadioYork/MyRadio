@@ -188,7 +188,7 @@ class MyRadio_Season extends MyRadio_Metadata_Common
          * Select an appropriate value for $term_id.
          */
         $term_id = MyRadio_Term::getActiveApplicationTerm()->getID();
-	$num_weeks = MyRadio_Term::getActiveApplicationTerm()->getTermWeeks();
+	    $num_weeks = MyRadio_Term::getActiveApplicationTerm()->getTermWeeks();
 
         //Start a transaction
         self::$db->query('BEGIN');

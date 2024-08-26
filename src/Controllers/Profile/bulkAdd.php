@@ -19,6 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         try {
             $user = MyRadio_User::createOrActivate(
                 $params['fname'],
+                $params['nname'],
                 $params['sname'],
                 $params['eduroam'],
                 $params['collegeid']
