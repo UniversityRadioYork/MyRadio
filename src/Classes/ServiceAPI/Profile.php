@@ -109,8 +109,11 @@ class Profile extends ServiceAPI
         if (self::$currentOfficers === false) {
             self::wakeup();
             self::$currentOfficers = self::$db->fetchAll(
-                'SELECT team.team_name AS team, officer.officer_name AS officership,
-                        sname || \', "\' || nname || \'", \' || fname AS name, member.memberid
+                'SELECT team.team_name AS team, officer.officer_name AS officership
+                CASE WHEN nname IS NULL
+                THEN fname || \' \' || sname
+                ELSE fname || \' "\' || nname || \'" \' || sname
+                END AS name, member.memberid
                 FROM member, officer, member_officer, team
                 WHERE member_officer.memberid = member.memberid
                     AND officer.officerid = member_officer.officerid
@@ -144,7 +147,10 @@ class Profile extends ServiceAPI
             self::wakeup();
             self::$officers = self::$db->fetchAll(
                 'SELECT team.team_name AS team, officer.type, officer.officer_name AS officership,
-                    fname || \'"\' || nname || \'"\' || sname AS name, member.memberid, officer.officerid
+                CASE WHEN nname IS NULL
+                THEN fname || \' \' || sname
+                ELSE fname || \' "\' || nname || \'" \' || sname
+                END AS name, member.memberid, officer.officerid
                 FROM team
                 LEFT JOIN officer ON team.teamid = officer.teamid AND officer.status = \'c\'
                 LEFT JOIN member_officer ON officer.officerid = member_officer.officerid
