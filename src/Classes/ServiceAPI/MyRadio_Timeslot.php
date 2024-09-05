@@ -1062,15 +1062,15 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
     /**
      * This is the server-side implementation of the JSONON system for tracking Show Planner alterations.
      *
-     * @param array[] $set A JSONON operation set
+     * @param array[] $ops A JSONON operation set
      */
-    public function updateShowPlan($set)
+    public function updateShowPlan($ops)
     {
         $result = [];
         //Being a Database Transaction - this all succeeds, or none of it does
         self::$db->query('BEGIN');
 
-        foreach ($set as $op) {
+        foreach ($ops as $op) {
             switch ($op['op']) {
                 case 'AddItem':
                     try {
