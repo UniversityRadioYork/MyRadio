@@ -332,7 +332,7 @@ var shipChanges = function (timeslotID, ops) {
           }
         },
         data: {
-          ops: ops
+          set: ops
         },
         dataType: "json",
         type: "PUT",
