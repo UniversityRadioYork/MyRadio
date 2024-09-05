@@ -448,7 +448,7 @@ class MyRadio_ChartRelease extends ServiceAPI
     {
         return [
             'type' => $this->getChartType()->getDescription(),
-            'date' => strftime('%c', $this->getReleaseTime()),
+            'date' => date('d/m/Y', $this->getReleaseTime()),
             'editlink' => [
                 'display' => 'icon',
                 'value' => 'pencil',

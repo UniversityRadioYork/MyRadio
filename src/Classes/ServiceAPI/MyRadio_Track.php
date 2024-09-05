@@ -634,7 +634,11 @@ class MyRadio_Track extends ServiceAPI
 
         $title = htmlspecialchars($this->getTitle());
         $artist = htmlspecialchars($this->getArtist());
-        $userName = htmlspecialchars($currentUser->getFName() . ' ' . $currentUser->getSName());
+        if (empty($currentUser->getNName()) == True)  {
+            $userName = htmlspecialchars($currentUser->getFName() . ' ' . $currentUser->getSName());
+        } else {
+            $userName = htmlspecialchars($currentUser->getFName() . ' "' . $currentUser->getNName() . '" ' . $currentUser->getSName());
+        }
         $editUrl = URLUtils::makeURL('Library', 'editTrack', ['trackid' => $this->getID()]);
         MyRadioEmail::sendEmailToList(
             MyRadio_List::getByName('playlisting'),
@@ -1211,7 +1215,7 @@ EOF
             $options['digitised'] = $options['digitised'] ? 't' : 'f';
         }
 
-        $result = self::$db->query(
+        $data = self::$db->fetchOne(
             'INSERT INTO rec_track (number, title, artist, length, genre, intro, outro,
             clean, recordid, digitised, digitisedby, duration, last_edited_time, last_edited_memberid)
             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $11) RETURNING *',
@@ -1231,8 +1235,6 @@ EOF
                 CoreUtils::getTimestamp()
             ]
         );
-
-        $data = self::$db->fetchOne($result);
 
         return new self($data);
     }

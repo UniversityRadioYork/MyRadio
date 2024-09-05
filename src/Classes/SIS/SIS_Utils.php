@@ -55,10 +55,10 @@ class SIS_Utils extends ServiceAPI
      */
     public static function ipLookup($ip)
     {
-        $query = self::$db->query(
-            'SELECT iscollege, description FROM l_subnet WHERE subnet >> $1 ORDER BY description ASC',
-            [$ip]
-        );
+        $sql = 'SELECT iscollege, description FROM l_subnet WHERE subnet >> $1 ORDER BY description ASC';
+        $params = [$ip];
+        
+        $query = self::$db->query($sql, $params);
 
         $location = [];
 
@@ -77,7 +77,7 @@ class SIS_Utils extends ServiceAPI
 
             return $location;
         }
-        $q = self::$db->fetchAll($query);
+        $q = self::$db->fetchAll($sql, $params);
         foreach ($q as $k) {
             $location[] = $k['description'];
             $location[] = ($k['iscollege'] == 't') ? 'College Bedroom' : 'Study Room / Labs / Wifi';

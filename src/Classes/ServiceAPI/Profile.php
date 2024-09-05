@@ -57,6 +57,11 @@ class Profile extends ServiceAPI
         return self::getMembersForYear(CoreUtils::getAcademicYear());
     }
 
+    function rem_inx ($str, $ind)
+    { 
+       return substr($str,0,$ind++). substr($str,$ind);
+    }
+
     /**
      * Returns an Array representation of the given year's URY Members.
      *
@@ -72,14 +77,22 @@ class Profile extends ServiceAPI
     {
         self::wakeup();
 
-        return self::$db->fetchAll(
-            'SELECT member.memberid, sname || \', \' || fname AS name, l_college.descr AS college, paid, email, eduroam
+        /* Adding nickname can cause issues if the nickname is null;
+        * If you work out a way to have a default value for null values in SQL,
+        * message me on slack @Ren Herring
+        */ 
+
+        $result = self::$db->fetchAll(
+            'SELECT member.memberid, CONCAT(fname, \', \' ,sname)  AS name, fname || \' "\' || nname || \'" \' || sname as nickname, l_college.descr AS college, paid, email, eduroam
             FROM member INNER JOIN (SELECT * FROM member_year WHERE year = $1) AS member_year
             ON ( member.memberid = member_year.memberid ), l_college
             WHERE member.college = l_college.collegeid
             ORDER BY sname ASC',
             [$year]
         );
+        
+
+        return $result;
     }
 
     /**
@@ -102,7 +115,7 @@ class Profile extends ServiceAPI
             self::wakeup();
             self::$currentOfficers = self::$db->fetchAll(
                 'SELECT team.team_name AS team, officer.officer_name AS officership,
-                        sname || \', \' || fname AS name, member.memberid
+                        sname || \', "\' || nname || \'", \' || fname AS name, member.memberid
                 FROM member, officer, member_officer, team
                 WHERE member_officer.memberid = member.memberid
                     AND officer.officerid = member_officer.officerid
@@ -136,7 +149,7 @@ class Profile extends ServiceAPI
             self::wakeup();
             self::$officers = self::$db->fetchAll(
                 'SELECT team.team_name AS team, officer.type, officer.officer_name AS officership,
-                    fname || \' \' || sname AS name, member.memberid, officer.officerid
+                    fname || \'"\' || nname || \'"\' || sname AS name, member.memberid, officer.officerid
                 FROM team
                 LEFT JOIN officer ON team.teamid = officer.teamid AND officer.status = \'c\'
                 LEFT JOIN member_officer ON officer.officerid = member_officer.officerid
