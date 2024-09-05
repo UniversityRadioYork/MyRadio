@@ -210,7 +210,7 @@ class MyRadio_Term extends ServiceAPI
 		return [
 			"term_id" => $this->getID(),
 			"start" => $this->getTermStartDate(),
-            "descr" => $this->getTermDescr(),
+            		"descr" => $this->getTermDescr(),
 			"num_weeks" => $this->getTermWeeks(),
 			"week_names" => $this->getTermWeekNames()
 		];
