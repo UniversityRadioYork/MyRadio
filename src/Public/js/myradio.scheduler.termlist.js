@@ -1,7 +1,7 @@
 $(".twig-datatable").dataTable({
   "aaSorting": [[2, "desc"]],
   "aoColumns": [
-    //termid
+    //term_id
     {
       "bVisible": false
     },
