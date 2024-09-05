@@ -389,12 +389,11 @@ class MyRadio_Album extends ServiceAPI
             $options['promoterid'] = null;
         }
 
-        $r = self::$db->query(
-            'INSERT INTO rec_record (title, artist, status, media, format, recordlabel, shelfnumber,
+        $q = 'INSERT INTO rec_record (title, artist, status, media, format, recordlabel, shelfnumber,
             shelfletter, memberid_add, cdid, location, promoterid)
             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
-            RETURNING recordid',
-            [
+            RETURNING recordid';
+        $p = [
                 trim($options['title']),
                 trim($options['artist']),
                 $options['status'],
@@ -407,10 +406,9 @@ class MyRadio_Album extends ServiceAPI
                 $options['cdid'],
                 $options['location'],
                 $options['promoterid'],
-            ]
-        );
+        ];
 
-        $id = self::$db->fetchAll($r);
+        $id = self::$db->fetchAll($q, $p);
 
         return self::getInstance($id[0]['recordid']);
     }

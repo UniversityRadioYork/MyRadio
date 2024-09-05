@@ -303,16 +303,14 @@ class NIPSWeb_ManagedItem extends \MyRadio\ServiceAPI\ServiceAPI
         if (strpos($options['auxid'], 'user-') !== false) {
             //This is a personal resource
             $path = str_replace('user-', 'membersmusic/', $options['auxid']);
-            $result = self::$db->query(
-                'INSERT INTO bapsplanner.managed_user_items (managedplaylistid, title, length, bpm)
-                VALUES ($1, $2, $3, $4) RETURNING manageditemid',
-                [
+            $q = 'INSERT INTO bapsplanner.managed_user_items (managedplaylistid, title, length, bpm)
+                VALUES ($1, $2, $3, $4) RETURNING manageditemid';
+            $p = [
                     $path,
                     trim($options['title']),
                     CoreUtils::intToTime(floor($options['duration'])),
                     $options['bpm'],
-                ]
-            );
+            ];
         } else {
             //This is a central resource
             $result = self::$db->fetchColumn(
@@ -324,21 +322,19 @@ class NIPSWeb_ManagedItem extends \MyRadio\ServiceAPI\ServiceAPI
             }
             $playlistid = $result[0];
 
-            $result = self::$db->query(
-                'INSERT INTO bapsplanner.managed_items (managedplaylistid, title, length, bpm, expirydate, memberid)
-                VALUES ($1, $2, $3, $4, $5, $6) RETURNING manageditemid',
-                [
+            $q = 'INSERT INTO bapsplanner.managed_items (managedplaylistid, title, length, bpm, expirydate, memberid)
+                VALUES ($1, $2, $3, $4, $5, $6) RETURNING manageditemid';
+            $p = [
                     $playlistid,
                     trim($options['title']),
                     CoreUtils::intToTime(floor($options['duration'])),
                     $options['bpm'],
                     $options['expires'],
                     $_SESSION['memberid'],
-                ]
-            );
+            ];
         }
 
-        $id = self::$db->fetchAll($result);
+        $id = self::$db->fetchAll($q, $p);
 
         return self::getInstance($id[0]['manageditemid']);
     }
