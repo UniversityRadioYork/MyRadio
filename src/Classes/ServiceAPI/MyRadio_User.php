@@ -475,7 +475,6 @@ class MyRadio_User extends ServiceAPI implements APICaller
         } else {
             return $this->fname.' "'.$this->nname.'" '.$this->sname;
         }
-        return $this->fname.' '.$this->nname.' '.$this->sname;
     }
 
     public function getLastLogin()

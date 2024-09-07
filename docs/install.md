@@ -29,8 +29,7 @@ If you have Docker on your system, use Docker Compose to set up an environment.
 Simply run `docker compose up -d` and visit "https://localhost:4443/myradio/".
 
 If you encounter an error with autoload.php:
-find the id of your myradio container using `docker container ls`
-enter a bash session with `docker exec -it [myradioid] bash`
+enter a bash session with `docker compose exec myradio bash`
 then in this session run `composer install`
 finally exit the session by running `exit`
 
