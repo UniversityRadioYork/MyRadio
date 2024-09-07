@@ -1,9 +1,13 @@
 $(".twig-datatable").dataTable({
-  "aaSorting": [[4, "desc"]],
+  "aaSorting": [[2, "desc"]],
   "aoColumns": [
     //termid
     {
       "bVisible": false
+    },
+    //start
+    {
+      "sTitle": "Start Date"
     },
     //descr
     {
@@ -11,15 +15,11 @@ $(".twig-datatable").dataTable({
     },
     //num_weeks
     {
-      "bVisible": true
+      "bVisible": false
     },
     //week_names
     {
-      "bVisible": false
-    },
-    //start
-    {
-      "sTitle": "Start Date"
+      "bVisible": false,
     }
   ],
   "bPaginate": true
