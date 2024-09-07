@@ -29,9 +29,7 @@ If you have Docker on your system, use Docker Compose to set up an environment.
 Simply run `docker compose up -d` and visit "https://localhost:4443/myradio/".
 
 If you encounter an error with autoload.php:
-enter a bash session with `docker compose exec myradio bash`
-then in this session run `composer install`
-finally exit the session by running `exit`
+Simply run the following docker command `docker compose exec myradio composer install`
 
 ## Vagrant Install
 

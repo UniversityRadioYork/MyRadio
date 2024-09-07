@@ -444,7 +444,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
      /**
      * Returns the User's nickname.
      *
-     * @return string The User's first name
+     * @return string The User's nickname
      */
     public function getNName()
     {

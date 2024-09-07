@@ -1,5 +1,5 @@
-//Name helper function for concating names;
-function NameHelper(data) {
+//Format names function for concating names;
+function formatName(data) {
   if (empty(data[row].user.nname) != false) {
     return data[row].user.fname + ' "' + data[row].user.nname  + '" ' + data[row].user.sname;
   }
@@ -81,7 +81,7 @@ $("#timeslots").on(
                       .attr("id", "signin_"+data[row].user.memberid)
                       .attr("value", data[row].user.memberid);
                     label.attr("for", "signin_"+data[row].user.memberid)
-                      .html(NameHelper(data));
+                      .html(formatName(data));
                     if (data[row].signedby !== null) {
                       check.attr("checked", "checked")
                         .attr("disabled", "true");
