@@ -1211,7 +1211,7 @@ EOF
             $options['digitised'] = $options['digitised'] ? 't' : 'f';
         }
 
-        $result = self::$db->query(
+        $data = self::$db->fetchOne(
             'INSERT INTO rec_track (number, title, artist, length, genre, intro, outro,
             clean, recordid, digitised, digitisedby, duration, last_edited_time, last_edited_memberid)
             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $11) RETURNING *',
@@ -1231,8 +1231,6 @@ EOF
                 CoreUtils::getTimestamp()
             ]
         );
-
-        $data = self::$db->fetchOne($result);
 
         return new self($data);
     }

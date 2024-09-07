@@ -1167,19 +1167,18 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
          * Find out if there's a NIPSWeb Schema listing for this timeslot.
          * If not, throw back an empty array
          */
-        $r = self::$db->query(
-            'SELECT timeslot_item_id, channel_id FROM bapsplanner.timeslot_items
+        $q = 'SELECT timeslot_item_id, channel_id FROM bapsplanner.timeslot_items
             WHERE timeslot_id=$1
-            ORDER BY weight ASC',
-            [$this->getID()]
-        );
+            ORDER BY weight ASC'; 
+
+        $r = self::$db->query($q, [$this->getID()]);
 
         if (!$r or self::$db->numRows($r) === 0) {
             //No show planned yet
             return [];
         } else {
             $tracks = [];
-            foreach (self::$db->fetchAll($r) as $track) {
+            foreach (self::$db->fetchAll($q, [$this->getID()]) as $track) {
                 $tracks[$track['channel_id']][] =
                     NIPSWeb_TimeslotItem::getInstance($track['timeslot_item_id'])->toDataSource();
             }

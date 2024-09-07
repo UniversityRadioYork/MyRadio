@@ -105,7 +105,7 @@ var NIPSWeb = function (d) {
             }
           },
           data: {
-            ops: ops
+            set: ops
           },
           type: "PUT",
           url: myradio.getAPIURL("timeslot", "updateshowplan", window.myradio.timeslotid, "")
