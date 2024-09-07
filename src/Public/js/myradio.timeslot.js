@@ -2,9 +2,7 @@ function formatName(data) {
   if (empty(data[row].user.nname) != false) {
     return data[row].user.fname + ' "' + data[row].user.nname  + '" ' + data[row].user.sname;
   }
-  else {
-    return data[row].user.fname + " " + data[row].user.sname;
-  }
+  return data[row].user.fname + " " + data[row].user.sname;
 }
 
 
