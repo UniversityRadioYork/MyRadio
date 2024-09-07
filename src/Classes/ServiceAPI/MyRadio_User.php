@@ -442,7 +442,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
     }
 
      /**
-     * Returns the User's first name.
+     * Returns the User's nickname.
      *
      * @return string The User's first name
      */
@@ -475,7 +475,6 @@ class MyRadio_User extends ServiceAPI implements APICaller
         } else {
             return $this->fname.' "'.$this->nname.'" '.$this->sname;
         }
-        return $this->fname.' '.$this->nname.' '.$this->sname;
     }
 
     public function getLastLogin()
@@ -2418,7 +2417,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
         $data['bio'] = 'This user is hidden';
         $data['memberid'] = $this->getID();
         $data['fname'] = 'Hidden';
-        $data['nname'] = 'Hidden';
+        $data['nname'] = NULL;
         $datap['sname'] = 'User';
         $data['public_email'] = '';
         $data['url'] = $this->getURL();
@@ -2476,7 +2475,6 @@ class MyRadio_User extends ServiceAPI implements APICaller
             'fname' => $this->getFName(),
             'nname' => $this->getNName(),
             'sname' => $this->getSName(),
-            //Warning this will leak user emails to public as the api isn't secure
             'public_email' => $this->getPublicEmail(),
             'url' => $this->getURL(),
             'receive_email' => $this->getReceiveEmail(),

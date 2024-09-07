@@ -57,11 +57,6 @@ class Profile extends ServiceAPI
         return self::getMembersForYear(CoreUtils::getAcademicYear());
     }
 
-    function rem_inx ($str, $ind)
-    { 
-       return substr($str,0,$ind++). substr($str,$ind);
-    }
-
     /**
      * Returns an Array representation of the given year's URY Members.
      *
@@ -69,21 +64,21 @@ class Profile extends ServiceAPI
      *               a member, sorted by their name:
      *
      * memberid: The user's unique memberid
-     * name: The user's last and first names formatted as <code>sname, fname</code>
+     * name: The user's last and first names and possibly nickname formatted as <code>fname "nname" sname</code>
      * college: The name of the member's college (not the ID!)
      * paid: How much the member has paid this year
      */
     public static function getMembersForYear($year)
     {
         self::wakeup();
-
-        /* Adding nickname can cause issues if the nickname is null;
-        * If you work out a way to have a default value for null values in SQL,
-        * message me on slack @Ren Herring
-        */ 
+        
 
         $result = self::$db->fetchAll(
-            'SELECT member.memberid, CONCAT(fname, \', \' ,sname)  AS name, fname || \' "\' || nname || \'" \' || sname as nickname, l_college.descr AS college, paid, email, eduroam
+            'SELECT member.memberid, 
+            CASE WHEN nname IS NULL
+            THEN fname || \' \' || sname
+            ELSE fname || \' "\' || nname || \'" \' || sname
+            END AS name, l_college.descr AS college, paid, email, eduroam
             FROM member INNER JOIN (SELECT * FROM member_year WHERE year = $1) AS member_year
             ON ( member.memberid = member_year.memberid ), l_college
             WHERE member.college = l_college.collegeid
@@ -114,8 +109,11 @@ class Profile extends ServiceAPI
         if (self::$currentOfficers === false) {
             self::wakeup();
             self::$currentOfficers = self::$db->fetchAll(
-                'SELECT team.team_name AS team, officer.officer_name AS officership,
-                        sname || \', "\' || nname || \'", \' || fname AS name, member.memberid
+                'SELECT team.team_name AS team, officer.officer_name AS officership
+                CASE WHEN nname IS NULL
+                THEN fname || \' \' || sname
+                ELSE fname || \' "\' || nname || \'" \' || sname
+                END AS name, member.memberid
                 FROM member, officer, member_officer, team
                 WHERE member_officer.memberid = member.memberid
                     AND officer.officerid = member_officer.officerid
@@ -149,7 +147,10 @@ class Profile extends ServiceAPI
             self::wakeup();
             self::$officers = self::$db->fetchAll(
                 'SELECT team.team_name AS team, officer.type, officer.officer_name AS officership,
-                    fname || \'"\' || nname || \'"\' || sname AS name, member.memberid, officer.officerid
+                CASE WHEN nname IS NULL
+                THEN fname || \' \' || sname
+                ELSE fname || \' "\' || nname || \'" \' || sname
+                END AS name, member.memberid, officer.officerid
                 FROM team
                 LEFT JOIN officer ON team.teamid = officer.teamid AND officer.status = \'c\'
                 LEFT JOIN member_officer ON officer.officerid = member_officer.officerid
