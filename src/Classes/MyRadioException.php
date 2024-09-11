@@ -203,7 +203,7 @@ class MyRadioException extends \RuntimeException implements ClientAware
         self::$count = 0;
     }
 
-    public function isClientSafe()
+    public function isClientSafe(): bool
     {
         return $this->code < 500;
     }
