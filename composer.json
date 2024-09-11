@@ -7,7 +7,7 @@
         "soundasleep/html2text": "~0.5",
         "twig/twig": "~2.4",
         "ext-xmlwriter": "*",
-        "webonyx/graphql-php": "^0.13.8",
+        "webonyx/graphql-php": "^15.0.0",
         "ext-json": "*",
         "spatie/icalendar-generator": "^2.1",
         "simshaun/recurr": "^4.0",

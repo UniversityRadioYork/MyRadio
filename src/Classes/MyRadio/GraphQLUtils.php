@@ -160,7 +160,7 @@ class GraphQLUtils
         $resolvedObject = null
     ) {
         if (isset($args['constants'])) {
-            $constants = $args['constants'];
+            $constants = $args['constants']->values;
             // No constants => public access
             if (count($constants) === 0) {
                 return true;
