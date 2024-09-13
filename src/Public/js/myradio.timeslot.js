@@ -1,4 +1,4 @@
-//combines the first,nickname,last name of the user together
+//combines the first,nickname,last names of the user together
 function formatName(data) {
   if (empty(data[row].user.nname) != false) {
     return data[row].user.fname + ' "' + data[row].user.nname  + '" ' + data[row].user.sname;
