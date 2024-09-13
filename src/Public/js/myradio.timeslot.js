@@ -1,4 +1,3 @@
-//Format names function for concating names;
 function formatName(data) {
   if (empty(data[row].user.nname) != false) {
     return data[row].user.fname + ' "' + data[row].user.nname  + '" ' + data[row].user.sname;
