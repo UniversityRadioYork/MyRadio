@@ -2015,12 +2015,11 @@ class MyRadio_User extends ServiceAPI implements APICaller
 
         //Actually create the member!
         $r = self::$db->fetchColumn(
-            'INSERT INTO public.member (fname, nname, sname, college, phone,
+            'INSERT INTO public.member (fname, sname, college, phone,
             email, receive_email, eduroam, require_password_change)
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING memberid',
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING memberid',
             [
                 $params['fname'],
-                $params['nname'],
                 $params['sname'],
                 $params['collegeid'],
                 $params['phone'],
@@ -2109,7 +2108,6 @@ class MyRadio_User extends ServiceAPI implements APICaller
      * Creates a new User, or activates a user, if it already exists.
      *
      * @param string $fname         The User's first name.
-     * @param string $nname         The User's nick name.
      * @param string $sname         The User's last name.
      * @param string $eduroam       The User's @york.ac.uk address.
      * @param int    $collegeid     The User's college.
@@ -2124,7 +2122,6 @@ class MyRadio_User extends ServiceAPI implements APICaller
      */
     public static function createOrActivate(
         $fname,
-        $nname,
         $sname,
         $eduroam = null,
         $collegeid = null,
@@ -2144,7 +2141,6 @@ class MyRadio_User extends ServiceAPI implements APICaller
         } else {
             $data = [
                 'fname' => $fname,
-                'nname' => $nname,
                 'sname' => $sname,
                 'eduroam' => $eduroam,
                 'collegeid' => $collegeid,
@@ -2171,7 +2167,6 @@ class MyRadio_User extends ServiceAPI implements APICaller
      */
     public static function createActivateAPI(
         $fname,
-        $nname,
         $sname,
         $captcha,
         $eduroam = null,
