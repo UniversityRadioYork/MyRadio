@@ -19,14 +19,18 @@ class MyRadioDefaultAuthenticator extends \MyRadio\Database implements \MyRadio\
      */
     public function __construct()
     {
+        $db = Config::$db_name;
+        if (isset($_ENV['E2E_TEST']) && $_ENV['E2E_TEST'] === 'true' && !empty($_SERVER['HTTP_X_MYRADIO_DATABASE'])) {
+            $db = $_REQUEST['HTTP_X_MYRADIO_DATABASE'];
+        }
         if (empty(Config::$auth_db_user)) {
             $this->db = pg_connect(
-                'host='.Config::$db_hostname.' port=5432 dbname='.Config::$db_name
+                'host='.Config::$db_hostname.' port=5432 dbname='.$db
                 .' user='.Config::$db_user.' password='.Config::$db_pass
             );
         } else {
             $this->db = pg_connect(
-                'host='.Config::$db_hostname.' port=5432 dbname='.Config::$db_name
+                'host='.Config::$db_hostname.' port=5432 dbname='.$db
                 .' user='.Config::$auth_db_user.' password='.Config::$auth_db_pass
             );
         }

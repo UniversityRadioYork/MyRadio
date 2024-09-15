@@ -1,0 +1,6 @@
+version: '3'
+services:
+  myradio:
+    environment:
+      - E2E_TEST=true
+    volumes: []

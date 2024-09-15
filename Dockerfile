@@ -2,9 +2,9 @@ FROM php:8.2-apache
 
 RUN apt-get update && apt-get install -y libpq-dev libpng-dev libjpeg-dev libldap-dev unzip \
                                          libcurl4-openssl-dev libxslt-dev git libz-dev libzip-dev libmemcached-dev \
-                                         postgresql-client jq msmtp-mta ffmpeg
+                                         postgresql-client python3-dev jq msmtp-mta ffmpeg
 
-RUN docker-php-ext-install pgsql pdo_pgsql gd ldap curl xsl zip
+RUN docker-php-ext-install pgsql gd ldap curl xsl zip
 
 RUN pecl install memcached && \
     echo extension=memcached.so >> /usr/local/etc/php/conf.d/memcached.ini
@@ -54,5 +54,14 @@ COPY src src
 
 COPY sample_configs/docker-config.php src/MyRadio_Config.local.php
 RUN chown www-data:www-data /var/www/myradio/src/MyRadio_Config.local.php && chmod 664 /var/www/myradio/src/MyRadio_Config.local.php
+
+# Testing requirements
+COPY pyproject.toml poetry.lock ./
+RUN curl -sSL https://install.python-poetry.org | python3 -
+ENV PATH="${PATH}:/root/.local/bin" 
+RUN poetry config virtualenvs.in-project true && \
+  poetry install
+
+COPY *.py ./
 
 CMD ["apache2-foreground"]

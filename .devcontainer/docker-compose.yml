@@ -17,9 +17,11 @@ services:
     # user: vscode
 
     init: true
+    environment:
+      E2E_TEST: 'true'
     
     volumes:
       # Update this to wherever you want VS Code to mount the folder of your project
-      - .:/workspaces/MyRadio:cached
+      - .:/var/www/myradio:cached
       - ./sample_configs/codespaces-server-name.conf:/etc/apache2/conf-enabled/server-name.conf
       - ./sample_configs/codespaces-apache.conf:/etc/apache2/sites-available/myradio.conf

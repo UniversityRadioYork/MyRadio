@@ -433,6 +433,8 @@ class MyRadio_Swagger
     {
         if (isset($_REQUEST['apiKey'])) {
             $_REQUEST['api_key'] = $_REQUEST['apiKey'];
+        } else if (isset($_SERVER['HTTP_APIKEY'])) {
+            $_REQUEST['api_key'] = $_SERVER['HTTP_APIKEY'];
         }
         if (empty($_REQUEST['api_key'])) {
             /*

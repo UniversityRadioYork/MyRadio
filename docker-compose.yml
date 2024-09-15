@@ -28,6 +28,7 @@ services:
     volumes:
       - ./schema:/var/www/myradio/schema
       - ./src:/var/www/myradio/src:rw
+      - ./tests:/var/www/myradio/tests:rw
   # daemon:
   #   build: .
   #   depends_on:
