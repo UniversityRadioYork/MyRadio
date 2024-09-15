@@ -59,4 +59,6 @@ ENV PATH="${PATH}:/root/.local/bin"
 RUN poetry config virtualenvs.in-project true && \
   poetry install
 
+COPY *.py ./
+
 CMD ["apache2-foreground"]
