@@ -4,7 +4,7 @@ RUN apt-get update && apt-get install -y libpq-dev libpng-dev libjpeg-dev liblda
                                          libcurl4-openssl-dev libxslt-dev git libz-dev libzip-dev libmemcached-dev \
                                          postgresql-client python3-dev jq msmtp-mta ffmpeg
 
-RUN docker-php-ext-install pgsql pdo_pgsql gd ldap curl xsl zip
+RUN docker-php-ext-install pgsql gd ldap curl xsl zip
 
 RUN pecl install memcached && \
     echo extension=memcached.so >> /usr/local/etc/php/conf.d/memcached.ini
@@ -54,8 +54,9 @@ RUN chown www-data:www-data /var/www/myradio/src/MyRadio_Config.local.php && chm
 
 # Testing requirements
 COPY pyproject.toml poetry.lock ./
-RUN curl -sSL https://install.python-poetry.org | python3 - && \
-  poetry config virtualenvs.in-project true && \
+RUN curl -sSL https://install.python-poetry.org | python3 -
+ENV PATH="${PATH}:/root/.local/bin" 
+RUN poetry config virtualenvs.in-project true && \
   poetry install
 
 CMD ["apache2-foreground"]

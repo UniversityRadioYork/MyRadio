@@ -4,7 +4,7 @@ RUN apt-get update && apt-get install -y libpq-dev libpng-dev libjpeg-dev liblda
                                          libcurl4-openssl-dev libxslt-dev git libz-dev libzip-dev libmemcached-dev \
                                          postgresql-client jq msmtp-mta ffmpeg
 
-RUN docker-php-ext-install pgsql pdo_pgsql gd ldap curl xsl zip
+RUN docker-php-ext-install pgsql gd ldap curl xsl zip
 
 RUN pecl install memcached && \
     echo extension=memcached.so >> /usr/local/etc/php/conf.d/memcached.ini
