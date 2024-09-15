@@ -3,3 +3,4 @@ services:
   myradio:
     environment:
       - E2E_TEST=true
+    volumes: []
