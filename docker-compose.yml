@@ -26,8 +26,7 @@ services:
       - 7080:80
       - 4443:443
     volumes:
-      - ./schema:/var/www/myradio/schema
-      - ./src:/var/www/myradio/src:rw
+      - .:/var/www/myradio
   # daemon:
   #   build: .
   #   depends_on:
