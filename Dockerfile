@@ -52,8 +52,8 @@ COPY src src
 COPY sample_configs/docker-config.php src/MyRadio_Config.local.php
 RUN chown www-data:www-data /var/www/myradio/src/MyRadio_Config.local.php && chmod 664 /var/www/myradio/src/MyRadio_Config.local.php
 
-COPY pyproject.toml poetry.lock ./
 # Testing requirements
+COPY pyproject.toml poetry.lock ./
 RUN curl -sSL https://install.python-poetry.org | python3 - && \
   poetry config virtualenvs.in-project true && \
   poetry install
