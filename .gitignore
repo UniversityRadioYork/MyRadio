@@ -15,3 +15,6 @@ composer.lock
 node_modules/
 src/Public/img/stats_training_*.svg
 .idea/
+__pycache__/
+*.pyc
+*.pyo

@@ -46,9 +46,13 @@ class Database
      */
     private function __construct()
     {
+        $db = Config::$db_name;
+        if (isset($_ENV['E2E_TEST']) && $_ENV['E2E_TEST'] === 'true' && !empty($_SERVER['HTTP_X_MYRADIO_DATABASE'])) {
+            $db = $_REQUEST['HTTP_X_MYRADIO_DATABASE'];
+        }
         $this->db = @pg_connect(
             'host='.Config::$db_hostname
-            .' port=5432 dbname='.Config::$db_name
+            .' port=5432 dbname='.$db
             .' user='.Config::$db_user
             .' password='.Config::$db_pass
         );

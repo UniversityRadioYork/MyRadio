@@ -96,7 +96,7 @@ AuthUtils::setUpAuth();
  * Turn off visible error reporting, if needed
  * must come after AuthUtils::setUpAuth()
  */
-if (!Config::$display_errors && defined('AUTH_SHOWERRORS') && !AuthUtils::hasPermission(AUTH_SHOWERRORS)) {
+if (!Config::$display_errors && defined('AUTH_SHOWERRORS') && !AuthUtils::hasPermission(AUTH_SHOWERRORS) && php_sapi_name() != "cli") {
     ini_set('display_errors', 'Off');
 }
 
@@ -114,7 +114,7 @@ if (isset($_SESSION)) {
     session_id($_COOKIE['PHPSESSID']);
 }
 
-if ((!defined('DISABLE_SESSION')) or DISABLE_SESSION === false) {
+if ((!defined('DISABLE_SESSION')) or DISABLE_SESSION === false or php_sapi_name() == "cli") {
     $session_handler = MyRadioSession::factory();
     // Changing the serialize handler to the general serialize/unserialize methods lets us
     // read sessions without actually having to activate them and read them into $_SESSION

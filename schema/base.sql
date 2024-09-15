@@ -1276,7 +1276,6 @@ COMMENT ON TABLE mail_subscription IS 'If a list is subscribable, then all membe
 CREATE TABLE member (
     memberid integer DEFAULT nextval(('"member_memberid_seq"'::text)::regclass) NOT NULL,
     fname character varying(255) NOT NULL,
-    nname character varying(255),
     sname character varying(255) NOT NULL,
     college integer NOT NULL,
     phone character varying(255),
