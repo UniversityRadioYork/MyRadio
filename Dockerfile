@@ -33,6 +33,9 @@ RUN openssl req -nodes -new -subj "/C=GB/ST=North Yorkshire/L=York/O=University 
 
 RUN a2enmod rewrite ssl
 
+# Fixes for running on ARM
+RUN echo "Mutex posixsem" >> /etc/apache2/apache2.conf
+
 COPY sample_configs/apache.conf /etc/apache2/sites-available/myradio.conf
 RUN a2dissite 000-default && a2ensite myradio && \
     service apache2 restart && apachectl -S
