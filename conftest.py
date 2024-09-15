@@ -20,6 +20,13 @@ def _get_myradio_config(field: str):
     )
 
 
+# We want each test to run in an isolated environment, otherwise tests may randomly fail
+# depending on the order that they ran.
+# We do this by creating a new PostgreSQL database for each test.
+# To speed it up, we first set up a template database, and then make a copy of it
+# for each test.
+# Database.php respects the X-MyRadio-Database header in E2E test mode (env var E2E_TEST == "true").
+
 @pytest.fixture(autouse=True, scope="session")
 def db_conn():
     # Get the config details
