@@ -13,7 +13,7 @@
     </tr>
     <tr>
       <td><b>Name:</b></td>
-      <td>{{user.fname}} {{user.nname}} {{user.sname}}</td>
+      <td>{{user.fname}} {{user.sname}}</td>
       <td rowspan="15" style="vertical-align:top"><img src="{{user.photo}}" width="300"></td>
     </tr>
     {% if user.college is defined %}
@@ -155,7 +155,7 @@
             <em>by <a href="{{train.awarded_by.url}}">{{train.awarded_by.value}}</a>
               {% if train.revoked_by %}
                 , revoked on {{train.revoked_time|date("j/n/Y")}} by
-                <a href="{{train.revoked_by.url}}"> {{train.revoked_by.fname}} {{train.revoked_by.sname}}</a>
+                <a href="{{train.revoked_by.url}}">{{train.revoked_by.fname}} {{train.revoked_by.sname}}</a>
               {% endif %}
             </em>
           </li>

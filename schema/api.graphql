@@ -99,7 +99,6 @@ type User implements Node & MyRadioObject {
     id: ID! @bind(method: "getID")
     itemId: Int! @bind(method: "getID")
     fname: String! @bind(method: "getFName")
-    nname: String! @bind(method: "getNName")
     sname: String! @bind(method: "getSName")
 
     # Public information
@@ -394,7 +393,6 @@ type EmailDestination {
 type MemberSearchResult {
     memberid: Int!
     fname: String!
-    nname: String!
     sname: String!
     eduroam: String
     local_alias: String

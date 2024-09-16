@@ -40,7 +40,7 @@ echo "User selected for deletion: " . $userid . "\n";
 try{
     $db->query(
         'INSERT INTO public.member(
-            memberid, fname, nname, sname, college, receive_email, data_removal)
+            memberid, fname, sname, college, receive_email, data_removal)
             VALUES ($1, \'deleted\', \'user\', 10, false, \'deleted\')',
         [$deletedUserId]
     );
