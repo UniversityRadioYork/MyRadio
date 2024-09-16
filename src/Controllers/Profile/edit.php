@@ -22,7 +22,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $data = $user->getEditForm()->readValues();
 
     $user->setFName($data['fname'])
-        ->setNName($data['nname'])
         ->setSName($data['sname'])
         ->setCollegeID($data['collegeid'])
         ->setPhone($data['phone'])

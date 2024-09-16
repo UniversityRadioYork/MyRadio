@@ -7,7 +7,6 @@ class ShowSpecCest
 {
     public static $user = [
         "fname" => "Testy",
-        "nname" => "Test",
         "sname" => "McTestFace",
         "receive_email" => false
     ];

@@ -8,11 +8,6 @@ $(".twig-datatable").dataTable({
     {
       "sTitle": "Author"
     },
-    //nickname
-    {
-      "sTitle": "nickname",
-      "sClass": "left",
-    },
     //posted
     {
       "sTitle": "Time"

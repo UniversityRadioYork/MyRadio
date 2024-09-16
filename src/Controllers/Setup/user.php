@@ -12,7 +12,6 @@ $pass_error = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $_REQUEST['password'] === $_REQUEST['passwordchk']) {
     $params = [
         'fname' => $_REQUEST['first-name'],
-        'nname' => $_REQUEST['nick-name'],
         'sname' => $_REQUEST['last-name'],
         'email' => $_REQUEST['email'],
         'phone' => $_REQUEST['phone'],
