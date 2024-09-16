@@ -34,7 +34,7 @@ COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 
 RUN mkdir -p /var/www/myradio && chown -R www-data:www-data /var/www/myradio && \
     mkdir -p /var/log/myradio && chown -R www-data:www-data /var/log/myradio && \
-    ln -s /var/log/myradio/errors.log /dev/stderr
+    ln -s /dev/stderr /var/log/myradio/errors.log
 
 WORKDIR /var/www/myradio
 COPY composer.* /var/www/myradio/
