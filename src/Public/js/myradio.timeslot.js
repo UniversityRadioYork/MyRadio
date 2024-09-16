@@ -84,13 +84,7 @@ $("#timeslots").on(
                     if (data[row].signedby !== null) {
                       check.attr("checked", "checked")
                         .attr("disabled", "true");
-                      if (empty(data[row].signedby.nname) != false ) {
-                        label.append(" (Signed in by "+data[row].signedby.fname + ' "' + data[row].signedby.nname + '" ' + data[row].signedby.sname + ")");  
-                      }
-                      else {
-                        label.append(" (Signed in by "+data[row].signedby.fname + " " + data[row].signedby.sname + ")");
-                      }
-                      
+                      label.append(" (Signed in by " + formatName(data[row].signedby) + ")");
                     } else if (data[row].user.memberid == window.myradio.memberid) {
                       check.attr("checked", "checked");
                     }
@@ -102,22 +96,12 @@ $("#timeslots").on(
                   if ($("#guest-signins").is(":empty")) {
                     $("#guest-signins").append("Guest data has been added by:<br>");
                   }
-                  if (empty(data[row].signedby.nname) != false) {
-                    $("#guest-signins").append(
-                      $("<span>")
-                        .text(data[row].signedby.fname + ' "'  + data[row].signedby.nname + '" ' + data[row].signedby.sname
-                        + " (" + moment.unix(data[row].time).fromNow() + ")")
-                        .append("<br>")
-                    );
-                  }
-                  else {
-                    $("#guest-signins").append(
-                      $("<span>")
-                        .text(data[row].signedby.fname + " " + data[row].signedby.sname
-                        + " (" + moment.unix(data[row].time).fromNow() + ")")
-                        .append("<br>")
-                    );
-                  }
+                  $("#guest-signins").append(
+                    $("<span>")
+                      .text(formatName(data[row])
+                      + " (" + moment.unix(data[row].time).fromNow() + ")")
+                      .append("<br>")
+                  );
                 }
               }
               $("#signin-list").append(
