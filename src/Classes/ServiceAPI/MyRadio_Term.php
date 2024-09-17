@@ -40,6 +40,9 @@ class MyRadio_Term extends ServiceAPI
         $this->descr = $result['descr'] . date(" Y", strtotime($this->start_date));
         $this->num_weeks = (int) $result['weeks'];
         $this->week_names = json_decode($result['week_names']);
+        if ($this->week_names == null) {
+            $this->week_names = [];
+        }
         
     }
 
@@ -80,9 +83,13 @@ class MyRadio_Term extends ServiceAPI
      */ 
     public static function getAllTerms($currentOnly = false)
     {
-        $query = 'SELECT termid, EXTRACT(EPOCH FROM start) AS start FROM terms WHERE ';
-        $query .= $currentOnly ? 'start <= now() AND ' : '';
-        $query .= 'finish > now() ORDER BY start ASC';
+        if ($currentOnly == "false") {
+            $currentOnly = false;
+        }
+
+        $query = 'SELECT termid, EXTRACT(EPOCH FROM start) AS start FROM terms ';
+        $query .= $currentOnly ? 'WHERE start <= now() AND finish > now() ' : '';
+        $query .= 'ORDER BY start ASC';
         $result = self::$db->fetchAll($query);
 
         $terms = [];
@@ -202,10 +209,10 @@ class MyRadio_Term extends ServiceAPI
 	public function toDataSource($mixins = []) {
 		return [
 			"term_id" => $this->getID(),
-			"descr" => $this->getTermDescr(),
+			"start" => $this->getTermStartDate(),
+            		"descr" => $this->getTermDescr(),
 			"num_weeks" => $this->getTermWeeks(),
-			"week_names" => $this->getTermWeekNames(),
-			"start" => $this->getTermStartDate()
+			"week_names" => $this->getTermWeekNames()
 		];
 	}
 }
