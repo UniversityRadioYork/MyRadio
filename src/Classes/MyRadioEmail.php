@@ -66,13 +66,26 @@ class MyRadioEmail extends ServiceAPI
             $split = \Html2Text\Html2Text::convert($this->body, true); // ignore errors
             $this->multipart = true;
             $body_transformed = 'This is a MIME encoded message.'
-                    .self::$rtnl.self::$rtnl.'--'.self::$multipart_boundary.self::$rtnl
-                    .'Content-Type: text/plain;charset=utf-8'.self::$rtnl.self::$rtnl
-                    .self::addFooter($split).self::$rtnl.self::$rtnl.'--'.self::$multipart_boundary.self::$rtnl
-                    .'Content-Type: text/html;charset=utf-8'.self::$rtnl.self::$rtnl
-                    .self::addHTMLFooter($this->body).self::$rtnl.self::$rtnl.'--'.self::$multipart_boundary.'--';
+                    .self::$rtnl.self::$rtnl
+                    .'--'.self::$multipart_boundary
+                    .self::$rtnl
+                    .'Content-Type: text/plain;charset=utf-8'
+                    .self::$rtnl
+                    .'Content-Transfer-Encoding: quoted-printable'
+                    .self::$rtnl.self::$rtnl
+                    .quoted_printable_encode(self::addFooter($split))
+                    .self::$rtnl.self::$rtnl
+                    .'--'.self::$multipart_boundary
+                    .self::$rtnl
+                    .'Content-Type: text/html;charset=utf-8'
+                    .self::$rtnl
+                    .'Content-Transfer-Encoding: quoted-printable'
+                    .self::$rtnl.self::$rtnl
+                    .quoted_printable_encode(self::addHTMLFooter($this->body))
+                    .self::$rtnl.self::$rtnl
+                    .'--'.self::$multipart_boundary.'--';
         } else {
-            $body_transformed = self::addFooter($this->body);
+            $body_transformed = quoted_printable_encode(self::addFooter($this->body));
         }
 
         // PHP's mail function doesn't deal with the fact there's a line limit for
@@ -163,7 +176,7 @@ class MyRadioEmail extends ServiceAPI
 
     private function getHeader()
     {
-        $headers = ['MIME-Version: 1.0', 'Content-Transfer-Encoding: quoted-printable'];
+        $headers = ['MIME-Version: 1.0'];
 
         if ($this->from !== null) {
             $headers[] = 'From: '.$this->from->getName().' <'.$this->from->getPublicEmail().'>';
@@ -180,6 +193,7 @@ class MyRadioEmail extends ServiceAPI
             $headers[] = 'Content-Type: multipart/alternative;boundary='.self::$multipart_boundary;
         } else {
             $headers[] = 'Content-Type: text/plain; charset=utf-8';
+            $headers[] = 'Content-Transfer-Encoding: quoted-printable';
         }
 
         return implode(self::$rtnl, $headers);
@@ -222,7 +236,7 @@ class MyRadioEmail extends ServiceAPI
                     if (!mail(
                         $user->getName() . ' <' . $user->getEmail() . '>',
                         $u_subject,
-                        quoted_printable_encode($u_message),
+                        $u_message,
                         $this->getHeader()
                     )) {
                         continue;
