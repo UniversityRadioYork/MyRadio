@@ -52,51 +52,6 @@
                     ]
                 },
                 {
-                    "title": "Contacts",
-                    "items": [
-                        {
-                            "title": "Contact Management",
-                            "url": "module=Mail,action=send,list=44",
-                            "description": "Management are the people that get the really boring paperwork emails. If that's what you need, then click here. They'd also appreciate a fun random email every once in a while for fun."
-                        },
-                        {
-                            "title": "Report a Technical Fault",
-                            "url": "module=Mail,action=send,list=30",
-                            "description": "Having a problem? Report it here and Computing and/or Engineering team will fix it for you. Or at least try."
-                        }
-                    ]
-                },
-                {
-                    "title": "Request",
-                    "items": [
-                        {
-                            "title": "Request Songs",
-                            "url": "https://song-requests.ury.org.uk/",
-                            "description": "Want to play a song that we don't have? Request it here and we can buy it!"
-			            },
-                        {
-                            "title": "Request Marketing for My Show",
-                            "url": "https://docs.google.com/forms/d/e/1FAIpQLSf-zNT5m3v_sYYYXQai0s2Fg5her51N5ywhVDKVPWyGI7QwyQ/viewform?usp=sf_link",
-                            "description": "Got a specific feature or event you want to get social media and graphics for? Fill out this form!"
-                        },
-                        {
-                            "title": "Request Feedback on My Presenting",
-                            "url": "https://docs.google.com/forms/d/e/1FAIpQLSed1ddilaPWdfMVWwACOO2hUMfisVcGvRj5nHuj0ESRWwgm_g/viewform",
-                            "description": "Fill out this form to get your demo reviewed by URY members past and present."
-                        },
-                        {
-                            "title": "Request Press Access to an Event",
-                            "url": "https://docs.google.com/forms/d/1CmTXxFJIUgPhUngLLeQYsYEpU4Ivg46Gl53pSO92C5U/viewform",
-                            "description": "Want to go to a gig, festival, or any other event and cover it for URY? Fill out this form and we can try and get you press access."
-                        },
-                        {
-                            "title": "Request key card access to the studio",
-                            "url": "https://forms.gle/MpGa8sTHLgB4hiHfA",
-                            "description": "Fill out this form to request key card access to the studio"
-                        }
-                    ]
-                },
-                {
                     "title": "Tools + Merch",
                     "items": [
                         {
@@ -215,6 +170,36 @@
                             "description": "Manage Mailing lists and email aliases."
                         }
                     ]
+                },
+                {
+                    "title": "Request",
+                    "items": [
+                        {
+                            "title": "Request Songs",
+                            "url": "https://song-requests.ury.org.uk/",
+                            "description": "Want to play a song that we don't have? Request it here and we can buy it!"
+			            },
+                        {
+                            "title": "Request Marketing for My Show",
+                            "url": "https://docs.google.com/forms/d/e/1FAIpQLSf-zNT5m3v_sYYYXQai0s2Fg5her51N5ywhVDKVPWyGI7QwyQ/viewform?usp=sf_link",
+                            "description": "Got a specific feature or event you want to get social media and graphics for? Fill out this form!"
+                        },
+                        {
+                            "title": "Request Feedback on My Presenting",
+                            "url": "https://docs.google.com/forms/d/e/1FAIpQLSed1ddilaPWdfMVWwACOO2hUMfisVcGvRj5nHuj0ESRWwgm_g/viewform",
+                            "description": "Fill out this form to get your demo reviewed by URY members past and present."
+                        },
+                        {
+                            "title": "Request Press Access to an Event",
+                            "url": "https://docs.google.com/forms/d/1CmTXxFJIUgPhUngLLeQYsYEpU4Ivg46Gl53pSO92C5U/viewform",
+                            "description": "Want to go to a gig, festival, or any other event and cover it for URY? Fill out this form and we can try and get you press access."
+                        },
+                        {
+                            "title": "Request key card access to the studio",
+                            "url": "https://forms.gle/MpGa8sTHLgB4hiHfA",
+                            "description": "Fill out this form to request key card access to the studio"
+                        }
+                    ]
                 }
             ]
         },
@@ -303,6 +288,21 @@
                             "title": "Edit Tech News",
                             "url": "module=MyRadio,action=news,feed=2",
                             "description": "Edit the Tech News feed."
+                        }
+                    ]
+                },
+                {
+                    "title": "Contacts",
+                    "items": [
+                        {
+                            "title": "Contact Management",
+                            "url": "module=Mail,action=send,list=44",
+                            "description": "Management are the people that get the really boring paperwork emails. If that's what you need, then click here. They'd also appreciate a fun random email every once in a while for fun."
+                        },
+                        {
+                            "title": "Report a Technical Fault",
+                            "url": "module=Mail,action=send,list=30",
+                            "description": "Having a problem? Report it here and Computing and/or Engineering team will fix it for you. Or at least try."
                         }
                     ]
                 }
