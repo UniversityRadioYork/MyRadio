@@ -136,6 +136,21 @@ class MyRadio_Event extends ServiceAPI
     }
 
     /**
+     * @param int
+     */
+    public function setHostId(int $hostId): void
+    {
+      self::$db->query('UPDATE public.events
+          SET hostid = $2
+          WHERE eventid = $1', [
+          $this->getID(),
+          $hostId
+      ]);
+      $this->hostId = $hostId;
+      $this->updateCacheObject();
+    }
+
+    /**
      * @return string
      */
     public function getDescriptionHtml(): string
@@ -184,7 +199,7 @@ class MyRadio_Event extends ServiceAPI
      */
     public function update(array $data)
     {
-        $requiredFields = ['title', 'description_html', 'start_time', 'end_time'];
+        $requiredFields = ['title', 'description_html', 'start_time', 'end_time', 'host'];
         foreach ($requiredFields as $field) {
             if (!(isset($data[$field]))) {
                 throw new MyRadioException("Missing $field", 400);
@@ -203,14 +218,16 @@ class MyRadio_Event extends ServiceAPI
             SET title = $2,
             description_html = $3,
             start_time = $4,
-            end_time = $5
+            end_time = $5,
+            hostid = $6
             WHERE eventid = $1',
             [
                 $this->getID(),
                 $data['title'],
                 $data['description_html'],
                 CoreUtils::getTimestamp($data['start_time']),
-                CoreUtils::getTimestamp($data['end_time'])
+                CoreUtils::getTimestamp($data['end_time']),
+                $data['host']->getID()
             ]
         );
 
@@ -218,6 +235,7 @@ class MyRadio_Event extends ServiceAPI
         $this->descriptionHtml = $data['description_html'];
         $this->startTime = $data['start_time'];
         $this->endTime = $data['end_time'];
+        $this->hostId = $data['host']->getID();
 
         $this->updateCacheObject();
     }
@@ -263,7 +281,7 @@ class MyRadio_Event extends ServiceAPI
     public static function create($data = [])
     {
         // Validate
-        $requiredFields = ['title', 'description_html', 'start_time', 'end_time'];
+        $requiredFields = ['title', 'description_html', 'start_time', 'end_time', 'host'];
         foreach ($requiredFields as $field) {
             if (!(isset($data[$field]))) {
                 throw new MyRadioException("Missing $field", 400);
@@ -277,7 +295,7 @@ class MyRadio_Event extends ServiceAPI
             }
         }
 
-        $hostid = MyRadio_User::getCurrentOrSystemUser()->getID();
+        //$hostid = MyRadio_User::getCurrentOrSystemUser()->getID();
 
         $sql = "INSERT INTO public.events (title, description_html, start_time, end_time, hostid)
                 VALUES ($1, $2, $3, $4, $5) RETURNING eventid";
@@ -285,7 +303,7 @@ class MyRadio_Event extends ServiceAPI
         $result = self::$db->fetchColumn($sql, [
             $data['title'], $data['description_html'],
             CoreUtils::getTimestamp($data['start_time']), CoreUtils::getTimestamp($data['end_time']),
-            $hostid
+            $data['host']->getID()
         ]);
 
         return self::factory($result[0]);
@@ -352,6 +370,18 @@ class MyRadio_Event extends ServiceAPI
                     'label' => 'End Time',
                 ]
             )
+        )
+        ->addField(
+            new MyRadioFormField(
+                'host',
+                MyRadioFormField::TYPE_MEMBER,
+                [
+                    'required' => true,
+                    'label' => 'organizer',
+                    'explanation' => 'the person running the event',
+                ]
+
+          )
         );
     }
 
@@ -365,7 +395,8 @@ class MyRadio_Event extends ServiceAPI
                     'title' => $this->getTitle(),
                     'description_html' => $this->getDescriptionHtml(),
                     'start_time' => date('d/m/Y H:i', $this->getStartTime()),
-                    'end_time' => date('d/m/Y H:i', $this->getEndTime())
+                    'end_time' => date('d/m/Y H:i', $this->getEndTime()),
+                    'host' => MyRadio_User::getInstance($this->getHostId()),
                 ]
             );
     }
