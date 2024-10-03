@@ -52,7 +52,7 @@
                     ]
                 },
                 {
-                    "title": "Tools + Merch",
+                    "title": "Tools",
                     "items": [
                         {
                             "title": "Change/Cancel Show",
@@ -68,7 +68,12 @@
                             "title": "Get Beds/Jingles",
                             "url": "https://docs.google.com/forms/d/e/1FAIpQLSdLauYhir0wRBHAJBXIw1OcpyRtdJulIueoVUz0CyM12qObSQ/viewform",
                             "description": "The Audio Resources team have a huge library and a little experience - give them a shot if you want that little something that makes your show stand out."
-                        },
+                        }
+                    ]
+                },
+                {
+                    "title": "Merch",
+                    "items": [
                         {
                             "title": "Buy URY Merchandise",
                             "url": "https://ury-2.creator-spring.com/",
