@@ -295,7 +295,6 @@ class MyRadio_Event extends ServiceAPI
             }
         }
 
-        //$hostid = MyRadio_User::getCurrentOrSystemUser()->getID();
 
         $sql = "INSERT INTO public.events (title, description_html, start_time, end_time, hostid)
                 VALUES ($1, $2, $3, $4, $5) RETURNING eventid";
@@ -377,8 +376,8 @@ class MyRadio_Event extends ServiceAPI
                 MyRadioFormField::TYPE_MEMBER,
                 [
                     'required' => true,
-                    'label' => 'organizer',
-                    'explanation' => 'the person running the event',
+                    'label' => 'Organizer',
+                    'explanation' => 'The person running the event',
                 ]
 
           )
