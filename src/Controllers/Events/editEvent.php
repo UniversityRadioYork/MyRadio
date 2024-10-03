@@ -50,6 +50,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         // creating new
         MyRadio_Event::getForm()
+            ->setFieldValue('host', MyRadio_User::getInstance())
             ->render();
     }
 }
