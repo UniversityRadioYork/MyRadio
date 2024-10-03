@@ -37,8 +37,7 @@ RUN a2enmod rewrite ssl
 RUN echo "Mutex posixsem" >> /etc/apache2/apache2.conf
 
 COPY sample_configs/apache.conf /etc/apache2/sites-available/myradio.conf
-RUN a2dissite 000-default && a2ensite myradio && \
-    service apache2 restart && apachectl -S
+RUN a2dissite 000-default && a2ensite myradio && apachectl -S
 
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 
