@@ -82,6 +82,13 @@ final class Config
     public static $schedule_url = '//ury.org.uk/schedule';
 
     /**
+     * The full URL for the off-air studio booking microservice site.
+     *
+     * @var string
+     */
+    public static $booking_url = '//booking.ury.org.uk/';
+
+    /**
      * The base URL of the radio home pages.
      *
      * @var string
@@ -780,6 +787,7 @@ EOT;
             'base_url' => self::$base_url,
             'rewrite_url' => self::$rewrite_url,
             'schedule_url' => self::$schedule_url,
+            'booking_url' => self::$booking_url,
             'website_url' => self::$website_url,
             'timezone' => self::$timezone,
             'default_module' => self::$default_module,
