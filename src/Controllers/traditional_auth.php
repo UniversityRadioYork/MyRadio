@@ -7,15 +7,23 @@
 //Load the basic MyRadio framework
 
 use \MyRadio\MyRadio\URLUtils;
+use MyRadio\Config;
+use MyRadio\ServiceAPI\MyRadio_APIKey;
+use MyRadio\ServiceAPI\MyRadio_Swagger2;
 
 require_once __DIR__.'/root_cli.php';
 
+if (defined('SHIBBOBLEH_ALLOW_API') && SHIBBOBLEH_ALLOW_API === true &&
+    (isset($_REQUEST['api_key']) || isset($_REQUEST['apiKey']))) {
+    $caller = MyRadio_Swagger2::getAPICaller();
+    $authed = $caller instanceof MyRadio_APIKey && !$caller->isRevoked();
+} else {
+    $authed = isset($_SESSION['memberid']) && !$_SESSION['auth_use_locked'];
+}
+
 //Check the current authentication status of the user
-if ((!isset($_SESSION['memberid']) or $_SESSION['auth_use_locked'])
-    && (!defined('SHIBBOBLEH_ALLOW_READONLY') or SHIBBOBLEH_ALLOW_READONLY === false)
-) {
+if (!$authed && (!defined('SHIBBOBLEH_ALLOW_READONLY') or SHIBBOBLEH_ALLOW_READONLY === false)) {
     //Authentication is required.
-    header('HTTP/1.1 403 Forbidden');
     URLUtils::redirect('MyRadio', 'login', ['next' => $_SERVER['REQUEST_URI']]);
     exit;
 }
@@ -25,7 +33,6 @@ if ((!isset($_SESSION['timeslotid']) or $_SESSION['timeslotid'] === null)
     && (defined('SHIBBOBLEH_REQUIRE_TIMESLOT') and SHIBBOBLEH_REQUIRE_TIMESLOT)
 ) {
     //Timeslot needs configuring
-    header('HTTP/1.1 403 Forbidden');
     URLUtils::redirect('MyRadio', 'timeslot', ['next' => $_SERVER['REQUEST_URI']]);
     exit;
 }
