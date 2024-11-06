@@ -99,6 +99,11 @@
                             "url": "/loggerng/",
                             "description": "Download a high-quality log."
                         },
+		    	{
+                            "title": "Clipper",
+                            "url": "https://clipper.ury.org.uk/",
+                            "description": "Download select clips of your show in real-time."
+                        },
                         {
                             "title": "List My Shows",
                             "url": "module=Scheduler,action=myShows",
