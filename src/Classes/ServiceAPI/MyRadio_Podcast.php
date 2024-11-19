@@ -363,7 +363,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
                 [
                     'label' => 'Upload New Cover Photo',
                     'explanation' => 'If you haven\'t specified an existing cover photo, upload one '
-                    . 'here - it should be square and at least 400x400 pixels.',
+                    . 'here - it should be square and at least 3000x3000 pixels.',
                     'required' => false,
                 ]
             )
