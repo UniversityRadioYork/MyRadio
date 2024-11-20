@@ -2015,9 +2015,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
         //Actually create the member!
         $r = self::$db->fetchColumn(
             'INSERT INTO public.member (fname, sname, college, phone,
-            'INSERT INTO public.member (fname, sname, college, phone,
             email, receive_email, eduroam, require_password_change)
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING memberid',
             VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING memberid',
             [
                 $params['fname'],
