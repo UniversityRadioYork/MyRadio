@@ -1,3 +1,11 @@
+function formatName(data) {
+  if (empty(data[row].user.nname) != false) {
+    return data[row].user.fname + ' "' + data[row].user.nname  + '" ' + data[row].user.sname;
+  }
+  return data[row].user.fname + " " + data[row].user.sname;
+}
+
+
 /* global moment, myradio */
 /**
  * Handles the interactivityness of timeslot selection
@@ -70,11 +78,11 @@ $("#timeslots").on(
                       .attr("id", "signin_"+data[row].user.memberid)
                       .attr("value", data[row].user.memberid);
                     label.attr("for", "signin_"+data[row].user.memberid)
-                      .html(data[row].user.fname + " " + data[row].user.sname);
+                      .html(formatName(data));
                     if (data[row].signedby !== null) {
                       check.attr("checked", "checked")
                         .attr("disabled", "true");
-                      label.append(" (Signed in by "+data[row].signedby.fname + " "+data[row].signedby.sname + ")");
+                      label.append(" (Signed in by " + formatName(data[row].signedby) + ")");
                     } else if (data[row].user.memberid == window.myradio.memberid) {
                       check.attr("checked", "checked");
                     }
@@ -88,7 +96,7 @@ $("#timeslots").on(
                   }
                   $("#guest-signins").append(
                     $("<span>")
-                      .text(data[row].signedby.fname + " " + data[row].signedby.sname
+                      .text(formatName(data[row])
                       + " (" + moment.unix(data[row].time).fromNow() + ")")
                       .append("<br>")
                   );

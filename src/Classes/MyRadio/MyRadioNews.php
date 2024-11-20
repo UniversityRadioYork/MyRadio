@@ -75,7 +75,11 @@ class MyRadioNews
         $db = Database::getInstance();
 
         $news = $db->fetchOne(
-            'SELECT newsentryid, fname || \' \' || sname AS author, timestamp AS posted, content
+            'SELECT newsentryid, 
+            CASE WHEN nname IS NULL
+            THEN fname || \' \' || sname
+            ELSE fname || \' "\' || nname || \'" \' || sname
+            END AS name, timestamp AS posted, content
             FROM public.news_feed, public.member
             WHERE newsentryid=$1
             AND news_feed.memberid = member.memberid',
