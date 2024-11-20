@@ -3,28 +3,26 @@
 <p>To finish up, tell us a little about yourself so we can create you an account.</p>
 <form action="?c=user" method="POST">
 <label for="first-name">First Name</label>
-    <input type="text" name="first-name" id="first-name" required><br>
-    
-    <label for="nick-name">Nickname</label>
-    <input type="text" name="nick-name" id="nick-name"><br>
+<input type="text" name="first-name" id="first-name" required><br>
 
-    <label for="last-name">Last Name</label>
-    <input type="text" name="last-name" id="last-name" required><br>
-    <br>
-    <label for="text">Email</label>
-    <input type="email"
-           name="email"
-           id="email"
-           required
-           ><br>
-    <label for="phone">Phone Number (Optional)</label>
-    <input type="text" name="phone" id="phone"><br>
-    <br>
-    <label for="password">Password</label>
-    <input type="password" name="password" id="password"><br>
-    <label for="passwordchk">Confirm Password</label>
-    <input type="password" name="passwordchk" id="passwordchk"><br> {{pass_error}}
-    <br>
+
+<label for="last-name">Last Name</label>
+<input type="text" name="last-name" id="last-name" required><br>
+<br>
+<label for="text">Email</label>
+<input type="email"
+        name="email"
+        id="email"
+        required
+        ><br>
+<label for="phone">Phone Number (Optional)</label>
+<input type="text" name="phone" id="phone"><br>
+<br>
+<label for="password">Password</label>
+<input type="password" name="password" id="password"><br>
+<label for="passwordchk">Confirm Password</label>
+<input type="password" name="passwordchk" id="passwordchk"><br> {{pass_error}}
+<br>
 <input type="submit" value="Create my account & save my settings" class="btn btn-primary">
 </form>
 {% endblock %}
