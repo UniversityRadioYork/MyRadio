@@ -903,18 +903,32 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
 
     /**
      * Searches searchable *text* metadata for the specified value. Does not work for image metadata.
-     *
+     * if $q is set, then $path_query must be set to "search"
+
+     * 
      * @todo effective_from/to not yet implemented
      *
-     * @param string $query          The query value.
+     * @param string $path_query     The query value encoded in the path (DEPRECATED).
+     * @param string $q              The query value as a query string. to use this, $path_query must be set to "search"
      * @param array  $string_keys    The metadata keys to search
      * @param int    $effective_from UTC Time to search from.
      * @param int    $effective_to   UTC Time to search to.
      *
      * @return array The shows that match the search terms
      */
-    public static function searchMeta($query, $string_keys = null, $effective_from = null, $effective_to = null)
+    public static function searchMeta($path_query, $q="", $string_keys = null, $effective_from = null, $effective_to = null)
     {
+        if($path_query != "search" && $q != "") {
+            throw new MyRadioException(
+                "the path_query must be set to 'search' if q is set in the query string",
+                400
+            );
+        }
+        if ($path_query == "search" && $q != ""){
+            $query = $q;
+        } else {
+            $query = $path_query;
+        }
         if (is_null($string_keys)) {
             $string_keys = ['title', 'description', 'tag'];
         }
