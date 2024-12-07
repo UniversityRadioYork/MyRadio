@@ -1063,12 +1063,26 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
      * This is the server-side implementation of the JSONON system for tracking Show Planner alterations.
      *
      * @param array[] $set A JSONON operation set
+     * @param int|null $last_modified Timestamp of the last time the client knows the show plan was modified
      */
-    public function updateShowPlan($set)
+    public function updateShowPlan($set, $last_modified = null)
     {
         $result = [];
         //Being a Database Transaction - this all succeeds, or none of it does
         self::$db->query('BEGIN');
+
+        // First, check when it was last modified - if it's been modified since
+        // the client last checked, reject the request as their view of the
+        // state of the showplan is out of date.
+        $last_mod_row = self::$db->fetchColumn(
+            'SELECT showplan_last_modified FROM schedule.show_season_timeslot WHERE show_season_timeslot_id=$1 FOR UPDATE',
+            [$this->getID()]
+        );
+        if (!empty($last_mod_row) && $last_modified !== null && CoreUtils::getTimestamp($last_mod_row[0]) !== $last_modified) {
+            self::$db->query('ROLLBACK');
+
+            return ['status' => 'OUTDATED'];
+        }
 
         foreach ($set as $op) {
             switch ($op['op']) {
@@ -1140,10 +1154,23 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             }
         }
 
+        $last_mod_res = self::$db->fetchColumn(
+            'UPDATE schedule.show_season_timeslot SET showplan_last_modified=NOW() WHERE show_season_timeslot_id=$1 RETURNING showplan_last_modified',
+            [$this->getID()]
+        );
         self::$db->query('COMMIT');
 
         //Update the legacy baps show plans database
         $this->updateLegacyShowPlan();
+
+        if ($last_modified !== null) {
+            // We know the client will be able to understand this format
+            return [
+                'status' => $result[count($result)-1]['status'] ? 'OK' : 'ERROR',
+                'result' => $result,
+                'last_modified' => CoreUtils::getTimestamp($last_mod_res[0])
+            ];
+        }
 
         return $result;
     }
@@ -1156,7 +1183,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
     /**
      * Returns the tracks etc. and their associated channels as planned for this show. Mainly used by NIPSWeb.
      */
-    public function getShowPlan()
+    public function getShowPlan(bool $include_last_modified = false)
     {
         // Check we can access it, if not, require permission
         if (!($this->isCurrentUserAnOwner())) {
@@ -1181,6 +1208,17 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             foreach (self::$db->fetchAll($q, [$this->getID()]) as $track) {
                 $tracks[$track['channel_id']][] =
                     NIPSWeb_TimeslotItem::getInstance($track['timeslot_item_id'])->toDataSource();
+            }
+
+            if ($include_last_modified) {
+                $last_modified = self::$db->fetchColumn(
+                    'SELECT showplan_last_modified FROM schedule.show_season_timeslot WHERE show_season_timeslot_id=$1',
+                    [$this->getID()]
+                );
+                return [
+                    'plan' => $tracks,
+                    'last_modified' => empty($last_modified) ? null : CoreUtils::getTimestamp($last_modified[0])
+                ];
             }
 
             return $tracks;
