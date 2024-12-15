@@ -903,7 +903,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
 
     /**
      * Searches searchable *text* metadata for the specified value. Does not work for image metadata.
-     * if $q is set, then $path_query must be set to "search"
+     * if $q is set, then $path_query must be set to "search". This allows the query to be given in path or in parameters.
 
      * 
      * @todo effective_from/to not yet implemented
