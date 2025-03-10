@@ -1778,15 +1778,19 @@ class MyRadio_User extends ServiceAPI implements APICaller
                                      .'even if you are subscribed to mailing lists.',
                 ]
             )
-        )
-        ->addField(
+        );
+        $uni_email = NULL;
+        if ($this->getUniAccount() !== NULL) {
+            $uni_email = str_replace('@'.Config::$eduroam_domain, '', $this->getUniAccount());
+        }
+        $form->addField(
             new MyRadioFormField(
                 'eduroam',
                 MyRadioFormField::TYPE_TEXT,
                 [
                     'required' => false,
                     'label' => 'University Email',
-                    'value' => str_replace('@'.Config::$eduroam_domain, '', $this->getUniAccount()),
+                    'value' => $uni_email,
                     'explanation' => '@'.Config::$eduroam_domain,
                 ]
             )
