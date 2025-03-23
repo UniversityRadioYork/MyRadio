@@ -58,7 +58,7 @@ class MyRadioError
      */
     public static function errorsToArray($errno, $errstr, $errfile, $errline)
     {
-        if ($errno === E_STRICT or error_reporting() === 0) {
+        if ($errno === E_STRICT or (error_reporting() & $errno) === 0) {
             return;
         }
         $error_name = self::getErrorName($errno);
