@@ -190,8 +190,9 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         }
 
         //Get information about Seasons
-        $this->season_ids = json_decode($result['seasons']);
-        if ($this->season_ids === null) {
+        if ($result['seasons'] !== null) {
+            $this->season_ids = json_decode($result['seasons']);
+        } else {
             $this->season_ids = [];
         }
     }
