@@ -3,6 +3,7 @@
 /**
  * This file provides the CoreUtils class for MyRadio.
  */
+
 namespace MyRadio\MyRadio;
 
 use MyRadio\Config;
@@ -67,7 +68,7 @@ class CoreUtils
 
         /* This is better than file_exists because it ensures that the response
          * is valid for a version which has the file when live does not */
-        return is_string(stream_resolve_include_path('Controllers/'.$module.'/'.$action.'.php'));
+        return is_string(stream_resolve_include_path('Controllers/' . $module . '/' . $action . '.php'));
     }
 
     /**
@@ -109,7 +110,7 @@ class CoreUtils
      * Formats pretty much anything into a happy, human readable date/time.
      *
      * @param string $timestring Some form of time
-     * @param bool   $time       Whether to include Hours,Mins. Default yes
+     * @param bool $time Whether to include Hours,Mins. Default yes
      *
      * @return string A happy time
      * @assert (40000) == '01/01/1970'
@@ -117,7 +118,7 @@ class CoreUtils
     public static function happyTime($timestring, $time = true, $date = true)
     {
         return date(
-            ($date ? 'd/m/Y' : '').($time && $date ? ' ' : '').($time ? 'H:i' : ''),
+            ($date ? 'd/m/Y' : '') . ($time && $date ? ' ' : '') . ($time ? 'H:i' : ''),
             is_numeric($timestring) ? $timestring : strtotime($timestring)
         );
     }
@@ -207,9 +208,9 @@ class CoreUtils
             $time = time();
         }
 
-        $year_absolute = (int) gmdate('Y', $time);
-        $week_number = (int) gmdate('W', $time);
-        $month = (int) gmdate('n', $time);
+        $year_absolute = (int)gmdate('Y', $time);
+        $week_number = (int)gmdate('W', $time);
+        $month = (int)gmdate('n', $time);
 
         if ($month === 1 && $week_number > 50) {
             //This is the final week of *last* year
@@ -237,7 +238,7 @@ class CoreUtils
             );
 
             // Default to this year
-            $account_reset_time = strtotime('+'.Config::$account_expiry_before.' days');
+            $account_reset_time = strtotime('+' . Config::$account_expiry_before . ' days');
             if (empty($term) || strtotime($term[0]) <= $account_reset_time) {
                 self::$academicYear = date('Y');
             } else {
@@ -252,14 +253,14 @@ class CoreUtils
      * Returns a postgresql formatted interval.
      *
      * @param int $start The start time
-     * @param int $end   The end time
+     * @param int $end The end time
      *
      * @return string a PgSQL valid interval value
      * @assert (0, 0) == '0 seconds'
      */
     public static function makeInterval($start, $end)
     {
-        return $end - $start.' seconds';
+        return $end - $start . ' seconds';
     }
 
     public static function intervalToSeconds($time)
@@ -275,7 +276,7 @@ class CoreUtils
      * Runs the relevant encode commands on an uploaded music file.
      *
      * @param string $tmpfile The original unencoded filepath
-     * @param string $dbfile  The destination filepath, sans extension
+     * @param string $dbfile The destination filepath, sans extension
      * @throws MyRadioException Thrown if encode or move commands appear to fail.
      * @note Similar command is run for podcast uploads, which are done slightly differently
      */
@@ -303,10 +304,10 @@ class CoreUtils
 
         if ($failed_formats) {
             throw new MyRadioException('Conversion failed: ' . implode(',', $failed_formats), 500);
-        } elseif (!file_exists($dbfile.'.mp3') || !file_exists($dbfile.'.ogg')) {
+        } elseif (!file_exists($dbfile . '.mp3') || !file_exists($dbfile . '.ogg')) {
             throw new MyRadioException('Conversion failed', 500);
         }
-        $orig_new_filename = $dbfile .".mp3.orig";
+        $orig_new_filename = $dbfile . ".mp3.orig";
         // using copy() instead of rename() because renaming between different file partitions
         // generates a warning relating to atomicity.
         // Now added some more checking to hopefully find when tracks don't get uploaded correctly.
@@ -314,10 +315,10 @@ class CoreUtils
         if (!file_exists($orig_new_filename)) {
             throw new MyRadioException('Could not copy file to library. File was not created.');
         } elseif ((filesize($tmpfile) !== filesize($orig_new_filename))
-                || (md5_file($tmpfile) !== md5_file($orig_new_filename))
-            ) {
-            throw new MyRadioException('File mismatch: "'.$tmpfile.'" copied to library as
-                "'.$orig_new_filename.'", files are not equal.');
+            || (md5_file($tmpfile) !== md5_file($orig_new_filename))
+        ) {
+            throw new MyRadioException('File mismatch: "' . $tmpfile . '" copied to library as
+                "' . $orig_new_filename . '", files are not equal.');
         } else {
             unlink($tmpfile);
         }
@@ -326,14 +327,14 @@ class CoreUtils
     /**
      * A simple debug method that only displays output for a specific user.
      *
-     * @param int    $userid  The ID of the user to display for
+     * @param int $userid The ID of the user to display for
      * @param string $message The HTML to display for this user
      * @assert (7449, 'Test') == null
      */
     public static function debugFor($userid, $message)
     {
         if ($_SESSION['memberid'] == $userid) {
-            echo '<p>'.$message.'</p>';
+            echo '<p>' . $message . '</p>';
         }
     }
 
@@ -376,7 +377,7 @@ class CoreUtils
     /**
      * Returns the ID of a Service/Module/Action request, creating it if necessary.
      *
-     * @param int    $module
+     * @param int $module
      * @param string $action
      *
      * @return int
@@ -386,11 +387,11 @@ class CoreUtils
         if (empty(self::$action_ids)) {
             $result = Database::getInstance()->fetchAll('SELECT name, moduleid, actionid FROM myury.actions');
             foreach ($result as $row) {
-                self::$action_ids[$row['name'].'-'.$row['moduleid']] = $row['actionid'];
+                self::$action_ids[$row['name'] . '-' . $row['moduleid']] = $row['actionid'];
             }
         }
 
-        if (empty(self::$action_ids[$action.'-'.$module])) {
+        if (empty(self::$action_ids[$action . '-' . $module])) {
             //The action needs creating
             $result = Database::getInstance()->fetchColumn(
                 'INSERT INTO myury.actions (moduleid, name)
@@ -398,13 +399,13 @@ class CoreUtils
                 [$module, $action]
             );
             if ($result) {
-                self::$action_ids[$action.'-'.$module] = $result[0];
+                self::$action_ids[$action . '-' . $module] = $result[0];
             } else {
                 return;
             }
         }
 
-        return self::$action_ids[$action.'-'.$module];
+        return self::$action_ids[$action . '-' . $module];
     }
 
     /**
@@ -446,7 +447,7 @@ class CoreUtils
             //It must implement the toDataSource method!
             if (!method_exists($element, 'toDataSource')) {
                 throw new MyRadioException(
-                    'Attempted to convert '.get_class($element).' to a DataSource but it not a valid Data Object!',
+                    'Attempted to convert ' . get_class($element) . ' to a DataSource but it not a valid Data Object!',
                     500
                 );
             }
@@ -471,11 +472,11 @@ class CoreUtils
             switch ($val['type']) {
                 case 'open':
                     $opened[$val['level']] = 0;
-                    /* Fall through */
+                /* Fall through */
                 case 'complete':
                     $index = '';
                     for ($i = 1; $i < ($val['level']); ++$i) {
-                        $index .= '['.$opened[$i].']';
+                        $index .= '[' . $opened[$i] . ']';
                     }
                     $path = explode('][', substr($index, 1, -1));
                     $value = &$array;
@@ -566,10 +567,10 @@ class CoreUtils
         return json_decode(
             file_get_contents(
                 Config::$yusu_api_website
-                .'?apikey='
-                .Config::$yusu_api_key
-                .'&function='
-                .$function,
+                . '?apikey='
+                . Config::$yusu_api_key
+                . '&function='
+                . $function,
                 false,
                 $context
             ),
@@ -649,7 +650,7 @@ class CoreUtils
     {
         $result = '';
         $pwdSource = '1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        srand((double) microtime() * 1000000);
+        srand((double)microtime() * 1000000);
         while ($pwdLen) {
             $result .= substr($pwdSource, rand(0, strlen($pwdSource) - 1), 1);
             --$pwdLen;
@@ -679,7 +680,7 @@ class CoreUtils
      * @return array The exploded tags.
      *
      * @throws MyRadioException when tags are longer than 24 characters.
-    **/
+     **/
     public static function explodeTags($tags)
     {
         $tags = preg_split('/[, ] */', $tags, null, PREG_SPLIT_NO_EMPTY);
@@ -700,6 +701,100 @@ class CoreUtils
         return $exploded_tags;
     }
 
+    private static function escapePathPart($part)
+    {
+        return preg_replace('((^\.)|\/|(\.$))', '_', $part);
+    }
+
+    private static function rmdirRecursive($dir) {
+        $objects = scandir($dir);
+        foreach ($objects as $file) {
+            if ($file === '.' || $file === '..') {
+                continue;
+            }
+            if (filetype($dir . '/' . $file) === "dir") {
+                self::rmdirRecursive($dir . '/' . $file);
+            } else {
+                unlink($dir . '/' . $file);
+            }
+        }
+        reset($objects);
+        rmdir($dir);
+    }
+
+    private static function reassembleResumableChunks($tmpDir, $baseFileName, $finalFilename) {
+        $numberOfUploadedFiles = 0;
+        foreach (scandir($tmpDir) as $file) {
+            $numberOfUploadedFiles++;
+        }
+
+        $totalNumberOfChunks = intval($_REQUEST['resumableTotalChunks']);
+        if ($totalNumberOfChunks > $numberOfUploadedFiles) {
+            return false;
+        }
+
+        $fd = fopen($baseFileName, 'w');
+        if ($fd === false) {
+            throw new MyRadioException('Couldn\'t start reassembling chunks');
+        }
+
+        // Gah, Resumable.js counts from 1
+        for ($i = 1; $i <= $totalNumberOfChunks; $i++) {
+            fwrite($fd, file_get_contents($baseFileName . '.part' . $i));
+        }
+        fclose($fd);
+
+        // Move the finished file into the final place
+        rename($baseFileName, $finalFilename);
+
+        // Rename and delete the temporary directory
+        rename($tmpDir, $tmpDir . '_UNUSED');
+        self::rmdirRecursive($tmpDir . '_UNUSED');
+        return true;
+    }
+
+    public static function acceptResumableUpload($finalFileName)
+    {
+        $id = $_REQUEST['resumableIdentifier'];
+        $filename = $_REQUEST['resumableFilename'];
+        $chunk = $_REQUEST['resumableChunkNumber'];
+        $id_escaped = self::escapePathPart($id);
+        $tmpdir = Config::$audio_upload_tmp_dir . '/' . $id_escaped;
+        if (!(file_exists($tmpdir))) {
+            mkdir($tmpdir, 0644);
+        }
+
+        $baseFileName = $tmpdir
+            . '/'
+            . self::escapePathPart($filename);
+
+        $chunkFileName = $baseFileName
+            . '.part'
+            . self::escapePathPart($chunk);
+
+        if ($_REQUEST['REQUEST_METHOD'] === 'GET') {
+            // This isn't an upload request, but Resumable.js checking if a chunk
+            // is already uploaded.
+            if (file_exists($chunkFileName)) {
+                header("HTTP/1.1 200 OK");
+            } else {
+                header("HTTP/1.1 404 Not Found");
+            }
+            exit();
+        }
+
+        // We're assuming Resumable only gives us one file per request
+        $files = array_values($_FILES);
+        $file = array_shift($files);
+
+        if(!(move_uploaded_file($file['tmp_name'], $chunkFileName))) {
+            throw new MyRadioException('Failed to move uploaded file');
+        }
+
+        // Now, check if we have the full file
+        return self::reassembleResumableChunks($tmpdir, $baseFileName, $finalFileName);
+    }
+
     public static function checkUploadPostSize()
     {
         // Check that any files don't go over the PHP post_max_size
@@ -717,13 +812,13 @@ class CoreUtils
             // The 'G' modifier is available since PHP 5.1.0
             case 'g':
                 $post_size *= 1024;
-                // fall through
+            // fall through
             case 'm':
                 $post_size *= 1024;
-                // fall through
+            // fall through
             case 'k':
                 $post_size *= 1024;
-                // fall through
+            // fall through
         }
         if ($_SERVER['CONTENT_LENGTH'] > $post_size) {
             throw new MyRadioException(
@@ -740,14 +835,14 @@ class CoreUtils
     /**
      * Generates a new password consisting of two words and a two-digit number.
      *
+     * @return string
      * @todo Make this crypto secure random?
      *
-     * @return string
      */
     public static function newPassword()
     {
-        return self::$words[array_rand(self::$words)].rand(10, 99)
-            .self::$words[array_rand(self::$words)];
+        return self::$words[array_rand(self::$words)] . rand(10, 99)
+            . self::$words[array_rand(self::$words)];
     }
 
     /**
