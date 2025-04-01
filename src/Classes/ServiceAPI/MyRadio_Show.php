@@ -1133,7 +1133,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         $writer->startElementNs("itunes", "owner", null);
 
         $writer->writeElementNs("itunes", "name", null, Config::$long_name);
-        $writer->writeElementNs("itunes", "email", null, "podcasting@" . Config::$email_domain);
+        $writer->writeElementNs("itunes", "email", null, "pc" . Config::$email_domain);
 
         $writer->endElement();
 
