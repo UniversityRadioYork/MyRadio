@@ -928,6 +928,11 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
      */
     public function cancelTimeslot($reason)
     {
+        //  If no active session we must have come through API so use admin
+        if (!isset($_SESSION['memberid'])) {
+            $r = $this->cancelTimeslotAdmin($reason);
+            return $r;
+        }
         //Get if the User has permission to drop the episode
         if (MyRadio_User::getInstance()->hasAuth(AUTH_DELETESHOWS)) {
             //Yep, do an administrative drop
