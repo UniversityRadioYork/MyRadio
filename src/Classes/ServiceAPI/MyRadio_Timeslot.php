@@ -929,7 +929,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
     public function cancelTimeslot($reason)
     {
         //  If no active session we must have come through API so use admin
-        if (!isset($_SESSION['memberid'])) {
+        if (MyRadio_User::getCurrentUser() === null) {
             $r = $this->cancelTimeslotAdmin($reason);
             return $r;
         }
