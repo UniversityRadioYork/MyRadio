@@ -1099,6 +1099,12 @@ EOT
                     );
                 }
 
+                // If gone through API use placeholder approved id - could be improved by needing a member ID as part of API call.
+                $approvedid = 1;
+                if (MyRadio_User::getCurrentUser() !== null) {
+                    $approvedid = $_SESSION['memberid'];
+                }
+
                 //This week is due to be scheduled! QUERY! QUERY!
                 $r = self::$db->fetchAll(
                     'INSERT INTO schedule.show_season_timeslot
