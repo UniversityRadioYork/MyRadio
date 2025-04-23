@@ -1115,7 +1115,7 @@ EOT
                         CoreUtils::getTimestamp($show_time),
                         $req_time['duration'],
                         $this->owner->getID(),
-                        $_SESSION['memberid'],
+                        $approvedid,
                     ]
                 );
                 if (empty($r)) {
