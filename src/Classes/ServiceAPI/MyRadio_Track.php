@@ -998,7 +998,7 @@ EOF
         $analysis['message'] = 'Currently editing track information for';
         $analysis['submittable'] = true;
         $analysis['fileid'] = $filename;
-        if(!empty($fileInfo['commends_html']))
+        if(!empty($fileInfo['comments_html']))
         {
             $analysis['analysis']['title'] = $fileInfo['comments_html']['title'];
             $analysis['analysis']['artist'] = $fileInfo['comments_html']['artist'];
