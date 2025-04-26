@@ -998,16 +998,27 @@ EOF
         $analysis['message'] = 'Currently editing track information for';
         $analysis['submittable'] = true;
         $analysis['fileid'] = $filename;
-        $analysis['analysis']['title'] = $fileInfo['comments_html']['title'];
-        $analysis['analysis']['artist'] = $fileInfo['comments_html']['artist'];
-        $analysis['analysis']['album'] = $fileInfo['comments_html']['album'];
-
-        //Remove total tracks in album from the track_number tag.
-        $trackNo = explode("/", $fileInfo['comments_html']['track_number'][0], 2)[0];
-        $analysis['analysis']['position'] = (string)$trackNo;
-
-        $trackName = implode("", $fileInfo['comments_html']['title']);
-        $analysis['analysis']['explicit'] = !!stripos($trackName, 'explicit');
+        if(!empty($fileInfo['commends_html']))
+        {
+            $analysis['analysis']['title'] = $fileInfo['comments_html']['title'];
+            $analysis['analysis']['artist'] = $fileInfo['comments_html']['artist'];
+            $analysis['analysis']['album'] = $fileInfo['comments_html']['album'];
+    
+            //Remove total tracks in album from the track_number tag.
+            $trackNo = explode("/", $fileInfo['comments_html']['track_number'][0], 2)[0];
+            $analysis['analysis']['position'] = (string)$trackNo;
+    
+            $trackName = implode("", $fileInfo['comments_html']['title']);
+            $analysis['analysis']['explicit'] = !!stripos($trackName, 'explicit');
+        }
+        else
+        {
+            $analysis['analysis']['title'] = "";
+            $analysis['analysis']['artist'] = "";
+            $analysis['analysis']['album'] = "";
+            $analysis['analysis']['position'] = "";
+            $analysis['analysis']['explicit'] = "";
+        }
 
         return $analysis;
     }
