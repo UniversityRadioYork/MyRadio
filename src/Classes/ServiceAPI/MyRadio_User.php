@@ -47,6 +47,13 @@ class MyRadio_User extends ServiceAPI implements APICaller
      */
     private $fname;
 
+     /**
+     * Stores the User's nickname.
+     *
+     * @var string
+     */
+    private $nname;
+
     /**
      * Stores the User's last name.
      *
@@ -237,7 +244,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
         $this->memberid = (int) $memberid;
         //Get the base data
         $data = self::$db->fetchOne(
-            'SELECT fname, sname, college AS collegeid, l_college.descr AS college,
+            'SELECT fname, nname, sname, college AS collegeid, l_college.descr AS college,
             phone, email, receive_email::boolean::text, local_name, local_alias, eduroam,
             account_locked::boolean::text, last_login, joined, profile_photo, bio,
             auth_provider, require_password_change::boolean::text, contract_signed::boolean::text, gdpr_accepted::boolean::text, 
@@ -434,6 +441,18 @@ class MyRadio_User extends ServiceAPI implements APICaller
         return $this->fname;
     }
 
+     /**
+     * Returns the User's nickname.
+     *
+     * @return string The User's nickname
+     */
+    public function getNName()
+    {
+        return $this->nname;
+    }
+
+
+
     /**
      * Returns the User's surname.
      *
@@ -451,7 +470,11 @@ class MyRadio_User extends ServiceAPI implements APICaller
      */
     public function getName()
     {
+        if (!empty($this->nname)) {
+            return $this->fname.' "'.$this->nname.'" '.$this->sname;   
+        }
         return $this->fname.' '.$this->sname;
+        
     }
 
     public function getLastLogin()
@@ -930,14 +953,14 @@ class MyRadio_User extends ServiceAPI implements APICaller
         $names = explode(' ', $name);
         if (isset($names[1])) {
             return self::$db->fetchAll(
-                'SELECT memberid, fname, sname, eduroam, local_alias FROM member
+                'SELECT memberid, fname, nname, sname, eduroam, local_alias FROM member
                 WHERE fname ILIKE $1 || \'%\' AND sname ILIKE $2 || \'%\'
                 ORDER BY sname, fname LIMIT $3',
                 [$names[0], $names[1], $limit]
             );
         } else {
             return self::$db->fetchAll(
-                'SELECT memberid, fname, sname, eduroam, local_alias FROM member
+                'SELECT memberid, fname, nname, sname, eduroam, local_alias FROM member
                 WHERE fname ILIKE $1 || \'%\' OR sname ILIKE $1 || \'%\'
                 ORDER BY sname, fname LIMIT $2',
                 [$name, $limit]
@@ -1284,6 +1307,14 @@ class MyRadio_User extends ServiceAPI implements APICaller
             throw new MyRadioException('Oh come on, everybody has a name.', 400);
         }
         $this->setCommonParam('fname', $fname);
+
+        return $this;
+    }
+
+    public function setNName($nname)
+    {
+
+        $this->setCommonParam('nname', $nname);
 
         return $this;
     }
@@ -1668,6 +1699,17 @@ class MyRadio_User extends ServiceAPI implements APICaller
             )
             ->addField(
                 new MyRadioFormField(
+                    'nname',
+                    MyRadioFormField::TYPE_TEXT,
+                    [
+                    'required' => false,
+                    'label' => 'Nickname',
+                    'value' => $this->getNName(),
+                    ]
+                )
+            )
+            ->addField(
+                new MyRadioFormField(
                     'sname',
                     MyRadioFormField::TYPE_TEXT,
                     [
@@ -1761,7 +1803,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
                 MyRadioFormField::TYPE_EMAIL,
                 [
                     'required' => false,
-                    'label' => 'Email',
+                    'label' => 'Public Email',
                     'value' => $this->email,
                 ]
             )
@@ -2069,6 +2111,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
      * Creates a new User, or activates a user, if it already exists.
      *
      * @param string $fname         The User's first name.
+     
      * @param string $sname         The User's last name.
      * @param string $eduroam       The User's @york.ac.uk address.
      * @param int    $collegeid     The User's college.
@@ -2083,6 +2126,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
      */
     public static function createOrActivate(
         $fname,
+        
         $sname,
         $eduroam = null,
         $collegeid = null,
@@ -2102,6 +2146,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
         } else {
             $data = [
                 'fname' => $fname,
+                
                 'sname' => $sname,
                 'eduroam' => $eduroam,
                 'collegeid' => $collegeid,
@@ -2128,6 +2173,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
      */
     public static function createActivateAPI(
         $fname,
+        
         $sname,
         $captcha,
         $eduroam = null,
@@ -2356,6 +2402,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
         $data['bio'] = 'This user is hidden';
         $data['memberid'] = $this->getID();
         $data['fname'] = 'Hidden';
+        $data['nname'] = NULL;
         $datap['sname'] = 'User';
         $data['public_email'] = '';
         $data['url'] = $this->getURL();
@@ -2411,6 +2458,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
         $data = [
             'memberid' => $this->getID(),
             'fname' => $this->getFName(),
+            'nname' => $this->getNName(),
             'sname' => $this->getSName(),
             'public_email' => $this->getPublicEmail(),
             'url' => $this->getURL(),
