@@ -14,7 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (empty($data['id'])) {
         //Create
         $availability = iTones_PlaylistAvailability::create(
-            iTones_Playlist::getInstance($data['playlistid']),
+            iTones_Playlist::getInstance($data['availabilityid']),
             $data['weight'],
             $data['effective_from'],
             $data['effective_to'],
@@ -25,8 +25,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'iTones',
             'editAvailability',
             [
-            'availabilityid' => $availability->getID(),
-            'message' => base64_encode('The availability has been created.'),
+                'availabilityid' => $availability->getID(),
+                'message' => base64_encode('The availability has been created.'),
             ]
         );
     } else {
