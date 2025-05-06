@@ -2,6 +2,11 @@
     "menu":
         [
             {
+                "title": "BaradDur",
+                "url": "https://baraddur.ury.org.uk/",
+                "description": "Scheduler 2.0 - A simpler way to do every day tasks."
+            },
+            {
                 "title": "Pending Allocations",
                 "url": "module=Scheduler",
                 "description": "View Seasons that haven't been allocated a timeslot yet."
