@@ -385,6 +385,16 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
                         ['show_season_timeslot_id' => $this->getID()]
                     ),
                 ],
+                'movelink' => [
+                    'display' => 'icon',
+                    'value' => 'transfer',
+                    'title' => 'Move Episode',
+                    'url' => URLUtils::makeURL(
+                        'Scheduler',
+                        'moveEpisode',
+                        ['show_season_timeslot_id' => $this->getID()]
+                    ),
+                ],
             ]
         );
     }

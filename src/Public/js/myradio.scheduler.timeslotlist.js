@@ -143,6 +143,10 @@ $(".twig-datatable").dataTable({
     {
       "sTitle": "Mixcloud Custom End Time",
       "bVisible": false
+    },
+    //moveLink
+    {
+      "sTitle": "Move"
     }
   ],
   "bPaginate": false
