@@ -1355,6 +1355,13 @@ $times
 
     public function addEpisode($start_time, $end_time)
     {
+        //  If no active session we must have come through API so use placeholder user id
+        if (MyRadio_User::getCurrentUser() === null) {
+            $user_id = 1;
+        } else {
+            $user_id = MyRadio_User::getCurrentUser()->getID();
+        }
+
         if(is_null($start_time) || is_null($end_time)) {
             throw new MyRadioException('Start and end time must be set.', 400);
         }
@@ -1374,7 +1381,7 @@ $times
                 $this->getID(),
                 CoreUtils::getTimestamp($start_time),
                 $interval,
-                MyRadio_User::getInstance()->getID()
+                $user_id
             ]
         );
         if ($r) {
