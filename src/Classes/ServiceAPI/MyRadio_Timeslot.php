@@ -372,9 +372,9 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
                 'time' => $this->getStartTime(),
                 'start_time' => CoreUtils::happyTime($this->getStartTime()),
                 'duration' => $this->getDuration(),
-                'mixcloud_status' => $this->getMeta('upload_state'),
-                'mixcloud_starttime' => $this->getMeta('upload_starttime'),
-                'mixcloud_endtime' => $this->getMeta('upload_endtime'),
+                'mixcloud_status' => 12,
+                'mixcloud_starttime' => 12,
+                'mixcloud_endtime' => 12,
                 'rejectlink' => [
                     'display' => 'icon',
                     'value' => 'trash',
@@ -1070,7 +1070,20 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             ]
         );
 
+        $email = "Hi #NAME, \r\n\r\n Please note that an episode of your show, " . $this->getMeta('title')
+        . ' has been moved by our Programming Team. The affected episode was at '
+        . CoreUtils::happyTime($this->getStartTime())
+        . "\r\n"
+        . "It has been moved to " . CoreUtils::happyTime($newStart) . " until " . CoreUtils::happyTime($newEnd)
+        . "\r\n\r\n";
+        $email .= "Regards\r\n" . Config::$long_name . ' Programming Team';
+
         self::$cache->purge();
+        MyRadioEmail::sendEmailToUserSet(
+            $this->getSeason()->getShow()->getCreditObjects(),
+            'Episode of ' . $this->getMeta('title') . ' Cancelled',
+            $email
+        );
         return $r;
     }
 
