@@ -1059,6 +1059,9 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
      */
     public function moveTimeslot($newStart, $newEnd)
     {
+        $oldStart = $this->getStartTime();
+        $oldEnd = $this->getEndTime();
+
         $r = self::$db->query(
             'UPDATE schedule.show_season_timeslot
             SET start_time = $1, duration = $2
@@ -1072,7 +1075,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
 
         $email = "Hi #NAME, \r\n\r\n Please note that an episode of your show, " . $this->getMeta('title')
         . ' has been moved by our Programming Team. The affected episode was at '
-        . CoreUtils::happyTime($this->getStartTime())
+        . CoreUtils::happyTime($oldStart) . ' until ' . CoreUtils::happyTime($oldEnd)
         . "\r\n"
         . "It has been moved to " . CoreUtils::happyTime($newStart) . " until " . CoreUtils::happyTime($newEnd)
         . "\r\n\r\n";
