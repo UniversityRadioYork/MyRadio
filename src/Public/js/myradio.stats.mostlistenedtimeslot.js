@@ -74,6 +74,11 @@ $(".twig-datatable").dataTable({
       "sTitle": "# of Episodes",
       "bVisible": true
     },
+    //addEpisodelink
+    {
+      "sTitle": "Add Episode",
+      "bVisible": false
+    },
     //allocatelink
     {
       "sTitle": "Allocate",
