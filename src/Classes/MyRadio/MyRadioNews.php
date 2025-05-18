@@ -123,6 +123,12 @@ class MyRadioNews
 
     public static function addItem($feedid, $content)
     {
+        $memberid = 1;
+        // is there an active session?
+        if (MyRadio_User::getCurrentUser() === null) {
+            $memberid = $_SESSION['memberid'];
+        }
+
         Database::getInstance()->query(
             'INSERT INTO public.news_feed'
             .' (feedid, memberid, content) VALUES'
