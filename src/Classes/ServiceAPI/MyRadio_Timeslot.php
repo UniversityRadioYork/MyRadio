@@ -372,9 +372,9 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
                 'time' => $this->getStartTime(),
                 'start_time' => CoreUtils::happyTime($this->getStartTime()),
                 'duration' => $this->getDuration(),
-                'mixcloud_status' => $this->getMeta('upload_state'),
-                'mixcloud_starttime' => $this->getMeta('upload_starttime'),
-                'mixcloud_endtime' => $this->getMeta('upload_endtime'),
+                'mixcloud_status' => 12,
+                'mixcloud_starttime' => 12,
+                'mixcloud_endtime' => 12,
                 'rejectlink' => [
                     'display' => 'icon',
                     'value' => 'trash',
@@ -394,7 +394,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
                         'moveEpisode',
                         ['show_season_timeslot_id' => $this->getID()]
                     ),
-                ],
+                ]
             ]
         );
     }
