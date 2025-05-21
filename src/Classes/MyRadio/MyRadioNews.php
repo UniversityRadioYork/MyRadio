@@ -121,7 +121,7 @@ class MyRadioNews
         }; //Can sometimes get duplicate key errors
     }
 
-    public static function addItem($feedid, $content, $memberid)
+    public static function addItem($feedid, $content, $memberid = 1)
     {
         // is there an active session?
         if (MyRadio_User::getCurrentUser() !== null) {
