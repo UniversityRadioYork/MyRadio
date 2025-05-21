@@ -125,7 +125,7 @@ class MyRadioNews
     {
         $memberid = 1;
         // is there an active session?
-        if (MyRadio_User::getCurrentUser() === null) {
+        if (MyRadio_User::getCurrentUser() !== null) {
             $memberid = $_SESSION['memberid'];
         }
 
@@ -133,7 +133,7 @@ class MyRadioNews
             'INSERT INTO public.news_feed'
             .' (feedid, memberid, content) VALUES'
             .' ($1, $2, $3)',
-            [$feedid, $_SESSION['memberid'], $content]
+            [$feedid, $memberid, $content]
         );
     }
 
