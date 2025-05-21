@@ -86,6 +86,10 @@ $(".twig-datatable").dataTable({
     {
       "sTitle": "# of Episodes"
     },
+    //addEpisodelink
+    {
+      "sTitle": "Add Episode"
+    },
     //allocatelink
     {
       "sTitle": "Allocate",

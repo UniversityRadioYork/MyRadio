@@ -90,6 +90,11 @@ $(".twig-datatable").dataTable({
       "sTitle": "# of Episodes",
       "bVisible": false
     },
+    //addEpisodelink
+    {
+      "sTitle": "Add Episode",
+      "bVisible": false
+    },
     //allocatelink
     {
       "sTitle": "Allocate",
@@ -143,6 +148,11 @@ $(".twig-datatable").dataTable({
     {
       "sTitle": "Mixcloud Custom End Time",
       "bVisible": false
+    },
+    //moveLink
+    {
+      "sTitle": "Move Episode",
+      "bSortable": false,
     }
   ],
   "bPaginate": false
