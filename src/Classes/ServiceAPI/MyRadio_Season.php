@@ -1353,13 +1353,11 @@ $times
         ));
     }
 
-    public function addEpisode($start_time, $end_time)
+    public function addEpisode($start_time, $end_time, $memberid = 1)
     {
         //  If no active session we must have come through API so use placeholder user id
-        if (MyRadio_User::getCurrentUser() === null) {
-            $user_id = 1;
-        } else {
-            $user_id = MyRadio_User::getCurrentUser()->getID();
+        if (MyRadio_User::getCurrentUser() !== null) {
+            $memberid = MyRadio_User::getCurrentUser()->getID();
         }
 
         if(is_null($start_time) || is_null($end_time)) {
@@ -1381,7 +1379,7 @@ $times
                 $this->getID(),
                 CoreUtils::getTimestamp($start_time),
                 $interval,
-                $user_id
+                $memberid
             ]
         );
         if ($r) {
