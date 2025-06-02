@@ -372,9 +372,6 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
                 'time' => $this->getStartTime(),
                 'start_time' => CoreUtils::happyTime($this->getStartTime()),
                 'duration' => $this->getDuration(),
-                'mixcloud_status' => 12,
-                'mixcloud_starttime' => 12,
-                'mixcloud_endtime' => 12,
                 'rejectlink' => [
                     'display' => 'icon',
                     'value' => 'trash',
