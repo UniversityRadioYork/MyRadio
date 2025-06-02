@@ -978,6 +978,16 @@ EOT
                         ['show_season_id' => $this->getID()]
                     ),
                 ],
+                'addEpisodesLink' => [
+                    'display' => 'icon',
+                    'value' => 'plus',
+                    'title' => 'Add Episodes',
+                    'url' => URLUtils::makeURL(
+                        'Scheduler',
+                        'addEpisode',
+                        ['show_season_id' => $this->getID()]
+                    ),
+                ],
                 'editlink' => [
                     'display' => 'icon',
                     'value' => 'pencil',
@@ -1297,5 +1307,84 @@ $times
             'show_season_id'
         );
         return self::resultSetToObjArray($r);
+    }
+
+    public function getAddEpisodeForm()
+    {
+        $title = $this->getMeta('title');
+        return (new MyRadioForm(
+            'sched_add_episode',
+            'Scheduler',
+            'addEpisode',
+            [
+                'debug' => false,
+                'title' => 'Add Episode',
+                'subtitle' => "New Episode - $title"
+            ]
+        ))->addField(new MyRadioFormField(
+            'grp_info',
+            MyRadioFormField::TYPE_SECTION,
+            [
+                'label' => 'Create new episode',
+                'explanation' => 'Enter the time for the new episode in this season. Take care with the end time.'
+            ]
+        ))->addField(new MyRadioFormField(
+            'new_start_time',
+            MyRadioFormField::TYPE_DATETIME,
+            [
+                'label' => 'Episde Start Time',
+                'value' => date('d/m/Y H:i')
+            ]
+        ))->addField(new MyRadioFormField(
+            'new_end_time',
+            MyRadioFormField::TYPE_DATETIME,
+            [
+                'label' => 'Episode End Time',
+                'value' => date('d/m/Y H:i')
+            ]
+        ))->addField(new MyRadioFormField(
+            'grp_info_close',
+            MyRadioFormField::TYPE_SECTION_CLOSE,
+            []
+        ))->addField(new MyRadioFormField(
+            'show_season_id',
+            MyRadioFormField::TYPE_HIDDEN,
+            ['value' => $this->getID()]
+        ));
+    }
+
+    public function addEpisode($start_time, $end_time, $memberid = 1)
+    {
+        //  If no active session we must have come through API so use placeholder user id
+        if (MyRadio_User::getCurrentUser() !== null) {
+            $memberid = MyRadio_User::getCurrentUser()->getID();
+        }
+
+        if(is_null($start_time) || is_null($end_time)) {
+            throw new MyRadioException('Start and end time must be set.', 400);
+        }
+
+        //Deal with the possibility of a show from 11pm to midnight etc. (taken from above)
+        if ($start_time < $end_time) {
+            $interval = CoreUtils::makeInterval($start_time, $end_time);
+        } else {
+            $interval = CoreUtils::makeInterval($start_time, $end_time + 86400);
+        }
+
+        $r = self::$db->query(
+            'INSERT INTO schedule.show_season_timeslot
+            (show_season_id, start_time, duration, memberid, approvedid)
+            VALUES ($1, $2, $3, $4, $4) RETURNING show_season_timeslot_id',
+            [
+                $this->getID(),
+                CoreUtils::getTimestamp($start_time),
+                $interval,
+                $memberid
+            ]
+        );
+        if ($r) {
+            $this->updateCacheObject();
+        }
+        return $r;
     }
 }
