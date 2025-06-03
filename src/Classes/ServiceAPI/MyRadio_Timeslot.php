@@ -1343,7 +1343,8 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             subject AS title,
             content AS body,
             (statusid = 2) AS read,
-            comm_source AS source
+            comm_source AS source,
+            sender AS sender
             FROM sis2.messages c
             INNER JOIN schedule.show_season_timeslot ts ON (c.timeslotid = ts.show_season_timeslot_id)
             WHERE  statusid <= 2 AND c.timeslotid = $1
@@ -1357,11 +1358,14 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             $result[$k]['time'] = intval($v['time']);
             $result[$k]['id'] = intval($v['id']);
             //Add the IP metadata
-            if ($v['type'] == 3) {
+            if ($v['type'] === 3) {
                 $result[$k]['location'] = SIS_Utils::ipLookup($v['source']);
             }
             $result[$k]['title'] = htmlspecialchars($v['title']);
             $result[$k]['body'] = htmlspecialchars($v['body']);
+            if ($v['type'] === 6) {
+                $result[$k]['author'] = htmlspecialchars($v['sender']);
+            }
         }
 
         return $result;
@@ -1403,6 +1407,49 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
                 $prefix . $message,         // content : message with prefix
                 $junk ? 4 : 1,            // statusid : junk or unread
                 $source,                  // comm_source : IP
+            ]
+        );
+
+        return $this;
+    }
+
+    /**
+     * Sends a message to the timeslot for display in SIS.
+     *
+     * @param string $message the message to be sent
+     * @param $sender
+     * @param $number
+     * @return MyRadio_Timeslot
+     */
+    public function sendWhatsappMessage($message, $sender, $number): MyRadio_Timeslot
+    {
+        $message = trim($message);
+
+        if (empty($message)) {
+            throw new MyRadioException('Message is empty.', 400);
+        }
+
+        $junk = SIS_Utils::checkMessageSpam($message);
+        $warning = SIS_Utils::checkMessageSocialEngineering($message);
+
+        if ($warning !== false) {
+            $prefix = '<p class="bg-danger">' . $warning . '</p> ';
+        } else {
+            $prefix = '';
+        }
+
+        self::$db->query(
+            'INSERT INTO sis2.messages (timeslotid, commtypeid, sender, subject, content, statusid, comm_source)
+            VALUES ($1, $2, $3, $4, $5, $6, $7)',
+            [
+                $this->getID(),           // timeslot
+                6,                        // commtypeid : website
+                $sender,                // sender
+                substr($message, 0, 144), // subject : trancated message
+                $prefix . $message,         // content : message with prefix
+                $junk ? 4 : 1,            // statusid : junk or unread
+                $number,                  // comm_source : sender mobile number
+                //                                   TODO: ^ maybe not (GDPR)
             ]
         );
 
