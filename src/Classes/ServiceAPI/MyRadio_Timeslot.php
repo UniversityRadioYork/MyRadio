@@ -1084,7 +1084,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
         self::$cache->purge();
         MyRadioEmail::sendEmailToUserSet(
             $this->getSeason()->getShow()->getCreditObjects(),
-            'Episode of ' . $this->getMeta('title') . ' Cancelled',
+            'Episode of ' . $this->getMeta('title') . ' Moved',
             $email
         );
         return $r;
