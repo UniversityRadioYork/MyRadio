@@ -26,6 +26,8 @@ RUN openssl req -nodes -new -subj "/C=GB/ST=North Yorkshire/L=York/O=University 
 
 RUN a2enmod rewrite ssl
 
+RUN echo "144.32.64.160/27" >> /etc/apache2/trusted-proxies.txt
+
 COPY sample_configs/apache.conf /etc/apache2/sites-available/myradio.conf
 RUN a2dissite 000-default && a2ensite myradio && apachectl -S
 
