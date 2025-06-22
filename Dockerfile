@@ -36,8 +36,10 @@ RUN a2enmod rewrite ssl
 # Fixes for running on ARM
 RUN echo "Mutex posixsem" >> /etc/apache2/apache2.conf
 
+RUN echo "127.0.0.0/8" >> /etc/apache2/trusted-proxies.txt
+
 COPY sample_configs/apache.conf /etc/apache2/sites-available/myradio.conf
-RUN a2dissite 000-default && a2ensite myradio && apachectl -S
+RUN a2enmod remoteip && a2dissite 000-default && a2ensite myradio && apachectl -S
 
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 
