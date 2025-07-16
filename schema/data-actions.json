@@ -144,6 +144,7 @@
     ["SIS", "selector.set"],
     ["SIS", "selector.query"],
     ["SIS", "news"],
+    ["SIS", "whatsapp.incoming"],
     ["Stats", "mostMessagedTimeslotYear"],
     ["Stats", "mostListenedTimeslotYear"],
     ["Stats", "mostListenedShowYear"],

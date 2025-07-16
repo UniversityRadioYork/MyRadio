@@ -555,6 +555,10 @@ final class Config
     public static $autoviz_clips_path = '';
     public static $autoviz_public_clips_base = '/media/autoviz-clips';
 
+    public static $sis_whatsapp_enable = false;
+    public static $sis_whatsapp_verify_token = '';
+    public static $sis_whatsapp_api_token = '';
+
     /**
      * Array of tabs and plugins to be used by SIS. They will be loaded in order.
      */
