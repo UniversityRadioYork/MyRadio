@@ -322,18 +322,44 @@ class MyRadio_Demo extends ServiceAPI
             WHERE demo_time > NOW() ORDER BY demo_time ASC"
         );
 
-        //Add the credits for each member
         $demos = [];
         foreach ($result as $demo) {
             $demo['demo_time'] = date('D d M H:i', strtotime($demo['demo_time']));
             $demo['member'] = MyRadio_User::getInstance($demo['memberid'])->getName();
             $demo['memberid'] = (int)$demo['memberid'];
             $demo['presenterstatusid'] = MyRadio_TrainingStatus::getInstance($demo['presenterstatusid'])->getTitle();
+
             $demos[] = $demo;
         }
+
         return $demos;
     }
 
+    public static function listDemosForSignup()
+    {
+        self::initDB();
+
+        $result = self::$db->fetchAll(
+            "SELECT schedule.demo.demo_id, demo_link, presenterstatusid, demo_time, schedule.demo.memberid, signup_cutoff_hours, max_participants, COUNT(schedule.demo.demo_id) AS attendee_count FROM schedule.demo
+            INNER JOIN schedule.demo_attendee ON schedule.demo.demo_id = schedule.demo_attendee.demo_id
+            WHERE demo_time > NOW() GROUP BY schedule.demo.demo_id ORDER BY demo_time ASC"
+        );
+
+        $demos = [];
+        foreach ($result as $demo) {
+            $demo['demo_time'] = date('D d M H:i', strtotime($demo['demo_time']));
+            $demo['member'] = MyRadio_User::getInstance($demo['memberid'])->getName();
+            $demo['memberid'] = (int)$demo['memberid'];
+            $demo['presenterstatusid'] = MyRadio_TrainingStatus::getInstance($demo['presenterstatusid'])->getTitle();
+            $demo['signup_cutoff_hours'] = (int)$demo['signup_cutoff_hours'];
+            $demo['max_participants'] = (int)$demo['max_participants'];
+            $demo['attendee_count'] = (int)$demo['attendee_count'];
+
+            $demos[] = $demo;
+        }
+
+        return $demos;
+    }
 
     /**
      * Deletes this demo and all attendees (if any).
