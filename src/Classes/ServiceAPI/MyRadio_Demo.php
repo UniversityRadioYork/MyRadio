@@ -340,8 +340,8 @@ class MyRadio_Demo extends ServiceAPI
         self::initDB();
 
         $result = self::$db->fetchAll(
-            "SELECT schedule.demo.demo_id, demo_link, presenterstatusid, demo_time, schedule.demo.memberid, signup_cutoff_hours, max_participants, COUNT(schedule.demo.demo_id) AS attendee_count FROM schedule.demo
-            INNER JOIN schedule.demo_attendee ON schedule.demo.demo_id = schedule.demo_attendee.demo_id
+            "SELECT schedule.demo.demo_id, demo_link, presenterstatusid, demo_time, schedule.demo.memberid, signup_cutoff_hours, max_participants, COUNT(schedule.demo_attendee.memberid) AS attendee_count FROM schedule.demo
+            LEFT JOIN schedule.demo_attendee ON schedule.demo.demo_id = schedule.demo_attendee.demo_id
             WHERE demo_time > NOW() GROUP BY schedule.demo.demo_id ORDER BY demo_time ASC"
         );
 
