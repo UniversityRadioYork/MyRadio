@@ -335,6 +335,9 @@ class MyRadio_Demo extends ServiceAPI
         return $demos;
     }
 
+    /**
+     * Gets a list of available demo slots in the future, including more details about the slot, suitable for the new signups form
+     */
     public static function listDemosForSignup()
     {
         self::initDB();
