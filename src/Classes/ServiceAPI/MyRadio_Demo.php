@@ -322,18 +322,49 @@ class MyRadio_Demo extends ServiceAPI
             WHERE demo_time > NOW() ORDER BY demo_time ASC"
         );
 
-        //Add the credits for each member
         $demos = [];
         foreach ($result as $demo) {
             $demo['demo_time'] = date('D d M H:i', strtotime($demo['demo_time']));
             $demo['member'] = MyRadio_User::getInstance($demo['memberid'])->getName();
             $demo['memberid'] = (int)$demo['memberid'];
             $demo['presenterstatusid'] = MyRadio_TrainingStatus::getInstance($demo['presenterstatusid'])->getTitle();
+
             $demos[] = $demo;
         }
+
         return $demos;
     }
 
+    /**
+     * Gets a list of available demo slots in the future, including more details about the slot, suitable for the new signups form
+     */
+    public static function listDemosForSignup()
+    {
+        self::initDB();
+
+        $result = self::$db->fetchAll(
+            "SELECT schedule.demo.demo_id, demo_link, presenterstatusid, demo_time, schedule.demo.memberid, signup_cutoff_hours, max_participants, COUNT(schedule.demo_attendee.memberid) AS attendee_count FROM schedule.demo
+            LEFT JOIN schedule.demo_attendee ON schedule.demo.demo_id = schedule.demo_attendee.demo_id
+            WHERE demo_time > NOW() GROUP BY schedule.demo.demo_id ORDER BY demo_time ASC"
+        );
+
+        $demos = [];
+        foreach ($result as $demo) {
+            $demo_time = strtotime($demo['demo_time']);
+            $demo['demo_time'] = date('D d M H:i', $demo_time);
+            $demo['demo_time_'] = $demo_time;
+            $demo['member'] = MyRadio_User::getInstance($demo['memberid'])->getName();
+            $demo['memberid'] = (int)$demo['memberid'];
+            $demo['presenterstatusid'] = MyRadio_TrainingStatus::getInstance($demo['presenterstatusid'])->getTitle();
+            $demo['signup_cutoff_hours'] = (int)$demo['signup_cutoff_hours'];
+            $demo['max_participants'] = (int)$demo['max_participants'];
+            $demo['attendee_count'] = (int)$demo['attendee_count'];
+
+            $demos[] = $demo;
+        }
+
+        return $demos;
+    }
 
     /**
      * Deletes this demo and all attendees (if any).
@@ -388,6 +419,18 @@ class MyRadio_Demo extends ServiceAPI
      */
     public function attend()
     {
+        return addAttendee($_SESSION['memberid']);
+    }
+
+    /**
+     * The passed user is marked as attending a demo
+     * Return 0: Success
+     * Return 1: Demo Full
+     * Return 2: Already Attending a Demo.
+     * Return 3: Too Late.
+     */
+    public function addAttendee(int $userid)
+    {
         if (!$this->isSpaceOnDemo()) {
             return 1;
         }
@@ -399,7 +442,7 @@ class MyRadio_Demo extends ServiceAPI
             WHERE schedule.demo_attendee.memberid = $1
             AND demo_time <= (NOW() + INTERVAL '1 week')
             AND presenterstatusid = $2",
-            [$_SESSION['memberid'], $this->presenterstatusid]
+            [$userid, $this->presenterstatusid]
         )) !== 0) {
             return 2;
         }
@@ -412,11 +455,11 @@ class MyRadio_Demo extends ServiceAPI
             "INSERT INTO schedule.demo_attendee
             (demo_id, memberid)
             VALUES ($1, $2)",
-            [$this->demo_id, $_SESSION['memberid']]
+            [$this->demo_id, $userid]
         );
 
         $user = $this->getDemoer();
-        $attendee = MyRadio_User::getInstance();
+        $attendee = MyRadio_User::getInstance($userid);
         MyRadioEmail::sendEmailToUser(
             $user,
             'New Training Attendee',
@@ -439,8 +482,8 @@ class MyRadio_Demo extends ServiceAPI
         );
 
         // Take off waiting list
-        if (self::onWaitingList($this->presenterstatusid)) {
-            self::leaveWaitingList($this->presenterstatusid);
+        if (self::onWaitingList($this->presenterstatusid, $userid)) {
+            self::leaveWaitingList($this->presenterstatusid, $userid);
         }
 
         return 0;
@@ -520,12 +563,17 @@ class MyRadio_Demo extends ServiceAPI
 
     public static function joinWaitingList($presenterstatusid)
     {
+        MyRadio_Demo::addToWaitingList($presenterstatusid, $_SESSION['memberid']);
+    }
+
+    public static function addToWaitingList($presenterstatusid, int $userid)
+    {
         self::initDB();
 
         $r = self::$db->fetchColumn(
             "SELECT memberid FROM schedule.demo_waiting_list
             WHERE memberid = $1 AND presenterstatusid = $2",
-            [$_SESSION['memberid'], $presenterstatusid]
+            [$userid, $presenterstatusid]
         );
 
         if (count($r) != 0) {
@@ -535,32 +583,38 @@ class MyRadio_Demo extends ServiceAPI
             self::$db->query(
                 "INSERT INTO schedule.demo_waiting_list (memberid, presenterstatusid, date_added)
                 VALUES ($1, $2, NOW())",
-                [$_SESSION['memberid'], $presenterstatusid]
+                [$userid, $presenterstatusid]
             );
         }
 
         return 0;
     }
 
-    public static function leaveWaitingList($presenterstatusid)
+    public static function leaveWaitingList($presenterstatusid, int $userid = -1)
     {
+        if (isset($_SESSION['memberid'])) {
+            $userid = $_SESSION['memberid'];
+        }
         self::initDB();
         self::$db->query(
             "DELETE FROM schedule.demo_waiting_list
             WHERE memberid = $1
             AND presenterstatusid = $2",
-            [$_SESSION['memberid'], $presenterstatusid]
+            [$userid, $presenterstatusid]
         );
     }
 
-    public static function userWaitingList()
+    public static function userWaitingList(int $userid = -1)
     {
+        if (isset($_SESSION['memberid'])) {
+            $userid = $_SESSION['memberid'];
+        }
         self::initDB();
         return self::$db->fetchAll(
             "SELECT presenterstatusid, date_added FROM schedule.demo_waiting_list
             WHERE memberid = $1
             ORDER BY date_added ASC",
-            [$_SESSION['memberid']]
+            [$userid]
         );
     }
 
@@ -575,9 +629,9 @@ class MyRadio_Demo extends ServiceAPI
         );
     }
 
-    public static function onWaitingList($presenterstatusid)
+    public static function onWaitingList($presenterstatusid, int $userid = -1)
     {
-        $list = self::userWaitingList();
+        $list = self::userWaitingList($userid);
         foreach ($list as $entry) {
             if ($entry['presenterstatusid'] == $presenterstatusid) {
                 return true;
