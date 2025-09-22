@@ -419,7 +419,7 @@ class MyRadio_Demo extends ServiceAPI
      */
     public function attend()
     {
-        return addAttendee($_SESSION['memberid']);
+        return $this->addAttendee($_SESSION['memberid']);
     }
 
     /**
@@ -563,7 +563,7 @@ class MyRadio_Demo extends ServiceAPI
 
     public static function joinWaitingList($presenterstatusid)
     {
-        MyRadio_Demo::addToWaitingList($presenterstatusid, $_SESSION['memberid']);
+        self::addToWaitingList($presenterstatusid, $_SESSION['memberid']);
     }
 
     public static function addToWaitingList($presenterstatusid, int $userid)
