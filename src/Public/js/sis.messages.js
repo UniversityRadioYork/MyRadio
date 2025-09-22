@@ -3,8 +3,8 @@
 var Messages = function () {
   var highest_message_id = 0,
     unreadMessages = 0,
-    glyphicons = ["question-sign", "envelope", "phone", "globe"],
-    locationNames = ["unknown method", "email", "text message", "the website"],
+    glyphicons = ["question-sign", "envelope", "phone", "globe", "globe", "globe", "phone"],
+    locationNames = ["unknown method", "email", "text message", "the website", "request", "mobile site", "WhatsApp"],
     table = document.createElement("table"),
     clickHandler = function (context, row, message) {
       $(row).click(function () {
@@ -30,7 +30,11 @@ var Messages = function () {
             location = location + " (" + message.location[1] + ")";
           }
         }
-        myradio.createDialog("Message", "<blockquote><p>" +message.body + "</p><footer>Listener via " + locationName + " at <cite>" + time + "</cite>.</footer></blockquote>" + location);
+        var listener = 'Listener';
+        if (message.type === 6) {
+          listener = message.sender;
+        }
+        myradio.createDialog("Message", "<blockquote><p>" +message.body + "</p><footer>" + listener + " via " + locationName + " at <cite>" + time + "</cite>.</footer></blockquote>" + location);
       });
     };
 
