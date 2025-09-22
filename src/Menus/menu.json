@@ -99,7 +99,7 @@
                             "url": "/loggerng/",
                             "description": "Download a high-quality log."
                         },
-		    	{
+                        {
                             "title": "Clipper",
                             "url": "https://clipper.ury.org.uk/",
                             "description": "Download select clips of your show in real-time."
@@ -188,7 +188,7 @@
                             "title": "Request Songs",
                             "url": "https://song-requests.ury.org.uk/",
                             "description": "Want to play a song that we don't have? Request it here and we can buy it!"
-			            },
+                        },
                         {
                             "title": "Request Marketing for My Show",
                             "url": "https://docs.google.com/forms/d/e/1FAIpQLSf-zNT5m3v_sYYYXQai0s2Fg5her51N5ywhVDKVPWyGI7QwyQ/viewform?usp=sf_link",
@@ -206,7 +206,7 @@
                         },
                         {
                             "title": "Request key card access to the studio",
-                            "url": "https://forms.gle/MpGa8sTHLgB4hiHfA",
+                            "url": "https://forms.gle/T8V2xt5UvzPxN1mB7",
                             "description": "Fill out this form to request key card access to the studio"
                         }
                     ]
