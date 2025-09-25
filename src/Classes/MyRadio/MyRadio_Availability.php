@@ -94,21 +94,25 @@ class MyRadio_Availability extends \MyRadio\ServiceAPI\ServiceAPI
      * Initiates the MyRadio_Availability object.
      *
      * @param int    $id       The ID of the Availability to initialise
-     * @param string $table
+     * @param string $availability_table
+     * @param string $timeslot_table
      * @param string $id_field
+     * @return array Contents of the availability, should child classes want to do anything else with it.
      */
-    protected function __construct($id, $result = null)
+    protected function setAvailability($id, $availability_table, $timeslot_table, $id_field)
     {
         $this->id = (int) $id;
+        $this->availability_table = $availability_table;
+        $this->timeslot_table = $timeslot_table;
+        $this->id_field = $id_field;
 
-        if ($result === null) {
-            $result = self::$db->fetchOne(
-                'SELECT * FROM '.$this->availability_table.' WHERE '.$this->id_field.'=$1',
-                [$id]
-            );
-        }
+
+        $result = self::$db->fetchOne(
+            'SELECT * FROM '.$this->availability_table.' WHERE '.$this->id_field.'=$1',
+            [$id]
+        );
         if (empty($result)) {
-            throw new MyRadioException('Availability '.$id.' does not exist!');
+            throw new MyRadioException("Availability $id does not exist in $this->availability_table!");
         }
 
         $this->created_by = MyRadio_User::getInstance($result['memberid']);
@@ -120,7 +124,8 @@ class MyRadio_Availability extends \MyRadio\ServiceAPI\ServiceAPI
         $this->timeslots = array_map(
             function ($x) {
                 return [
-                    'id' => $x['id'], 'day' => $x['day'],
+                    'id' => $x['id'],
+                    'day' => $x['day'],
                     'start_time' => strtotime($x['start_time'], 0),
                     'end_time' => strtotime($x['end_time'], 0),
                 ];
@@ -131,6 +136,8 @@ class MyRadio_Availability extends \MyRadio\ServiceAPI\ServiceAPI
                 [$this->id]
             )
         );
+
+        return $result;
     }
 
     /**
@@ -226,25 +233,6 @@ class MyRadio_Availability extends \MyRadio\ServiceAPI\ServiceAPI
     }
 
     /**
-     * Returns a MyRadioForm filled in and ripe for being used to edit this Availability.
-     *
-     * @return MyRadioForm
-     */
-    public function getEditForm()
-    {
-        return $this->getForm($this->banner->getID())
-            ->editMode(
-                $this->getID(),
-                [
-                    'timeslots' => $this->getTimeslots(),
-                    'effective_from' => CoreUtils::happyTime($this->getEffectiveFrom()),
-                    'effective_to' => $this->getEffectiveTo() === null ? null :
-                        CoreUtils::happyTime($this->getEffectiveTo()),
-                ]
-            );
-    }
-
-    /**
      * Return if this Availability is currently active. That is, it has started and has not expired.
      * It returns true even when there isn't currently a Timeslot for the Availaibility running.
      *
@@ -272,7 +260,7 @@ class MyRadio_Availability extends \MyRadio\ServiceAPI\ServiceAPI
      *
      * @param int $time
      *
-     * @return MyRadio_BannerCampaign
+     * @return MyRadio_Availability
      */
     public function setEffectiveFrom($time)
     {
@@ -291,12 +279,13 @@ class MyRadio_Availability extends \MyRadio\ServiceAPI\ServiceAPI
      *
      * @param int $time
      *
-     * @return MyRadio_BannerCampaign
+     * @return MyRadio_Availability
      */
     public function setEffectiveTo($time)
     {
+        $this->effective_to = $time;
+
         if ($time === null) {
-            $this->effective_to = $time;
             self::$db->query(
                 'UPDATE '.$this->availability_table.' SET effective_to=NULL WHERE '.$this->id_field.'=$1',
                 [$this->getID()]
@@ -322,23 +311,31 @@ class MyRadio_Availability extends \MyRadio\ServiceAPI\ServiceAPI
      *
      * @todo  Input validation.
      */
-    public function addTimeslot($day, $start, $end)
+    public function addTimeslot($day, $start, $end, $optional_field_name, $optional_field_val = NULL)
     {
         $start = gmdate('H:i:s', $start).'+00';
         $end = gmdate('H:i:s', $end).'+00';
-
+        $userid = MyRadio_User::getInstance()->getID();
+        if (!is_null($optional_field_name) && !is_null($optional_field_val)) {
+            $optional_field = true;
+        } else {
+            $optional_field = false;
+        }
         $id = self::$db->fetchColumn(
             'INSERT INTO '.$this->timeslot_table.'
-            ('.$this->id_field.', memberid, approvedid, day, start_time, end_time)
-            VALUES ($1, $2, $2, $3, $4, $5) RETURNING id',
+            ('.$this->id_field.', memberid, approvedid, day, start_time, end_time'. ($optional_field ? ', '.$optional_field_name : '') .')
+            VALUES ($1, $2, $2, $3, $4, $5, $6'. ($optional_field ? ', $7' : '') . ') RETURNING id',
             [
                 $this->getID(),
-                MyRadio_User::getInstance()->getID(),
+                $userid,
+                $userid,
                 $day,
                 $start,
                 $end,
+                $optional_field_val,
             ]
         )[0];
+
 
         $this->timeslots[] = [
             'id' => $id,
@@ -351,9 +348,9 @@ class MyRadio_Availability extends \MyRadio\ServiceAPI\ServiceAPI
     }
 
     /**
-     * Get all Banner Campaigns.
+     * Get all Availabilities.
      *
-     * @return MyRadio_BannerCampaign[]
+     * @return MyRadio_Availability[]
      */
     public static function getAllAvailabilities()
     {
@@ -369,13 +366,20 @@ class MyRadio_Availability extends \MyRadio\ServiceAPI\ServiceAPI
      *
      * @return MyRadioForm
      */
-    protected static function getForm($module, $action)
+    protected static function getFormBase($id, $module, $action, $params = [])
     {
         return (
             new MyRadioForm(
                 'availabilityfrm',
                 $module,
-                $action
+                $action,
+                $params
+            )
+        )->addField(
+            new MyRadioFormField(
+                'availabilityid',
+                MyRadioFormField::TYPE_HIDDEN,
+                ['value' => $id]
             )
         )
         ->addField(
@@ -407,6 +411,7 @@ class MyRadio_Availability extends \MyRadio\ServiceAPI\ServiceAPI
                 'timeslots',
                 MyRadioFormField::TYPE_WEEKSELECT,
                 [
+                    'required' => false,
                     'label' => 'Timeslots',
                     'explanation' => 'All times filled in on this schedule (i.e. are purple) are times during the'
                     .' week that this Availability is considered active, and therefore appears on the website.'
