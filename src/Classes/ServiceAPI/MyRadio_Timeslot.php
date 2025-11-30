@@ -1436,6 +1436,18 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
     }
 
     /**
+     * Ditto, but a helper for GraphQL
+     * @param int $timeslotid
+     * @param string $message
+     */
+    public static function sendMessageToTimeslot($timeslotid, $message)
+    {
+        /** @var self $timeslot */
+        $timeslot = self::getInstance($timeslotid);
+        $timeslot->sendMessage($message);
+    }
+
+    /**
      * Signs the given user into the timeslot to say they were
      * on air at this time, if they haven't been signed in already.
      *
