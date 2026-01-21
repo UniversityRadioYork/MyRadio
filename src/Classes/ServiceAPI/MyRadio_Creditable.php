@@ -108,16 +108,19 @@ trait MyRadio_Creditable
                 $credit_types_in_byline[] = $type["value"];
             }
         }
-        $str = '';
+        $names = [];
         foreach ($this->getCredits() as $credit) {
             if (in_array($credit['type'], $credit_types_in_byline)) {
-                $str .= $credit['User']->getName().', ';
+                $names[] = $credit['User']->getName();
             } else {
                 continue;
             }
         }
+        $names = array_unique($names);
+        $str = implode(", ",$names);
+        
 
-        return empty($str) ? '' : substr($str, 0, -2);
+        return empty($names) ? '' : $str;
     }
 
     /**
