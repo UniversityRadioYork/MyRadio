@@ -25,7 +25,33 @@ var Tracklist = function () {
         );
         myradio.createDialog(
           "Confirm removal",
-          "Are you sure you want to remove " + title + " by " + artist + " from the tracklist?",
+          "Are you sure you want to remove '" + title + " by " + artist + "' from the tracklist?",
+          [confirmButton, myradio.closeButton()]
+        );
+      };
+    },
+    get_end_func = function (id, title, artist) {
+      return function () {
+        var confirmButton = document.createElement("button");
+        confirmButton.className = "btn btn-warning";
+        confirmButton.innerHTML = "End Tracklist";
+        confirmButton.setAttribute("data-dismiss", "modal");
+        confirmButton.addEventListener(
+          "click",
+          function () {
+            myradio.callAPI("PUT", "tracklistItem", "endtime", id, "", "", 
+              function () {
+                let row = document.getElementById("t" + id);
+                let tds = row.childNodes;
+                let endbtn = tds[tds.length - 1].querySelectorAll('.end-btn')[0];
+                row.removeChild(endbtn);
+              }
+            );
+          }
+        );
+        myradio.createDialog(
+          "Confirm end of track?",
+          "Are you sure you want to mark '" + title + " by " + artist + "' as ended in the tracklist?",
           [confirmButton, myradio.closeButton()]
         );
       };
@@ -203,24 +229,33 @@ var Tracklist = function () {
       table = document.createElement("table");
       table.setAttribute("class", "tracklist");
       header = document.createElement("tr");
-      header.innerHTML = "<th>Title</th><th>Artist</th><th>Album</th><th>Time</th><th>Remove</th>";
+      header.innerHTML = "<th>Title</th><th>Artist</th><th>Album</th><th>Start Time</th><th>End Time</th><th>Actions</th>";
       table.appendChild(header);
 
       this.appendChild(addButton);
       this.appendChild(table);
     },
     update: function (data) {
+      // Empty the tracklist table so we can fill it with updated content.
+      var paras = document.getElementsByClassName('td-tracklistitem');
+      while(paras[0]) {
+          paras[0].parentNode.removeChild(paras[0]);
+      }
+      
       for (var i in data) {
-        var time,
+        var time,endTime,
           newRow = document.createElement("tr"),
           titleTd = document.createElement("td"),
           artistTd = document.createElement("td"),
           albumTd = document.createElement("td"),
           timeTd = document.createElement("td"),
-          deleteTd = document.createElement("td"),
-          deleteButton = document.createElement("button");
-
+          endTimeTd = document.createElement("td"),
+          actionTd = document.createElement("td"),
+          deleteButton = document.createElement("button"),
+          endButton = document.createElement("button");
+        
         time = moment.unix(data[i].playtime);
+        
         newRow.className = "td-tracklistitem";
         newRow.setAttribute("id", "t"+data[i].id);
         newRow.setAttribute("trackid", data[i].trackid);
@@ -228,26 +263,39 @@ var Tracklist = function () {
         deleteButton.className = "btn btn-danger";
         deleteButton.innerHTML = "<span class='glyphicon glyphicon-trash'></span>";
         deleteButton.addEventListener("click", get_delete_func(data[i].id, data[i].title, data[i].artist));
+        actionTd.appendChild(deleteButton);
+        if (data[i].endtime == false) {
+          endButton.className = "end-btn btn btn-warning";
+          endButton.innerHTML = "<span class='glyphicon glyphicon-stop'></span>";
+          endButton.addEventListener("click", get_end_func(data[i].id, data[i].title, data[i].artist));
+          actionTd.appendChild(endButton);
+          
+          endTimeTd.innerHTML = "Playing..."
+        } else {
+          endTime = moment.unix(data[i].endtime);
+          endTimeTd.innerHTML = endTime.format("HH:MM")
+        };
 
         titleTd.innerHTML = data[i].title;
         artistTd.innerHTML = data[i].artist;
         albumTd.innerHTML = data[i].album;
         timeTd.innerHTML = time.format("HH:mm");
-        deleteTd.appendChild(deleteButton);
 
         newRow.appendChild(titleTd);
         newRow.appendChild(artistTd);
         newRow.appendChild(albumTd);
         newRow.appendChild(timeTd);
-        newRow.appendChild(deleteTd);
+        newRow.appendChild(endTimeTd);
+        newRow.appendChild(actionTd);
 
         table.appendChild(newRow);
 
         //Increment the highest message id, if necessary
-        tracklist_highest_id = (tracklist_highest_id < data[i].id) ? data[i].id : tracklist_highest_id;
+        //tracklist_highest_id = (tracklist_highest_id < data[i].id) ? data[i].id : tracklist_highest_id;
       }
       //Update the server's highest id parameter
-      this.registerParam("tracklist_highest_id", tracklist_highest_id);
+      //this.registerParam("tracklist_highest_id", tracklist_highest_id);
+      //This would then only append new tracklists as they come in, however, we want to show updating end times, so get full tracklist every time.
     }
   };
 };
