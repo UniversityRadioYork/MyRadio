@@ -20,21 +20,17 @@ $(".twig-datatable").dataTable({
     {
       sTitle: "Campaign End"
     },
-    //banner_location_id
-    {
-      bVisible: false
-    },
     //num_timeslots
     {
       sTitle: "# of Timeslots"
     },
+    //banner_location_id
+    {
+      bVisible: false
+    },
     //edit_link
     {
       sTitle: "Edit"
-    },
-    //timeslots
-    {
-      bVisible: false
     }
   ],
   "bPaginate": false,
