@@ -253,6 +253,22 @@ class MyRadioFormField
     const TYPE_SECTION_CLOSE = 0x16;
 
     /**
+     * The constant used to specify this MyRadioFormField is a custom React component.
+     *
+     * It takes the following custom options:
+     * * component - the name of the component to render
+     *  (must be default export of a file called "Public/js/myradio.form.react.{component|lowercase}.js)
+     *
+     * The component is imported from the above file, and rendered with the following props:
+     * * formName: the name of the form
+     * * field: the output of $this->render(), JSON-encoded
+     *
+     * It should render an <input type="hidden" name={formName + "-" + field.name} value={JSON.stringify(value)} />
+     * (in other words, a input named the same as all other field inputs, with the field's value JSON-encoded).
+     */
+    const TYPE_REACT = 0x17;
+
+    /**
      * The name/id of the Form Field.
      *
      * @var string
@@ -609,6 +625,7 @@ class MyRadioFormField
      * @return mixed The submitted field value
      *
      * @throws MyRadioException if the field type does not have a valid read handler
+     * @throws \JsonException if the React field type returns invalid JSON
      *
      * @todo   Verify all returns deal with repeated elements correctly
      */
@@ -850,6 +867,9 @@ class MyRadioFormField
 
                 return $times;
                 break;
+            case self::TYPE_REACT:
+                // React fields should dump in JSON
+                return json_decode($_REQUEST[$name], true, 512, JSON_THROW_ON_ERROR);
             default:
                 throw new MyRadioException(
                     'Field type ' . $this->type . ' does not have a valid value interpreter definition.'
