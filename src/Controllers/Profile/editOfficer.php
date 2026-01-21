@@ -4,19 +4,21 @@
  */
 use \MyRadio\MyRadio\URLUtils;
 use \MyRadio\ServiceAPI\MyRadio_Officer;
+use MyRadio\ServiceAPI\MyRadio_Team;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     //Submitted
     $data = MyRadio_Officer::getForm()->readValues();
 
     if (empty($data['id'])) {
+        $team = MyRadio_Team::getInstance($data['team']);
         //create new
         $officer = MyRadio_Officer::createOfficer(
             $data['name'],
             $data['description'],
             $data['alias'],
             $data['ordering'],
-            $data['team'],
+            $team,
             $data['type']
         );
     } else {
