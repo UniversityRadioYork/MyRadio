@@ -32,8 +32,9 @@ endfor %}
     apiLink.appendChild(linkText);
 
     apiLink.addEventListener('click', function(event) {
-        myradio.callAPI('{{method}}', '{{module}}', '{{action}}', '{{id}}', '{{options|first}}', {{options|json_encode()|raw}});
-        parent.remove();
+        myradio.callAPI('{{method}}', '{{module}}', '{{action}}', '{{id}}', '{{options|first}}', {{options|json_encode()|raw}}, function() {
+            window.location.reload();
+        });
         event.preventDefault();
     }, false);
 
