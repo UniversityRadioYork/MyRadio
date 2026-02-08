@@ -48,7 +48,7 @@ RUN mkdir -p /var/www/myradio && chown -R www-data:www-data /var/www/myradio && 
 
 WORKDIR /var/www/myradio
 COPY composer.* /var/www/myradio/
-RUN COMPOSER_VENDOR_DIR=/var/www/myradio/src/vendor composer install
+RUN COMPOSER_VENDOR_DIR=/var/www/myradio/src/vendor composer install --no-security-blocking
 
 COPY schema schema
 COPY src src
