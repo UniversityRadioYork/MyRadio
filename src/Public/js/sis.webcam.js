@@ -45,10 +45,6 @@ var Webcam = function () {
 
             img.setAttribute("src", data["streams"][i]["liveurl"]);
 
-            setInterval(function (image, source) {
-              image.setAttribute("src", source + "?_=" + Date.now());
-            }, 5000, img, data["streams"][i]["liveurl"]);
-
             caption.innerHTML = data["streams"][i]["streamname"];
 
             figure.className = "webcam-stream-container";
