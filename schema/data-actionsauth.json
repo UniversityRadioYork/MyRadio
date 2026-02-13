@@ -163,6 +163,7 @@
     ["SIS", "tracklist.findTrack", "AUTH_USESIS"],
     ["SIS", "webcam.get", "AUTH_USESIS"],
     ["SIS", "webcam.set", "AUTH_MODIFYWEBCAM"],
+    ["SIS", "whatsapp.incoming", "AUTH_NOLOGIN"],
     ["Stats", "bapsPlayCounter", "AUTH_TRACKSTATISTICS"],
     ["Stats", "fullTracklist", "AUTH_TRACKSTATISTICS"],
     ["Stats", "jukeboxPlayCounter", "AUTH_TRACKSTATISTICS"],
