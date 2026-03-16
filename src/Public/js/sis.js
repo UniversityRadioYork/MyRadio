@@ -23,7 +23,7 @@ var SIS = function (container) {
         dataType: "json",
         //The timeout here is to prevent stack overflow
         complete: function () {
-          setTimeout(connect, 100);
+          setTimeout(connect, 10000);
         },
         success: handleResponse,
         statusCode: {
