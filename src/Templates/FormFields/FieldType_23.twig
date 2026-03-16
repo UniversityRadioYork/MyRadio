@@ -1,0 +1,8 @@
+<div id="{{frm_name}}-{{sfieldname}}">
+    <b>Loading, please wait...</b>
+</div>
+{# We can't instantiate the component yet, since we have to do it after the import map #}
+{# This is done in form.twig. #}
+<script nomodule>
+    $("#{{frm_name}}-{{sfieldname}}").text("Sorry, your browser is too old to use this. Please update your browser.");
+</script>

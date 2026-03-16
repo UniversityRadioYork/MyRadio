@@ -336,6 +336,16 @@ class MyRadioForm
             $captcha = null;
         }
 
+        // If we're using a React field, load in the prerequisites
+        $hasReact = !empty(array_filter(/**
+         * @param MyRadioFormField $field
+         * @return boolean
+         */            $this->fields,
+            function ($field) {
+                return $field->getType() === MyRadioFormField::TYPE_REACT;
+            }
+        ));
+
         $fields = [];
         $redact = [];
         foreach ($this->fields as $field) {
@@ -364,6 +374,22 @@ class MyRadioForm
                 ->addVariable('redact', $redact)
                 ->addVariable('captcha', $captcha)
                 ->addVariable('frm_custom', $frmcustom);
+
+        if ($hasReact) {
+            $reactComponentFields = [];
+            foreach ($fields as $field) {
+                if ($field['type'] !== MyRadioFormField::TYPE_REACT) {
+                    continue;
+                }
+                $componentType = $field['options']['component'];
+                if (!isset($reactComponentFields[$componentType])) {
+                    $reactComponentFields[$componentType] = [];
+                }
+                $reactComponentFields[$componentType][] = $field;
+            }
+            $twig = $twig->addVariable('react', $reactComponentFields);
+        }
+
         $twig->render();
     }
 
