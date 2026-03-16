@@ -249,7 +249,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             $params['genres'] = [];
         }
         if (!isset($params['tags'])) {
-            $params['tags'] = '';
+            $params['tags'] = [];
         }
 
         // Support API calls where there is no session.
@@ -308,7 +308,10 @@ class MyRadio_Show extends MyRadio_Metadata_Common
         }
 
         // Explode the tags
-        $tags = CoreUtils::explodeTags($params['tags']);
+        $tags = $params['tags'];
+        if(!(is_array($tags))) {
+            $tags = CoreUtils::explodeTags($params['tags']);
+        }
         foreach ($tags as $tag) {
             self::$db->query(
                 'INSERT INTO schedule.show_metadata

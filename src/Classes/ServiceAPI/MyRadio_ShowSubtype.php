@@ -107,7 +107,7 @@ class MyRadio_ShowSubtype extends ServiceAPI
             $subtypes[] = new self($row);
         }
 
-        return CoreUtils::setToDataSource($subtypes);
+        return $subtypes;
     }
 
     /**

@@ -108,7 +108,7 @@ class GraphQLUtils
         $resolvedObject = null
     ) {
         $caller = MyRadio_Swagger2::getAPICaller();
-        if ($caller === null) {
+        if (empty($caller)) {
             throw new MyRadioException('No valid authentication data provided', 401);
         }
         if ($caller->hasAuth(AUTH_APISUDO)) {
