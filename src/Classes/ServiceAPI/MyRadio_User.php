@@ -1075,6 +1075,36 @@ class MyRadio_User extends ServiceAPI implements APICaller
     }
 
     /**
+     * Get upcoming shows for the user.
+     * This is for scheduling niceities, because Scheduler module isn't the most user friendly
+     *
+     * @return MyRadio_Timeslot[]
+     */
+
+    public function getUpcomingTimeslots()
+    {
+        // fetchColumn to return ids, start_time needed in SQL because ordering and distinct :(
+        $result = self::$db->fetchColumn(
+            "SELECT DISTINCT(show_season_timeslot_id), show_season_timeslot.start_time
+            FROM schedule.show_season_timeslot
+            INNER JOIN schedule.show_season USING (show_season_id)
+            INNER JOIN schedule.show USING (show_id)
+            INNER JOIN schedule.show_credit USING (show_id)
+            WHERE show_credit.creditid = $1
+            AND show_season_timeslot.start_time > NOW()
+            AND show_credit.effective_to IS NULL
+            ORDER BY show_season_timeslot.start_time;",
+            [$this->memberid]
+        );
+
+        if (empty($result)) {
+            return [];
+        } else {
+            return MyRadio_Timeslot::resultSetToObjArray($result);
+        }
+    }
+
+    /**
      * @param string $paramName The key to update, e.g. account_locked.
      *                          Don't be silly and try to set memberid. Bad things will happen.
      * @param mixed  $value     The value to set the param to. Type depends on $paramName.
