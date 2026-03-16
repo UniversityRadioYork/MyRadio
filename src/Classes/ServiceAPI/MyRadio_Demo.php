@@ -119,34 +119,38 @@ class MyRadio_Demo extends ServiceAPI
                     WHERE demo_id = $6",
                     [CoreUtils::getTimestamp($time), $link, $training_type, $signup_cutoff_hours, $max_participants, $this->getID()]
                 );
-                // Email People
-                $attendees = $this->myRadioUsersAttendingDemo();
-                $attendees[] = $this->getDemoer();
-                
-                // Work out what to tell people re. where their training is
-                if ($link == null && $this->demo_link != null) {
-                    $demo_location = "It is now in person at our studios in Vanbrugh College.";
-                } elseif ($link != null && $this->demo_link == null) {
-                    $demo_location = "It is now online and will be hosted at " . $link;
-                } elseif ($link != null) {
-                    $demo_location = "It will now be at " . $link;
-                } else {
-                    $demo_location = "";
-                }
 
-                foreach ($attendees as $attendee) {
-                    MyRadioEmail::sendEmailToUser(
-                        $attendee,
-                        "Updated Training Session",
-                        "Hi " . $attendee->getFName()
+                if ($this->demo_time !== CoreUtils::getTimestamp($time) || $this->demo_link !== $link) {
+                    // Email People
+                    $attendees = $this->myRadioUsersAttendingDemo();
+                    $attendees[] = $this->getDemoer();
+
+                    // Work out what to tell people re. where their training is
+                    if ($link == null && $this->demo_link != null) {
+                        $demo_location = "It is now in person at our studios in Vanbrugh College.";
+                    } elseif ($link != null && $this->demo_link == null) {
+                        $demo_location = "It is now online and will be hosted at " . $link;
+                    } elseif ($link != null) {
+                        $demo_location = "It will now be at " . $link;
+                    } else {
+                        $demo_location = "";
+                    }
+
+                    foreach ($attendees as $attendee) {
+                        MyRadioEmail::sendEmailToUser(
+                            $attendee,
+                            "Updated Training Session",
+                            "Hi " . $attendee->getFName()
                             . "\r\n\r\n There's been a change to your training session on " . $this->demo_time
                             . ".\r\n\r\n"
                             . ($time != $this->demo_time ? "It is now at "
                                 . CoreUtils::happyTime($time) . ".\r\n\r\n" : "")
                             . $demo_location . "\r\n\r\n"
                             . Config::$long_name . " Training Team"
-                    );
+                        );
+                    }
                 }
+
                 $this->demo_link = $link;
                 $this->demo_time = CoreUtils::getTimestamp($time);
                 $this->presenterstatusid = $training_type;
