@@ -685,6 +685,127 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
     }
 
     /**
+     * Parses $t as either an integral UNIX timestamp or string RFC-3339
+     * timestamp.
+     *
+     * @param   int|string $t  The time to parse.
+     * @return  DateTime  The parsed date.
+     * @throws  MyRadioException  If $t is the wrong type.
+     */
+    private static function parseLightScheduleTime($t)
+    {
+        if ($t instanceof \DateTime) {
+            $tdt = $t;
+        } elseif (is_string($t)) {
+            $tdt = \DateTime::createFromFormat(\DateTime::RFC3339, $t);
+
+            if (!($tdt instanceof \DateTime)) {
+                // Maybe there's a space between date and time, not T.
+                // Postgres etc. do this.
+
+                $tdt = \DateTime::createFromFormat("Y-m-d H:i:sP", $t);
+            }
+        } elseif (is_int($t)) {
+            $tdt = new \DateTime("@$t");
+        } else {
+            throw new MyRadioException('Invalid type for schedule timestamp.');
+        }
+
+        if ($tdt instanceof \DateTime) {
+            return $tdt;
+        }
+
+        throw new MyRadioException('Invalid date format.');
+    }
+
+    /**
+     * Gets a summary of Timeslots airing between `start` and `end` inclusive.
+     *
+     * This method doesn't return full Timeslots.  Instead, it returns an
+     * array of timeslot summaries with the following structure:
+     *
+     * - `start`: Start time (RFC-3339 with space between date and time);
+     * - `end`: End time (RFC-3339 with space between date and time);
+     * - `duration`: Duration (HH:MM:SS);
+     * - `title`: Current show (not timeslot) title;
+     * - `description`: Current show (not timeslot) description;
+     * - `id`: Timeslot ID, which can be used to get the full Timeslot.
+     *
+     * The intended use of this method is for when a full week schedule
+     * query would be too slow---this method executes exactly one database
+     * query.
+     *
+     * From the API, `start` and `range` should be strings representing
+     * non-fractional RFC-3339 timestamps (with date and time separated by
+     * either `T` or ` `.
+     *
+     * When called from inside MyRadio, the arguments to this function may
+     * also be DateTime objects or integers (read as UNIX timestamps).
+     *
+     * @param string $start   The start of the timeslot range.
+     * @param string $end     The range end; defaults to one week after start.
+     *
+     * @return array[]  An array of timeslot summaries (see above).
+     */
+    public static function getLightSchedule($start, $end = null)
+    {
+        self::wakeup();
+
+        $start_dt = self::parseLightScheduleTime($start);
+        $start_pg = CoreUtils::getTimestamp($start_dt->getTimestamp());
+
+        if ($end == null) {
+            $end_dt = $start_dt->add(new \DateInterval("P1W"));
+        } else {
+            $end_dt = self::parseLightScheduleTime($end);
+        }
+        $end_pg = CoreUtils::getTimestamp($end_dt->getTimestamp());
+
+        $result = self::$db->fetchAll(
+            'WITH
+                 current_show_md AS (
+                     SELECT show_id,
+                            metadata_key.name AS key,
+                            metadata_value AS val
+                     FROM schedule.show_metadata
+                     INNER JOIN metadata.metadata_key USING (metadata_key_id)
+                     WHERE effective_from < NOW()
+                       AND (effective_to IS NULL OR effective_to > NOW())
+                     ORDER BY effective_from DESC
+                 ),
+                 current_show_titles AS (
+                     SELECT DISTINCT ON (show_id) show_id, val AS title
+                     FROM current_show_md
+                     WHERE key = \'title\'
+                 ),
+                 current_show_descs AS (
+                     SELECT DISTINCT ON (show_id) show_id, val AS description
+                     FROM current_show_md
+                     WHERE current_show_md.key = \'description\'
+                 )
+             SELECT
+                 show_season_timeslot_id AS id,
+                 title,
+                 description,
+                 start_time as start,
+                 (start_time + duration) as end,
+                 duration
+             FROM schedule.show_season_timeslot AS t
+             INNER JOIN schedule.show_season USING (show_season_id)
+             INNER JOIN schedule.show USING (show_id)
+             INNER JOIN current_show_descs USING (show_id)
+             INNER JOIN current_show_titles USING (show_id)
+             WHERE ($1 < start_time + duration)
+               AND (start_time < $2)
+               AND show_type_id = 1
+             ORDER BY start_time ASC',
+            [$start_pg, $end_pg]
+        );
+
+        return $result;
+    }
+
+    /**
      * Returns the current timeslot, and the n after it, in a simplified
      * datasource format. Mainly intended for API use.
      *
