@@ -1,0 +1,16 @@
+{
+  "Servers": {
+    "1": {
+      "Name": "MyRadio",
+      "Group": "Servers",
+      "Port": 5432,
+      "Username": "myradio",
+      "Host": "postgres",
+      "MaintenanceDB": "postgres",
+      "ConnectionParameters": {
+        "sslmode": "prefer",
+        "connect_timeout": 10
+      }
+    }
+  }
+}

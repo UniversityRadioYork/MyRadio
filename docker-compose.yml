@@ -9,6 +9,20 @@ services:
     volumes:
       - db-data:/var/lib/postgresql/data
 
+  pgadmin:
+    image: dpage/pgadmin4:9.4.0
+    environment:
+      PGADMIN_DEFAULT_EMAIL: development@ury.org.uk
+      PGADMIN_DEFAULT_PASSWORD: ury
+      PGADMIN_LISTEN_PORT: 80
+    ports:
+      - 15432:80
+    volumes:
+      - pgadmin:/var/lib/pgadmin
+      - ./sample_configs/pgadmin-servers.json:/pgadmin4/servers.json:ro
+    depends_on:
+      - postgres
+
   memcached:
     image: memcached:alpine
 
@@ -42,3 +56,4 @@ services:
   #   command: ['/usr/local/bin/php', '/var/www/myradio/src/Controllers/daemon.php']
 volumes:
   db-data:
+  pgadmin:
