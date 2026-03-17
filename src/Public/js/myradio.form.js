@@ -59,7 +59,10 @@ var MyRadioForm = {
           },
           {
             displayKey: function (i) {
-              return i.fname + " " + i.sname;
+              if (i.nname != null) {
+                return i.fname + ' "' + i.nname + '" ' + i.sname;
+              }
+              return i.fname + ' ' + i.sname;
             },
             source: memberLookup.ttAdapter(),
             templates: {
@@ -76,6 +79,9 @@ var MyRadioForm = {
                 } else {
                   identity = "(#" + i.memberid + ")";
                 }
+                if (i.nname != null) {
+                  return $("<p>").text(i.fname + ' "' + i.nname + '" ' + i.sname + " " + identity);
+                }
                 return $("<p>").text(i.fname + " " + i.sname + " " + identity);
               }
             }
@@ -83,6 +89,7 @@ var MyRadioForm = {
           .on(
             "typeahead:selected",
             function (e, obj) {
+              
               idField.val(obj.memberid);
             }
           );
