@@ -9,13 +9,14 @@ use MyRadio\Config;
 use MyRadio\MyRadioException;
 use MyRadio\MyRadio\CoreUtils;
 use MyRadio\ServiceAPI\MyRadio_User;
+use MyRadio\ServiceAPI\ServiceAPI;
 
 /**
  * The NIPSWeb_ManagedItem class helps provide control and access to Beds and Jingles and similar not-PPL resources.
  *
  * @uses    \Database
  */
-class NIPSWeb_ManagedItem extends \MyRadio\ServiceAPI\ServiceAPI
+class NIPSWeb_ManagedItem extends ServiceAPI
 {
     private $managed_item_id;
 
@@ -174,7 +175,7 @@ class NIPSWeb_ManagedItem extends \MyRadio\ServiceAPI\ServiceAPI
             'summary' => $this->getTitle(), //Again, freaking NIPSWeb
             'title' => $this->getTitle(),
             'managedid' => $this->getID(),
-            'length' => CoreUtils::intToTime($this->getLength() > 0 ? $this->getLength() : 0),
+            'length' => CoreUtils::intToTime(max($this->getLength(), 0)),
             'trackid' => $this->getID(),
             'expirydate' => $this->getExpiryDate(),
             'expired' => $this->isExpired(),

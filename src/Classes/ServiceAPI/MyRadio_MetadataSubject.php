@@ -291,7 +291,7 @@ trait MyRadio_MetadataSubject
 
         $query = urldecode($query);
 
-        $results = self::$db->fetchColumn(
+        return self::$db->fetchColumn(
             'SELECT DISTINCT '.$id_field
             .' FROM '.$table
             .' WHERE metadata_value ILIKE \'%\' || $1 || \'%\''
@@ -299,8 +299,6 @@ trait MyRadio_MetadataSubject
             .' LIMIT $2',
             [$query, $limit]
         );
-
-        return $results;
     }
 
     /**

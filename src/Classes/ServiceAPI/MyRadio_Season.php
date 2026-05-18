@@ -968,7 +968,7 @@ EOT
                 ]),
                 'submitted' => $this->getSubmittedTime(),
                 'requested_time' => count($requested_times) > 0 ? $requested_times[0] : null,
-                'first_time' => CoreUtils::happyTime(($first_time ? $first_time : 0)),
+                'first_time' => CoreUtils::happyTime(($first_time ?: 0)),
                 'num_episodes' => [
                     'display' => 'text',
                     'value' => count($this->timeslots),

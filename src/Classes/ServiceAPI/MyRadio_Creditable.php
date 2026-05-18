@@ -112,8 +112,6 @@ trait MyRadio_Creditable
         foreach ($this->getCredits() as $credit) {
             if (in_array($credit['type'], $credit_types_in_byline)) {
                 $str .= $credit['User']->getName().', ';
-            } else {
-                continue;
             }
         }
 

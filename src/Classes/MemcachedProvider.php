@@ -6,6 +6,7 @@
 namespace MyRadio;
 
 use Memcached;
+use MyRadio\Iface\CacheProvider;
 
 /**
  * MemcachedProvider provides in-memory caching for PHP resources to increase page load times.
@@ -14,7 +15,7 @@ use Memcached;
  * it which are then stored using Memcached automatically. It will throw an Error and disable itself if it cannot
  * initialise correctly.
  */
-class MemcachedProvider implements \MyRadio\Iface\CacheProvider
+class MemcachedProvider implements CacheProvider
 {
     /**
      * A variable to store the singleton instance.
@@ -127,9 +128,7 @@ class MemcachedProvider implements \MyRadio\Iface\CacheProvider
         }
 
         //Don't use $this->get as it'll append the prefix twice
-        $result = $this->memcached->getMulti($keys);
-
-        return $result;
+        return $this->memcached->getMulti($keys);
     }
 
     /**

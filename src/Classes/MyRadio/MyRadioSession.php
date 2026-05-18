@@ -3,11 +3,12 @@
 namespace MyRadio\MyRadio;
 
 use MyRadio\Database;
+use SessionHandlerInterface;
 
 /**
  * Custom session handler.
  */
-class MyRadioSession implements \SessionHandlerInterface
+class MyRadioSession implements SessionHandlerInterface
 {
     const TIMEOUT = 7200; //Session expires after 2hrs
 

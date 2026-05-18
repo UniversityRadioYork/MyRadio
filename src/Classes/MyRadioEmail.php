@@ -5,6 +5,7 @@
  */
 namespace MyRadio;
 
+use Html2Text\Html2Text;
 use MyRadio\MyRadio\CoreUtils;
 use MyRadio\MyRadio\URLUtils;
 use MyRadio\ServiceAPI\ServiceAPI;
@@ -63,7 +64,7 @@ class MyRadioEmail extends ServiceAPI
         $split = strip_tags($this->body);
         if ($this->body !== $split) {
             //There's HTML in there
-            $split = \Html2Text\Html2Text::convert($this->body, true); // ignore errors
+            $split = new Html2Text($this->body, true)->getText(); // ignore errors
             $this->multipart = true;
             $body_transformed = 'This is a MIME encoded message.'
                     .self::$rtnl.self::$rtnl
@@ -266,8 +267,6 @@ class MyRadioEmail extends ServiceAPI
                 $this->setSentToList($list);
             }
         }
-
-        return;
     }
 
     public function getSentToUser(MyRadio_User $user)
@@ -371,18 +370,11 @@ class MyRadioEmail extends ServiceAPI
      */
     public function isRecipient(MyRadio_User $user)
     {
-        foreach ($this->r_users as $ruser) {
-            if ($ruser === $user->getID()) {
-                return true;
-            }
+        if (in_array($user->getID(), $this->r_users, true)) {
+            return true;
         }
-        foreach ($this->getListRecipients() as $list) {
-            if ($list->isMember($user->getID())) {
-                return true;
-            }
-        }
+        return array_any($this->getListRecipients(), fn($list) => $list->isMember($user->getID()));
 
-        return false;
     }
 
     public function getSubject()

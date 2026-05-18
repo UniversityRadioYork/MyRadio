@@ -7,6 +7,7 @@ namespace MyRadio\Daemons;
 
 use MyRadio\Config;
 use MyRadio\iTones\iTones_Playlist;
+use MyRadio\MyRadio\MyRadio_Daemon;
 use MyRadio\ServiceAPI\MyRadio_User;
 use MyRadio\ServiceAPI\MyRadio_Track;
 use MyRadio\ServiceAPI\MyRadio_TracklistItem;
@@ -17,7 +18,7 @@ use MyRadio\NIPSWeb\NIPSWeb_AutoPlaylist;
  *
  * @uses    \Database
  */
-class MyRadio_PlaylistsDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
+class MyRadio_PlaylistsDaemon extends MyRadio_Daemon
 {
     private static $locks = [];
 

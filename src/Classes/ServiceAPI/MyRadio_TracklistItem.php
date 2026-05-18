@@ -111,7 +111,7 @@ class MyRadio_TracklistItem extends ServiceAPI
         if ($timeslotid == null) {
             $timeslot_was_null = true;
             $timeslot = MyRadio_Timeslot::getCurrentTimeslot();
-            $timeslotid = $timeslot != null ? $timeslot->getID() : null; // will be null if jukebox etc.
+            $timeslotid = $timeslot?->getID(); // will be null if jukebox etc.
         } else {
             $timeslot = MyRadio_Timeslot::getInstance($timeslotid);
         }
@@ -122,14 +122,14 @@ class MyRadio_TracklistItem extends ServiceAPI
 
         if ($timeslot == null) {
             // we're on jukebox
-            if ($tracklist_all == false) {
+            if (!$tracklist_all) {
                 throw new MyRadioException(
                     "The current user doesn't have permission to set a tracklist on a show other than their own.",
                     403
                 );
             }
         } else {
-            if ($tracklist_all == false && !$timeslot->isCurrentUserAnOwner()) {
+            if (!$tracklist_all && !$timeslot->isCurrentUserAnOwner()) {
                 throw new MyRadioException(
                     "Current user doesn't have permission to tracklist to a show they aren't credited on.",
                     403
@@ -259,12 +259,10 @@ class MyRadio_TracklistItem extends ServiceAPI
     {
         $sel_action = MyRadio_Selector::getSelActionAtTime($time);
 
-        $sources = self::$db->fetchColumn(
+        return self::$db->fetchColumn(
             'SELECT sourceid FROM tracklist.selsources WHERE selaction=$1',
             [$sel_action]
         );
-
-        return $sources;
     }
 
     /**

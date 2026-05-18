@@ -1459,7 +1459,6 @@ class MyRadio_User extends ServiceAPI implements APICaller
         $this->payment[] = ['year' => $year, 'paid' => $amount];
         $this->clearPermissionCache()->updateCacheObject();
         $this->updateCacheObject();
-        return;
     }
 
     /**

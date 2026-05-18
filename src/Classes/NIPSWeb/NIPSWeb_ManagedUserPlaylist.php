@@ -89,7 +89,7 @@ class NIPSWeb_ManagedUserPlaylist extends NIPSWeb_ManagedPlaylist
                  * http://stackoverflow.com/questions/4903387/can-2-singleton-classes-reference-each-other
                  * http://www.phparch.com/2010/03/static-methods-vs-singletons-choose-neither/
                  */
-                $this->items[] = NIPSWeb_ManagedItem::getInstance((int) $id, $this);
+                $this->items[] = NIPSWeb_ManagedItem::getInstance((int) $id);
             }
         }
 

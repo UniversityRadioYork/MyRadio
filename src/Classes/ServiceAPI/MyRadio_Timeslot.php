@@ -273,9 +273,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
     public static function getUserSelectedTimeslot()
     {
         if (isset($_SESSION['timeslotid'])) {
-            $timeslot = self::getInstance($_SESSION['timeslotid']);
-
-            return $timeslot;
+            return self::getInstance($_SESSION['timeslotid']);
         }
         return null;
     }
@@ -940,8 +938,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
     {
         //  If no active session we must have come through API so use admin
         if (MyRadio_User::getCurrentUser() === null) {
-            $r = $this->cancelTimeslotAdmin($reason);
-            return $r;
+            return $this->cancelTimeslotAdmin($reason);
         }
         //Get if the User has permission to drop the episode
         if (MyRadio_User::getInstance()->hasAuth(AUTH_DELETESHOWS)) {
@@ -1339,7 +1336,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
             [$this->getID()]
         );
 
-        $data = array_merge(
+        return array_merge(
             $data,
             array_map(
                 function ($x) {
@@ -1353,8 +1350,6 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
                 $result
             )
         );
-
-        return $data;
     }
 
     public function getMessages($offset = 0)

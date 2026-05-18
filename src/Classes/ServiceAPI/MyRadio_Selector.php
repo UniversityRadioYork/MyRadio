@@ -132,14 +132,12 @@ class MyRadio_Selector
 
         $state = str_split($data);
 
-        $sel_status = [
+        return [
             'studio' => (int) $state[0],
             'lock' => (int) $state[1],
             'selectedfrom' => (int) $state[2],
             'power' => (int) $state[3],
         ];
-
-        return $sel_status;
     }
 
     /**
@@ -307,7 +305,7 @@ class MyRadio_Selector
             return false;
         }
 
-        return ($result[0] == 13) ? true : false;
+        return $result[0] === 13;
     }
 
     /**
@@ -335,7 +333,7 @@ class MyRadio_Selector
             return false;
         }
 
-        return ($result[0] == 15) ? true : false;
+        return $result[0] === 15;
     }
 
     /**

@@ -602,7 +602,7 @@ class MyRadio_Officer extends ServiceAPI
      */
     public static function getForm()
     {
-        $form = (
+        return (
             new MyRadioForm(
                 'officerForm',
                 'Profile',
@@ -736,8 +736,6 @@ class MyRadio_Officer extends ServiceAPI
                 ]
             )
         );
-
-        return $form;
     }
 
     /**

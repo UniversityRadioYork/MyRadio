@@ -29,7 +29,6 @@ class MyRadioError
         E_USER_ERROR => 'User-generated error',
         E_USER_WARNING => 'User-generated warning',
         E_USER_NOTICE => 'User-generated notice',
-        E_STRICT => 'Runtime notice',
         E_RECOVERABLE_ERROR => 'Recoverable error',
     ];
 
@@ -58,7 +57,7 @@ class MyRadioError
      */
     public static function errorsToArray($errno, $errstr, $errfile, $errline)
     {
-        if ($errno === E_STRICT or (error_reporting() & $errno) === 0) {
+        if ((error_reporting() & $errno) === 0) {
             return;
         }
         $error_name = self::getErrorName($errno);
@@ -67,7 +66,7 @@ class MyRadioError
             'string' => $errstr,
             'file' => htmlspecialchars($errfile, ENT_NOQUOTES, 'UTF-8'),
             'line' => $errline, ];
-        array_push(self::$php_errorlist, $php_error);
+        self::$php_errorlist[] = $php_error;
     }
 
     /**
@@ -134,13 +133,13 @@ class MyRadioError
 
         $lockfile = fopen(Config::$log_file_lock, 'a+');
         if (!$lockfile) {
-            error_log('FAIL: fopen failed in '.__FUNCTION__.' in '.__FILE__.'');
+            error_log('FAIL: fopen failed in '.__FUNCTION__.' in '.__FILE__);
             error_log(__FUNCTION__.' failed! Check server logs!');
             throw new MyRadioException('Failed to open log file.', 500);
         }
         $locked = flock($lockfile, LOCK_EX);
         if (!$locked) {
-            error_log('FAIL: flock failed in '.__FUNCTION__.' in '.__FILE__.'');
+            error_log('FAIL: flock failed in '.__FUNCTION__.' in '.__FILE__);
             error_log(__FUNCTION__.' failed! Check server logs!');
             throw new MyRadioException('Failed to open log lock file');
         }
@@ -164,7 +163,7 @@ class MyRadioError
                 error_log(
                     'FAIL: preg_match could not match '
                     .'expected pattern in error log file, in '
-                    .__FILE__.''
+                    .__FILE__
                 );
                 continue;
             }
@@ -225,8 +224,8 @@ class MyRadioError
 
         // Now that lockfile has been updated (if it was necessary)
         // it's time to release the lock, and close the file.
-        if (flock($lockfile, LOCK_UN) == false
-            || fclose($lockfile) == false
+        if (!flock($lockfile, LOCK_UN)
+            || !fclose($lockfile)
         ) {
             error_log('FAIL: flock or fclose failed in '.__FUNCTION__.' in '.__FILE__);
             error_log(__FUNCTION__.' failed! Check server logs!');

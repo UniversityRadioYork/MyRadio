@@ -4,6 +4,7 @@ namespace MyRadio\MyRadio;
 
 use MyRadio\Config;
 use MyRadio\Database;
+use MyRadio\Iface\MyRadioAuthenticator;
 use MyRadio\MyRadioEmail;
 use MyRadio\MyRadioException;
 use MyRadio\ServiceAPI\MyRadio_User;
@@ -12,7 +13,7 @@ use MyRadio\ServiceAPI\MyRadio_User;
  * An Authenticator processes login requests for a user against a specific
  * user database.
  */
-class MyRadioDefaultAuthenticator extends \MyRadio\Database implements \MyRadio\Iface\MyRadioAuthenticator
+class MyRadioDefaultAuthenticator extends Database implements MyRadioAuthenticator
 {
     /**
      * Sets up the DB connection.

@@ -5,6 +5,7 @@
  */
 namespace MyRadio\iTones;
 
+use MyRadio\MyRadio\MyRadio_Availability;
 use MyRadio\MyRadioException;
 use MyRadio\MyRadio\CoreUtils;
 use MyRadio\MyRadio\URLUtils;
@@ -12,7 +13,7 @@ use MyRadio\MyRadio\MyRadioForm;
 use MyRadio\MyRadio\MyRadioFormField;
 use MyRadio\ServiceAPI\MyRadio_User;
 
-class iTones_PlaylistAvailability extends \MyRadio\MyRadio\MyRadio_Availability
+class iTones_PlaylistAvailability extends MyRadio_Availability
 {
     /**
      * The Playlist this is a Availability for.

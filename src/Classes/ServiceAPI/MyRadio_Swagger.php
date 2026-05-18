@@ -5,6 +5,7 @@
  */
 namespace MyRadio\ServiceAPI;
 
+use MyRadio\Iface\APICaller;
 use ReflectionMethod;
 use ReflectionClass;
 use MyRadio\Config;
@@ -427,7 +428,7 @@ class MyRadio_Swagger
     /**
      * Identifies who's calling this.
      *
-     * @return \MyRadio\Iface\APICaller The APICaller authorising against the request
+     * @return APICaller The APICaller authorising against the request
      */
     public static function getAPICaller()
     {

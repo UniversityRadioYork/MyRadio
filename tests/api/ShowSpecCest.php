@@ -1,6 +1,7 @@
 <?php
 
 use \Codeception\Util\HttpCode;
+use Step\Api\MyRadioTester;
 
 // Tests if new shows can be created and appear where they are expected
 class ShowSpecCest
@@ -17,7 +18,7 @@ class ShowSpecCest
         "podcast_explicit" => false
     ];
 
-    public function _before(\Step\Api\MyRadioTester $I)
+    public function _before(MyRadioTester $I)
     {
         $time = time();
         // Obj has to be constructed here, for the time() call
@@ -30,11 +31,11 @@ class ShowSpecCest
         $I->haveHttpHeader('Content-Type', 'application/json'); // Necessary for post requests
     }
 
-    public function _after(\Step\Api\MyRadioTester $I)
+    public function _after(MyRadioTester $I)
     {
     }
 
-    public function testShowCreate(\Step\Api\MyRadioTester $I)
+    public function testShowCreate(MyRadioTester $I)
     {
         ShowSpecCest::$show["credits"] = [
             "credittype" => [1], // Show creation requires these extra arrays :(

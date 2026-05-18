@@ -7,12 +7,13 @@ namespace MyRadio\Daemons;
 
 use MyRadio\Config;
 use MyRadio\Database;
+use MyRadio\MyRadio\MyRadio_Daemon;
 use MyRadio\ServiceAPI\MyRadio_Track;
 
 /**
  * The Explicit Daemon asks iTunes if a Track is Explicit.
  */
-class MyRadio_ExplicitDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
+class MyRadio_ExplicitDaemon extends MyRadio_Daemon
 {
     private static $digitised_only = true;
 

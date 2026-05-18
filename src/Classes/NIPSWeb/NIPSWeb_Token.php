@@ -5,6 +5,7 @@
 namespace MyRadio\NIPSWeb;
 
 use MyRadio\MyRadioException;
+use MyRadio\ServiceAPI\ServiceAPI;
 
 /**
  * The NIPSWeb_Token class.
@@ -13,7 +14,7 @@ use MyRadio\MyRadioException;
  *
  * @uses    \Database
  */
-class NIPSWeb_Token extends \MyRadio\ServiceAPI\ServiceAPI
+class NIPSWeb_Token extends ServiceAPI
 {
     public static function createToken($trackid)
     {

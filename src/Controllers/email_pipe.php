@@ -12,7 +12,7 @@ use \MyRadio\MyRadioException;
 use \MyRadio\ServiceAPI\MyRadio_User;
 use \MyRadio\ServiceAPI\MyRadio_List;
 
-define('SILENT_EXCEPTIONS', true);
+const SILENT_EXCEPTIONS = true;
 
 ini_set('log_errors', 1);
 ini_set('error_log', '/tmp/php-mailparser-error.log');

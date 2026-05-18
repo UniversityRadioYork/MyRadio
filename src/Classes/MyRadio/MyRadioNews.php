@@ -118,7 +118,7 @@ class MyRadioNews
                 [$newsentryid, $user->getID()]
             );
         } catch (MyRadioException $e) {
-        }; //Can sometimes get duplicate key errors
+        } //Can sometimes get duplicate key errors
     }
 
     public static function addItem($feedid, $content, $memberid = 1)

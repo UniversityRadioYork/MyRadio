@@ -14,13 +14,14 @@ use MyRadio\ServiceAPI\MyRadio_User;
 use MyRadio\ServiceAPI\MyRadio_Track;
 use MyRadio\MyRadio\MyRadioForm;
 use MyRadio\MyRadio\MyRadioFormField;
+use MyRadio\ServiceAPI\ServiceAPI;
 
 /**
  * The iTones_Playlist class helps provide control and access to managed playlists.
  *
  * @uses    \Database
  */
-class iTones_Playlist extends \MyRadio\ServiceAPI\ServiceAPI
+class iTones_Playlist extends ServiceAPI
 {
     private $playlistid;
     private $title;

@@ -12,13 +12,14 @@ use MyRadio\ServiceAPI\MyRadio_Track;
 use MyRadio\ServiceAPI\MyRadio_TracklistItem;
 use MyRadio\iTones\iTones_TrackRequest;
 use MyRadio\iTones\iTones_Playlist;
+use MyRadio\ServiceAPI\ServiceAPI;
 
 /**
  * The iTones_Utils class provides generic utilities for controlling iTones - URY's Campus Jukebox.
  *
  * @uses    \Database
  */
-class iTones_Utils extends \MyRadio\ServiceAPI\ServiceAPI
+class iTones_Utils extends ServiceAPI
 {
     private static $telnet_handle;
     private static $queues = ['requests'];

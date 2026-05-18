@@ -19,11 +19,11 @@ if (isset($_REQUEST['id'])) {
 } else {
     $data = MyRadio_Track::findByOptions(
         [
-                'title' => isset($_REQUEST['term']) ? $_REQUEST['term'] : '',
-                'artist' => isset($_REQUEST['artist']) ? $_REQUEST['artist'] : '',
+                'title' => $_REQUEST['term'] ?? '',
+                'artist' => $_REQUEST['artist'] ?? '',
                 'limit' => isset($_REQUEST['limit']) ? intval($_REQUEST['limit']) : Config::$ajax_limit_default,
-                'digitised' => isset($_REQUEST['require_digitised']) ? (bool) $_REQUEST['require_digitised'] : false,
-                'itonesplaylistid' => isset($_REQUEST['itonesplaylistid']) ? $_REQUEST['itonesplaylistid'] : '',
+                'digitised' => isset($_REQUEST['require_digitised']) && (bool)$_REQUEST['require_digitised'],
+                'itonesplaylistid' => $_REQUEST['itonesplaylistid'] ?? '',
         ]
     );
 }

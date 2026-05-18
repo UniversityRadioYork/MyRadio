@@ -1,5 +1,6 @@
 <?php
 
+use JetBrains\PhpStorm\NoReturn;
 use \MyRadio\Config;
 
 $__start = -microtime(true);
@@ -10,9 +11,9 @@ $__start = -microtime(true);
  * @todo Management interfaces to configure keys and expose methods
  */
 // Configure MyRadio & Set API Settings
-define('SILENT_EXCEPTIONS', false);
+const SILENT_EXCEPTIONS = false;
 define('DISABLE_SESSION', !(empty($args['api_key'])));
-define('JSON_DEBUG', true);
+const JSON_DEBUG = true;
 
 require_once __DIR__.'/../Controllers/root_cli.php';
 
@@ -23,7 +24,8 @@ error_reporting(E_ALL);
 /**
  * Handle API errors.
  */
-function api_error($code, $message = null)
+#[NoReturn]
+function api_error($code, $message = null): void
 {
     ob_end_clean();
     $messages = [

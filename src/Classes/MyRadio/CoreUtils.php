@@ -5,6 +5,8 @@
  */
 namespace MyRadio\MyRadio;
 
+use HTMLPurifier;
+use HTMLPurifier_Config;
 use MyRadio\Config;
 use MyRadio\Database;
 use MyRadio\MyRadioTwig;
@@ -579,8 +581,8 @@ class CoreUtils
 
     public static function getSafeHTML($dirty_html)
     {
-        $config = \HTMLPurifier_Config::createDefault();
-        $purifier = new \HTMLPurifier($config);
+        $config = HTMLPurifier_Config::createDefault();
+        $purifier = new HTMLPurifier($config);
 
         return $purifier->purify($dirty_html);
     }
@@ -649,7 +651,7 @@ class CoreUtils
     {
         $result = '';
         $pwdSource = '1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        srand((double) microtime() * 1000000);
+        srand((float) microtime() * 1000000);
         while ($pwdLen) {
             $result .= substr($pwdSource, rand(0, strlen($pwdSource) - 1), 1);
             --$pwdLen;

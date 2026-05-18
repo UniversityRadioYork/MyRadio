@@ -153,12 +153,10 @@ class MyRadio_Alias extends ServiceAPI
      */
     public function toDataSource($mixins = [])
     {
-        $data = [
+        return [
             'alias_id' => $this->getID(),
             'source' => $this->getSource(),
             'destinations' => CoreUtils::dataSourceParser($this->getDestinations()),
         ];
-
-        return $data;
     }
 }

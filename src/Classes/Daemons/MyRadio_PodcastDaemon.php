@@ -6,12 +6,13 @@
 namespace MyRadio\Daemons;
 
 use MyRadio\Config;
+use MyRadio\MyRadio\MyRadio_Daemon;
 use MyRadio\ServiceAPI\MyRadio_Podcast;
 
 /**
  * The Podcast Daemon converts uploaded audio files into web-ready uryplayer files.
  */
-class MyRadio_PodcastDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
+class MyRadio_PodcastDaemon extends MyRadio_Daemon
 {
     /**
      * If this method returns true, the Daemon host should run this Daemon. If it returns false, it must not.

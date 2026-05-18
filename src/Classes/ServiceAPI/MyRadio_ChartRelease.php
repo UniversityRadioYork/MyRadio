@@ -262,7 +262,7 @@ class MyRadio_ChartRelease extends ServiceAPI
     {
         $chart_rows = [];
         foreach ($this->chart_row_ids as $chart_row_id) {
-            $chart_rows[] = MyRadio_ChartRow::getInstance($chart_row_id, $this);
+            $chart_rows[] = MyRadio_ChartRow::getInstance($chart_row_id);
         }
 
         return $chart_rows;
@@ -373,7 +373,7 @@ class MyRadio_ChartRelease extends ServiceAPI
             ];
         }
 
-        $form = (
+        return (
             new MyRadioForm(
                 'charts_editchartrelease',
                 'Charts',
@@ -416,8 +416,6 @@ class MyRadio_ChartRelease extends ServiceAPI
                 )
             )
         );
-
-        return $form;
     }
 
     public function getEditForm()

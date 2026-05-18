@@ -10,14 +10,14 @@
 use \MyRadio\MyRadio\CoreUtils;
 use \MyRadio\Config;
 
-define('SILENT_EXCEPTIONS', true);
-define('DBDATA_COMPLETE', 0);
-define('DBDATA_PERMISSIONS', 1);
-define('DBDATA_SUDO', 2);
-define('DBDATA_BLANK', 3);
-define('SCHEMA_DIR', __DIR__.'/../../../schema/');
+const SILENT_EXCEPTIONS = true;
+const DBDATA_COMPLETE = 0;
+const DBDATA_PERMISSIONS = 1;
+const DBDATA_SUDO = 2;
+const DBDATA_BLANK = 3;
+const SCHEMA_DIR = __DIR__ . '/../../../schema/';
 
-$controller = isset($_REQUEST['c']) ? $_REQUEST['c'] : 'checks';
+$controller = $_REQUEST['c'] ?? 'checks';
 
 session_start();
 if (isset($_SESSION['myradio_setup_config'])) {

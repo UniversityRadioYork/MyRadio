@@ -2,6 +2,8 @@
 
 namespace MyRadio\MyRadio;
 
+use DOMDocument;
+use DOMXPath;
 use MyRadio\MyRadioException;
 use MyRadio\ServiceAPI\MyRadio_Album;
 use MyRadio\ServiceAPI\MyRadio_Track;
@@ -478,8 +480,6 @@ class MyRadioFormField
         }
         if ($this->type !== self::TYPE_TABULARSET) {
             $this->value = $value;
-
-            return;
         } else {
             foreach ($this->options as $field) {
                 if (!$field instanceof self) {
@@ -632,11 +632,11 @@ class MyRadioFormField
                 }
                 break;
             case self::TYPE_BLOCKTEXT:
-                $dom = new \DOMDocument();
+                $dom = new DOMDocument();
                 // We have to wrap the html so that DOMDocument has a root
                 $dom->loadHtml("<div>$_REQUEST[$name]</div>", LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
 
-                $xpath = new \DOMXPath($dom);
+                $xpath = new DOMXPath($dom);
                 while ($node = $xpath->query('//script')->item(0)) {
                     $node->parentNode->removeChild($node);
                 }

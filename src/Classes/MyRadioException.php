@@ -5,15 +5,17 @@
  */
 namespace MyRadio;
 
+use Exception;
 use GraphQL\Error\ClientAware;
 use MyRadio\MyRadio\AuthUtils;
 use MyRadio\MyRadio\CoreUtils;
+use RuntimeException;
 
 /**
  * Extends the standard Exception class to provide additional functionality
  * and logging.
  */
-class MyRadioException extends \RuntimeException implements ClientAware
+class MyRadioException extends RuntimeException implements ClientAware
 {
     const FATAL = -1;
 
@@ -45,11 +47,11 @@ class MyRadioException extends \RuntimeException implements ClientAware
     /**
      * Extends the default session by enabling useful output.
      *
-     * @param string     $message  A nice message explaining what is going on
-     * @param int        $code     A number representing the problem. -1 Indicates fatal.
-     * @param \Exception $previous
+     * @param string         $message A nice message explaining what is going on
+     * @param int            $code A number representing the problem. -1 Indicates fatal.
+     * @param Exception|null $previous
      */
-    public function __construct($message, $code = 500, \Exception $previous = null)
+    public function __construct(string $message, int $code = 500, Exception|null $previous = null)
     {
         parent::__construct((string) $message, (int) $code, $previous);
 

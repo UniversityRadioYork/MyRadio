@@ -125,7 +125,7 @@ class MyRadio_List extends ServiceAPI
 
     private function parseSQL($sql)
     {
-        $sql = str_replace(
+        return str_replace(
             ['%LISTID', '%Y', '%BOY'],
             [
                 $this->getID(),
@@ -134,8 +134,6 @@ class MyRadio_List extends ServiceAPI
             ],
             $sql
         );
-
-        return $sql;
     }
 
     public function getMembers()

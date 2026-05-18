@@ -78,7 +78,7 @@ $required_modules = [
 ];
 $required_classes = [
     [
-        'class' => '\Twig_Environment',
+        'class' => '\Twig\Environment',
         'success' => 'You have Twig installed! This is required for MyRadio to generate web pages.',
         'fail' => 'Your server needs to have Twig installed in order to continue. See '
         .'<a href="http://twig.sensiolabs.org/doc/installation.html">the Twig documentation</a> for more information.',

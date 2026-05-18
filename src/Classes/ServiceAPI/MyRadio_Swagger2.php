@@ -5,6 +5,7 @@
  */
 namespace MyRadio\ServiceAPI;
 
+use MyRadio\IFace\APICaller;
 use MyRadio\MyRadio\MyRadioSession;
 use ReflectionClass;
 use MyRadio\Config;
@@ -28,10 +29,10 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
     /**
      * Returns if the given Authenticator can call the given Class/Method/Mixin combination.
      *
-     * @param \MyRadio\IFace\APICaller $auth   The Authenticator to validate the request against
-     * @param string                   $class  The internal name of the class to validate against
-     * @param string                   $method The internal name of the method to validate against
-     * @param string[]                 $mixins For toDataSource requests, zero or more mixins to validate against
+     * @param APICaller $auth   The Authenticator to validate the request against
+     * @param string    $class  The internal name of the class to validate against
+     * @param string    $method The internal name of the method to validate against
+     * @param string[]  $mixins For toDataSource requests, zero or more mixins to validate against
      *
      * @return bool
      */
@@ -246,7 +247,7 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
     public static function resources()
     {
         $apis = self::getApis();
-        $data = [
+        return [
             'swagger' => '2.0',
             'basePath' => Config::$api_uri.'v2',
             'host' => $_SERVER['HTTP_HOST'],
@@ -290,8 +291,6 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
             ],
             'definitions' => self::getApiConfig()['specs']
         ];
-
-        return $data;
     }
 
     private static function getApis()

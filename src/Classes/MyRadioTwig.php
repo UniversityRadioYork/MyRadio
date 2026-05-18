@@ -4,6 +4,7 @@ namespace MyRadio;
 
 use MyRadio\Config;
 use MyRadio\Database;
+use MyRadio\Iface\TemplateEngine;
 use MyRadio\MyRadio\AuthUtils;
 use MyRadio\MyRadio\URLUtils;
 use MyRadio\MyRadio\MyRadioMenu;
@@ -12,14 +13,14 @@ use MyRadio\MyRadioError;
 use Twig\TwigFunction;
 use Twig\Loader\FilesystemLoader;
 use Twig\Environment;
-use Twig_Extension_Debug;
+use Twig\Extension\DebugExtension;
 
 /**
  * Singleton class for the Twig template engine.
  *
  * @depends Config
  */
-class MyRadioTwig implements \MyRadio\Iface\TemplateEngine
+class MyRadioTwig implements TemplateEngine
 {
     private $contextVariables = [];
     private $template;
@@ -36,7 +37,7 @@ class MyRadioTwig implements \MyRadio\Iface\TemplateEngine
         $this->contextVariables['notices'] = [];
         $this->twig = new Environment($twig_loader, ['auto_reload' => true]);
         if (Config::$template_debug) {
-            $this->twig->addExtension(new Twig_Extension_Debug());
+            $this->twig->addExtension(new DebugExtension());
             $this->twig->enableDebug();
         }
 
@@ -150,7 +151,7 @@ class MyRadioTwig implements \MyRadio\Iface\TemplateEngine
         return $this;
     }
 
-    public function addError($message, $icon = 'warning-sign')
+    public function addError($message, $icon = 'warning-sign'): static
     {
         $this->contextVariables['notices'][] = ['icon' => $icon, 'message' => $message, 'state' => 'danger'];
 
@@ -179,11 +180,11 @@ class MyRadioTwig implements \MyRadio\Iface\TemplateEngine
             ));
 
             // the $template is valid
-        } catch (Twig_Error_Syntax $e) {
+        } catch (\Twig\Error\SyntaxError $e) {
             throw new MyRadioException('Twig Parse Error'.$e->getMessage(), $e->getCode(), $e);
         }
 
-        $this->template = $this->twig->loadTemplate($template);
+        $this->template = $this->twig->load($template);
 
         return $this;
     }

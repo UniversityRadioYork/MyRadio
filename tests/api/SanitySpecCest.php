@@ -2,6 +2,8 @@
 
 // Test if the API responds to queries
 //  TODO Expand this test file and explain what it's for
+use Step\Api\MyRadioTester;
+
 class SanitySpecCest
 {
     public function _before(ApiTester $I)
@@ -12,7 +14,7 @@ class SanitySpecCest
     {
     }
 
-    public function getConfig(\Step\Api\MyRadioTester $I)
+    public function getConfig(MyRadioTester $I)
     {
         $I->wantTo("retrieve the public config");
         $I->sendGET("/config/publicconfig?api_key=travis-test-key");

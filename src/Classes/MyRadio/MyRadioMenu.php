@@ -107,7 +107,7 @@ class MyRadioMenu
 
             //Get permissions for each $item
             foreach ($items as $key => $item) {
-                $items[$key] = array_merge($items[$key], $this->breakDownURL($item['url']));
+                $items[$key] = array_merge($item, $this->breakDownURL($item['url']));
             }
         }
 
@@ -211,8 +211,6 @@ class MyRadioMenu
             }
         }
 
-        $url = $count === 1 ? URLUtils::makeURL($module, $action, $params) : $url;
-
-        return $url;
+        return $count === 1 ? URLUtils::makeURL($module, $action, $params) : $url;
     }
 }
