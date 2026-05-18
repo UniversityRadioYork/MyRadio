@@ -7,7 +7,7 @@ services:
       POSTGRES_USER: myradio
       POSTGRES_PASSWORD: myradio
     volumes:
-      - db-data:/var/lib/postgresql/data
+      - db-data:/var/lib/postgresql
 
   memcached:
     image: memcached:alpine

@@ -9,7 +9,7 @@ RUN docker-php-ext-install pgsql pdo_pgsql gd ldap curl xsl zip
 RUN pecl install memcached && \
     echo extension=memcached.so >> /usr/local/etc/php/conf.d/memcached.ini
 
-RUN pecl install xdebug-3.3.1 && docker-php-ext-enable xdebug \
+RUN pecl install xdebug-3.5.1 && docker-php-ext-enable xdebug \
  && echo 'zend_extension="/usr/local/lib/php/extensions/no-debug-non-zts-20220829/xdebug.so"' >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
  && echo 'xdebug.client_port=9003' >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
  && echo 'xdebug.mode=develop,debug' >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini \
@@ -48,7 +48,7 @@ RUN mkdir -p /var/www/myradio && chown -R www-data:www-data /var/www/myradio && 
 
 WORKDIR /var/www/myradio
 COPY composer.* /var/www/myradio/
-RUN COMPOSER_VENDOR_DIR=/var/www/myradio/src/vendor composer install --no-security-blocking
+RUN COMPOSER_VENDOR_DIR=/var/www/myradio/src/vendor composer install
 
 COPY schema schema
 COPY src src
