@@ -16,3 +16,4 @@ node_modules/
 src/Public/img/stats_training_*.svg
 .idea/
 .DS_Store
+/.direnv
