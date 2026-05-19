@@ -230,7 +230,7 @@ class MyRadioEmail extends ServiceAPI
                 //Don't send if the user has opted out
                 if ($user->getReceiveEmail()) {
                     $u_subject = trim(str_ireplace('#NAME', $user->getFName(), $this->subject));
-                    if (substr($u_subject, 0, 1) !== '[') {
+                    if (!str_starts_with($u_subject, '[')) {
                         $u_subject = '['.Config::$short_name.'] '.$u_subject;
                     }
                     $u_message = str_ireplace('#NAME', $user->getFName(), $this->body_transformed);
@@ -404,7 +404,7 @@ class MyRadioEmail extends ServiceAPI
             $data = CoreUtils::getSafeHTML($body);
         }
 
-        if (strpos($data, '<') === false) {
+        if (!str_contains($data, '<')) {
             return nl2br($data);
         } else {
             return $data;

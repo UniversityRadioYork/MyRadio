@@ -10,9 +10,9 @@
  * 'digitised': Boolean If true, only digitised tracks are returned
  * 'itonesplaylistid': The ID if an itones playlist the tracks must be in
  */
-use \MyRadio\Config;
-use \MyRadio\MyRadio\URLUtils;
-use \MyRadio\ServiceAPI\MyRadio_Track;
+use MyRadio\Config;
+use MyRadio\MyRadio\URLUtils;
+use MyRadio\ServiceAPI\MyRadio_Track;
 
 if (isset($_REQUEST['id'])) {
     $data = MyRadio_Track::getInstance((int) $_REQUEST['id']);

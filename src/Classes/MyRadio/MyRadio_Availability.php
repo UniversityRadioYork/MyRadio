@@ -372,12 +372,10 @@ class MyRadio_Availability extends ServiceAPI
      */
     protected static function getForm($module, $action)
     {
-        return (
-            new MyRadioForm(
-                'availabilityfrm',
-                $module,
-                $action
-            )
+        return new MyRadioForm(
+            'availabilityfrm',
+            $module,
+            $action
         )
         ->addField(
             new MyRadioFormField(

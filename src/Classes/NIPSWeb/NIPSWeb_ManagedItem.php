@@ -5,6 +5,7 @@
  */
 namespace MyRadio\NIPSWeb;
 
+use getID3;
 use MyRadio\Config;
 use MyRadio\MyRadioException;
 use MyRadio\MyRadio\CoreUtils;
@@ -197,7 +198,7 @@ class NIPSWeb_ManagedItem extends ServiceAPI
 
         move_uploaded_file($tmp_path, Config::$audio_upload_tmp_dir.'/'.$filename);
 
-        $getID3 = new \getID3();
+        $getID3 = new getID3();
         $fileInfo = $getID3->analyze(Config::$audio_upload_tmp_dir.'/'.$filename);
         //The entire $fileInfo array will break Session.
         $_SESSION['uploadInfo'][$filename] = [
@@ -214,7 +215,7 @@ class NIPSWeb_ManagedItem extends ServiceAPI
                 'bitrate' => $fileInfo['audio']['bitrate']
             ];
         }
-        if (strpos($fileInfo['audio']['channelmode'], 'stereo') === false) {
+        if (!str_contains($fileInfo['audio']['channelmode'], 'stereo')) {
             return [
                 'status' => 'FAIL',
                 'error' => 'Item is not stereo.',
@@ -301,7 +302,7 @@ class NIPSWeb_ManagedItem extends ServiceAPI
         }
 
         //Decode the auxid to figure out what/where we're adding
-        if (strpos($options['auxid'], 'user-') !== false) {
+        if (str_contains($options['auxid'], 'user-')) {
             //This is a personal resource
             $path = str_replace('user-', 'membersmusic/', $options['auxid']);
             $q = 'INSERT INTO bapsplanner.managed_user_items (managedplaylistid, title, length, bpm)

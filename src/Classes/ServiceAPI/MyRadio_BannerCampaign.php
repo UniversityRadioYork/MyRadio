@@ -500,16 +500,14 @@ class MyRadio_BannerCampaign extends ServiceAPI
      */
     public static function getForm($bannerid = null)
     {
-        return (
-            new MyRadioForm(
-                'bannercampaignfrm',
-                'Website',
-                'editCampaign',
-                [
-                    'template' => 'Website/campaignfrm.twig',
-                    'title' => 'Edit Banner Campaign',
-                ]
-            )
+        return new MyRadioForm(
+            'bannercampaignfrm',
+            'Website',
+            'editCampaign',
+            [
+                'template' => 'Website/campaignfrm.twig',
+                'title' => 'Edit Banner Campaign',
+            ]
         )
         ->addField(
             new MyRadioFormField(

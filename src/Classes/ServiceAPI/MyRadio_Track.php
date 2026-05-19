@@ -207,15 +207,13 @@ class MyRadio_Track extends ServiceAPI
 
     public static function getForm()
     {
-        return (
-            new MyRadioForm(
-                'lib_edittrack',
-                'Library',
-                'editTrack',
-                [
-                    'title' => 'Edit Track',
-                ]
-            )
+        return new MyRadioForm(
+            'lib_edittrack',
+            'Library',
+            'editTrack',
+            [
+                'title' => 'Edit Track',
+            ]
         )->addField(
             new MyRadioFormField('title', MyRadioFormField::TYPE_TEXT, ['label' => 'Title'])
         )->addField(
@@ -987,7 +985,7 @@ EOF
                 'bitrate' => $fileInfo['audio']['bitrate']
             ];
         }
-        if (strpos($fileInfo['audio']['channelmode'], 'stereo') === false) {
+        if (!str_contains($fileInfo['audio']['channelmode'], 'stereo')) {
             return [
                 'status' => 'FAIL',
                 'message' => 'Item is not stereo',

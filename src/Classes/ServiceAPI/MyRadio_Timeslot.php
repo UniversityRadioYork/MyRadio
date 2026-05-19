@@ -153,11 +153,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
     public function getMeta($meta_string)
     {
         $key = self::getMetadataKey($meta_string);
-        if (isset($this->metadata[$key])) {
-            return $this->metadata[$key];
-        } else {
-            return $this->getSeason()->getMeta($meta_string);
-        }
+        return $this->metadata[$key] ?? $this->getSeason()->getMeta($meta_string);
     }
 
     public function getID()
@@ -1471,14 +1467,14 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
     public function toIcalEvent(): Event
     {
         return Event::create($this->getMeta('title'))
-            ->startsAt((new DateTime())->setTimestamp($this->getStartTime()))
-            ->endsAt((new DateTime())->setTimestamp($this->getEndTime()))
+            ->startsAt(new DateTime()->setTimestamp($this->getStartTime()))
+            ->endsAt(new DateTime()->setTimestamp($this->getEndTime()))
             ->description(html_entity_decode(strip_tags($this->getMeta('description'))));
     }
 
     public static function getCancelForm()
     {
-        return (new MyRadioForm(
+        return new MyRadioForm(
             'sched_cancel',
             'Scheduler',
             'cancelEpisode',
@@ -1486,7 +1482,6 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
                 'debug' => false,
                 'title' => 'Cancel Episode',
             ]
-        )
         )->addField(
             new MyRadioFormField(
                 'reason',
@@ -1505,7 +1500,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
     public function getMoveForm()
     {
         $title = $this->getMeta('title') . ' - ' . CoreUtils::happyTime($this->getStartTime());
-        return (new MyRadioForm(
+        return new MyRadioForm(
             'sched_move',
             'Scheduler',
             'moveEpisode',
@@ -1514,7 +1509,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
                 'title' => 'Move Episode',
                 'subtitle' => "Moving $title"
             ]
-        ))->addField(new MyRadioFormField(
+        )->addField(new MyRadioFormField(
             'grp_info',
             MyRadioFormField::TYPE_SECTION,
             [

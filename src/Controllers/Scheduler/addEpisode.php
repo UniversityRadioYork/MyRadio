@@ -2,11 +2,10 @@
 /**
  * Presents a form to the user to enable them to move an Episode.
  */
-use \MyRadio\Config;
-use MyRadio\MyRadio\AuthUtils;
-use \MyRadio\MyRadioException;
-use \MyRadio\MyRadio\URLUtils;
-use \MyRadio\ServiceAPI\MyRadio_Season;
+
+use MyRadio\MyRadioException;
+use MyRadio\MyRadio\URLUtils;
+use MyRadio\ServiceAPI\MyRadio_Season;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     //Submitted

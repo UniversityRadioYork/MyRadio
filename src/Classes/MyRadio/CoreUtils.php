@@ -99,7 +99,7 @@ class CoreUtils
      */
     public static function actionSafe($action)
     {
-        if (strpos($action, '/') !== false) {
+        if (str_contains($action, '/')) {
             //Someone is trying to traverse directories
             throw new MyRadioException('Directory Traversal Thrwated');
         }
@@ -284,15 +284,15 @@ class CoreUtils
     public static function encodeTrack($tmpfile, $dbfile)
     {
         $commands = [
-            'mp3' => "nice -n 15 ffmpeg -i '{$tmpfile}' -ab 192k -f mp3 -map 0:a '{$dbfile}.mp3'",
-            'ogg' => "nice -n 15 ffmpeg -i '{$tmpfile}' -acodec libvorbis -ab 192k -map 0:a '{$dbfile}.ogg'"
+            'mp3' => "nice -n 15 ffmpeg -i '$tmpfile' -ab 192k -f mp3 -map 0:a '$dbfile.mp3'",
+            'ogg' => "nice -n 15 ffmpeg -i '$tmpfile' -acodec libvorbis -ab 192k -map 0:a '$dbfile.ogg'"
         ];
         $escaped_commands = array_map('escapeshellcmd', $commands);
         $failed_formats = [];
 
         foreach (['mp3', 'ogg'] as $format) {
-            if (file_exists("{$dbfile}.{$format}")) {
-                throw new MyRadioException("Cannot encode, track {$dbfile}.{$format} already exists", 500);
+            if (file_exists("$dbfile.$format")) {
+                throw new MyRadioException("Cannot encode, track $dbfile.$format already exists", 500);
             }
         }
 
@@ -868,7 +868,7 @@ class CoreUtils
 
         $name = strtolower($show_name);
         foreach ($blockMatches as $match) {
-            if (strpos($name, strtolower($match[0])) !== false /* bloody PHP */) {
+            if (str_contains($name, strtolower($match[0])) /* bloody PHP */) {
                 return $match[1];
             }
         }

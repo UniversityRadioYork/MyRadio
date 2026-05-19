@@ -5,9 +5,9 @@
  *
  * @todo proper documentation
  */
-use \MyRadio\MyRadio\MyRadioNews;
-use \MyRadio\MyRadio\URLUtils;
-use \MyRadio\ServiceAPI\MyRadio_User;
+use MyRadio\MyRadio\MyRadioNews;
+use MyRadio\MyRadio\URLUtils;
+use MyRadio\ServiceAPI\MyRadio_User;
 
 MyRadioNews::markNewsAsRead((int) $_REQUEST['newsentryid'], MyRadio_User::getInstance());
 URLUtils::nocontent();

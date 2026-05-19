@@ -82,14 +82,10 @@ class MyRadio_AutoVizClip extends ServiceAPI
             }
             $clip = new self();
             $parts = explode('-', $clipPath, 3);
-            switch ($parts[0]) {
-                case 'full_show':
-                case 'clip':
-                    $clip->type = $parts[0];
-                    break;
-                default:
-                    throw new MyRadioException("Unrecognised clip type for file $clipPath");
-            }
+            $clip->type = match ($parts[0]) {
+                'full_show', 'clip' => $parts[0],
+                default => throw new MyRadioException("Unrecognised clip type for file $clipPath"),
+            };
             $clip->start_time = intval($parts[1]);
             $clip->end_time = intval($parts[2]);
             $clip->timeslot_id = $timeslot_id;

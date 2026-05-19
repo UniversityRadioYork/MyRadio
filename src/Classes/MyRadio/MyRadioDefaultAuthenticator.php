@@ -81,7 +81,7 @@ class MyRadioDefaultAuthenticator extends Database implements MyRadioAuthenticat
                 //Validate the password
                 if (crypt($password, $r[0]) === $r[0]) {
                     //Check if the password is legacy MD5
-                    if (substr($r[0], 0, 3) === '$1$') {
+                    if (str_starts_with($r[0], '$1$')) {
                         //Upgrade password
                         $new_password = $this->encrypt($password);
                         $this->query(

@@ -2,8 +2,8 @@
 /**
  * If you don't know what a 403 page is, you have a long way to go.
  */
-use \MyRadio\MyRadio\CoreUtils;
-use \MyRadio\ServiceAPI\MyRadio_User;
+use MyRadio\MyRadio\CoreUtils;
+use MyRadio\ServiceAPI\MyRadio_User;
 
 $twig = CoreUtils::getTemplateObject();
 header('HTTP/1.1 400 Bad Request');

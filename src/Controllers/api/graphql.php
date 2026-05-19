@@ -155,7 +155,7 @@ $typeConfigDecorator = function ($typeConfig, TypeDefinitionNode $typeDefinition
 
 $schema = BuildSchema::build($schemaText, $typeConfigDecorator);
 
-if (isset($_SERVER['CONTENT_TYPE']) && strpos($_SERVER['CONTENT_TYPE'], 'application/json') !== false) {
+if (isset($_SERVER['CONTENT_TYPE']) && str_contains($_SERVER['CONTENT_TYPE'], 'application/json')) {
     $raw = file_get_contents('php://input') ?: '';
     $data = json_decode($raw, true) ?: [];
 } else {

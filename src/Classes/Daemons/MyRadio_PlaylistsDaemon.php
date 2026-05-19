@@ -192,8 +192,8 @@ class MyRadio_PlaylistsDaemon extends MyRadio_Daemon
             //Get track statistics for every daytime window
             for ($i = 0; $i < 14; ++$i) {
                 $stats = MyRadio_TracklistItem::getTracklistStatsForBAPS(
-                    strtotime("6am -{$i} days"),
-                    strtotime("9pm -{$i} days")
+                    strtotime("6am -$i days"),
+                    strtotime("9pm -$i days")
                 );
                 //Accumulate the results
                 foreach ($stats as $track) {
@@ -219,8 +219,8 @@ class MyRadio_PlaylistsDaemon extends MyRadio_Daemon
             for ($i = 0; $i < 14; ++$i) {
                 $j = $i + 1;
                 $stats = MyRadio_TracklistItem::getTracklistStatsForBAPS(
-                    strtotime("9pm -{$j} days"),
-                    strtotime("6am -{$i} days")
+                    strtotime("9pm -$j days"),
+                    strtotime("6am -$i days")
                 );
                 foreach ($stats as $track) {
                     if (!isset($most_played[$track['trackid']])) {

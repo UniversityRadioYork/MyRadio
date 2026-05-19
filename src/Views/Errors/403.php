@@ -2,7 +2,7 @@
 /**
  * This View renders a HTTP/1.1 403 Error - for when a <code>AuthUtils::requirePermission()</code> call returns false.
  */
-use \MyRadio\MyRadio\CoreUtils;
+use MyRadio\MyRadio\CoreUtils;
 
 header('HTTP/1.1 403 Forbidden');
 

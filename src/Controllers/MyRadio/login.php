@@ -18,15 +18,13 @@ use \MyRadio\MyRadio\MyRadioFormField;
 if (isset($_SESSION['memberid'])) {
     isset($_GET["next"]) ? URLUtils::redirectURI($_GET["next"]) : URLUtils::redirect(Config::$default_module);
 } else {
-    $form = (
-        new MyRadioForm(
-            'myradio_login',
-            'MyRadio',
-            'login',
-            [
-                'title' => 'Login',
-            ]
-        )
+    $form = new MyRadioForm(
+        'myradio_login',
+        'MyRadio',
+        'login',
+        [
+            'title' => 'Login',
+        ]
     )->addField(
         new MyRadioFormField(
             'user',

@@ -50,7 +50,7 @@ class MyRadioTwig implements TemplateEngine
                 return $date2 >= ($date1 + 86400) || ($date1 % 86400) > ($date2 % 86400);
             }));
 
-        $this->addVariable('memberid', isset($_SESSION['memberid']) ? $_SESSION['memberid'] : 0)
+        $this->addVariable('memberid', $_SESSION['memberid'] ?? 0)
             ->addVariable(
                 'impersonatorurl',
                 !empty($_SESSION['myradio-impersonating'])
@@ -63,8 +63,8 @@ class MyRadioTwig implements TemplateEngine
                 ? $_SESSION['myradio-impersonating']['name']
                 : ''
             )
-            ->addVariable('timeslotname', isset($_SESSION['timeslotname']) ? $_SESSION['timeslotname'] : null)
-            ->addVariable('timeslotid', isset($_SESSION['timeslotid']) ? $_SESSION['timeslotid'] : null)
+            ->addVariable('timeslotname', $_SESSION['timeslotname'] ?? null)
+            ->addVariable('timeslotid', $_SESSION['timeslotid'] ?? null)
             ->addVariable('baseurl', Config::$base_url)
             ->addVariable('websiteurl', Config::$website_url)
             ->addVariable('shortname', Config::$short_name)
@@ -75,11 +75,11 @@ class MyRadioTwig implements TemplateEngine
             ->addVariable('module', empty($GLOBALS['module']) ? Config::$default_module : $GLOBALS['module'])
             ->addVariable('action', empty($GLOBALS['action']) ? Config::$default_action : $GLOBALS['action'])
             ->addVariable('config', Config::getPublicConfig())
-            ->addVariable('name', isset($_SESSION['name']) ? $_SESSION['name'] : '')
+            ->addVariable('name', $_SESSION['name'] ?? '')
             ->addVariable('nonav', isset($_GET['nonav']));
 
         if (!empty($GLOBALS['module']) && isset($_SESSION['memberid'])) {
-            $this->addVariable('submenu', (new MyRadioMenu())->getSubMenuForUser($GLOBALS['module']))
+            $this->addVariable('submenu', new MyRadioMenu()->getSubMenuForUser($GLOBALS['module']))
                 ->addVariable('title', $GLOBALS['module']);
         }
 

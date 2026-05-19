@@ -36,7 +36,7 @@ class MyRadio_Alias extends ServiceAPI
      * Format:<br>
      * {{type: 'text', value: 'dave.tracz'}, ...}
      *
-     * @var mixed[]
+     * @var array
      */
     private $destinations = [];
 
@@ -139,7 +139,7 @@ class MyRadio_Alias extends ServiceAPI
      * Format:<br>
      * {{type: 'text', value: string/Officer/Member}, ...}
      *
-     * @return mixed[]
+     * @return array
      */
     public function getDestinations()
     {

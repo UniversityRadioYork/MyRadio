@@ -35,8 +35,8 @@ if (isset($_REQUEST['request'])) {
         exit;
     }
 } else {
-    $module = (isset($_REQUEST['module']) ? $_REQUEST['module'] : Config::$default_module);
-    $action = (isset($_REQUEST['action']) ? $_REQUEST['action'] : Config::$default_action);
+    $module = ($_REQUEST['module'] ?? Config::$default_module);
+    $action = ($_REQUEST['action'] ?? Config::$default_action);
     if (!CoreUtils::isValidController($module, $action)) {
         //Yep, that doesn't exist.
         require 'Controllers/Errors/404.php';
@@ -81,7 +81,7 @@ if (isset($_REQUEST['joyride'])) {
 
 // Apply analytics
 if (Config::$enable_analytics) {
-    if (substr($action, 0, 2) !== 'a-' // pseudo-API
+    if (!str_starts_with($action, 'a-') // pseudo-API
         && $action !== 'config.js'
         && !($module === 'SIS' && $action === 'remote')
         && !($module === 'MyRadio' && $action === 'login')

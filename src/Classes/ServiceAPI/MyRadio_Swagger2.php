@@ -152,7 +152,7 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
             // array_filter($paths, func, ARRAY_FILTER_USE_KEY) is not running func for me...
             $options = [];
             foreach (array_keys($paths) as $key) {
-                if (strpos($key, $path.'/{') === 0) {
+                if (str_starts_with($key, $path . '/{')) {
                     $options[] = $key;
                     break;
                 }
@@ -516,7 +516,7 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
         foreach ($refClass->getMethods() as $method) {
             if ((!$method->isPublic())
                 || in_array($method->getName(), $blocked_methods)
-                || substr($method->getName(), strlen($method->getName()) - 4) === 'Form'
+                || str_ends_with($method->getName(), 'Form')
                 ) {
                 continue;
             }

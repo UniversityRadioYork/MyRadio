@@ -33,7 +33,7 @@ class URLUtils
     public static function backWithMessage($message)
     {
         header('Location: '.$_SERVER['HTTP_REFERER']
-            .(strstr($_SERVER['HTTP_REFERER'], '?') !== false ? '&' : '?').'message='.base64_encode($message));
+            .(str_contains($_SERVER['HTTP_REFERER'], '?') ? '&' : '?').'message='.base64_encode($message));
     }
 
     /**
@@ -126,7 +126,7 @@ class URLUtils
             $str = Config::$base_url.$module.'/'.(($action !== null) ? $action.'/' : '');
             if (!empty($params)) {
                 if (is_string($params)) {
-                    if (substr($params, 0, 1) !== '?') {
+                    if (!str_starts_with($params, '?')) {
                         $str .= '?';
                     }
                     $str .= $params;

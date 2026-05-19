@@ -12,16 +12,14 @@ use \MyRadio\MyRadio\MyRadioFormField;
 use \MyRadio\ServiceAPI\MyRadio_List;
 use \MyRadio\ServiceAPI\MyRadio_User;
 
-$form = (
-    new MyRadioForm(
-        'mail_send',
-        $module,
-        $action,
-        [
-            'debug' => true,
-            'title' => 'Send Email',
-        ]
-    )
+$form = new MyRadioForm(
+    'mail_send',
+    $module,
+    $action,
+    [
+        'debug' => true,
+        'title' => 'Send Email',
+    ]
 )->addField(
     new MyRadioFormField(
         'subject',

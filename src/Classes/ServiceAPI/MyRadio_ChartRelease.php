@@ -373,13 +373,11 @@ class MyRadio_ChartRelease extends ServiceAPI
             ];
         }
 
-        return (
-            new MyRadioForm(
-                'charts_editchartrelease',
-                'Charts',
-                'editChartRelease',
-                ['title' => 'Create Chart Release']
-            )
+        return new MyRadioForm(
+            'charts_editchartrelease',
+            'Charts',
+            'editChartRelease',
+            ['title' => 'Create Chart Release']
         )->addField(
             new MyRadioFormField(
                 'chart_type_id',

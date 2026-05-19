@@ -393,17 +393,15 @@ class MyRadio_Show extends MyRadio_Metadata_Common
 
     public static function getForm()
     {
-        return (
-            new MyRadioForm(
-                'sched_show',
-                'Scheduler',
-                'editShow',
-                [
-                    'debug' => true,
-                    'title' => 'Scheduler',
-                    'subtitle' => 'Create a Show'
-                ]
-            )
+        return new MyRadioForm(
+            'sched_show',
+            'Scheduler',
+            'editShow',
+            [
+                'debug' => true,
+                'title' => 'Scheduler',
+                'subtitle' => 'Create a Show'
+            ]
         )->addField(
             new MyRadioFormField('grp-basics', MyRadioFormField::TYPE_SECTION, ['label' => 'About My Show'])
         )->addField(
@@ -552,16 +550,14 @@ class MyRadio_Show extends MyRadio_Metadata_Common
 
     public static function getPhotoForm()
     {
-        return (
-            new MyRadioForm(
-                'sched_showphoto',
-                'Scheduler',
-                'showPhoto',
-                [
-                    'debug' => true,
-                    'title' => 'Update Show Photo',
-                ]
-            )
+        return new MyRadioForm(
+            'sched_showphoto',
+            'Scheduler',
+            'showPhoto',
+            [
+                'debug' => true,
+                'title' => 'Update Show Photo',
+            ]
         )->addField(
             new MyRadioFormField(
                 'show_id',

@@ -5,8 +5,8 @@
  *
  * - if it's sent to a certain mailing list, it'll put it in the archives
  *
- * @uses    \Database
- * @uses    \CoreUtils
+ * @uses    Database
+ * @uses    CoreUtils
  */
 use \MyRadio\MyRadioException;
 use \MyRadio\ServiceAPI\MyRadio_User;
@@ -45,7 +45,7 @@ fclose($fd);
 if (!isset($sender[2][0])) {
     $sender = null;
 } else {
-    if (strstr($sender[2][0], '<') !== false) {
+    if (str_contains($sender[2][0], '<')) {
         $addr = preg_replace('/.*<(.*)>.*/', '$1', $sender[2][0]);
     } else {
         $addr = trim($sender[2][0]);
@@ -54,7 +54,7 @@ if (!isset($sender[2][0])) {
 }
 
 foreach ($recipients[3] as $recipient) {
-    if (strstr($recipient, '<') !== false) {
+    if (str_contains($recipient, '<')) {
         $addr = preg_replace('/.*<(.*)>.*/', '$1', $recipient);
     } else {
         $addr = trim($recipient);

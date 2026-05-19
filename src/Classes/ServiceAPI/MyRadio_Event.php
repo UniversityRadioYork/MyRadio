@@ -322,16 +322,14 @@ class MyRadio_Event extends ServiceAPI
 
     public static function getForm()
     {
-        return (
-            new MyRadioForm(
-                'event',
-                'Events',
-                'editEvent',
-                [
-                    'title' => 'Events',
-                    'subtitle' => 'Create Event'
-                ]
-            )
+        return new MyRadioForm(
+            'event',
+            'Events',
+            'editEvent',
+            [
+                'title' => 'Events',
+                'subtitle' => 'Create Event'
+            ]
         )->addField(
             new MyRadioFormField(
                 'title',
@@ -415,8 +413,8 @@ class MyRadio_Event extends ServiceAPI
     public function toIcalEvent()
     {
         return Event::create($this->getTitle())
-            ->startsAt((new DateTime())->setTimestamp($this->getStartTime()))
-            ->endsAt((new DateTime())->setTimestamp($this->getEndTime()))
+            ->startsAt(new DateTime()->setTimestamp($this->getStartTime()))
+            ->endsAt(new DateTime()->setTimestamp($this->getEndTime()))
             ->description(html_entity_decode(strip_tags($this->getDescriptionHtml())))
             ->organizer($this->getHost()->getPublicEmail(), $this->getHost()->getName());
     }

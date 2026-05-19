@@ -2,11 +2,10 @@
 /**
  * Provides a tool to add new permissions for MyRadio Service/Module/Action systems.
  */
-use \MyRadio\MyRadio\AuthUtils;
-use \MyRadio\MyRadio\CoreUtils;
-use \MyRadio\MyRadio\URLUtils;
-use \MyRadio\MyRadio\MyRadioForm;
-use \MyRadio\MyRadio\MyRadioFormField;
+use MyRadio\MyRadio\AuthUtils;
+use MyRadio\MyRadio\URLUtils;
+use MyRadio\MyRadio\MyRadioForm;
+use MyRadio\MyRadio\MyRadioFormField;
 
 /*
  * Form definition for adding permissions.
@@ -47,7 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $data = $form->readValues();
 
     $constant = $data['constant'];
-    if (substr($constant, 0, 5) == 'AUTH_' && strlen($constant) >= 6) {
+    if (str_starts_with($constant, 'AUTH_') && strlen($constant) >= 6) {
         AuthUtils::addPermission($data['description'], $constant);
         $message = 'The permission "'. $constant .'" has been added successfully.';
         URLUtils::redirectWithMessage('MyRadio', 'listPermissions', $message);

@@ -7,16 +7,14 @@ use \MyRadio\Config;
 use \MyRadio\MyRadio\MyRadioForm;
 use \MyRadio\MyRadio\MyRadioFormField;
 
-$form = (
-    new MyRadioForm(
-        'myradio_pwReset',
-        'MyRadio',
-        'pwReset',
-        [
-            'title' => 'Password Reset',
-            'captcha' => true,
-        ]
-    )
+$form = new MyRadioForm(
+    'myradio_pwReset',
+    'MyRadio',
+    'pwReset',
+    [
+        'title' => 'Password Reset',
+        'captcha' => true,
+    ]
 )->addField(
     new MyRadioFormField(
         'user',

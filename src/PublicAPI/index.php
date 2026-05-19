@@ -36,7 +36,7 @@ function api_error($code, $message = null): void
         405 => 'Method Not Allowed',
         500 => 'Internal Server Error',
     ];
-    header("HTTP/1.1 $code {$messages[$code]}");
+    header("HTTP/1.1 $code $messages[$code]");
     header('Content-Type: application/json');
     echo json_encode(
         [
@@ -66,7 +66,7 @@ function invokeArgsNamed(ReflectionMethod $refmethod, $object, array $args = [])
             if (!$param->isOptional() && !isset($args[$name])) {
                 api_error(400, $name . ' is required.');
             }
-            $param = isset($args[$name]) ? $args[$name] : $param->getDefaultValue();
+            $param = $args[$name] ?? $param->getDefaultValue();
         }
     }
     unset($param);
@@ -89,9 +89,9 @@ if (empty($class)) {
 }
 
 //Go to the right version controller
-if (strpos($_SERVER['REQUEST_URI'], Config::$api_uri . 'graphql') !== false) {
+if (str_contains($_SERVER['REQUEST_URI'], Config::$api_uri . 'graphql')) {
     require_once '../Controllers/api/graphql.php';
-} elseif (strpos($_SERVER['REQUEST_URI'], Config::$api_uri.'v2/') !== false) {
+} elseif (str_contains($_SERVER['REQUEST_URI'], Config::$api_uri . 'v2/')) {
     require_once '../Controllers/api/v2.php';
 } else {
     require_once '../Controllers/api/v1.php';

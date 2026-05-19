@@ -34,7 +34,7 @@ class MyRadioError
 
     private static function getErrorName($errno)
     {
-        return isset(self::$error_type[$errno]) ? self::$error_type[$errno] : 'Unknown error code';
+        return self::$error_type[$errno] ?? 'Unknown error code';
     }
 
     /**
@@ -119,7 +119,7 @@ class MyRadioError
             return;
         }
         //I don't like this error. It is compatible. Maybe report a PHP bug sometime.
-        if (strstr($errstr, 'should be compatible with') !== false) {
+        if (str_contains($errstr, 'should be compatible with')) {
             return;
         }
 

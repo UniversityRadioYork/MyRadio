@@ -8,16 +8,14 @@ use \MyRadio\MyRadio\MyRadioForm;
 use \MyRadio\MyRadio\MyRadioFormField;
 use \MyRadio\iTones\iTones_Utils;
 
-$form = (
-    new MyRadioForm(
-        'itones_trackrequest',
-        $module,
-        $action,
-        [
-            'debug' => true,
-            'title' => 'Request Campus Jukebox Track',
-        ]
-    )
+$form = new MyRadioForm(
+    'itones_trackrequest',
+    $module,
+    $action,
+    [
+        'debug' => true,
+        'title' => 'Request Campus Jukebox Track',
+    ]
 )->addField(
     new MyRadioFormField(
         'track',

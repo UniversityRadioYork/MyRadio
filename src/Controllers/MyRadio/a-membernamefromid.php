@@ -5,9 +5,9 @@
  *
  * @todo    Proper documentation
  */
-use \MyRadio\MyRadioException;
-use \MyRadio\MyRadio\URLUtils;
-use \MyRadio\ServiceAPI\MyRadio_User;
+use MyRadio\MyRadioException;
+use MyRadio\MyRadio\URLUtils;
+use MyRadio\ServiceAPI\MyRadio_User;
 
 if (!isset($_REQUEST['term'])) {
     throw new MyRadioException('Parameter \'term\' is required but was not provided');

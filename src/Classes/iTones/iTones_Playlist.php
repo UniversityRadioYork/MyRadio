@@ -71,14 +71,14 @@ class iTones_Playlist extends ServiceAPI
 
     public static function getTracksForm()
     {
-        return (new MyRadioForm(
+        return new MyRadioForm(
             'itones_playlistedit',
             'iTones',
             'editPlaylist',
             [
                 'title' => 'Edit Campus Jukebox Playlist',
             ]
-        ))->addField(
+        )->addField(
             new MyRadioFormField(
                 'tracks',
                 MyRadioFormField::TYPE_TABULARSET,
@@ -137,14 +137,14 @@ class iTones_Playlist extends ServiceAPI
 
     public static function getForm()
     {
-        return (new MyRadioForm(
+        return new MyRadioForm(
             'itones_playlistedit',
             'iTones',
             'configurePlaylist',
             [
                 'title' => 'Configure Jukebox Playlist',
             ]
-        ))->addField(
+        )->addField(
             new MyRadioFormField(
                 'title',
                 MyRadioFormField::TYPE_TEXT,
@@ -406,7 +406,7 @@ class iTones_Playlist extends ServiceAPI
             if (!($track instanceof MyRadio_Track)) {
                 try {
                     $tracks[$idx] = MyRadio_Track::getInstance($track);
-                } catch (\Exception $e) {
+                } catch (Exception $e) {
                     // (blame Matt Strat if any of this breaks)
                     $tracks[$idx] = null;
                     continue;

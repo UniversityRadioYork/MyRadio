@@ -81,7 +81,7 @@ class MemcachedProvider implements CacheProvider
         }
 
         if ($expires === 0) {
-            $expires = \MyRadio\Config::$cache_default_timeout;
+            $expires = Config::$cache_default_timeout;
         }
         // Values > 30 days are assumed to be epoch times
         // http://php.net/manual/en/memcached.expiration.php
@@ -114,7 +114,7 @@ class MemcachedProvider implements CacheProvider
      *
      * @param array $keys cache keys to be fetched
      *
-     * @return mixed[] array of objects relating to provided keys
+     * @return array array of objects relating to provided keys
      */
     public function getAll($keys)
     {
@@ -184,7 +184,7 @@ class MemcachedProvider implements CacheProvider
      */
     public function __clone()
     {
-        throw new \MyRadio\MyRadioException('Attempted to clone a singleton');
+        throw new MyRadioException('Attempted to clone a singleton');
     }
 
     private function getKeyPrefix()

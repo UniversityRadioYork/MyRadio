@@ -5,9 +5,9 @@
  *
  * @todo    Proper Documentation
  */
-use \MyRadio\Config;
-use \MyRadio\MyRadio\URLUtils;
-use \MyRadio\ServiceAPI\MyRadio_Album;
+use MyRadio\Config;
+use MyRadio\MyRadio\URLUtils;
+use MyRadio\ServiceAPI\MyRadio_Album;
 
 if (isset($_REQUEST['id'])) {
     $data = MyRadio_Album::getInstance($_REQUEST['id']);

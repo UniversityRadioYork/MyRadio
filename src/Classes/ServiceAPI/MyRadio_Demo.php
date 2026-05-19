@@ -159,7 +159,7 @@ class MyRadio_Demo extends ServiceAPI
 
     public static function getForm()
     {
-        return (new MyRadioForm(
+        return new MyRadioForm(
             'sched_demo',
             'Training',
             'createDemo',
@@ -167,7 +167,7 @@ class MyRadio_Demo extends ServiceAPI
                 'title' => 'Training',
                 'subtitle' => 'Create Training Session',
             ]
-        ))->addField(
+        )->addField(
             new MyRadioFormField(
                 'demo_training_type',
                 MyRadioFormField::TYPE_SELECT,

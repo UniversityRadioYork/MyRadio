@@ -226,16 +226,14 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
 
     public static function getForm()
     {
-        $form = (
-            new MyRadioForm(
-                'createpodcastfrm',
-                'Podcast',
-                'editPodcast',
-                [
-                    'title' => 'Podcasts',
-                    'subtitle' => 'Create Podcast'
-                ]
-            )
+        $form = new MyRadioForm(
+            'createpodcastfrm',
+            'Podcast',
+            'editPodcast',
+            [
+                'title' => 'Podcasts',
+                'subtitle' => 'Create Podcast'
+            ]
         )->addField(
             new MyRadioFormField(
                 'title',
@@ -413,16 +411,14 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
 
     public static function getSuspendForm()
     {
-        return (
-            new MyRadioForm(
-                "suspendpodcastfrm",
-                "Podcast",
-                "suspendPodcast",
-                [
-                    "title" => "Podcasts",
-                    "subtitle" => "Suspend Podcast"
-                ]
-            )
+        return new MyRadioForm(
+            "suspendpodcastfrm",
+            "Podcast",
+            "suspendPodcast",
+            [
+                "title" => "Podcasts",
+                "subtitle" => "Suspend Podcast"
+            ]
         )->addField(
             new MyRadioFormField(
                 "confirm",
@@ -442,16 +438,14 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
 
     public static function getUnsuspendForm()
     {
-        return (
-            new MyRadioForm(
-                "unsuspendpodcastfrm",
-                "Podcast",
-                "suspendPodcast",
-                [
-                    "title" => "Podcasts",
-                    "subtitle" => "Request to Unsuspend Podcast"
-                ]
-            )
+        return new MyRadioForm(
+            "unsuspendpodcastfrm",
+            "Podcast",
+            "suspendPodcast",
+            [
+                "title" => "Podcasts",
+                "subtitle" => "Request to Unsuspend Podcast"
+            ]
         )->addField(
             new MyRadioFormField(
                 "reason",
@@ -1018,7 +1012,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
     {
         $tmpfile = $this->getArchiveFile();
         $dbfile = $this->getWebFile();
-        shell_exec("nice -n 15 ffmpeg -i '{$tmpfile}' -ab 128k -f mp3 -map 0:a '{$dbfile}'");
+        shell_exec("nice -n 15 ffmpeg -i '$tmpfile' -ab 128k -f mp3 -map 0:a '$dbfile'");
 
         self::$db->query(
             'UPDATE uryplayer.podcast SET file=$1 WHERE podcast_id=$2',

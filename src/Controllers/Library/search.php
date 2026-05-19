@@ -38,8 +38,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($data['title']) || isset($data['artist'])) {
         $tracks = MyRadio_Track::findByOptions(
             [
-                'title' => isset($data['title']) ? $data['title'] : '',
-                'artist' => isset($data['artist']) ? $data['artist'] : '',
+                'title' => $data['title'] ?? '',
+                'artist' => $data['artist'] ?? '',
                 'limit' => 30
             ]
         );
