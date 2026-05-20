@@ -146,7 +146,7 @@ class MyRadio_ChartRow extends ServiceAPI
      *
      * @return MyRadio_ChartRow The newly created track.
      */
-    public function create($data)
+    public static function create($data)
     {
         self::$db->query(
             'INSERT INTO music.chart_row(chart_release_id, position, trackid)

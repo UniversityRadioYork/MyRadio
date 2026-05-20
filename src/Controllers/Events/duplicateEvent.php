@@ -6,7 +6,6 @@ use MyRadio\ServiceAPI\MyRadio_Event;
 use MyRadio\ServiceAPI\MyRadio_User;
 
 // editing
-/** @var MyRadio_Event $event */
 $event = MyRadio_Event::getInstance($_REQUEST['eventid']);
 
 // check permissions

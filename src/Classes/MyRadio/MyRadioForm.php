@@ -254,11 +254,11 @@ class MyRadioForm
      *
      * This methods sets all TYPE_FILE fields to not required - it is assumed that they are not needed for editing.
      *
-     * @param mixed $ident  Usually a primary key, something unique that the receiving controller will use to know
+     * @param mixed       $ident  Usually a primary key, something unique that the receiving controller will use to know
      *                      which instance of an entry is being updated
-     * @param array $values A key=>value array of input names and their values. These will literally be sent to
+     * @param array       $values A key=>value array of input names and their values. These will literally be sent to
      *                      setFieldValue iteratively
-     * @param string action If set, will replace the default Form action.
+     * @param string|null $action If set, will replace the default Form action.
      *
      * Note: This method should only be called once in the object's lifetime
      */

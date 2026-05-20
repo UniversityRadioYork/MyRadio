@@ -265,7 +265,6 @@ trait MyRadio_MetadataSubject
      * @param int         $limit          The number of results to return
      *
      * @return array The list of IDs of whatever is being searched.
-     * @noinspection PhpDocSignatureInspection
      * @todo effective_from/to not yet implemented
      */
     protected static function searchMetaBase(

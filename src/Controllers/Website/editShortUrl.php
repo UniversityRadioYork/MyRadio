@@ -43,7 +43,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (isset($_REQUEST['shorturlid'])) {
         //edit form
-        /** @var MyRadio_ShortURL $shortUrl */
         $shortUrl = MyRadio_ShortURL::getInstance($_REQUEST['shorturlid']);
         $shortUrl
             ->getEditForm()

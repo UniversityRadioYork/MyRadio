@@ -464,19 +464,19 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
     /**
      * Create a new Podcast.
      *
-     * @param string       $title       The Podcast's title
-     * @param string       $description The Podcast's description
-     * @param array        $tags        An array of String tags
-     * @param string       $file        The local filesystem path to the Podcast file
-     * @param MyRadio_Show $show        The show to attach the Podcast to
-     * @param array        $credits     Credit data. Format compatible with a credit TABULARSET (see Scheduler)
+     * @param string            $title       The Podcast's title
+     * @param string            $description The Podcast's description
+     * @param array             $tags        An array of String tags
+     * @param string            $file        The local filesystem path to the Podcast file
+     * @param MyRadio_Show|null $show        The show to attach the Podcast to
+     * @param array             $credits     Credit data. Format compatible with a credit TABULARSET (see Scheduler)
      */
     public static function create(
         $title,
         $description,
         $tags,
         $file,
-        MyRadio_Show $show = null,
+        MyRadio_Show|null $show = null,
         $credits = null
     ) {
         //Validate the tags
@@ -493,7 +493,6 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
         )[0];
 
         // DANGER WILL ROBINSON DANGER
-        /** @var self $podcast */
         $podcast = self::getInstance($id);
 
         $podcast->setMeta('title', $title);

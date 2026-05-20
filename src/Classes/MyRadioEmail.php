@@ -119,7 +119,8 @@ class MyRadioEmail extends ServiceAPI
         if (strlen($body) > 1024000) {
             //Woah - that's a big email. Where's this coming from?
             //If its more than a couple MB expect this script/service to shortly die due to RAM usage.
-            $caller = array_shift(debug_backtrace());
+            $bt = debug_backtrace();
+            $caller = array_shift($bt);
             trigger_error(
                 'Received long email body: '.strlen($body).' bytes. Source: '
                 .$from.'/'.$caller['file'].':'.$caller['line'],
@@ -308,13 +309,14 @@ class MyRadioEmail extends ServiceAPI
     /**
      * Sends an email to the specified User.
      *
-     * @param MyRadio_User $to
-     * @param string       $subject email subject
-     * @param string        $message email message
+     * @param MyRadio_User      $to
+     * @param string            $subject email subject
+     * @param string            $message email message
+     * @param MyRadio_User|null $from user sending the email
      *
      * @todo Check if "Receive Emails" is enabled for the User
      */
-    public static function sendEmailToUser(MyRadio_User $to, $subject, $message, MyRadio_User $from = null)
+    public static function sendEmailToUser(MyRadio_User $to, $subject, $message, MyRadio_User|null $from = null)
     {
         self::create(['members' => [$to]], $subject, $message, $from);
 
@@ -324,13 +326,14 @@ class MyRadioEmail extends ServiceAPI
     /**
      * Sends an email to the specified MyRadio_List.
      *
-     * @param MyRadio_List  $to
-     * @param string        $subject email subject
-     * @param string        $message email message
+     * @param MyRadio_List      $to
+     * @param string            $subject email subject
+     * @param string            $message email message
+     * @param MyRadio_User|null $from
      *
      * @todo Check if "Receive Emails" is enabled for the User
      */
-    public static function sendEmailToList(MyRadio_List $to, $subject, $message, MyRadio_User $from = null)
+    public static function sendEmailToList(MyRadio_List $to, $subject, $message, MyRadio_User|null $from = null)
     {
         if ($from !== null && !$to->hasSendPermission($from)) {
             return false;
@@ -344,11 +347,12 @@ class MyRadioEmail extends ServiceAPI
      * Sends an email to all the specified Users, with certain customisation abilities:
      * #NAME is replaced with the User's first name.
      *
-     * @param array  $to      An array of User objects
-     * @param string $subject email subject
-     * @param sting  $message email message
+     * @param array             $to      An array of User objects
+     * @param string            $subject email subject
+     * @param string            $message email message
+     * @param MyRadio_User|null $from
      */
-    public static function sendEmailToUserSet($to, $subject, $message, MyRadio_User $from = null)
+    public static function sendEmailToUserSet($to, $subject, $message, MyRadio_User|null $from = null)
     {
         foreach ($to as $user) {
             if (!($user instanceof MyRadio_User)) {

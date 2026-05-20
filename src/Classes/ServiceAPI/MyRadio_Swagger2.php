@@ -12,6 +12,7 @@ use MyRadio\Config;
 use MyRadio\MyRadioException;
 use MyRadio\MyRadio\CoreUtils;
 use MyRadio\MyRadio\URLUtils;
+use ReflectionMethod;
 
 /**
  * The Swagger class is an Implementation of https://developers.helloreverb.com/swagger/.
@@ -89,7 +90,7 @@ class MyRadio_Swagger2 extends MyRadio_Swagger
      * Identify if this method should put its option in its path
      * i.e. as /class/method/option
      *
-     * @param ReflectionMethod The method
+     * @param ReflectionMethod $method The method
      * @return bool
      */
     private static function isOptionInPathForMethod($method)

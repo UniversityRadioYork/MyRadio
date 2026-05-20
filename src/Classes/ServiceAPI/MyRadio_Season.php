@@ -12,6 +12,7 @@ use MyRadio\MyRadio\URLUtils;
 use MyRadio\MyRadio\MyRadioForm;
 use MyRadio\MyRadio\MyRadioFormField;
 use MyRadio\MyRadioEmail;
+use MyRadio\ServiceAPI\MyRadio_Metadata_Common as MyRadio_Metadata_CommonAlias;
 use \MyRadio\ServiceAPI\MyRadio_Scheduler;
 use \MyRadio\ServiceAPI\MyRadio_Term;
 
@@ -725,10 +726,10 @@ EOT
     /**
      * Alias for getCredits($this->getShow()), which enables credits to be
      * automatically inherited from the show.
-     * @param parent Unused for type compatibility with parent
+     * @param MyRadio_Metadata_CommonAlias|null $parent Unused for type compatibility with parent
      * @return array[]
      */
-    public function getCredits(MyRadio_Metadata_Common $parent = null)
+    public function getCredits(MyRadio_Metadata_CommonAlias|null $parent = null)
     {
         return parent::getCredits($this->getShow());
     }

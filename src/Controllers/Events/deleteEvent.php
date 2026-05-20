@@ -8,7 +8,6 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     throw new MyRadioException('Method not allowed', 405);
 }
 
-/** @var MyRadio_Event $event */
 $event = MyRadio_Event::getInstance($_REQUEST['eventid']);
 $event->checkEditPermissions();
 $event->delete();

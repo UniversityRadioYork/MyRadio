@@ -136,7 +136,7 @@ class MyRadio_Event extends ServiceAPI
     }
 
     /**
-     * @param int
+     * @param int $hostId
      */
     public function setHostId(int $hostId): void
     {

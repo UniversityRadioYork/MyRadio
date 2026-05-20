@@ -198,14 +198,15 @@ class MyRadio_ChartRelease extends ServiceAPI
      */
     public function findReleaseIDOn($release_time, $chart_type_id)
     {
+        $array = self::$db->fetchColumn(
+            self::FIND_RELEASE_ID_ON_SQL,
+            [
+                $chart_type_id,
+                date('c', $release_time),
+            ]
+        );
         return array_pop(
-            self::$db->fetchColumn(
-                self::FIND_RELEASE_ID_ON_SQL,
-                [
-                    $chart_type_id,
-                    date('c', $release_time),
-                ]
-            )
+            $array
         );
     }
 

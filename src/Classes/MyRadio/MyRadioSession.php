@@ -44,7 +44,7 @@ class MyRadioSession implements SessionHandlerInterface
      */
     public function gc($lifetime): int|false
     {
-        $this->db->query(
+        $result = $this->db->query(
             'DELETE FROM sso_session WHERE timestamp<$1',
             [CoreUtils::getTimestamp(time() - $lifetime)]
         );

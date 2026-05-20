@@ -188,11 +188,11 @@ class MyRadio_TrainingStatus extends ServiceAPI
     /**
      * Checks if the user has the Training Status the one depends on.
      *
-     * @param MyRadio_User $user Default current User.
+     * @param MyRadio_User|null $user Default current User.
      *
      * @return bool True if no dependency or dependency gained, false otherwise.
      */
-    public function hasDependency(MyRadio_User $user = null)
+    public function hasDependency(MyRadio_User|null $user = null)
     {
         if ($user === null) {
             $user = MyRadio_User::getInstance();
@@ -214,11 +214,11 @@ class MyRadio_TrainingStatus extends ServiceAPI
     /**
      * Returns if the User can Award this Training Status.
      *
-     * @param MyRadio_User $user
+     * @param MyRadio_User|null $user
      *
      * @return bool
      */
-    public function canAward(MyRadio_User $user = null)
+    public function canAward(MyRadio_User|null $user = null)
     {
         if ($this->isArchived()) {
             return false;
@@ -261,11 +261,11 @@ class MyRadio_TrainingStatus extends ServiceAPI
     /**
      * Checks if the User has this Training Status.
      *
-     * @param MyRadio_User $user
+     * @param MyRadio_User|null $user
      *
      * @return bool
      */
-    public function isAwardedTo(MyRadio_User $user = null)
+    public function isAwardedTo(MyRadio_User|null $user = null)
     {
         if ($user === null) {
             $user = MyRadio_User::getInstance();
@@ -339,12 +339,12 @@ class MyRadio_TrainingStatus extends ServiceAPI
      *
      * A User cannot award themselves statuses.
      *
-     * @param MyRadio_User $to The User getting the Training Status.
-     * @param MyRadio_User $by The User awarding the Training Status.
+     * @param MyRadio_User      $to The User getting the Training Status.
+     * @param MyRadio_User|null $by The User awarding the Training Status.
      *
      * @return MyRadio_TrainingStatus[]
      */
-    public static function getAllAwardableTo(MyRadio_User $to, MyRadio_User $by = null)
+    public static function getAllAwardableTo(MyRadio_User $to, MyRadio_User|null $by = null)
     {
         if ($by === null) {
             $by = MyRadio_User::getInstance();

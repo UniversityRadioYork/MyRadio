@@ -1239,7 +1239,7 @@ class MyRadio_Timeslot extends MyRadio_Metadata_Common
     public static function getNextAutovizTimeslots()
     {
         $data = self::getCurrentAndNextObjects();
-        /** @type MyRadio_Timeslot[] */
+        /** @type MyRadio_Timeslot[] $data */
         $timeslots = [$data['current'], ...($data['next'])];
         $timeslots = array_filter($timeslots, function ($ts) {
             return $ts !== null && (!is_array($ts));

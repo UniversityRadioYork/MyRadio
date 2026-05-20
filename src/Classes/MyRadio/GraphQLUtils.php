@@ -57,7 +57,6 @@ class GraphQLUtils
      */
     private static function getDirectiveByNameOnAstNode($node, string $name)
     {
-        /** @var NodeList $directives */
         $directives = $node->directives;
         if ($directives) {
             /** @var DirectiveNode[] $directives */
@@ -284,7 +283,7 @@ class GraphQLUtils
                 if ($value === null) {
                     return $value;
                 } elseif (is_numeric($value)) {
-                    $interval = new DateInterval("PT${value}S");
+                    $interval = new DateInterval("PT{$value}S");
                 } else {
                     $data = date_parse($value);
                     $interval = new DateInterval(

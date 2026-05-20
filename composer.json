@@ -15,7 +15,15 @@
         "ext-pgsql": "*",
         "rbdwllr/reallysimplejwt": "^5.0",
         "ext-curl": "*",
-        "ext-dom": "*"
+        "ext-dom": "*",
+        "ext-xml": "*",
+        "ext-pcntl": "*",
+        "ext-memcached": "*",
+        "ext-openssl": "*",
+        "ext-libxml": "*",
+        "ext-ldap": "*",
+        "ext-fileinfo": "*",
+        "ext-gd": "*"
     },
     "require-dev": {
         "squizlabs/php_codesniffer": "^4.0",

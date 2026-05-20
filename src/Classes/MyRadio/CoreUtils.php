@@ -368,7 +368,7 @@ class CoreUtils
             if ($result) {
                 self::$module_ids[$module] = $result[0];
             } else {
-                return;
+                throw new MyRadioException("failed to create module");
             }
         }
 
@@ -402,7 +402,7 @@ class CoreUtils
             if ($result) {
                 self::$action_ids[$action.'-'.$module] = $result[0];
             } else {
-                return;
+                throw new MyRadioException("failed to create action");
             }
         }
 

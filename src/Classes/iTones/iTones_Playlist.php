@@ -290,15 +290,15 @@ class iTones_Playlist extends ServiceAPI
     /**
      * Takes a lock on this playlist - stores a notification to all other systems that it should not be edited.
      *
-     * @param string       $lockstr If you already have a lock, put it here. It will be renewed if it is still valid.
-     * @param MyRadio_User $user    The user that has acquired the lock. Defaults to current user.
-     *                              Required for CLI requests. This String will be invalidated by the update.
+     * @param string            $lockstr If you already have a lock, put it here. It will be renewed if it is still valid.
+     * @param MyRadio_User|null $user    The user that has acquired the lock. Defaults to current user.
+     *                                   Required for CLI requests. This String will be invalidated by the update.
      *
      * @return bool|string false if the lock is not available, or a sha1 that proves ownership of the lock.
      *                     No, the hash isn't all that fancy, but it prevents people being stupid.
      *                     Write operations require this String.
      */
-    public function acquireOrRenewLock($lockstr = null, MyRadio_User $user = null)
+    public function acquireOrRenewLock($lockstr = null, MyRadio_User|null $user = null)
     {
         if ($user === null) {
             $user = MyRadio_User::getInstance();
@@ -630,11 +630,10 @@ class iTones_Playlist extends ServiceAPI
      *
      * Only includes Playlists with a currently running slot, and a Track.
      *
-     * @param iTones_Playlist[] A list of one or more playlists to not return.
+     * @param iTones_Playlist[] $playlists_to_ignore A list of one or more playlists to not return.
      * @param bool $includeArchived whether to include archived playlists (default false)
-     * @throws MyRadioException If no playlists are available.
-     *
      * @return iTones_Playlist
+     * @throws MyRadioException If no playlists are available.
      */
     public static function getPlaylistFromWeights($playlists_to_ignore = [], $includeArchived = false)
     {

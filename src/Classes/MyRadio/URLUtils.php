@@ -5,7 +5,6 @@
  */
 namespace MyRadio\MyRadio;
 
-use JetBrains\PhpStorm\NoReturn;
 use MyRadio\Config;
 use MyRadio\Database;
 use MyRadio\MyRadioError;
@@ -39,7 +38,6 @@ class URLUtils
     /**
      * Responds with nocontent.
      */
-    #[NoReturn]
     public static function nocontent(): void
     {
         header('HTTP/1.1 204 No Content');
@@ -49,7 +47,6 @@ class URLUtils
     /**
      * Responds with JSON data.
      */
-    #[NoReturn]
     public static function dataToJSON($data): void
     {
         header('Content-Type: application/json');

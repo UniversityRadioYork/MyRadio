@@ -191,7 +191,7 @@ class MyRadio_UserTrainingStatus extends MyRadio_TrainingStatus
     public static function create(
         MyRadio_TrainingStatus $status,
         MyRadio_User $awarded_to,
-        MyRadio_User $awarded_by = null
+        MyRadio_User|null $awarded_by = null
     ) {
         //Does the User already have this?
         foreach ($awarded_to->getAllTraining(true) as $training) {

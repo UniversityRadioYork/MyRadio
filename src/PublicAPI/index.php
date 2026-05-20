@@ -1,6 +1,5 @@
 <?php
 
-use JetBrains\PhpStorm\NoReturn;
 use \MyRadio\Config;
 
 $__start = -microtime(true);
@@ -24,7 +23,6 @@ error_reporting(E_ALL);
 /**
  * Handle API errors.
  */
-#[NoReturn]
 function api_error($code, $message = null): void
 {
     ob_end_clean();

@@ -1178,7 +1178,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
         /**
      * sets if the user has signed the privacy statement.
      *
-     * @param enum 
+     * @param enum $removal
      *
      * @return MyRadio_User
      */
