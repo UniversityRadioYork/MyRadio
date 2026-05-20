@@ -139,7 +139,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
         $this->memberid = (int) $result['memberid'];
         $this->approvedid = (int) $result['approvedid'];
         $this->submitted = strtotime($result['submitted']);
-        $this->suspended = ($result['suspended'] === 't') ? true : false;
+        $this->suspended = $result['suspended'] === 't';
         $this->show_id = (int) $result['show_id'];
 
         //Deal with the Credits arrays
@@ -226,16 +226,14 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
 
     public static function getForm()
     {
-        $form = (
-            new MyRadioForm(
-                'createpodcastfrm',
-                'Podcast',
-                'editPodcast',
-                [
-                    'title' => 'Podcasts',
-                    'subtitle' => 'Create Podcast'
-                ]
-            )
+        $form = new MyRadioForm(
+            'createpodcastfrm',
+            'Podcast',
+            'editPodcast',
+            [
+                'title' => 'Podcasts',
+                'subtitle' => 'Create Podcast'
+            ]
         )->addField(
             new MyRadioFormField(
                 'title',
@@ -413,16 +411,14 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
 
     public static function getSuspendForm()
     {
-        return (
-            new MyRadioForm(
-                "suspendpodcastfrm",
-                "Podcast",
-                "suspendPodcast",
-                [
-                    "title" => "Podcasts",
-                    "subtitle" => "Suspend Podcast"
-                ]
-            )
+        return new MyRadioForm(
+            "suspendpodcastfrm",
+            "Podcast",
+            "suspendPodcast",
+            [
+                "title" => "Podcasts",
+                "subtitle" => "Suspend Podcast"
+            ]
         )->addField(
             new MyRadioFormField(
                 "confirm",
@@ -442,16 +438,14 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
 
     public static function getUnsuspendForm()
     {
-        return (
-            new MyRadioForm(
-                "unsuspendpodcastfrm",
-                "Podcast",
-                "suspendPodcast",
-                [
-                    "title" => "Podcasts",
-                    "subtitle" => "Request to Unsuspend Podcast"
-                ]
-            )
+        return new MyRadioForm(
+            "unsuspendpodcastfrm",
+            "Podcast",
+            "suspendPodcast",
+            [
+                "title" => "Podcasts",
+                "subtitle" => "Request to Unsuspend Podcast"
+            ]
         )->addField(
             new MyRadioFormField(
                 "reason",
@@ -470,19 +464,19 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
     /**
      * Create a new Podcast.
      *
-     * @param string       $title       The Podcast's title
-     * @param string       $description The Podcast's description
-     * @param array        $tags        An array of String tags
-     * @param string       $file        The local filesystem path to the Podcast file
-     * @param MyRadio_Show $show        The show to attach the Podcast to
-     * @param array        $credits     Credit data. Format compatible with a credit TABULARSET (see Scheduler)
+     * @param string            $title       The Podcast's title
+     * @param string            $description The Podcast's description
+     * @param array             $tags        An array of String tags
+     * @param string            $file        The local filesystem path to the Podcast file
+     * @param MyRadio_Show|null $show        The show to attach the Podcast to
+     * @param array             $credits     Credit data. Format compatible with a credit TABULARSET (see Scheduler)
      */
     public static function create(
         $title,
         $description,
         $tags,
         $file,
-        MyRadio_Show $show = null,
+        MyRadio_Show|null $show = null,
         $credits = null
     ) {
         //Validate the tags
@@ -499,7 +493,6 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
         )[0];
 
         // DANGER WILL ROBINSON DANGER
-        /** @var self $podcast */
         $podcast = self::getInstance($id);
 
         $podcast->setMeta('title', $title);
@@ -1018,7 +1011,7 @@ class MyRadio_Podcast extends MyRadio_Metadata_Common
     {
         $tmpfile = $this->getArchiveFile();
         $dbfile = $this->getWebFile();
-        shell_exec("nice -n 15 ffmpeg -i '{$tmpfile}' -ab 128k -f mp3 -map 0:a '{$dbfile}'");
+        shell_exec("nice -n 15 ffmpeg -i '$tmpfile' -ab 128k -f mp3 -map 0:a '$dbfile'");
 
         self::$db->query(
             'UPDATE uryplayer.podcast SET file=$1 WHERE podcast_id=$2',

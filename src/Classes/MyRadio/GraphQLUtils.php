@@ -3,6 +3,7 @@
 
 namespace MyRadio\MyRadio;
 
+use DateInterval;
 use GraphQL\Language\AST\DirectiveNode;
 use GraphQL\Language\AST\EnumValueNode;
 use GraphQL\Language\AST\FieldDefinitionNode;
@@ -20,6 +21,8 @@ use MyRadio\ServiceAPI\MyRadio_Show;
 use MyRadio\ServiceAPI\MyRadio_Swagger2;
 use MyRadio\ServiceAPI\MyRadio_Timeslot;
 use MyRadio\ServiceAPI\MyRadio_User;
+use ReflectionException;
+use ReflectionMethod;
 
 class GraphQLUtils
 {
@@ -54,7 +57,6 @@ class GraphQLUtils
      */
     private static function getDirectiveByNameOnAstNode($node, string $name)
     {
-        /** @var NodeList $directives */
         $directives = $node->directives;
         if ($directives) {
             /** @var DirectiveNode[] $directives */
@@ -138,7 +140,7 @@ class GraphQLUtils
                 // Object-scalar rule: if we're dealing with an object, use API v2 rules
                 // If we're dealing with a scalar, assume it's okay, as it must have come from an object
                 if ($info->returnType instanceof WrappingType) {
-                    $type = $info->returnType->getWrappedType(true);
+                    $type = $info->returnType->getWrappedType();
                 } else {
                     $type = $info->returnType;
                 }
@@ -222,9 +224,9 @@ class GraphQLUtils
         if ($info->returnType instanceof ScalarType) {
             $type = $info->returnType->name;
         } elseif ($info->returnType instanceof WrappingType
-            && $info->returnType->getWrappedType(true) instanceof ScalarType
+            && $info->returnType->getWrappedType() instanceof ScalarType
         ) {
-            $type = $info->returnType->getWrappedType(true)->name;
+            $type = $info->returnType->getWrappedType()->name;
         } else {
             return $value;
         }
@@ -281,10 +283,10 @@ class GraphQLUtils
                 if ($value === null) {
                     return $value;
                 } elseif (is_numeric($value)) {
-                    $interval = new \DateInterval("PT${value}S");
+                    $interval = new DateInterval("PT{$value}S");
                 } else {
                     $data = date_parse($value);
-                    $interval = new \DateInterval(
+                    $interval = new DateInterval(
                         sprintf(
                             "P%02dY%02dM%02dDT%02dH%02dM%02dS",
                             $data['year'],
@@ -302,7 +304,7 @@ class GraphQLUtils
         }
     }
 
-    public static function invokeNamed(\ReflectionMethod $meth, $object = null, $args = [])
+    public static function invokeNamed(ReflectionMethod $meth, $object = null, $args = [])
     {
         $methArgs = $meth->getParameters();
         // If it has no arguments, we can just invoke it directly.
@@ -317,7 +319,7 @@ class GraphQLUtils
                 } else {
                     try {
                         $param = $param->getDefaultValue();
-                    } catch (\ReflectionException $e) {
+                    } catch (ReflectionException $e) {
                         $methName = $meth->getName();
                         $obj = $meth->getDeclaringClass()->getName();
                         throw new MyRadioException("Missing parameter $name in call to $obj::$methName");

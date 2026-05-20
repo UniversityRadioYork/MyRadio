@@ -140,7 +140,7 @@ class MyRadio_Artist extends ServiceAPI
         }
 
         //Do the bulk of the sorting with SQL
-        $result = self::$db->fetchAll(
+        return self::$db->fetchAll(
             'SELECT DISTINCT rec_track.artist
             FROM rec_track
             INNER JOIN rec_record ON ( rec_track.recordid = rec_record.recordid )
@@ -160,7 +160,5 @@ class MyRadio_Artist extends ServiceAPI
             .($options['limit'] == 0 ? '' : ' LIMIT $'.$limit_param),
             $sql_params
         );
-
-        return $result;
     }
 }

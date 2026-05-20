@@ -5,7 +5,6 @@ use MyRadio\MyRadio\AuthUtils;
 use MyRadio\ServiceAPI\MyRadio_AutoVizConfiguration;
 use MyRadio\ServiceAPI\MyRadio_Timeslot;
 
-/** @var MyRadio_Timeslot $timeslot */
 $timeslot = MyRadio_Timeslot::getInstance($_REQUEST['timeslotid']);
 
 //Check the user has permission to edit this show

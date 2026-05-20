@@ -14,7 +14,7 @@ use \MyRadio\MyRadio\MyRadioNews;
 
 /** @var MyRadio_User $user */
 $user = MyRadio_User::getInstance();
-$menu = (new MyRadioMenu())->getMenuForUser();
+$menu = new MyRadioMenu()->getMenuForUser();
 
 $news = MyRadioNews::getLatestNewsItem(Config::$news_feed, $user);
 $news_clickthrough = Config::$members_news_enable && empty($news['seen']);

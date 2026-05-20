@@ -5,17 +5,19 @@
  */
 namespace MyRadio\NIPSWeb;
 
+use getID3;
 use MyRadio\Config;
 use MyRadio\MyRadioException;
 use MyRadio\MyRadio\CoreUtils;
 use MyRadio\ServiceAPI\MyRadio_User;
+use MyRadio\ServiceAPI\ServiceAPI;
 
 /**
  * The NIPSWeb_ManagedItem class helps provide control and access to Beds and Jingles and similar not-PPL resources.
  *
  * @uses    \Database
  */
-class NIPSWeb_ManagedItem extends \MyRadio\ServiceAPI\ServiceAPI
+class NIPSWeb_ManagedItem extends ServiceAPI
 {
     private $managed_item_id;
 
@@ -174,7 +176,7 @@ class NIPSWeb_ManagedItem extends \MyRadio\ServiceAPI\ServiceAPI
             'summary' => $this->getTitle(), //Again, freaking NIPSWeb
             'title' => $this->getTitle(),
             'managedid' => $this->getID(),
-            'length' => CoreUtils::intToTime($this->getLength() > 0 ? $this->getLength() : 0),
+            'length' => CoreUtils::intToTime(max($this->getLength(), 0)),
             'trackid' => $this->getID(),
             'expirydate' => $this->getExpiryDate(),
             'expired' => $this->isExpired(),
@@ -196,7 +198,7 @@ class NIPSWeb_ManagedItem extends \MyRadio\ServiceAPI\ServiceAPI
 
         move_uploaded_file($tmp_path, Config::$audio_upload_tmp_dir.'/'.$filename);
 
-        $getID3 = new \getID3();
+        $getID3 = new getID3();
         $fileInfo = $getID3->analyze(Config::$audio_upload_tmp_dir.'/'.$filename);
         //The entire $fileInfo array will break Session.
         $_SESSION['uploadInfo'][$filename] = [
@@ -213,7 +215,7 @@ class NIPSWeb_ManagedItem extends \MyRadio\ServiceAPI\ServiceAPI
                 'bitrate' => $fileInfo['audio']['bitrate']
             ];
         }
-        if (strpos($fileInfo['audio']['channelmode'], 'stereo') === false) {
+        if (!str_contains($fileInfo['audio']['channelmode'], 'stereo')) {
             return [
                 'status' => 'FAIL',
                 'error' => 'Item is not stereo.',
@@ -300,7 +302,7 @@ class NIPSWeb_ManagedItem extends \MyRadio\ServiceAPI\ServiceAPI
         }
 
         //Decode the auxid to figure out what/where we're adding
-        if (strpos($options['auxid'], 'user-') !== false) {
+        if (str_contains($options['auxid'], 'user-')) {
             //This is a personal resource
             $path = str_replace('user-', 'membersmusic/', $options['auxid']);
             $q = 'INSERT INTO bapsplanner.managed_user_items (managedplaylistid, title, length, bpm)

@@ -12,6 +12,7 @@ use MyRadio\MyRadio\URLUtils;
 use MyRadio\MyRadio\MyRadioForm;
 use MyRadio\MyRadio\MyRadioFormField;
 use MyRadio\MyRadioEmail;
+use MyRadio\ServiceAPI\MyRadio_Metadata_Common as MyRadio_Metadata_CommonAlias;
 use \MyRadio\ServiceAPI\MyRadio_Scheduler;
 use \MyRadio\ServiceAPI\MyRadio_Term;
 
@@ -339,17 +340,15 @@ class MyRadio_Season extends MyRadio_Metadata_Common
             $date = $date + (86400 * 7); //one week
         }
 
-        return (
-            new MyRadioForm(
-                'sched_season',
-                'Scheduler',
-                'editSeason',
-                [
-                    'debug' => true,
-                    'title' => 'Scheduler',
-                    'subtitle' => 'New Season',
-                ]
-            )
+        return new MyRadioForm(
+            'sched_season',
+            'Scheduler',
+            'editSeason',
+            [
+                'debug' => true,
+                'title' => 'Scheduler',
+                'subtitle' => 'New Season',
+            ]
         )->addField(
             new MyRadioFormField('show_id', MyRadioFormField::TYPE_HIDDEN)
         )->addField(
@@ -487,17 +486,15 @@ class MyRadio_Season extends MyRadio_Metadata_Common
         $num_weeks = $current_term_info->getTermWeeks();
         $startdate = $current_term_info->getTermStartDate();
         $week_names = $current_term_info->getTermWeekNames();
-        $form = (
-            new MyRadioForm(
-                'sched_allocate',
-                'Scheduler',
-                'allocate',
-                [
-                    'title' => 'Scheduler',
-                    'subtitle' => 'Allocate Timeslots to Season',
-                    'template' => 'Scheduler/allocate.twig',
-                ]
-            )
+        $form = new MyRadioForm(
+            'sched_allocate',
+            'Scheduler',
+            'allocate',
+            [
+                'title' => 'Scheduler',
+                'subtitle' => 'Allocate Timeslots to Season',
+                'template' => 'Scheduler/allocate.twig',
+            ]
         )->addField(
             new MyRadioFormField(
                 'season_id', // NOTE: Needed by this name for passing the season ID around for allocation
@@ -591,17 +588,15 @@ class MyRadio_Season extends MyRadio_Metadata_Common
 
     public static function getRejectForm()
     {
-        return (
-            new MyRadioForm(
-                'sched_reject',
-                'Scheduler',
-                'reject',
-                [
-                    'debug' => false,
-                    'title' => 'Scheduler',
-                    'subtitle' => 'Reject Season Application'
-                ]
-            )
+        return new MyRadioForm(
+            'sched_reject',
+            'Scheduler',
+            'reject',
+            [
+                'debug' => false,
+                'title' => 'Scheduler',
+                'subtitle' => 'Reject Season Application'
+            ]
         )->addField(
             new MyRadioFormField('season_id', MyRadioFormField::TYPE_HIDDEN)
         )->addField(
@@ -711,10 +706,10 @@ Your application for a season of a show was rejected by our programming team, fo
 
 $reason
 
-You can reapply online at any time, or for more information, email pc@{$email}.
+You can reapply online at any time, or for more information, email pc@$email.
 
 
-~ {$sname} Scheduling Legume
+~ $sname Scheduling Legume
 EOT
             );
         }
@@ -725,20 +720,16 @@ EOT
     public function getMeta($meta_string)
     {
         $key = self::getMetadataKey($meta_string);
-        if (isset($this->metadata[$key])) {
-            return $this->metadata[$key];
-        } else {
-            return $this->getShow()->getMeta($meta_string);
-        }
+        return $this->metadata[$key] ?? $this->getShow()->getMeta($meta_string);
     }
 
     /**
      * Alias for getCredits($this->getShow()), which enables credits to be
      * automatically inherited from the show.
-     * @param parent Unused for type compatibility with parent
+     * @param MyRadio_Metadata_CommonAlias|null $parent Unused for type compatibility with parent
      * @return array[]
      */
-    public function getCredits(\MyRadio\ServiceAPI\MyRadio_Metadata_Common $parent = null)
+    public function getCredits(MyRadio_Metadata_CommonAlias|null $parent = null)
     {
         return parent::getCredits($this->getShow());
     }
@@ -968,7 +959,7 @@ EOT
                 ]),
                 'submitted' => $this->getSubmittedTime(),
                 'requested_time' => count($requested_times) > 0 ? $requested_times[0] : null,
-                'first_time' => CoreUtils::happyTime(($first_time ? $first_time : 0)),
+                'first_time' => CoreUtils::happyTime(($first_time ?: 0)),
                 'num_episodes' => [
                     'display' => 'text',
                     'value' => count($this->timeslots),
@@ -1312,7 +1303,7 @@ $times
     public function getAddEpisodeForm()
     {
         $title = $this->getMeta('title');
-        return (new MyRadioForm(
+        return new MyRadioForm(
             'sched_add_episode',
             'Scheduler',
             'addEpisode',
@@ -1321,7 +1312,7 @@ $times
                 'title' => 'Add Episode',
                 'subtitle' => "New Episode - $title"
             ]
-        ))->addField(new MyRadioFormField(
+        )->addField(new MyRadioFormField(
             'grp_info',
             MyRadioFormField::TYPE_SECTION,
             [

@@ -1178,7 +1178,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
         /**
      * sets if the user has signed the privacy statement.
      *
-     * @param enum 
+     * @param enum $removal
      *
      * @return MyRadio_User
      */
@@ -1215,8 +1215,8 @@ class MyRadio_User extends ServiceAPI implements APICaller
     public function setEduroam($eduroam)
     {
         //Require the user to be part of this eduroam domain
-        if (strstr($eduroam, '@') !== false
-            && strstr($eduroam, '@'.Config::$eduroam_domain) === false
+        if (str_contains($eduroam, '@')
+            && !str_contains($eduroam, '@' . Config::$eduroam_domain)
         ) {
             throw new MyRadioException(
                 'Eduroam account should be @'
@@ -1255,7 +1255,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
         if ($email === '') {
             $email = null;
         }
-        if (!empty($email) && strstr($email, '@') === false) {
+        if (!empty($email) && !str_contains($email, '@')) {
             throw new MyRadioException('That email address doesn\'t look right. It needs to have an @.', 400);
         }
 
@@ -1318,7 +1318,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
      */
     public function setLocalName($name)
     {
-        if (strstr($name, '@') !== false) {
+        if (str_contains($name, '@')) {
             throw new MyRadioException('Mailbox alias may not contain an @ symbol');
         }
         if ($name !== $this->local_name && self::findByEmail($name) !== null && self::findByEmail($name) != $this) {
@@ -1459,7 +1459,6 @@ class MyRadio_User extends ServiceAPI implements APICaller
         $this->payment[] = ['year' => $year, 'paid' => $amount];
         $this->clearPermissionCache()->updateCacheObject();
         $this->updateCacheObject();
-        return;
     }
 
     /**
@@ -1935,8 +1934,8 @@ class MyRadio_User extends ServiceAPI implements APICaller
         }
 
         //Require the user to be part of this eduroam domain
-        if (strstr($params['eduroam'], '@') !== false
-            && strstr($params['eduroam'], '@'.Config::$eduroam_domain) === false
+        if (str_contains($params['eduroam'], '@')
+            && !str_contains($params['eduroam'], '@' . Config::$eduroam_domain)
         ) {
             throw new MyRadioException(
                 'Eduroam account should be @'.Config::$eduroam_domain.'! Use of other eduroam accounts is blocked.
@@ -2001,7 +2000,7 @@ class MyRadio_User extends ServiceAPI implements APICaller
         //Activate the member's account for the current academic year
         $user->activateMemberThisYear($params['paid']);
         //Set the user's password
-        (new MyRadioDefaultAuthenticator())->setPassword($user, $plain_pass);
+        new MyRadioDefaultAuthenticator()->setPassword($user, $plain_pass);
 
         //Send a welcome email (this will not send if receive_email is not enabled!)
         /*

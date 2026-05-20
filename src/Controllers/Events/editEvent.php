@@ -20,7 +20,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         );
     } else {
         // edit
-        /** @var MyRadio_Event $event */
         $event = MyRadio_Event::getInstance($data['id']);
 
         // check permissions
@@ -40,7 +39,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 } else {
     if (isset($_REQUEST['eventid'])) {
         // editing
-        /** @var MyRadio_Event $event */
         $event = MyRadio_Event::getInstance($_REQUEST['eventid']);
 
         // check permissions

@@ -41,14 +41,14 @@ $config_overrides['base_url'] = '//'.$domain.explode('?', $_SERVER['REQUEST_URI'
 // Build the config file
 $file_str = "<?php\nuse \\MyRadio\\Config;\n";
 foreach ($config_overrides as $k => $v) {
-    if (is_numeric($v) != true && is_bool($v) != true) {
+    if (!is_numeric($v) && !is_bool($v)) {
         $v = "'".str_replace("'", "\\'", $v)."'";
     } elseif ($v === true) {
         $v = 'true';
     } elseif ($v === false) {
         $v = 'false';
     }
-    $file_str .= 'Config::$'.$k.' = '.strval($v).";\n";
+    $file_str .= 'Config::$'.$k.' = '. $v .";\n";
 }
 
 //Actually write the file

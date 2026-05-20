@@ -2,7 +2,7 @@
 /**
  * @todo Proper Documentation
  */
-use \MyRadio\MyRadio\CoreUtils;
+use MyRadio\MyRadio\CoreUtils;
 
 header('HTTP/1.1 404 File Not Found');
 

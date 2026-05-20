@@ -4,6 +4,7 @@
  */
 namespace MyRadio\ServiceAPI;
 
+use getID3;
 use MyRadio\Config;
 use MyRadio\Database;
 use MyRadio\MyRadioException;
@@ -16,6 +17,7 @@ use MyRadio\ServiceAPI\MyRadio_Season;
 use MyRadio\ServiceAPI\MyRadio_Scheduler;
 use MyRadio\ServiceAPI\MyRadio_Timeslot;
 use MyRadio\ServiceAPI\MyRadio_Term;
+use XMLWriter;
 
 /**
  * The Show class is used to create, view and manupulate Shows within the new MyRadio Scheduler Format.
@@ -391,17 +393,15 @@ class MyRadio_Show extends MyRadio_Metadata_Common
 
     public static function getForm()
     {
-        return (
-            new MyRadioForm(
-                'sched_show',
-                'Scheduler',
-                'editShow',
-                [
-                    'debug' => true,
-                    'title' => 'Scheduler',
-                    'subtitle' => 'Create a Show'
-                ]
-            )
+        return new MyRadioForm(
+            'sched_show',
+            'Scheduler',
+            'editShow',
+            [
+                'debug' => true,
+                'title' => 'Scheduler',
+                'subtitle' => 'Create a Show'
+            ]
         )->addField(
             new MyRadioFormField('grp-basics', MyRadioFormField::TYPE_SECTION, ['label' => 'About My Show'])
         )->addField(
@@ -550,16 +550,14 @@ class MyRadio_Show extends MyRadio_Metadata_Common
 
     public static function getPhotoForm()
     {
-        return (
-            new MyRadioForm(
-                'sched_showphoto',
-                'Scheduler',
-                'showPhoto',
-                [
-                    'debug' => true,
-                    'title' => 'Update Show Photo',
-                ]
-            )
+        return new MyRadioForm(
+            'sched_showphoto',
+            'Scheduler',
+            'showPhoto',
+            [
+                'debug' => true,
+                'title' => 'Update Show Photo',
+            ]
         )->addField(
             new MyRadioFormField(
                 'show_id',
@@ -1086,7 +1084,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             $website . '/' . Config::$public_media_uri
         );
 
-        $writer = new \XMLWriter();
+        $writer = new XMLWriter();
         $writer->openMemory();
         $writer->startDocument('1.0', 'UTF-8');
         $writer->setIndent(true);
@@ -1180,7 +1178,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
                 $writer->endElement();
             }
 
-            $getID3 = new \getID3();
+            $getID3 = new getID3();
             $fileInfo = $getID3->analyze($episode->getWebFile());
 
             if (isset($fileInfo["playtime_string"])) {
@@ -1206,7 +1204,7 @@ class MyRadio_Show extends MyRadio_Metadata_Common
 
     public function toDataSource($mixins = [])
     {
-        $data = [
+        return [
             'show_id' => $this->getID(),
             'title' => $this->getMeta('title'),
             'credits_string' => implode(', ', $this->getCreditsNames(false)),
@@ -1258,7 +1256,5 @@ class MyRadio_Show extends MyRadio_Metadata_Common
             ],
             'photo' => $this->getShowPhoto(),
         ];
-
-        return $data;
     }
 }

@@ -7,13 +7,14 @@ namespace MyRadio\NIPSWeb;
 
 use MyRadio\MyRadioException;
 use MyRadio\ServiceAPI\MyRadio_User;
+use MyRadio\ServiceAPI\ServiceAPI;
 
 /**
  * The NIPSWeb_ManagedPlaylist class helps provide control and access to managed playlists.
  *
  * @uses    \Database
  */
-class NIPSWeb_ManagedPlaylist extends \MyRadio\ServiceAPI\ServiceAPI
+class NIPSWeb_ManagedPlaylist extends ServiceAPI
 {
     /**
      * The Singleton store for ManagedPlaylist objects.
@@ -73,7 +74,7 @@ class NIPSWeb_ManagedPlaylist extends \MyRadio\ServiceAPI\ServiceAPI
                  * http://stackoverflow.com/questions/4903387/can-2-singleton-classes-reference-each-other
                  * http://www.phparch.com/2010/03/static-methods-vs-singletons-choose-neither/
                  */
-                $this->items[] = NIPSWeb_ManagedItem::getInstance((int) $id, $this);
+                $this->items[] = NIPSWeb_ManagedItem::getInstance((int) $id);
             }
         }
 

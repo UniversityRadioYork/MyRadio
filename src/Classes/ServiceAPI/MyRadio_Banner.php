@@ -336,11 +336,11 @@ class MyRadio_Banner extends MyRadio_Photo
     /**
      * Generates the form used to Create and Edit Banners.
      *
-     * @return MyRadio_Form
+     * @return MyRadioForm
      */
     public static function getForm()
     {
-        return (new MyRadioForm(
+        return new MyRadioForm(
             'bannerfrm',
             'Website',
             'editBanner',
@@ -348,7 +348,7 @@ class MyRadio_Banner extends MyRadio_Photo
                 'title' => 'Edit Banner',
                 'template' => 'Website/bannerfrm.twig',
             ]
-        ))
+        )
         ->addField(
             new MyRadioFormField(
                 'alt',

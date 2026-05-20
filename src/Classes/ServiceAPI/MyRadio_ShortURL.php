@@ -127,14 +127,14 @@ class MyRadio_ShortURL extends ServiceAPI
     public static function getForm(): MyRadioForm
     {
         $domain = preg_replace('{^//}', '', Config::$website_url);
-        return (new MyRadioForm(
+        return new MyRadioForm(
             'shorturlfrm',
             'Website',
             'editShortUrl',
             [
                 'title' => 'Edit Short URL'
             ]
-        ))->addField(
+        )->addField(
             new MyRadioFormField(
                 'slug',
                 MyRadioFormField::TYPE_TEXT,

@@ -8,13 +8,14 @@ namespace MyRadio\NIPSWeb;
 use MyRadio\MyRadioException;
 use MyRadio\ServiceAPI\MyRadio_Track;
 use MyRadio\ServiceAPI\MyRadio_User;
+use MyRadio\ServiceAPI\ServiceAPI;
 
 /**
  * The NIPSWeb_AutoPlaylist class helps provide control and access to Auto playlists.
  *
  * @uses    \Database
  */
-class NIPSWeb_AutoPlaylist extends \MyRadio\ServiceAPI\ServiceAPI
+class NIPSWeb_AutoPlaylist extends ServiceAPI
 {
     /**
      * The Singleton store for AutoPlaylist objects.

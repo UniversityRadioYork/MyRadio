@@ -99,7 +99,7 @@ class NIPSWeb_Views
             // Extract the range string
             list(, $range) = explode('=', $_SERVER['HTTP_RANGE'], 2);
             // Make sure the client hasn't sent us a multibyte range
-            if (strpos($range, ',') !== false) {
+            if (str_contains($range, ',')) {
                 // (?) Shoud this be issued here, or should the first
                 // range be used? Or should the header be ignored and
                 // we output the whole content?

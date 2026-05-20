@@ -5,6 +5,8 @@
  */
 namespace MyRadio\MyRadio;
 
+use HTMLPurifier;
+use HTMLPurifier_Config;
 use MyRadio\Config;
 use MyRadio\Database;
 use MyRadio\MyRadioTwig;
@@ -97,7 +99,7 @@ class CoreUtils
      */
     public static function actionSafe($action)
     {
-        if (strpos($action, '/') !== false) {
+        if (str_contains($action, '/')) {
             //Someone is trying to traverse directories
             throw new MyRadioException('Directory Traversal Thrwated');
         }
@@ -282,15 +284,15 @@ class CoreUtils
     public static function encodeTrack($tmpfile, $dbfile)
     {
         $commands = [
-            'mp3' => "nice -n 15 ffmpeg -i '{$tmpfile}' -ab 192k -f mp3 -map 0:a '{$dbfile}.mp3'",
-            'ogg' => "nice -n 15 ffmpeg -i '{$tmpfile}' -acodec libvorbis -ab 192k -map 0:a '{$dbfile}.ogg'"
+            'mp3' => "nice -n 15 ffmpeg -i '$tmpfile' -ab 192k -f mp3 -map 0:a '$dbfile.mp3'",
+            'ogg' => "nice -n 15 ffmpeg -i '$tmpfile' -acodec libvorbis -ab 192k -map 0:a '$dbfile.ogg'"
         ];
         $escaped_commands = array_map('escapeshellcmd', $commands);
         $failed_formats = [];
 
         foreach (['mp3', 'ogg'] as $format) {
-            if (file_exists("{$dbfile}.{$format}")) {
-                throw new MyRadioException("Cannot encode, track {$dbfile}.{$format} already exists", 500);
+            if (file_exists("$dbfile.$format")) {
+                throw new MyRadioException("Cannot encode, track $dbfile.$format already exists", 500);
             }
         }
 
@@ -366,7 +368,7 @@ class CoreUtils
             if ($result) {
                 self::$module_ids[$module] = $result[0];
             } else {
-                return;
+                throw new MyRadioException("failed to create module");
             }
         }
 
@@ -400,7 +402,7 @@ class CoreUtils
             if ($result) {
                 self::$action_ids[$action.'-'.$module] = $result[0];
             } else {
-                return;
+                throw new MyRadioException("failed to create action");
             }
         }
 
@@ -579,8 +581,8 @@ class CoreUtils
 
     public static function getSafeHTML($dirty_html)
     {
-        $config = \HTMLPurifier_Config::createDefault();
-        $purifier = new \HTMLPurifier($config);
+        $config = HTMLPurifier_Config::createDefault();
+        $purifier = new HTMLPurifier($config);
 
         return $purifier->purify($dirty_html);
     }
@@ -649,7 +651,7 @@ class CoreUtils
     {
         $result = '';
         $pwdSource = '1234567890abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        srand((double) microtime() * 1000000);
+        srand((float) microtime() * 1000000);
         while ($pwdLen) {
             $result .= substr($pwdSource, rand(0, strlen($pwdSource) - 1), 1);
             --$pwdLen;
@@ -866,7 +868,7 @@ class CoreUtils
 
         $name = strtolower($show_name);
         foreach ($blockMatches as $match) {
-            if (strpos($name, strtolower($match[0])) !== false /* bloody PHP */) {
+            if (str_contains($name, strtolower($match[0])) /* bloody PHP */) {
                 return $match[1];
             }
         }

@@ -4,6 +4,8 @@
  */
 namespace MyRadio;
 
+use PgSql\Result;
+
 /**
  * This singleton class handles actual database connection.
  *
@@ -86,7 +88,7 @@ class Database
      * @param array  $params   Parameters for the query
      * @param bool   $rollback Deprecated.
      *
-     * @return A pg result reference
+     * @return Result A pg result reference
      *
      * @throws MyRadioException If the query fails
      * @assert ('SELECT * FROM public.tableethatreallydoesntexist') throws MyRadioException

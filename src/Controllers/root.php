@@ -3,6 +3,8 @@
 /**
  * This is the Root Controller - it is the backbone of everything MyRadio.
  */
+
+use MyRadio\Autoloader;
 use \MyRadio\Config;
 use \MyRadio\ServiceAPI\ServiceAPI;
 use \MyRadio\MyRadio\AuthUtils;
@@ -13,7 +15,7 @@ use \MyRadio\MyRadio\MyRadioNullSession;
  * This number is incremented every time a database patch is released.
  * Patches are scripts in schema/patches.
  */
-define('MYRADIO_CURRENT_SCHEMA_VERSION', 18);
+const MYRADIO_CURRENT_SCHEMA_VERSION = 18;
 
 /*
  * Turn on Error Reporting for the start. Once the Config object is loaded
@@ -36,7 +38,7 @@ set_include_path(str_replace('Controllers', '', __DIR__).PATH_SEPARATOR.get_incl
  */
 require_once 'Classes/Autoloader.php';
 // instantiate the loader
-$loader = new \MyRadio\Autoloader();
+$loader = new Autoloader();
 // register the autoloader
 $loader->register();
 // register the base directories for the namespace prefix
@@ -77,7 +79,7 @@ set_exception_handler(
             $e->uncaught();
         } else {
             echo 'This information is not available at the moment. Please try again later.';
-            print_r($e);
+            var_dump($e);
         }
     }
 );

@@ -5,7 +5,6 @@
 namespace MyRadio\ServiceAPI;
 
 use MyRadio\MyRadioException;
-use MyRadio\ServiceAPI\MyRadio_User;
 
 /**
  * The UserTrainingStatus class links TrainingStatuses to Users.
@@ -183,16 +182,16 @@ class MyRadio_UserTrainingStatus extends MyRadio_TrainingStatus
      *
      * @param MyRadio_TrainingStatus $status     The status to be awarded
      * @param MyRadio_User           $awarded_to The User to be awarded the training status
-     * @param MyRadio_User           $awarded_by The User that is granting the training status
+     * @param MyRadio_User|null      $awarded_by The User that is granting the training status
      *
-     * @return \self
+     * @return self
      *
      * @throws MyRadioException
      */
     public static function create(
         MyRadio_TrainingStatus $status,
         MyRadio_User $awarded_to,
-        MyRadio_User $awarded_by = null
+        MyRadio_User|null $awarded_by = null
     ) {
         //Does the User already have this?
         foreach ($awarded_to->getAllTraining(true) as $training) {

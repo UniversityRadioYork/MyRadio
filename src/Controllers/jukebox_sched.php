@@ -3,8 +3,8 @@
 /**
  * This is the Jukebox Scheduler Controller - when triggered, it will inject a track into the iTones playout queue.
  *
- * @uses    \Database
- * @uses    \CoreUtils
+ * @uses    Database
+ * @uses    CoreUtils
  */
 use \MyRadio\iTones\iTones_Utils;
 use \MyRadio\iTones\iTones_Playlist;

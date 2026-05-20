@@ -12,7 +12,7 @@ use \MyRadio\ServiceAPI\Profile;
 $officers = Profile::getOfficers();
 
 foreach ($officers as $k => $v) {
-    if (!empty($officers[$k]['name'])) {
+    if (!empty($v['name'])) {
         $officers[$k]['url'] = URLUtils::makeURL('Profile', 'view', ['memberid' => $v['memberid']]);
     }
 

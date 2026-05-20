@@ -1,9 +1,10 @@
 <?php
 namespace Step\Api;
 
+use ApiTester;
 use \Codeception\Util\HttpCode;
 
-class MyRadioTester extends \ApiTester
+class MyRadioTester extends ApiTester
 {
 
     public function checkAPIResponse($status_code=HttpCode::OK)

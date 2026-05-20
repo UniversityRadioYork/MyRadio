@@ -7,13 +7,14 @@ namespace MyRadio\Daemons;
 use MyRadio\Config;
 use MyRadio\Database;
 use MyRadio\iTones\iTones_Playlist;
+use MyRadio\MyRadio\MyRadio_Daemon;
 use MyRadio\NIPSWeb\NIPSWeb_BAPSUtils;
 use MyRadio\NIPSWeb\NIPSWeb_ManagedPlaylist;
 
 /**
  * The BAPSSync Daemon will scan the Show Planner playlists, and put them into BAPS.
  */
-class MyRadio_BAPSSyncDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
+class MyRadio_BAPSSyncDaemon extends MyRadio_Daemon
 {
     /**
      * If this method returns true, the Daemon host should run this Daemon. If it returns false, it must not.

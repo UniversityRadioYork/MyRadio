@@ -10,9 +10,9 @@ $__start = -microtime(true);
  * @todo Management interfaces to configure keys and expose methods
  */
 // Configure MyRadio & Set API Settings
-define('SILENT_EXCEPTIONS', false);
+const SILENT_EXCEPTIONS = false;
 define('DISABLE_SESSION', !(empty($args['api_key'])));
-define('JSON_DEBUG', true);
+const JSON_DEBUG = true;
 
 require_once __DIR__.'/../Controllers/root_cli.php';
 
@@ -23,7 +23,7 @@ error_reporting(E_ALL);
 /**
  * Handle API errors.
  */
-function api_error($code, $message = null)
+function api_error($code, $message = null): void
 {
     ob_end_clean();
     $messages = [
@@ -34,7 +34,7 @@ function api_error($code, $message = null)
         405 => 'Method Not Allowed',
         500 => 'Internal Server Error',
     ];
-    header("HTTP/1.1 $code {$messages[$code]}");
+    header("HTTP/1.1 $code $messages[$code]");
     header('Content-Type: application/json');
     echo json_encode(
         [
@@ -64,7 +64,7 @@ function invokeArgsNamed(ReflectionMethod $refmethod, $object, array $args = [])
             if (!$param->isOptional() && !isset($args[$name])) {
                 api_error(400, $name . ' is required.');
             }
-            $param = isset($args[$name]) ? $args[$name] : $param->getDefaultValue();
+            $param = $args[$name] ?? $param->getDefaultValue();
         }
     }
     unset($param);
@@ -87,9 +87,9 @@ if (empty($class)) {
 }
 
 //Go to the right version controller
-if (strpos($_SERVER['REQUEST_URI'], Config::$api_uri . 'graphql') !== false) {
+if (str_contains($_SERVER['REQUEST_URI'], Config::$api_uri . 'graphql')) {
     require_once '../Controllers/api/graphql.php';
-} elseif (strpos($_SERVER['REQUEST_URI'], Config::$api_uri.'v2/') !== false) {
+} elseif (str_contains($_SERVER['REQUEST_URI'], Config::$api_uri . 'v2/')) {
     require_once '../Controllers/api/v2.php';
 } else {
     require_once '../Controllers/api/v1.php';

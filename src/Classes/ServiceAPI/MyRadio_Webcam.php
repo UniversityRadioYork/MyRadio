@@ -7,6 +7,9 @@ namespace MyRadio\ServiceAPI;
 use MyRadio\Config;
 use MyRadio\ServiceAPI\MyRadio_User;
 use MyRadio\MyRadioException;
+use function curl_exec;
+use function curl_init;
+use function curl_setopt;
 
 /**
  * Deals with Webcam features within MyRadio.
@@ -62,8 +65,7 @@ class MyRadio_Webcam extends ServiceAPI
 
     public static function getViewCounter(MyRadio_User $user)
     {
-        $counter = self::$db->fetchOne('SELECT timer FROM webcam.memberviews WHERE memberid = $1', [$user->getID()]);
-        return $counter;
+        return self::$db->fetchOne('SELECT timer FROM webcam.memberviews WHERE memberid = $1', [$user->getID()]);
     }
 
     /**
@@ -147,12 +149,12 @@ class MyRadio_Webcam extends ServiceAPI
     {
         $validCams = ['studio1', 'studio2', 'cam1', 'cam2', 'cam5', 'hall', 'office'];
         if (in_array($id, $validCams)) {
-            $ch = \curl_init(Config::$webcam_set_url.$id);
-            \curl_setopt($ch, CURLOPT_POST, true);
-            \curl_setopt($ch, CURLOPT_AUTOREFERER, 1);
-            \curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+            $ch = curl_init(Config::$webcam_set_url.$id);
+            curl_setopt($ch, CURLOPT_POST, true);
+            curl_setopt($ch, CURLOPT_AUTOREFERER, 1);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 
-            \curl_exec($ch); // ignore response
+            curl_exec($ch); // ignore response
         }
     }
 }

@@ -5,9 +5,9 @@
  *
  * @todo    Proper Documentation
  */
-use \MyRadio\Config;
-use \MyRadio\MyRadio\URLUtils;
-use \MyRadio\ServiceAPI\MyRadio_Artist;
+use MyRadio\Config;
+use MyRadio\MyRadio\URLUtils;
+use MyRadio\ServiceAPI\MyRadio_Artist;
 
 if (!isset($_REQUEST['term'])) {
     $data = [];

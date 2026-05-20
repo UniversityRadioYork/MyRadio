@@ -2,11 +2,10 @@
 /**
  * @todo Proper Documentation
  */
-use \MyRadio\MyRadio\URLUtils;
-use \MyRadio\ServiceAPI\MyRadio_Season;
-use \MyRadio\ServiceAPI\MyRadio_Scheduler;
-use \MyRadio\ServiceAPI\MyRadio_Term;
-use \MyRadio\MyRadioException;
+use MyRadio\MyRadio\URLUtils;
+use MyRadio\ServiceAPI\MyRadio_Season;
+use MyRadio\ServiceAPI\MyRadio_Term;
+use MyRadio\MyRadioException;
 
 $current_term_info = MyRadio_Term::getActiveApplicationTerm();
 $term_weeks = $current_term_info->getTermWeeks();

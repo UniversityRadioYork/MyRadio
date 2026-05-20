@@ -32,7 +32,7 @@ class MyRadioNews
      *
      * @param int $newsfeedid The ID of the feed to get
      */
-    public static function getFeed($newsfeedid, MyRadio_User $user = null, $revoked = false)
+    public static function getFeed($newsfeedid, MyRadio_User|null $user = null, $revoked = false)
     {
         $data = [];
         foreach (Database::getInstance()->fetchColumn(
@@ -54,7 +54,7 @@ class MyRadioNews
      *
      * @return array
      */
-    public static function getLatestNewsItem($newsfeedid, MyRadio_User $user = null)
+    public static function getLatestNewsItem($newsfeedid, MyRadio_User|null $user = null)
     {
         $newsentry = Database::getInstance()->fetchOne(
             'SELECT newsentryid FROM public.news_feed
@@ -70,7 +70,7 @@ class MyRadioNews
         return self::getNewsItem($newsentry['newsentryid'], $user);
     }
 
-    public static function getNewsItem($newsentryid, MyRadio_User $user = null)
+    public static function getNewsItem($newsentryid, MyRadio_User|null $user = null)
     {
         $db = Database::getInstance();
 
@@ -118,7 +118,7 @@ class MyRadioNews
                 [$newsentryid, $user->getID()]
             );
         } catch (MyRadioException $e) {
-        }; //Can sometimes get duplicate key errors
+        } //Can sometimes get duplicate key errors
     }
 
     public static function addItem($feedid, $content, $memberid = 1)
@@ -138,15 +138,13 @@ class MyRadioNews
 
     public static function getForm()
     {
-        return (
-            new MyRadioForm(
-                'myradio_news',
-                'MyRadio',
-                'addNews',
-                [
-                    'title' => 'Add news item',
-                ]
-            )
+        return new MyRadioForm(
+            'myradio_news',
+            'MyRadio',
+            'addNews',
+            [
+                'title' => 'Add news item',
+            ]
         )->addField(
             new MyRadioFormField(
                 'body',

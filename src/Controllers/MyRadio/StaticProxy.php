@@ -22,7 +22,7 @@ foreach ([__DIR__.'/../../Public/', __DIR__.'/../../Public/js/vendor/skins/light
     }
 }
 
-if (strstr($_GET[0], '..') !== false) {
+if (str_contains($_GET[0], '..')) {
     exit;
 }
 

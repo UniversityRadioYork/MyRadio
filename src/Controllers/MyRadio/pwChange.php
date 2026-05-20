@@ -16,15 +16,13 @@ use \MyRadio\MyRadio\MyRadioFormField;
 use \MyRadio\MyRadio\MyRadioDefaultAuthenticator;
 use \MyRadio\ServiceAPI\MyRadio_User;
 
-$form = (
-    new MyRadioForm(
-        'myradio_pwChange',
-        'MyRadio',
-        'pwChange',
-        [
-            'title' => 'Password Change',
-        ]
-    )
+$form = new MyRadioForm(
+    'myradio_pwChange',
+    'MyRadio',
+    'pwChange',
+    [
+        'title' => 'Password Change',
+    ]
 )->addField(
     new MyRadioFormField(
         'pw1',

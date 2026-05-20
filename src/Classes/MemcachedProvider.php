@@ -6,6 +6,7 @@
 namespace MyRadio;
 
 use Memcached;
+use MyRadio\Iface\CacheProvider;
 
 /**
  * MemcachedProvider provides in-memory caching for PHP resources to increase page load times.
@@ -14,7 +15,7 @@ use Memcached;
  * it which are then stored using Memcached automatically. It will throw an Error and disable itself if it cannot
  * initialise correctly.
  */
-class MemcachedProvider implements \MyRadio\Iface\CacheProvider
+class MemcachedProvider implements CacheProvider
 {
     /**
      * A variable to store the singleton instance.
@@ -80,7 +81,7 @@ class MemcachedProvider implements \MyRadio\Iface\CacheProvider
         }
 
         if ($expires === 0) {
-            $expires = \MyRadio\Config::$cache_default_timeout;
+            $expires = Config::$cache_default_timeout;
         }
         // Values > 30 days are assumed to be epoch times
         // http://php.net/manual/en/memcached.expiration.php
@@ -113,7 +114,7 @@ class MemcachedProvider implements \MyRadio\Iface\CacheProvider
      *
      * @param array $keys cache keys to be fetched
      *
-     * @return mixed[] array of objects relating to provided keys
+     * @return array array of objects relating to provided keys
      */
     public function getAll($keys)
     {
@@ -127,9 +128,7 @@ class MemcachedProvider implements \MyRadio\Iface\CacheProvider
         }
 
         //Don't use $this->get as it'll append the prefix twice
-        $result = $this->memcached->getMulti($keys);
-
-        return $result;
+        return $this->memcached->getMulti($keys);
     }
 
     /**
@@ -185,7 +184,7 @@ class MemcachedProvider implements \MyRadio\Iface\CacheProvider
      */
     public function __clone()
     {
-        throw new \MyRadio\MyRadioException('Attempted to clone a singleton');
+        throw new MyRadioException('Attempted to clone a singleton');
     }
 
     private function getKeyPrefix()

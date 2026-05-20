@@ -2,6 +2,8 @@
 
 namespace MyRadio\MyRadio;
 
+use DOMDocument;
+use DOMXPath;
 use MyRadio\MyRadioException;
 use MyRadio\ServiceAPI\MyRadio_Album;
 use MyRadio\ServiceAPI\MyRadio_Track;
@@ -468,18 +470,16 @@ class MyRadioFormField
      * In the case of TABULARSETs, $value may be an array of multiple existing values. You must also provide an extended
      * field name, which is the name of this field, a period '.', and the name of the inner field.
      *
-     * @param mixed  $value    The value that this MyRadioFormField will be set to. Type depends on $type parameter.
-     * @param string $subfield For TABULARSETs, this is fieldname.innerfieldname.
+     * @param mixed       $value    The value that this MyRadioFormField will be set to. Type depends on $type parameter.
+     * @param string|null $subField For TABULARSETs, this is fieldname.innerfieldname.
      */
     public function setValue($value, $subField = null)
     {
-        if (strpos($subField, '.') !== false) {
+        if (str_contains($subField, '.')) {
             $subField = explode('.', $subField)[1];
         }
         if ($this->type !== self::TYPE_TABULARSET) {
             $this->value = $value;
-
-            return;
         } else {
             foreach ($this->options as $field) {
                 if (!$field instanceof self) {
@@ -622,21 +622,20 @@ class MyRadioFormField
             case self::TYPE_ARTIST:
                 //Deal with Arrays for repeated elements - see function comment.
                 if (is_array($_REQUEST[$name])) {
-                    $stripped_values = [];
-                    foreach ($_REQUEST[$name] as $field_key => $field_value) {
-                        $stripped_values[$field_key] = strip_tags($field_value);
-                    }
+                    $stripped_values = array_map(function ($field_value) {
+                        return strip_tags($field_value);
+                    }, $_REQUEST[$name]);
                     return $stripped_values;
                 } else {
                     return strip_tags($_REQUEST[$name]);
                 }
                 break;
             case self::TYPE_BLOCKTEXT:
-                $dom = new \DOMDocument();
+                $dom = new DOMDocument();
                 // We have to wrap the html so that DOMDocument has a root
                 $dom->loadHtml("<div>$_REQUEST[$name]</div>", LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
 
-                $xpath = new \DOMXPath($dom);
+                $xpath = new DOMXPath($dom);
                 while ($node = $xpath->query('//script')->item(0)) {
                     $node->parentNode->removeChild($node);
                 }

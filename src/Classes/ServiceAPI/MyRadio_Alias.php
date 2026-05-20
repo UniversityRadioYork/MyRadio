@@ -36,7 +36,7 @@ class MyRadio_Alias extends ServiceAPI
      * Format:<br>
      * {{type: 'text', value: 'dave.tracz'}, ...}
      *
-     * @var mixed[]
+     * @var array
      */
     private $destinations = [];
 
@@ -139,7 +139,7 @@ class MyRadio_Alias extends ServiceAPI
      * Format:<br>
      * {{type: 'text', value: string/Officer/Member}, ...}
      *
-     * @return mixed[]
+     * @return array
      */
     public function getDestinations()
     {
@@ -153,12 +153,10 @@ class MyRadio_Alias extends ServiceAPI
      */
     public function toDataSource($mixins = [])
     {
-        $data = [
+        return [
             'alias_id' => $this->getID(),
             'source' => $this->getSource(),
             'destinations' => CoreUtils::dataSourceParser($this->getDestinations()),
         ];
-
-        return $data;
     }
 }

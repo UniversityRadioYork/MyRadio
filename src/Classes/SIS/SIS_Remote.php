@@ -53,7 +53,7 @@ class SIS_Remote extends ServiceAPI
     {
         $response = SIS_Messages::getMessages(
             $session['timeslotid'],
-            isset($_REQUEST['messages_highest_id']) ? $_REQUEST['messages_highest_id'] : 0
+            $_REQUEST['messages_highest_id'] ?? 0
         );
 
         if (!empty($response) && $response !== false) {
@@ -72,7 +72,7 @@ class SIS_Remote extends ServiceAPI
     {
         $response = SIS_Tracklist::getTrackListing(
             $session['timeslotid'],
-            isset($_REQUEST['tracklist_highest_id']) ? $_REQUEST['tracklist_highest_id'] : 0
+            $_REQUEST['tracklist_highest_id'] ?? 0
         );
 
         if (!empty($response) && $response !== false) {

@@ -37,26 +37,14 @@ class NIPSWeb_ManagedUserPlaylist extends NIPSWeb_ManagedPlaylist
     public static function getNameFromFolder($id)
     {
         $data = explode('/', $id);
-        switch ($data[sizeof($data) - 1]) {
-            case 'jingles':
-                return 'My Jingles';
-                break;
-            case 'beds':
-                return 'My Beds';
-                break;
-            case 'links':
-                return 'My Links';
-                break;
-            case 'sfx':
-                return 'My Sound Effects';
-                break;
-            case 'other':
-                return 'My Misc Things';
-                break;
-            default:
-                return 'ERR_USR_PRESET_NOT_FOUND: '.$id;
-                break;
-        }
+        return match ($data[sizeof($data) - 1]) {
+            'jingles' => 'My Jingles',
+            'beds' => 'My Beds',
+            'links' => 'My Links',
+            'sfx' => 'My Sound Effects',
+            'other' => 'My Misc Things',
+            default => 'ERR_USR_PRESET_NOT_FOUND: ' . $id,
+        };
     }
 
     /**
@@ -89,7 +77,7 @@ class NIPSWeb_ManagedUserPlaylist extends NIPSWeb_ManagedPlaylist
                  * http://stackoverflow.com/questions/4903387/can-2-singleton-classes-reference-each-other
                  * http://www.phparch.com/2010/03/static-methods-vs-singletons-choose-neither/
                  */
-                $this->items[] = NIPSWeb_ManagedItem::getInstance((int) $id, $this);
+                $this->items[] = NIPSWeb_ManagedItem::getInstance((int) $id);
             }
         }
 

@@ -6,13 +6,14 @@ namespace MyRadio\NIPSWeb;
 
 use MyRadio\MyRadioException;
 use MyRadio\ServiceAPI\MyRadio_Track;
+use MyRadio\ServiceAPI\ServiceAPI;
 
 /**
  * The NIPSWeb_TimeslotItem class helps provide Show Planner with access to all resource types a timeslot item could be.
  *
  * @uses    \Database
  */
-class NIPSWeb_TimeslotItem extends \MyRadio\ServiceAPI\ServiceAPI
+class NIPSWeb_TimeslotItem extends ServiceAPI
 {
     private $timeslot_item_id;
 
@@ -101,7 +102,7 @@ class NIPSWeb_TimeslotItem extends \MyRadio\ServiceAPI\ServiceAPI
         if ($this->item_type == "CentralDB") {
             return MyRadio_Track::getInstance($this->item_id);
         } elseif ($this->item_type == "ManagedDB") {
-            return NIPSWeb_ManagedItem::getInstance($this->item_id, $this->item_playlist_ref);
+            return NIPSWeb_ManagedItem::getInstance($this->item_id);
         }
     }
 

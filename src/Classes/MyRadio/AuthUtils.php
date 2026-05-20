@@ -133,6 +133,7 @@ class AuthUtils
             require 'Controllers/Errors/403.php';
             exit;
         }
+        return true;
     }
 
     /**

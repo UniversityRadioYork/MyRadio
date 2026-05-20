@@ -5,6 +5,8 @@
  */
 namespace MyRadio\ServiceAPI;
 
+use getID3;
+use getID3_lib;
 use MyRadio\Config;
 use MyRadio\MyRadioEmail;
 use MyRadio\MyRadioException;
@@ -169,7 +171,7 @@ class MyRadio_Track extends ServiceAPI
         $this->trackid = (int) $result['trackid'];
         $this->artist = $result['artist'];
         $this->clean = $result['clean'];
-        $this->digitised = ($result['digitised'] == 't') ? true : false;
+        $this->digitised = $result['digitised'] === 't';
         $this->digitisedby = empty($result['digitisedby']) ?
             null : (int) $result['digitisedby'];
         $this->last_edited_time = empty($result['last_edited_time']) ?
@@ -205,15 +207,13 @@ class MyRadio_Track extends ServiceAPI
 
     public static function getForm()
     {
-        return (
-            new MyRadioForm(
-                'lib_edittrack',
-                'Library',
-                'editTrack',
-                [
-                    'title' => 'Edit Track',
-                ]
-            )
+        return new MyRadioForm(
+            'lib_edittrack',
+            'Library',
+            'editTrack',
+            [
+                'title' => 'Edit Track',
+            ]
         )->addField(
             new MyRadioFormField('title', MyRadioFormField::TYPE_TEXT, ['label' => 'Title'])
         )->addField(
@@ -971,9 +971,9 @@ EOF
             throw new MyRadioException('Failed to move uploaded track to tmp directory.', 500);
         }
 
-        $getID3 = new \getID3();
+        $getID3 = new getID3();
         $fileInfo = $getID3->analyze(Config::$audio_upload_tmp_dir.'/'.$filename);
-        $getID3_lib = new \getID3_lib();
+        $getID3_lib = new getID3_lib();
         $getID3_lib->CopyTagsToComments($fileInfo);
 
         // File quality checks
@@ -985,7 +985,7 @@ EOF
                 'bitrate' => $fileInfo['audio']['bitrate']
             ];
         }
-        if (strpos($fileInfo['audio']['channelmode'], 'stereo') === false) {
+        if (!str_contains($fileInfo['audio']['channelmode'], 'stereo')) {
             return [
                 'status' => 'FAIL',
                 'message' => 'Item is not stereo',
@@ -1093,7 +1093,7 @@ EOF
 
         // Get the track duration from the file if it isn't already set
         if (empty($ainfo['duration'])) {
-            $getID3 = new \getID3();
+            $getID3 = new getID3();
             $ainfo['duration'] = intval($getID3->analyze(Config::$audio_upload_tmp_dir.'/'.$tmpid)['playtime_seconds']);
         }
 

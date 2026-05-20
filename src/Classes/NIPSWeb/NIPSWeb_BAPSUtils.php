@@ -11,11 +11,12 @@ use MyRadio\Config;
 use MyRadio\MyRadioException;
 use MyRadio\MyRadio\CoreUtils;
 use MyRadio\ServiceAPI\MyRadio_Timeslot;
+use MyRadio\ServiceAPI\ServiceAPI;
 
 /**
  * This class has helper functions for saving Show Planner show informaiton into legacy BAPS Show layout.
  */
-class NIPSWeb_BAPSUtils extends \MyRadio\ServiceAPI\ServiceAPI
+class NIPSWeb_BAPSUtils extends ServiceAPI
 {
     public static function getBAPSShowIDFromTimeslot(MyRadio_Timeslot $timeslot)
     {

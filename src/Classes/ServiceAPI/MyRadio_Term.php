@@ -163,16 +163,14 @@ class MyRadio_Term extends ServiceAPI
 
     public static function getTermForm()
     {
-        return (
-            new MyRadioForm(
-                'sched_term',
-                'Scheduler',
-                'editTerm',
-                [
-                    'title' => 'Scheduler',
-                    'subtitle' => 'Create Term',
-                ]
-            )
+        return new MyRadioForm(
+            'sched_term',
+            'Scheduler',
+            'editTerm',
+            [
+                'title' => 'Scheduler',
+                'subtitle' => 'Create Term',
+            ]
         )->addField(
             new MyRadioFormField(
                 'descr',

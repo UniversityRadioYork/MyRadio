@@ -24,7 +24,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         );
     } else {
         //submit edit
-        /** @var MyRadio_Show $show */
         $show = MyRadio_Show::getInstance($data['id']);
 
         //Check the user has permission to edit this show

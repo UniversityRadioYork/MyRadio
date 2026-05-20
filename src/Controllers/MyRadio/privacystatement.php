@@ -10,16 +10,14 @@ use \MyRadio\MyRadio\MyRadioForm;
 use \MyRadio\MyRadio\MyRadioFormField;
 use MyRadio\ServiceAPI\MyRadio_User;
 
-$form = (
-    new MyRadioForm(
-        'myradio_login',
-        'MyRadio',
-        'privacystatement',
-        [
-            'title' => 'Privacy Statement'
-        ]
-    )
-    )->setTemplate('MyRadio/privacy.twig');
+$form = new MyRadioForm(
+    'myradio_login',
+    'MyRadio',
+    'privacystatement',
+    [
+        'title' => 'Privacy Statement'
+    ]
+)->setTemplate('MyRadio/privacy.twig');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 

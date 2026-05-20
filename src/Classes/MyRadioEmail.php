@@ -5,6 +5,7 @@
  */
 namespace MyRadio;
 
+use Html2Text\Html2Text;
 use MyRadio\MyRadio\CoreUtils;
 use MyRadio\MyRadio\URLUtils;
 use MyRadio\ServiceAPI\ServiceAPI;
@@ -63,7 +64,7 @@ class MyRadioEmail extends ServiceAPI
         $split = strip_tags($this->body);
         if ($this->body !== $split) {
             //There's HTML in there
-            $split = \Html2Text\Html2Text::convert($this->body, true); // ignore errors
+            $split = new Html2Text($this->body, true)->getText(); // ignore errors
             $this->multipart = true;
             $body_transformed = 'This is a MIME encoded message.'
                     .self::$rtnl.self::$rtnl
@@ -118,7 +119,8 @@ class MyRadioEmail extends ServiceAPI
         if (strlen($body) > 1024000) {
             //Woah - that's a big email. Where's this coming from?
             //If its more than a couple MB expect this script/service to shortly die due to RAM usage.
-            $caller = array_shift(debug_backtrace());
+            $bt = debug_backtrace();
+            $caller = array_shift($bt);
             trigger_error(
                 'Received long email body: '.strlen($body).' bytes. Source: '
                 .$from.'/'.$caller['file'].':'.$caller['line'],
@@ -229,7 +231,7 @@ class MyRadioEmail extends ServiceAPI
                 //Don't send if the user has opted out
                 if ($user->getReceiveEmail()) {
                     $u_subject = trim(str_ireplace('#NAME', $user->getFName(), $this->subject));
-                    if (substr($u_subject, 0, 1) !== '[') {
+                    if (!str_starts_with($u_subject, '[')) {
                         $u_subject = '['.Config::$short_name.'] '.$u_subject;
                     }
                     $u_message = str_ireplace('#NAME', $user->getFName(), $this->body_transformed);
@@ -266,8 +268,6 @@ class MyRadioEmail extends ServiceAPI
                 $this->setSentToList($list);
             }
         }
-
-        return;
     }
 
     public function getSentToUser(MyRadio_User $user)
@@ -309,13 +309,14 @@ class MyRadioEmail extends ServiceAPI
     /**
      * Sends an email to the specified User.
      *
-     * @param MyRadio_User $to
-     * @param string       $subject email subject
-     * @param string        $message email message
+     * @param MyRadio_User      $to
+     * @param string            $subject email subject
+     * @param string            $message email message
+     * @param MyRadio_User|null $from user sending the email
      *
      * @todo Check if "Receive Emails" is enabled for the User
      */
-    public static function sendEmailToUser(MyRadio_User $to, $subject, $message, MyRadio_User $from = null)
+    public static function sendEmailToUser(MyRadio_User $to, $subject, $message, MyRadio_User|null $from = null)
     {
         self::create(['members' => [$to]], $subject, $message, $from);
 
@@ -325,13 +326,14 @@ class MyRadioEmail extends ServiceAPI
     /**
      * Sends an email to the specified MyRadio_List.
      *
-     * @param MyRadio_List  $to
-     * @param string        $subject email subject
-     * @param string        $message email message
+     * @param MyRadio_List      $to
+     * @param string            $subject email subject
+     * @param string            $message email message
+     * @param MyRadio_User|null $from
      *
      * @todo Check if "Receive Emails" is enabled for the User
      */
-    public static function sendEmailToList(MyRadio_List $to, $subject, $message, MyRadio_User $from = null)
+    public static function sendEmailToList(MyRadio_List $to, $subject, $message, MyRadio_User|null $from = null)
     {
         if ($from !== null && !$to->hasSendPermission($from)) {
             return false;
@@ -345,11 +347,12 @@ class MyRadioEmail extends ServiceAPI
      * Sends an email to all the specified Users, with certain customisation abilities:
      * #NAME is replaced with the User's first name.
      *
-     * @param array  $to      An array of User objects
-     * @param string $subject email subject
-     * @param sting  $message email message
+     * @param array             $to      An array of User objects
+     * @param string            $subject email subject
+     * @param string            $message email message
+     * @param MyRadio_User|null $from
      */
-    public static function sendEmailToUserSet($to, $subject, $message, MyRadio_User $from = null)
+    public static function sendEmailToUserSet($to, $subject, $message, MyRadio_User|null $from = null)
     {
         foreach ($to as $user) {
             if (!($user instanceof MyRadio_User)) {
@@ -371,18 +374,11 @@ class MyRadioEmail extends ServiceAPI
      */
     public function isRecipient(MyRadio_User $user)
     {
-        foreach ($this->r_users as $ruser) {
-            if ($ruser === $user->getID()) {
-                return true;
-            }
+        if (in_array($user->getID(), $this->r_users, true)) {
+            return true;
         }
-        foreach ($this->getListRecipients() as $list) {
-            if ($list->isMember($user->getID())) {
-                return true;
-            }
-        }
+        return array_any($this->getListRecipients(), fn($list) => $list->isMember($user->getID()));
 
-        return false;
     }
 
     public function getSubject()
@@ -412,7 +408,7 @@ class MyRadioEmail extends ServiceAPI
             $data = CoreUtils::getSafeHTML($body);
         }
 
-        if (strpos($data, '<') === false) {
+        if (!str_contains($data, '<')) {
             return nl2br($data);
         } else {
             return $data;

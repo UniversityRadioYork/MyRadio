@@ -24,12 +24,12 @@ trait MyRadio_Creditable
     /**
      * Get all credits.
      *
-     * @param MyRadio_Metadata_Common $parent Used when there is inheritance enabled
-     *                                        for this object. In this case credits are merged.
+     * @param MyRadio_Metadata_Common|null $parent Used when there is inheritance enabled
+     *                                             for this object. In this case credits are merged.
      *
      * @return type
      */
-    public function getCredits(\MyRadio\ServiceAPI\MyRadio_Metadata_Common $parent = null)
+    public function getCredits(MyRadio_Metadata_Common|null $parent = null)
     {
         $parent = empty($parent) ? [] : $parent->getCredits();
         $current = empty($this->credits) ? [] : $this->credits;
@@ -112,8 +112,6 @@ trait MyRadio_Creditable
         foreach ($this->getCredits() as $credit) {
             if (in_array($credit['type'], $credit_types_in_byline)) {
                 $str .= $credit['User']->getName().', ';
-            } else {
-                continue;
             }
         }
 

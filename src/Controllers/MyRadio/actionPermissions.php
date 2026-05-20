@@ -2,11 +2,11 @@
 /**
  * Provides a tool to manage permissions for MyRadio Service/Module/Action systems.
  */
-use \MyRadio\MyRadio\AuthUtils;
-use \MyRadio\MyRadio\CoreUtils;
-use \MyRadio\MyRadio\URLUtils;
-use \MyRadio\MyRadio\MyRadioForm;
-use \MyRadio\MyRadio\MyRadioFormField;
+use MyRadio\MyRadio\AuthUtils;
+use MyRadio\MyRadio\CoreUtils;
+use MyRadio\MyRadio\URLUtils;
+use MyRadio\MyRadio\MyRadioForm;
+use MyRadio\MyRadio\MyRadioFormField;
 
 /*
  * Form definition for adding permissions.

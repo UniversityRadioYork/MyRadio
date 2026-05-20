@@ -15,8 +15,9 @@ use MyRadio\MyRadio\CoreUtils;
 use MyRadio\MyRadio\MyRadioForm;
 use MyRadio\MyRadio\MyRadioFormField;
 use MyRadio\ServiceAPI\MyRadio_User;
+use MyRadio\ServiceAPI\ServiceAPI;
 
-class MyRadio_Availability extends \MyRadio\ServiceAPI\ServiceAPI
+class MyRadio_Availability extends ServiceAPI
 {
     /**
      * The table the Availability is stored in.
@@ -371,12 +372,10 @@ class MyRadio_Availability extends \MyRadio\ServiceAPI\ServiceAPI
      */
     protected static function getForm($module, $action)
     {
-        return (
-            new MyRadioForm(
-                'availabilityfrm',
-                $module,
-                $action
-            )
+        return new MyRadioForm(
+            'availabilityfrm',
+            $module,
+            $action
         )
         ->addField(
             new MyRadioFormField(

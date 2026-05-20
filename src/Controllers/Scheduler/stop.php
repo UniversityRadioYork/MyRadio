@@ -8,7 +8,7 @@ use \MyRadio\ServiceAPI\MyRadio_Selector;
 use \MyRadio\ServiceAPI\MyRadio_User;
 
 $result = true;
-$stage = isset($_POST['stage']) ? $_POST['stage'] : 1;
+$stage = $_POST['stage'] ?? 1;
 
 if ($stage == 3) {
     $title = $_POST['show-name'];

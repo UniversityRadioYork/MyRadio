@@ -2,13 +2,15 @@
 
 namespace MyRadio\iTones;
 
+use MyRadio\MyRadio\CoreUtils;
 use MyRadio\MyRadioException;
+use MyRadio\ServiceAPI\ServiceAPI;
 
 /**
  * Utility class to help with playlist categories.
  * @package MyRadio\iTones
  */
-class iTones_PlaylistCategory extends \MyRadio\ServiceAPI\ServiceAPI
+class iTones_PlaylistCategory extends ServiceAPI
 {
     private $id;
     private $name;
@@ -72,7 +74,7 @@ class iTones_PlaylistCategory extends \MyRadio\ServiceAPI\ServiceAPI
             $vals[] = new self($row);
         }
 
-        return \MyRadio\MyRadio\CoreUtils::setToDataSource($vals);
+        return CoreUtils::setToDataSource($vals);
     }
 
     /**

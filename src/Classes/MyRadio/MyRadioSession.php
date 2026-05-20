@@ -3,11 +3,12 @@
 namespace MyRadio\MyRadio;
 
 use MyRadio\Database;
+use SessionHandlerInterface;
 
 /**
  * Custom session handler.
  */
-class MyRadioSession implements \SessionHandlerInterface
+class MyRadioSession implements SessionHandlerInterface
 {
     const TIMEOUT = 7200; //Session expires after 2hrs
 
@@ -43,7 +44,7 @@ class MyRadioSession implements \SessionHandlerInterface
      */
     public function gc($lifetime): int|false
     {
-        $this->db->query(
+        $result = $this->db->query(
             'DELETE FROM sso_session WHERE timestamp<$1',
             [CoreUtils::getTimestamp(time() - $lifetime)]
         );

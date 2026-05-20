@@ -4,8 +4,8 @@
  * This is the controller for the news items
  * members news, tech news and the presenter information sheet.
  */
-use \MyRadio\MyRadio\URLUtils;
-use \MyRadio\MyRadio\MyRadioNews;
+use MyRadio\MyRadio\URLUtils;
+use MyRadio\MyRadio\MyRadioNews;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     //Submitted

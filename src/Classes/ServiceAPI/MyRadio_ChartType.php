@@ -204,13 +204,11 @@ class MyRadio_ChartType extends MyRadio_Type
 
     public static function getForm()
     {
-        $form = (
-            new MyRadioForm(
-                'charts_editcharttype',
-                'Charts',
-                'editChartType',
-                ['title' => 'Edit Chart Type']
-            )
+        return new MyRadioForm(
+            'charts_editcharttype',
+            'Charts',
+            'editChartType',
+            ['title' => 'Edit Chart Type']
         )->addField(
             new MyRadioFormField(
                 'name',
@@ -230,8 +228,6 @@ class MyRadio_ChartType extends MyRadio_Type
                 ]
             )
         );
-
-        return $form;
     }
 
     public function getEditForm()

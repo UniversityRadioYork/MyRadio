@@ -602,13 +602,11 @@ class MyRadio_Officer extends ServiceAPI
      */
     public static function getForm()
     {
-        $form = (
-            new MyRadioForm(
-                'officerForm',
-                'Profile',
-                'editOfficer',
-                ['title' => 'Create Officer']
-            )
+        return new MyRadioForm(
+            'officerForm',
+            'Profile',
+            'editOfficer',
+            ['title' => 'Create Officer']
         )->addField(
             new MyRadioFormField(
                 'name',
@@ -736,8 +734,6 @@ class MyRadio_Officer extends ServiceAPI
                 ]
             )
         );
-
-        return $form;
     }
 
     /**

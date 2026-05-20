@@ -15,6 +15,6 @@ if (isset($_REQUEST['correctionid'])) {
     throw new MyRadioException('Correctionid is required!', 400);
 }
 
-$correction->reject(empty($_REQUEST['permanent']) ? false : (bool) $_REQUEST['permanent']);
+$correction->reject(!empty($_REQUEST['permanent']) && (bool)$_REQUEST['permanent']);
 
 URLUtils::backWithMessage('The correction was applied successfully!');

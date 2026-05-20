@@ -108,7 +108,7 @@ class iTones_PlaylistRevision extends iTones_Playlist
     /**
      * Prevents idiots attempting to edit this revision.
      */
-    public function acquireOrRenewLock($lockstr = null, MyRadio_User $user = null)
+    public function acquireOrRenewLock($lockstr = null, MyRadio_User|null $user = null)
     {
         throw new MyRadioException('You can\'t lock an archived playlist revision, poopyhead!');
     }

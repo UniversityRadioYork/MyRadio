@@ -38,7 +38,7 @@ $typeConfigDecorator = function ($typeConfig, TypeDefinitionNode $typeDefinition
             /** @var UnionType $union */
             $union = $info->returnType;
             if ($union instanceof WrappingType) {
-                $union = $union->getWrappedType(true);
+                $union = $union->getWrappedType();
             }
             /** @var InterfaceType $myRadioObjectType */
             $myRadioObjectType = $info->schema->getType('MyRadioObject');
@@ -155,7 +155,7 @@ $typeConfigDecorator = function ($typeConfig, TypeDefinitionNode $typeDefinition
 
 $schema = BuildSchema::build($schemaText, $typeConfigDecorator);
 
-if (isset($_SERVER['CONTENT_TYPE']) && strpos($_SERVER['CONTENT_TYPE'], 'application/json') !== false) {
+if (isset($_SERVER['CONTENT_TYPE']) && str_contains($_SERVER['CONTENT_TYPE'], 'application/json')) {
     $raw = file_get_contents('php://input') ?: '';
     $data = json_decode($raw, true) ?: [];
 } else {
@@ -256,7 +256,7 @@ function graphQlResolver($source, $args, GraphQLContext $context, ResolveInfo $i
                 // Not done yet. Remember, GraphQL IDs have to be unique
                 // We combine it with the class name and base64encode it
                 // Also note that `id` is bypassed from authorization, as it's controlled by access to the parent object
-                return base64_encode($clazz . '#' . strval($id));
+                return base64_encode($clazz . '#' . $id);
             }
         }
         // Now, check if it's a meta field, as given by the @meta directive

@@ -6,11 +6,12 @@ namespace MyRadio\Daemons;
 
 use MyRadio\Config;
 use MyRadio\Database;
+use MyRadio\MyRadio\MyRadio_Daemon;
 
 /**
  * The LabelFinder Daemon processes rec_record in batches, and tries to fill in the "label" field.
  */
-class MyRadio_LabelFinderDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
+class MyRadio_LabelFinderDaemon extends MyRadio_Daemon
 {
     /**
      * If this method returns true, the Daemon host should run this Daemon. If it returns false, it must not.
@@ -47,7 +48,7 @@ class MyRadio_LabelFinderDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
             if (!empty($data['results'])) {
                 $label = $data['results'][0]['label'][0];
 
-                dlog("Setting {$album['recordid']} label to {$label}", 2);
+                dlog("Setting {$album['recordid']} label to $label", 2);
                 Database::getInstance()->query(
                     'UPDATE public.rec_record SET recordlabel=$1 WHERE recordid=$2',
                     [$label, $album['recordid']]

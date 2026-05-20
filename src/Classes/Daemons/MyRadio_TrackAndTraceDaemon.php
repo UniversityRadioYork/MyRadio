@@ -3,13 +3,14 @@
 namespace MyRadio\Daemons;
 
 use MyRadio\Config;
+use MyRadio\MyRadio\MyRadio_Daemon;
 use MyRadio\ServiceAPI\MyRadio_Timeslot;
 use MyRadio\ServiceAPI\MyRadio_Season;
 use MyRadio\MyRadio\CoreUtils;
 use MyRadio\MyRadioEmail;
 use MyRadio\ServiceAPI\MyRadio_List;
 
-class MyRadio_TrackAndTraceDaemon extends \MyRadio\MyRadio\MyRadio_Daemon
+class MyRadio_TrackAndTraceDaemon extends MyRadio_Daemon
 {
     public static function isEnabled()
     {

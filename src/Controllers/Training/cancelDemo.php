@@ -18,7 +18,7 @@ if ($demo->getDemoer()->getID() !== MyRadio_User::getCurrentUser()->getID()) {
     AuthUtils::requirePermission(AUTH_CANCELANYDEMO);
 }
 
-$form = (new MyRadioForm('cancelDemo', 'Training', 'cancelDemo'))
+$form = new MyRadioForm('cancelDemo', 'Training', 'cancelDemo')
     ->addField(new MyRadioFormField('demo_id', MyRadioFormField::TYPE_HIDDEN))
     ->setFieldValue('demo_id', $_REQUEST['demo_id']);
 

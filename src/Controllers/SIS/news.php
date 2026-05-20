@@ -20,7 +20,7 @@ $proxied_headers = ['Set-Cookie', 'Content-Type', 'Cookie', 'Location'];
 $proxy_base_url_canonical = rtrim($proxy_base_url, '/ ').'/';
 
 //check if valid
-if (strpos($_SERVER['REQUEST_URI'], $proxy_base_url) !== 0) {
+if (!str_starts_with($_SERVER['REQUEST_URI'], $proxy_base_url)) {
     die("The config paramter \$prox_base_url \"$proxy_base_url\" that you specified
         does not match the beginning of the request URI: ".
         $_SERVER['REQUEST_URI']);
@@ -69,7 +69,7 @@ $headers = explode("\r\n", $headers);
 $hs = [];
 
 foreach ($headers as $header) {
-    if (false !== strpos($header, ':')) {
+    if (str_contains($header, ':')) {
         list($h, $v) = explode(':', $header);
         $hs[$h][] = $v;
     } else {

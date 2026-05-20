@@ -20,7 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     foreach (Config::$short_url_forbidden_slugs as $test) {
-        if (strpos($slug, $test) === 0) {
+        if (str_starts_with($slug, $test)) {
             URLUtils::backWithMessage("You can't use '$test' as a slug. Sorry. Please choose another one.");
             exit;
         }
@@ -43,7 +43,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (isset($_REQUEST['shorturlid'])) {
         //edit form
-        /** @var MyRadio_ShortURL $shortUrl */
         $shortUrl = MyRadio_ShortURL::getInstance($_REQUEST['shorturlid']);
         $shortUrl
             ->getEditForm()

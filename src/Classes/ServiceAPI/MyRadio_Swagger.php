@@ -5,6 +5,7 @@
  */
 namespace MyRadio\ServiceAPI;
 
+use MyRadio\Iface\APICaller;
 use ReflectionMethod;
 use ReflectionClass;
 use MyRadio\Config;
@@ -134,7 +135,7 @@ class MyRadio_Swagger
             if ($count === 1) {
                 $meta['api'] = $comment;
             } else {
-                $meta['api'] = (substr($method->getName(), 0, 3) === 'set' || $method->getName() === 'create') ?
+                $meta['api'] = (str_starts_with($method->getName(), 'set') || $method->getName() === 'create') ?
                     'POST' : 'GET';
             }
 
@@ -223,7 +224,7 @@ class MyRadio_Swagger
         foreach ($raw as $line) {
             if (empty($raw)) {
                 $lines[] = '';
-            } elseif (substr($line, 0, 1) === '@') {
+            } elseif (str_starts_with($line, '@')) {
                 $key = preg_replace('/^\@([a-zA-Z]+)(.*)$/', '$1', $line);
                 $keys[] = ['type' => $key, 'data' => trim(preg_replace('/^\@([a-zA-Z]+) (.*)$/', '$2', $line))];
             } else {
@@ -427,7 +428,7 @@ class MyRadio_Swagger
     /**
      * Identifies who's calling this.
      *
-     * @return \MyRadio\Iface\APICaller The APICaller authorising against the request
+     * @return APICaller The APICaller authorising against the request
      */
     public static function getAPICaller()
     {
@@ -459,7 +460,7 @@ class MyRadio_Swagger
      */
     protected static function getCurrentUserWithoutMessingWithSession()
     {
-        $dummysession = unserialize((new MyRadioSession())->read(session_id()));
+        $dummysession = unserialize(new MyRadioSession()->read(session_id()));
         if (!isset($dummysession['memberid'])) {
             $user = null;
         } else {
