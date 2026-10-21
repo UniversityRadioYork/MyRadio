@@ -1,4 +1,7 @@
-FROM php:8.2-apache
+# syntax=docker/dockerfile:1
+
+# php:8.2.35-apache-trixie
+FROM php@sha256:151c5936def01adbcc90fc86cb4e06ecee380c1aa141dceefde1fa90ebcebc23
 
 RUN apt-get update && apt-get install -y libpq-dev libpng-dev libjpeg-dev libldap-dev unzip \
                                          libcurl4-openssl-dev libxslt-dev git libz-dev libzip-dev libmemcached-dev \
